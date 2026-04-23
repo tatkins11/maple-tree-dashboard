@@ -39,7 +39,7 @@ def connect_postgres_db(database_url: str):
             "Hosted database mode requires psycopg. Install dependencies with `pip install -r requirements.txt`."
         ) from exc
 
-    connection = psycopg.connect(_normalize_postgres_url(database_url))
+    connection = psycopg.connect(_normalize_postgres_url(database_url), autocommit=True)
     initialize_postgres_database(connection)
     return PostgresConnectionAdapter(connection, dict_row)
 
