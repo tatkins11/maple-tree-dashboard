@@ -237,7 +237,7 @@ def fetch_current_season_stats(
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
         WHERE s.season = ?
-        ORDER BY s.ops DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY s.ops DESC, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=(season,),
@@ -393,7 +393,7 @@ def fetch_single_season_stats(
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
         {where_clause}
-        ORDER BY s.season DESC, s.ops DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY s.season DESC, s.ops DESC, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=params,
@@ -517,7 +517,7 @@ def fetch_schedule_team_names(
         SELECT DISTINCT team_name
         FROM schedule_games
         {where_clause}
-        ORDER BY team_name COLLATE NOCASE
+        ORDER BY team_name
         """,
         params,
     ).fetchall()
@@ -568,7 +568,7 @@ def fetch_schedule_opponents(
           AND team_name = ?
           AND is_bye = 0
           AND COALESCE(opponent_name, '') <> ''
-        ORDER BY opponent_name COLLATE NOCASE
+        ORDER BY opponent_name
         """,
         (season, team_name),
     ).fetchall()
@@ -1126,7 +1126,7 @@ def fetch_latest_standings_snapshot(
             division_name
         FROM standings_snapshot
         WHERE {where_clause} AND snapshot_date = ?
-        ORDER BY win_pct DESC, wins DESC, team_name COLLATE NOCASE
+        ORDER BY win_pct DESC, wins DESC, LOWER(team_name)
         """,
         connection,
         params=params_with_date,
@@ -1153,7 +1153,7 @@ def fetch_league_divisions(
         SELECT DISTINCT division_name
         FROM league_schedule_games
         WHERE season = ? AND COALESCE(division_name, '') <> ''
-        ORDER BY division_name COLLATE NOCASE
+        ORDER BY division_name
         """,
         (season,),
     ).fetchall()
@@ -1179,7 +1179,7 @@ def fetch_league_team_names(
             UNION
             SELECT away_team AS team_name FROM league_schedule_games WHERE {where_clause}
         )
-        ORDER BY team_name COLLATE NOCASE
+        ORDER BY team_name
         """,
         [*params, *params],
     ).fetchall()
@@ -1626,7 +1626,7 @@ def _fetch_advanced_season_source(connection: sqlite3.Connection, season: str) -
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
         WHERE s.season = ?
-        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        ORDER BY LOWER(pm.preferred_display_name)
         """,
         connection,
         params=(season,),
@@ -1680,7 +1680,7 @@ def _fetch_advanced_career_source(
         JOIN player_metadata pm ON pm.player_id = s.player_id
         {where_clause}
         GROUP BY pm.preferred_display_name, pi.canonical_name
-        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        ORDER BY LOWER(pm.preferred_display_name)
         """,
         connection,
         params=params,
@@ -2015,7 +2015,7 @@ def fetch_player_identities(connection: sqlite3.Connection) -> pd.DataFrame:
             pm.active_flag
         FROM player_identity pi
         JOIN player_metadata pm ON pm.player_id = pi.player_id
-        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        ORDER BY LOWER(pm.preferred_display_name)
         """,
         connection,
     )
@@ -2034,7 +2034,7 @@ def fetch_player_aliases(connection: sqlite3.Connection) -> pd.DataFrame:
         FROM player_aliases pa
         JOIN player_identity pi ON pi.player_id = pa.player_id
         JOIN player_metadata pm ON pm.player_id = pa.player_id
-        ORDER BY pm.preferred_display_name COLLATE NOCASE, pa.source_name COLLATE NOCASE
+        ORDER BY LOWER(pm.preferred_display_name), LOWER(pa.source_name)
         """,
         connection,
     )
@@ -2053,7 +2053,7 @@ def fetch_player_metadata(connection: sqlite3.Connection) -> pd.DataFrame:
             pm.active_flag,
             COALESCE(pm.notes, '') AS notes
         FROM player_metadata pm
-        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        ORDER BY LOWER(pm.preferred_display_name)
         """,
         connection,
     )
@@ -2075,7 +2075,7 @@ def fetch_active_roster(
         JOIN player_identity pi ON pi.player_id = sr.player_id
         JOIN player_metadata pm ON pm.player_id = sr.player_id
         WHERE sr.season_name = ? AND sr.active_flag = 1
-        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=(season_name,),
@@ -2107,7 +2107,7 @@ def fetch_projection_inventory(
         FROM hitter_projections hp
         JOIN player_metadata pm ON pm.player_id = hp.player_id
         {where_clause}
-        ORDER BY hp.projection_season DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY hp.projection_season DESC, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=params,
