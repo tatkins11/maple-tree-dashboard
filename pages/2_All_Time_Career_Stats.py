@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_all_time_leaders,
@@ -20,7 +21,7 @@ st.set_page_config(page_title="All-Time / Career Stats", page_icon="🥎", layou
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -28,7 +29,7 @@ ensure_authenticated()
 
 st.title("All-Time / Career Stats")
 db_path = database_path_control(DEFAULT_DB_PATH, key="career_stats_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))
 
 selected_seasons = st.multiselect("Season filter", options=seasons, default=seasons)

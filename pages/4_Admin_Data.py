@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.dashboard.auth import require_admin
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_active_roster,
@@ -24,7 +25,7 @@ st.set_page_config(page_title="Admin / Data", page_icon="🥎", layout="wide")
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -32,7 +33,7 @@ require_admin()
 
 st.title("Admin / Data")
 db_path = database_path_control(DEFAULT_DB_PATH, key="admin_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 projection_seasons = fetch_projection_seasons(connection)
 selected_projection_season = st.selectbox(
     "Projection season",

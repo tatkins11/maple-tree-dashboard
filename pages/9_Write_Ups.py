@@ -9,6 +9,7 @@ import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import ROLE_ADMIN, ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DASHBOARD_SEASON,
     DEFAULT_DB_PATH,
@@ -48,7 +49,7 @@ st.set_page_config(page_title="Write-Ups", page_icon="📝", layout="wide")
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -237,7 +238,7 @@ def main() -> None:
     st.caption("Weekly pregame and doubleheader recap generation built directly into the dashboard.")
 
     db_path = database_path_control(DEFAULT_DB_PATH, key="writeups_db_path")
-    connection = get_db_connection(db_path)
+    connection = get_db_connection(db_path, get_connection_cache_key())
 
     schedule_seasons = fetch_schedule_seasons(connection)
     league_schedule_seasons = fetch_league_schedule_seasons(connection)

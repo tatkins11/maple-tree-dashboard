@@ -6,6 +6,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     COUNTING_RECORD_COLUMNS,
     DEFAULT_DB_PATH,
@@ -23,7 +24,7 @@ st.set_page_config(page_title="Records", page_icon="🥎", layout="wide")
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -297,7 +298,7 @@ st.title("Records")
 st.caption("Team hitter records across career totals and single seasons.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="records_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))
 
 st.markdown('<div class="records-controls">', unsafe_allow_html=True)

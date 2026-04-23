@@ -8,6 +8,7 @@ import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     DEFAULT_DASHBOARD_SEASON,
@@ -31,7 +32,7 @@ st.set_page_config(page_title="Advanced Analytics", page_icon="🥎", layout="wi
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -254,7 +255,7 @@ st.markdown(
 )
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="advanced_analytics_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))
 
 if not seasons:

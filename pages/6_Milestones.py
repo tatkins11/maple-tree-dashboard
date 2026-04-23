@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     MILESTONE_LADDERS,
@@ -22,7 +23,7 @@ st.set_page_config(page_title="Milestone Tracker", page_icon="🥎", layout="wid
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -320,7 +321,7 @@ st.title("Milestone Tracker")
 st.caption("Career batting milestones based on canonical player identities and verified career totals.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="milestones_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 
 all_categories = list(MILESTONE_LADDERS.keys())
 sort_options = ["nearest milestone", "player name", "stat category"]

@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     DEFAULT_DASHBOARD_SEASON,
@@ -42,7 +43,7 @@ st.set_page_config(page_title="Schedule", page_icon="📅", layout="wide")
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -586,7 +587,7 @@ st.title("Schedule")
 st.caption("Local team schedule plus league-wide scouting powered by imported CSV data.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="schedule_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 
 team_schedule_seasons = fetch_schedule_seasons(connection)
 league_schedule_seasons = fetch_league_schedule_seasons(connection)

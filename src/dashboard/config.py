@@ -33,6 +33,13 @@ def get_database_url() -> str:
     return get_setting("DATABASE_URL", "").strip()
 
 
+def get_connection_cache_key() -> str:
+    database_url = get_database_url()
+    if database_url:
+        return f"{APP_MODE_HOSTED}:{database_url}"
+    return f"{get_app_mode()}:local"
+
+
 def should_use_hosted_database() -> bool:
     database_url = get_database_url()
     if database_url:

@@ -6,6 +6,7 @@ import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import require_admin
+from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_active_roster,
@@ -23,7 +24,7 @@ st.set_page_config(page_title="Lineup Optimizer", page_icon="🥎", layout="wide
 
 
 @st.cache_resource
-def get_db_connection(db_path: str):
+def get_db_connection(db_path: str, cache_key: str):
     return get_connection(Path(db_path))
 
 
@@ -61,7 +62,7 @@ require_admin()
 
 st.title("Lineup Optimizer")
 db_path = database_path_control(DEFAULT_DB_PATH, key="optimizer_db_path")
-connection = get_db_connection(db_path)
+connection = get_db_connection(db_path, get_connection_cache_key())
 projection_seasons = fetch_projection_seasons(connection)
 active_roster_df = fetch_active_roster(connection, season_name=DEFAULT_ACTIVE_ROSTER_SEASON)
 active_names = active_roster_df["preferred_display_name"].tolist() if not active_roster_df.empty else []
