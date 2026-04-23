@@ -1200,10 +1200,11 @@ def fetch_league_weeks(
     where_clause = " AND ".join(where_parts)
     rows = connection.execute(
         f"""
-        SELECT DISTINCT week_label
+        SELECT week_label, MIN(game_date) AS first_game_date, MIN(COALESCE(game_time, '')) AS first_game_time
         FROM league_schedule_games
         WHERE {where_clause} AND COALESCE(week_label, '') <> ''
-        ORDER BY game_date, COALESCE(game_time, ''), week_label
+        GROUP BY week_label
+        ORDER BY first_game_date, first_game_time, week_label
         """,
         params,
     ).fetchall()
