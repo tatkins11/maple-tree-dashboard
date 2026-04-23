@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from typing import Iterable, Optional
 
 from src.dashboard.config import get_database_url, should_use_hosted_database
@@ -38,7 +39,7 @@ def connect_postgres_db(database_url: str):
             "Hosted database mode requires psycopg. Install dependencies with `pip install -r requirements.txt`."
         ) from exc
 
-    connection = psycopg.connect(database_url)
+    connection = psycopg.connect(_normalize_postgres_url(database_url))
     initialize_postgres_database(connection)
     return PostgresConnectionAdapter(connection, dict_row)
 
@@ -103,6 +104,14 @@ class PostgresCursorAdapter:
 
 def _translate_sql_placeholders(query: str) -> str:
     return query.replace("?", "%s")
+
+
+def _normalize_postgres_url(database_url: str) -> str:
+    parts = urlsplit(database_url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    if "sslmode" not in query:
+        query["sslmode"] = "require"
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
 def initialize_database(connection: sqlite3.Connection) -> None:
