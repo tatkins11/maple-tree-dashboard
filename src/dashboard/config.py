@@ -34,7 +34,10 @@ def get_database_url() -> str:
 
 
 def should_use_hosted_database() -> bool:
-    return get_app_mode() == APP_MODE_HOSTED and bool(get_database_url())
+    database_url = get_database_url()
+    if database_url:
+        return True
+    return get_app_mode() == APP_MODE_HOSTED and bool(database_url)
 
 
 def get_viewer_password() -> str:
@@ -48,4 +51,3 @@ def get_admin_password() -> str:
 def get_default_sqlite_path(default_path: Path) -> Path:
     configured = get_setting("SQLITE_DB_PATH", "").strip()
     return Path(configured) if configured else default_path
-
