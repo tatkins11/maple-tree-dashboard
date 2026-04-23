@@ -1,0 +1,16 @@
+slowpitch_optimizer audit report
+generated_at: 2026-04-23T09:17:19
+
+players_loaded: 24
+player_aliases_loaded: 26
+season_batting_rows_loaded: 69
+games_loaded: 0
+player_game_rows_loaded: 0
+rows_with_parsing_uncertainty: 0
+identity_review_items: 0
+
+uncertainties:
+- none
+
+identity_review:
+- none

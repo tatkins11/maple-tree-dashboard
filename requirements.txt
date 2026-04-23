@@ -1,0 +1,6 @@
+pandas
+psycopg[binary]
+pymupdf
+pydantic
+pytest
+streamlit

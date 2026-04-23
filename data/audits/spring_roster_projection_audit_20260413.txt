@@ -1,0 +1,46 @@
+Spring Roster Projection Audit
+projection_season=Maple Tree Fall 2025
+roster_season=Current Spring
+
+Full Projection Rows
+player_name | canonical_name | projection_source | current_pa | baseline_pa | career_pa | current_weight | p_single | p_double | p_triple | p_home_run | p_walk | p_hbp | p_roe | p_fc | p_gidp | p_so | p_out | proj_obp | proj_tb_rate | proj_xbh_rate | proj_run_rate | proj_rbi_rate
+Corey | corey | season_blended | 44 | 138 | 182 | 0.268 | 0.317 | 0.055 | 0.005 | 0.011 | 0.041 | 0.000 | 0.000 | 0.049 | 0.017 | 0.040 | 0.466 | 0.478 | 0.486 | 0.071 | 0.268 | 0.202
+Duff | duff | season_blended | 47 | 140 | 187 | 0.281 | 0.326 | 0.061 | 0.058 | 0.005 | 0.034 | 0.000 | 0.000 | 0.038 | 0.005 | 0.015 | 0.458 | 0.522 | 0.642 | 0.124 | 0.240 | 0.211
+Glove | glove | season_blended | 49 | 147 | 196 | 0.290 | 0.369 | 0.096 | 0.059 | 0.075 | 0.038 | 0.000 | 0.000 | 0.043 | 0.006 | 0.011 | 0.303 | 0.680 | 1.039 | 0.230 | 0.496 | 0.464
+Jason | jason | season_blended | 42 | 107 | 149 | 0.259 | 0.227 | 0.012 | 0.000 | 0.000 | 0.152 | 0.000 | 0.000 | 0.061 | 0.000 | 0.101 | 0.446 | 0.453 | 0.252 | 0.012 | 0.266 | 0.121
+Jj | jj | season_blended | 54 | 155 | 209 | 0.310 | 0.336 | 0.098 | 0.028 | 0.046 | 0.101 | 0.000 | 0.000 | 0.027 | 0.009 | 0.045 | 0.311 | 0.635 | 0.799 | 0.172 | 0.372 | 0.276
+Joel | joel | season_blended | 41 | 34 | 75 | 0.255 | 0.381 | 0.050 | 0.000 | 0.000 | 0.006 | 0.000 | 0.000 | 0.047 | 0.028 | 0.050 | 0.437 | 0.484 | 0.482 | 0.050 | 0.288 | 0.225
+Joey | snaxx | season_blended | 44 | 32 | 76 | 0.268 | 0.441 | 0.012 | 0.000 | 0.000 | 0.024 | 0.000 | 0.000 | 0.012 | 0.000 | 0.006 | 0.505 | 0.489 | 0.465 | 0.012 | 0.082 | 0.140
+Kives | kives | season_blended | 49 | 115 | 164 | 0.290 | 0.336 | 0.073 | 0.066 | 0.048 | 0.037 | 0.000 | 0.000 | 0.067 | 0.019 | 0.006 | 0.348 | 0.627 | 0.873 | 0.188 | 0.347 | 0.432
+Porter | porter | season_blended | 31 | 137 | 168 | 0.205 | 0.285 | 0.108 | 0.052 | 0.052 | 0.060 | 0.000 | 0.000 | 0.012 | 0.018 | 0.026 | 0.387 | 0.568 | 0.866 | 0.212 | 0.324 | 0.304
+Tim | tim | career_fallback | 0 | 70 | 70 | 0.000 | 0.200 | 0.086 | 0.100 | 0.186 | 0.043 | 0.000 | 0.000 | 0.071 | 0.000 | 0.014 | 0.300 | 0.686 | 1.414 | 0.371 | 0.486 | 0.529
+Tristan | tristan | season_blended | 51 | 153 | 204 | 0.298 | 0.219 | 0.103 | 0.029 | 0.187 | 0.062 | 0.000 | 0.000 | 0.054 | 0.010 | 0.010 | 0.325 | 0.655 | 1.261 | 0.319 | 0.432 | 0.598
+Walsh | walsh | season_blended | 15 | 44 | 59 | 0.111 | 0.209 | 0.075 | 0.048 | 0.048 | 0.040 | 0.000 | 0.000 | 0.020 | 0.000 | 0.007 | 0.552 | 0.441 | 0.695 | 0.171 | 0.108 | 0.312
+
+Top By Projected On-Base Rate
+player_name | canonical_name | projection_source | projected_on_base_rate | current_plate_appearances | baseline_plate_appearances | current_season_weight | p_out
+Tim | tim | career_fallback | 0.686 | 0 | 70 | 0.000 | 0.300
+Glove | glove | season_blended | 0.680 | 49 | 147 | 0.290 | 0.303
+Tristan | tristan | season_blended | 0.655 | 51 | 153 | 0.298 | 0.325
+Jj | jj | season_blended | 0.635 | 54 | 155 | 0.310 | 0.311
+Kives | kives | season_blended | 0.627 | 49 | 115 | 0.290 | 0.348
+
+Top By Projected Total-Base Rate
+player_name | canonical_name | projection_source | projected_total_base_rate | current_plate_appearances | baseline_plate_appearances | current_season_weight | p_out
+Tim | tim | career_fallback | 1.414 | 0 | 70 | 0.000 | 0.300
+Tristan | tristan | season_blended | 1.261 | 51 | 153 | 0.298 | 0.325
+Glove | glove | season_blended | 1.039 | 49 | 147 | 0.290 | 0.303
+Kives | kives | season_blended | 0.873 | 49 | 115 | 0.290 | 0.348
+Porter | porter | season_blended | 0.866 | 31 | 137 | 0.205 | 0.387
+
+Top By Projected Extra-Base-Hit Rate
+player_name | canonical_name | projection_source | projected_extra_base_hit_rate | current_plate_appearances | baseline_plate_appearances | current_season_weight | p_out
+Tim | tim | career_fallback | 0.371 | 0 | 70 | 0.000 | 0.300
+Tristan | tristan | season_blended | 0.319 | 51 | 153 | 0.298 | 0.325
+Glove | glove | season_blended | 0.230 | 49 | 147 | 0.290 | 0.303
+Porter | porter | season_blended | 0.212 | 31 | 137 | 0.205 | 0.387
+Kives | kives | season_blended | 0.188 | 49 | 115 | 0.290 | 0.348
+
+Career Fallback Rows Only
+player_name | canonical_name | projection_source | current_plate_appearances | baseline_plate_appearances | career_plate_appearances | current_season_weight | projected_on_base_rate | projected_total_base_rate | projected_extra_base_hit_rate | projected_run_rate | projected_rbi_rate | p_out
+Tim | tim | career_fallback | 0 | 70 | 70 | 0.000 | 0.686 | 1.414 | 0.371 | 0.486 | 0.529 | 0.300

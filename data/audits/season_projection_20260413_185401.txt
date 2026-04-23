@@ -1,0 +1,33 @@
+Simulated season projection report
+
+season_games: 13
+simulated_seasons: 5000
+seed: 42
+
+Team summary
+average_runs_per_game: 12.988
+median_runs_per_game: 13.000
+average_runs_per_season: 168.839
+median_runs_per_season: 168.000
+p10_runs_per_season: 142.000
+p90_runs_per_season: 197.000
+
+Assumptions
+- Existing hitter event probabilities are used unchanged.
+- Existing runner advancement logic is used unchanged.
+- Runs and RBI are tracked directly from simulated scoring events.
+- OPS is computed from simulated OBP + SLG.
+
+Player summaries
+1. Jj | source=season_blended | mean_pa=53.106 | mean_ab=48.022 | mean_1b=17.608 | mean_2b=5.307 | mean_3b=1.218 | mean_hr=2.204 | mean_bb=5.084 | mean_r=22.373 | mean_rbi=12.246 | mean_avg=0.548 | mean_obp=0.614 | mean_slg=0.847 | mean_ops=1.461 | median_r=22.000 | p10_r=17.000 | p90_r=28.000
+2. Glove | source=season_blended | mean_pa=52.187 | mean_ab=49.953 | mean_1b=18.599 | mean_2b=4.894 | mean_3b=2.970 | mean_hr=4.538 | mean_bb=2.234 | mean_r=24.728 | mean_rbi=20.896 | mean_avg=0.621 | mean_obp=0.680 | mean_slg=1.110 | mean_ops=1.790 | median_r=25.000 | p10_r=20.000 | p90_r=30.000
+3. Tristan | source=season_blended | mean_pa=51.334 | mean_ab=48.596 | mean_1b=11.461 | mean_2b=5.896 | mean_3b=1.496 | mean_hr=10.352 | mean_bb=2.738 | mean_r=24.475 | mean_rbi=33.329 | mean_avg=0.601 | mean_obp=0.673 | mean_slg=1.423 | mean_ops=2.096 | median_r=24.000 | p10_r=19.000 | p90_r=30.000
+4. Tim | source=career_fallback | mean_pa=50.490 | mean_ab=48.513 | mean_1b=11.302 | mean_2b=5.070 | mean_3b=4.950 | mean_hr=8.193 | mean_bb=1.977 | mean_r=21.473 | mean_rbi=29.299 | mean_avg=0.608 | mean_obp=0.702 | mean_slg=1.424 | mean_ops=2.126 | median_r=21.000 | p10_r=17.000 | p90_r=26.000
+5. Kives | source=season_blended | mean_pa=49.602 | mean_ab=48.117 | mean_1b=16.623 | mean_2b=3.754 | mean_3b=3.341 | mean_hr=2.310 | mean_bb=1.485 | mean_r=14.389 | mean_rbi=15.656 | mean_avg=0.541 | mean_obp=0.614 | mean_slg=0.902 | mean_ops=1.516 | median_r=14.000 | p10_r=10.000 | p90_r=19.000
+6. Porter | source=season_blended | mean_pa=48.551 | mean_ab=46.032 | mean_1b=14.407 | mean_2b=5.789 | mean_3b=1.859 | mean_hr=2.185 | mean_bb=2.520 | mean_r=11.788 | mean_rbi=14.826 | mean_avg=0.527 | mean_obp=0.558 | mean_slg=0.876 | mean_ops=1.433 | median_r=12.000 | p10_r=8.000 | p90_r=16.000
+7. Walsh | source=season_blended | mean_pa=47.574 | mean_ab=45.249 | mean_1b=9.788 | mean_2b=3.147 | mean_3b=1.546 | mean_hr=2.380 | mean_bb=2.324 | mean_r=8.911 | mean_rbi=12.052 | mean_avg=0.373 | mean_obp=0.428 | mean_slg=0.668 | mean_ops=1.096 | median_r=9.000 | p10_r=5.000 | p90_r=13.000
+8. Duff | source=season_blended | mean_pa=46.207 | mean_ab=44.347 | mean_1b=15.676 | mean_2b=3.066 | mean_3b=2.583 | mean_hr=0.211 | mean_bb=1.860 | mean_r=7.949 | mean_rbi=9.101 | mean_avg=0.486 | mean_obp=0.540 | mean_slg=0.686 | mean_ops=1.226 | median_r=8.000 | p10_r=5.000 | p90_r=11.000
+9. Joey | source=season_blended | mean_pa=45.130 | mean_ab=43.835 | mean_1b=19.710 | mean_2b=0.620 | mean_3b=0.000 | mean_hr=0.000 | mean_bb=1.295 | mean_r=6.391 | mean_rbi=6.086 | mean_avg=0.464 | mean_obp=0.493 | mean_slg=0.478 | mean_ops=0.971 | median_r=6.000 | p10_r=3.000 | p90_r=10.000
+10. Corey | source=season_blended | mean_pa=44.008 | mean_ab=41.929 | mean_1b=14.064 | mean_2b=2.384 | mean_3b=0.248 | mean_hr=0.237 | mean_bb=2.078 | mean_r=7.223 | mean_rbi=6.032 | mean_avg=0.404 | mean_obp=0.470 | mean_slg=0.490 | mean_ops=0.960 | median_r=7.000 | p10_r=4.000 | p90_r=11.000
+11. Joel | source=season_blended | mean_pa=42.713 | mean_ab=42.415 | mean_1b=16.060 | mean_2b=2.088 | mean_3b=0.000 | mean_hr=0.000 | mean_bb=0.298 | mean_r=8.773 | mean_rbi=5.315 | mean_avg=0.428 | mean_obp=0.481 | mean_slg=0.477 | mean_ops=0.959 | median_r=9.000 | p10_r=5.000 | p90_r=12.000
+12. Jason | source=season_blended | mean_pa=41.406 | mean_ab=34.947 | mean_1b=9.691 | mean_2b=0.604 | mean_3b=0.000 | mean_hr=0.000 | mean_bb=6.459 | mean_r=10.366 | mean_rbi=4.000 | mean_avg=0.295 | mean_obp=0.459 | mean_slg=0.312 | mean_ops=0.771 | median_r=10.000 | p10_r=7.000 | p90_r=14.000

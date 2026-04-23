@@ -1,0 +1,26 @@
+Historical Scoring Benchmark
+data_source=season_batting_stats in db/all_seasons_identity.sqlite
+benchmark_method=team_runs_proxy = sum(player runs) / max player GP for each season
+limitation=no game-level team score data is currently loaded; scorebook tables are empty
+
+Season Benchmarks
+season | team_games_proxy | team_runs | team_rbi | runs_per_game | rbi_per_game
+Maple Tree Fall 2025 | 13 | 166 | 165 | 12.769 | 12.692
+Maple Tree Tappers Summer 2025 | 13 | 103 | 100 | 7.923 | 7.692
+Smoking Bunts Summer 2022 | 17 | 216 | 216 | 12.706 | 12.706
+Soviet Sluggers Summer 2021 | 18 | 195 | 195 | 10.833 | 10.833
+
+Historical Summary
+count=4
+average_runs_per_game=11.058
+median_runs_per_game=11.770
+min_runs_per_game=7.923
+max_runs_per_game=12.769
+distribution_buckets=7s:1, 10s:1, 12s:2, 12s:2
+
+Current Manual Simulation Comparison
+lineup | average_runs | median_runs | delta_vs_hist_avg | delta_vs_fall_2025
+Tristan 4th Strong Table | 13.065 | 12.000 | 2.007 | 0.296
+Tristan 2nd Strong Table | 13.044 | 13.000 | 1.986 | 0.275
+Intentional Poor Lineup | 12.139 | 11.000 | 1.081 | -0.630
+Weak Setters Before DHH | 12.127 | 11.000 | 1.069 | -0.642

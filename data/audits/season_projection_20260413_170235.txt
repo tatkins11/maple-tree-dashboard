@@ -1,0 +1,33 @@
+Simulated season projection report
+
+season_games: 12
+simulated_seasons: 500
+seed: 42
+
+Team summary
+average_runs_per_game: 13.017
+median_runs_per_game: 13.000
+average_runs_per_season: 156.200
+median_runs_per_season: 157.000
+p10_runs_per_season: 131.000
+p90_runs_per_season: 182.000
+
+Assumptions
+- Existing hitter event probabilities are used unchanged.
+- Existing runner advancement logic is used unchanged.
+- Runs and RBI are tracked directly from simulated scoring events.
+- OPS is computed from simulated OBP + SLG.
+
+Player summaries
+1. Jj | source=season_blended | mean_pa=48.758 | mean_ab=44.030 | mean_1b=16.400 | mean_2b=4.846 | mean_3b=1.294 | mean_hr=2.200 | mean_r=20.280 | mean_rbi=10.424 | mean_avg=0.562 | mean_slg=0.881 | mean_ops=1.514 | median_r=20.000 | p10_r=15.000 | p90_r=25.000
+2. Glove | source=season_blended | mean_pa=47.960 | mean_ab=46.054 | mean_1b=17.404 | mean_2b=4.526 | mean_3b=2.738 | mean_hr=3.652 | mean_r=21.304 | mean_rbi=17.358 | mean_avg=0.615 | mean_slg=1.070 | mean_ops=1.745 | median_r=21.000 | p10_r=17.000 | p90_r=26.000
+3. Tristan | source=season_blended | mean_pa=47.182 | mean_ab=44.254 | mean_1b=10.516 | mean_2b=4.894 | mean_3b=1.324 | mean_hr=8.834 | mean_r=20.942 | mean_rbi=28.506 | mean_avg=0.578 | mean_slg=1.347 | mean_ops=2.007 | median_r=21.000 | p10_r=16.000 | p90_r=26.000
+4. Kives | source=season_blended | mean_pa=46.362 | mean_ab=44.668 | mean_1b=15.436 | mean_2b=3.402 | mean_3b=2.962 | mean_hr=2.332 | mean_r=16.670 | mean_rbi=15.244 | mean_avg=0.540 | mean_slg=0.906 | mean_ops=1.530 | median_r=17.000 | p10_r=12.000 | p90_r=21.000
+5. Tim | source=career_fallback | mean_pa=45.404 | mean_ab=43.434 | mean_1b=9.056 | mean_2b=3.950 | mean_3b=4.392 | mean_hr=8.664 | mean_r=18.006 | mean_rbi=30.050 | mean_avg=0.600 | mean_slg=1.492 | mean_ops=2.180 | median_r=18.000 | p10_r=14.000 | p90_r=22.000
+6. Joey | source=season_blended | mean_pa=44.562 | mean_ab=43.410 | mean_1b=19.502 | mean_2b=0.512 | mean_3b=0.000 | mean_hr=0.000 | mean_r=8.348 | mean_rbi=6.380 | mean_avg=0.461 | mean_slg=0.473 | mean_ops=0.961 | median_r=8.000 | p10_r=5.000 | p90_r=12.000
+7. Porter | source=season_blended | mean_pa=43.408 | mean_ab=40.750 | mean_1b=12.330 | mean_2b=4.718 | mean_3b=2.334 | mean_hr=2.276 | mean_r=10.324 | mean_rbi=12.932 | mean_avg=0.531 | mean_slg=0.929 | mean_ops=1.501 | median_r=10.000 | p10_r=6.000 | p90_r=14.000
+8. Joel | source=season_blended | mean_pa=42.518 | mean_ab=42.234 | mean_1b=15.994 | mean_2b=2.064 | mean_3b=0.000 | mean_hr=0.000 | mean_r=6.942 | mean_rbi=5.860 | mean_avg=0.428 | mean_slg=0.476 | mean_ops=0.956 | median_r=7.000 | p10_r=4.000 | p90_r=10.000
+9. Duff | source=season_blended | mean_pa=41.380 | mean_ab=39.916 | mean_1b=13.582 | mean_2b=2.592 | mean_3b=2.392 | mean_hr=0.182 | mean_r=8.132 | mean_rbi=8.736 | mean_avg=0.470 | mean_slg=0.668 | mean_ops=1.194 | median_r=8.000 | p10_r=5.000 | p90_r=12.000
+10. Walsh | source=season_blended | mean_pa=40.378 | mean_ab=38.826 | mean_1b=8.600 | mean_2b=2.920 | mean_3b=1.876 | mean_hr=1.922 | mean_r=8.034 | mean_rbi=11.526 | mean_avg=0.395 | mean_slg=0.715 | mean_ops=1.154 | median_r=8.000 | p10_r=4.000 | p90_r=12.000
+11. Corey | source=season_blended | mean_pa=39.268 | mean_ab=37.660 | mean_1b=12.432 | mean_2b=2.148 | mean_3b=0.186 | mean_hr=0.422 | mean_r=8.108 | mean_rbi=6.074 | mean_avg=0.403 | mean_slg=0.504 | mean_ops=0.978 | median_r=8.000 | p10_r=5.000 | p90_r=12.000
+12. Jason | source=season_blended | mean_pa=38.010 | mean_ab=32.288 | mean_1b=8.720 | mean_2b=0.460 | mean_3b=0.000 | mean_hr=0.000 | mean_r=9.110 | mean_rbi=3.110 | mean_avg=0.284 | mean_slg=0.299 | mean_ops=0.750 | median_r=9.000 | p10_r=6.000 | p90_r=13.000

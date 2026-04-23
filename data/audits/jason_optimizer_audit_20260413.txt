@@ -1,0 +1,98 @@
+Jason Optimizer Audit
+projection_season=Maple Tree Fall 2025
+
+Jason Identity And Projection
+player_name=Jason
+canonical_name=jason
+projection_source=season_blended
+current_pa=42
+baseline_pa=107
+career_pa=149
+current_weight=0.259
+p_single=0.227
+p_double=0.012
+p_triple=0.000
+p_home_run=0.000
+p_walk=0.152
+p_hit_by_pitch=0.000
+p_reached_on_error=0.000
+p_fielder_choice=0.061
+p_grounded_into_double_play=0.000
+projected_strikeout_rate=0.101
+p_out=0.446
+projected_on_base_rate=0.453
+projected_total_base_rate=0.252
+projected_extra_base_hit_rate=0.012
+projected_run_rate=0.266
+projected_rbi_rate=0.121
+
+Jason Season Stats Used
+current_season=Maple Tree Fall 2025
+current_games=13
+current_pa=42
+current_ab=33
+current_hits=13
+current_singles=11
+current_doubles=2
+current_triples=0
+current_home_runs=0
+current_walks=9
+current_strikeouts=4
+current_fc=2
+current_runs=15
+current_rbi=5
+current_tb=15
+
+Jason Career Baseline Used
+baseline_games=40
+baseline_pa=107
+baseline_ab=92
+baseline_hits=23
+baseline_singles=23
+baseline_doubles=0
+baseline_triples=0
+baseline_home_runs=0
+baseline_walks=14
+baseline_strikeouts=11
+baseline_fc=7
+baseline_runs=25
+baseline_rbi=13
+baseline_tb=23
+
+Side By Side Projection Comparison
+player | canonical | source | proj_obp | proj_tb_rate | proj_xbh_rate | p_out | proj_run_rate | proj_rbi_rate | p_walk | p_so | p_fc
+Tim | tim | career_fallback | 0.686 | 1.414 | 0.371 | 0.300 | 0.486 | 0.529 | 0.043 | 0.014 | 0.071
+Kives | kives | season_blended | 0.627 | 0.873 | 0.188 | 0.348 | 0.347 | 0.432 | 0.037 | 0.006 | 0.067
+Porter | porter | season_blended | 0.568 | 0.866 | 0.212 | 0.387 | 0.324 | 0.304 | 0.060 | 0.026 | 0.012
+Jason | jason | season_blended | 0.453 | 0.252 | 0.012 | 0.446 | 0.266 | 0.121 | 0.152 | 0.101 | 0.061
+Joey | snaxx | season_blended | 0.489 | 0.465 | 0.012 | 0.505 | 0.082 | 0.140 | 0.024 | 0.006 | 0.012
+Corey | corey | season_blended | 0.478 | 0.486 | 0.071 | 0.466 | 0.268 | 0.202 | 0.041 | 0.040 | 0.049
+Joel | joel | season_blended | 0.484 | 0.482 | 0.050 | 0.437 | 0.288 | 0.225 | 0.006 | 0.050 | 0.047
+Duff | duff | season_blended | 0.522 | 0.642 | 0.124 | 0.458 | 0.240 | 0.211 | 0.034 | 0.015 | 0.038
+Walsh | walsh | season_blended | 0.441 | 0.695 | 0.171 | 0.552 | 0.108 | 0.312 | 0.040 | 0.007 | 0.020
+
+Optimizer Slot Heuristic Scores (selected slots)
+player | slot1 | slot2 | slot3 | slot4 | slot5 | slot6
+Jason | 2.276 | 2.028 | 1.681 | 0.937 | 0.774 | 1.303
+Tim | 3.650 | 4.517 | 5.577 | 5.036 | 4.134 | 3.271
+Kives | 3.188 | 3.544 | 3.958 | 3.268 | 2.701 | 2.421
+Porter | 2.892 | 3.315 | 3.692 | 3.054 | 2.504 | 2.289
+Joey | 2.184 | 2.461 | 2.328 | 1.605 | 1.312 | 1.496
+Corey | 2.416 | 2.449 | 2.422 | 1.761 | 1.449 | 1.631
+Joel | 2.470 | 2.467 | 2.446 | 1.782 | 1.471 | 1.651
+Duff | 2.569 | 2.830 | 2.925 | 2.244 | 1.838 | 1.878
+Walsh | 2.022 | 2.605 | 3.001 | 2.554 | 2.105 | 1.704
+
+Sensitivity Checks
+current_optimizer_best = avg 13.064 | median 13.000 | order Glove / Jj / Tristan / Tim / Jason / Kives / Porter / Joey / Corey / Joel / Duff / Walsh
+best_with_jason_unconstrained_alt_search = avg 13.499 | median 13.000 | order Glove / Jj / Porter / Tristan / Tim / Duff / Kives / Corey / Walsh / Joel / Joey / Jason
+best_with_jason_forced_last = avg 13.499 | median 13.000 | order Glove / Jj / Porter / Tristan / Tim / Duff / Kives / Corey / Walsh / Joel / Joey / Jason
+best_with_jason_bottom_3 = avg 13.499 | median 13.000 | order Glove / Jj / Porter / Tristan / Tim / Duff / Kives / Corey / Walsh / Joel / Joey / Jason
+
+Interpretation
+- Jason is not projected like a true middle-order bat. His projected OBP and total-base rate trail Tim, Kives, Porter, Duff, Joel, Corey, and Joey in several key areas.
+- Jason's main standout numbers are walk rate (0.152) and a context-derived projected run rate (0.266), not power.
+- Jason has no projected ROE boost and only moderate FC probability, so his placement is not mainly driven by ROE/FC advancement behavior.
+- Sensitivity testing shows the lineup does not get worse when Jason is pushed to the bottom. In the stronger constrained search, the best lineup actually has Jason last.
+- That points more to optimizer search behavior and heuristic scoring than to Jason being a genuine middle-order bat.
+- The most suspicious heuristic inputs are projected_run_rate and projected_rbi_rate, which are context-sensitive stats and may be overhelping Jason in slot scoring.

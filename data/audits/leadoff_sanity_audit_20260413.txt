@@ -1,0 +1,49 @@
+Leadoff Sanity Audit
+projection_season=Maple Tree Fall 2025
+roster=Current Spring active 12-player roster
+simulations_per_run=800
+seed=42
+
+Leadoff Skill Snapshot
+player | projected_on_base_rate | p_out | p_walk | projected_total_base_rate | projected_extra_base_hit_rate
+Joey | 0.489 | 0.505 | 0.024 | 0.465 | 0.012
+Glove | 0.680 | 0.303 | 0.038 | 1.039 | 0.230
+Jj | 0.635 | 0.311 | 0.101 | 0.799 | 0.172
+Kives | 0.627 | 0.348 | 0.037 | 0.873 | 0.188
+
+Unconstrained Current Optimizer Best
+avg_runs=13.219
+median_runs=13.000
+lineup=Joey / Jj / Tristan / Glove / Tim / Duff / Kives / Porter / Walsh / Corey / Joel / Jason
+
+Constrained Leadoff Comparison
+Joey:
+  avg_runs=12.596
+  median_runs=12.000
+  delta_vs_unconstrained=-0.623
+  lineup=Joey / Jj / Tristan / Tim / Porter / Kives / Glove / Jason / Duff / Corey / Walsh / Joel
+
+Glove:
+  avg_runs=13.754
+  median_runs=13.000
+  delta_vs_unconstrained=+0.535
+  lineup=Glove / Jj / Kives / Tristan / Porter / Tim / Duff / Corey / Joel / Walsh / Joey / Jason
+
+Jj:
+  avg_runs=13.185
+  median_runs=12.000
+  delta_vs_unconstrained=-0.034
+  lineup=Jj / Jason / Tim / Tristan / Glove / Duff / Porter / Joel / Walsh / Corey / Joey / Kives
+
+Kives:
+  avg_runs=13.655
+  median_runs=13.000
+  delta_vs_unconstrained=+0.436
+  lineup=Kives / Glove / Duff / Tristan / Jj / Tim / Porter / Joel / Walsh / Corey / Joey / Jason
+
+Interpretation
+- Joey is not the strongest leadoff option by the current model. He has the weakest OBP, the highest out rate, the weakest walk rate except for Kives, and almost no extra-base damage among the four candidates.
+- Glove and Kives both outperform Joey clearly in constrained optimization, and both have much stronger leadoff skill profiles.
+- Jj is effectively a near-tie with the unconstrained best, but still trails the best constrained Glove and Kives runs.
+- This suggests the current unconstrained optimizer still has residual search-path noise around the leadoff slot rather than a true model preference for Joey.
+- The leadoff choice is meaningful, not just noise: Glove and Kives are roughly +0.44 to +0.54 runs better than Joey in these constrained runs.

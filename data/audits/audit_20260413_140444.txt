@@ -1,0 +1,38 @@
+slowpitch_optimizer audit report
+generated_at: 2026-04-13T14:04:44
+
+players_loaded: 24
+player_aliases_loaded: 25
+season_batting_rows_loaded: 58
+games_loaded: 0
+player_game_rows_loaded: 0
+rows_with_parsing_uncertainty: 0
+identity_review_items: 23
+
+uncertainties:
+- none
+
+identity_review:
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Bruns'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Corey'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Duff'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Glove'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Jason'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Jj'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Joel'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Kives'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Mike'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Mr. Atkins'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Porter'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Slomka'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Snaxx'
+- Maple Tree Fall 2025 Stats.csv: created new player identity for 'Walsh'
+- Smoking Bunts Summer 2022 Stats.csv: created new player identity for 'Jt'
+- Smoking Bunts Summer 2022 Stats.csv: created new player identity for 'Layshock'
+- Smoking Bunts Summer 2022 Stats.csv: created new player identity for 'Riley Gowens'
+- Smoking Bunts Summer 2022 Stats.csv: created new player identity for 'Stevie'
+- Smoking Bunts Summer 2022 Stats.csv: created new player identity for 'Tim'
+- Soviet Sluggers Summer 2021 Stats.csv: created new player identity for 'Aj'
+- Soviet Sluggers Summer 2021 Stats.csv: created new player identity for 'Austin'
+- Soviet Sluggers Summer 2021 Stats.csv: created new player identity for 'Harm'
+- Soviet Sluggers Summer 2021 Stats.csv: created new player identity for 'Nick'

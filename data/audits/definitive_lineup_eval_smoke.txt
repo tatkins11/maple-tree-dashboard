@@ -1,0 +1,33 @@
+Definitive Lineup Evaluation
+projection_season=Maple Tree Fall 2025
+game_date=2026-04-23
+fixed_phase_1_bottom_suffix=Porter / Walsh / Joel / Corey / Duff / Joey / Jason
+fixed_phase_2_last=Jason
+practical_near_tie_delta=0.030
+
+Phase 1
+winner=Glove / Jj / Kives / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason
+winner_expected_runs=13.205 | winner_median_runs=13.000 | winner_ci=[13.167, 13.242]
+practical_near_tie=yes
+top_5:
+1. Glove / Jj / Kives / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.205 | median=13.000 | ci=[13.167, 13.242] | delta=0.000
+2. Glove / Jj / Kives / Tristan / Tim / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.189 | median=13.000 | ci=[13.151, 13.227] | delta=-0.015 practical_near_tie
+3. Jj / Glove / Tristan / Kives / Tim / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.185 | median=13.000 | ci=[13.147, 13.223] | delta=-0.020 practical_near_tie
+4. Kives / Glove / Jj / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.175 | median=13.000 | ci=[13.137, 13.213] | delta=-0.030 practical_near_tie
+5. Glove / Kives / Jj / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.143 | median=13.000 | ci=[13.105, 13.181] | delta=-0.061
+
+Phase 2
+winner=Glove / Jj / Kives / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason
+winner_expected_runs=13.177 | winner_median_runs=13.000 | winner_ci=[13.140, 13.215]
+practical_near_tie=yes
+top_5:
+1. Glove / Jj / Kives / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason | avg=13.177 | median=13.000 | ci=[13.140, 13.215] | delta=0.000
+2. Glove / Jj / Kives / Tim / Tristan / Joey / Duff / Walsh / Porter / Corey / Joel / Jason | avg=13.162 | median=13.000 | ci=[13.124, 13.200] | delta=-0.016 practical_near_tie
+3. Glove / Jj / Kives / Tim / Tristan / Duff / Walsh / Corey / Porter / Joey / Joel / Jason | avg=13.149 | median=13.000 | ci=[13.111, 13.187] | delta=-0.028 practical_near_tie
+
+Final Summary
+best_full_lineup=Glove / Jj / Kives / Tim / Tristan / Porter / Walsh / Joel / Corey / Duff / Joey / Jason
+best_expected_runs=13.177 | best_median_runs=13.000 | best_ci=[13.140, 13.215]
+runner_up=Glove / Jj / Kives / Tim / Tristan / Joey / Duff / Walsh / Porter / Corey / Joel / Jason
+runner_up_expected_runs=13.162 | delta_from_winner=-0.016
+decision=effectively tied

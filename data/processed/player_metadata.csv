@@ -1,0 +1,25 @@
+player_id,preferred_display_name,is_fixed_dhh,baserunning_grade,consistency_grade,speed_flag,active_flag,notes,player_name,canonical_name
+21,Aj,0,C,C,0,1,,Aj,aj
+22,Austin,0,C,C,0,1,,Austin,austin
+2,Bruns,0,C,C,0,1,,Bruns,bruns
+3,Corey,0,C,C,0,1,,Corey,corey
+4,Duff,0,C,C,0,1,,Duff,duff
+5,Glove,0,C,C,0,1,,Glove,glove
+23,Harm,0,C,C,0,1,,Harm,harm
+6,Jason,0,C,C,0,1,,Jason,jason
+7,Jj,0,C,C,0,1,,Jj,jj
+8,Joel,0,C,C,0,1,,Joel,joel
+16,Jt,0,C,C,0,1,,Jt,jt
+9,Kives,0,C,C,0,1,,Kives,kives
+17,Layshock,0,C,C,0,1,,Layshock,layshock
+10,Mike,0,C,C,0,1,,Mike,mike
+11,Mr. Atkins,0,C,C,0,1,,Mr. Atkins,mr atkins
+24,Nick,0,C,C,0,1,,Nick,nick
+12,Porter,0,C,C,0,1,,Porter,porter
+18,Riley Gowens,0,C,C,0,1,,Riley Gowens,riley gowens
+13,Slomka,0,C,C,0,1,,Slomka,slomka
+14,Snaxx,0,C,C,0,1,,Snaxx,snaxx
+19,Stevie,0,C,C,0,1,,Stevie,stevie
+20,Tim,0,C,C,0,1,,Tim,tim
+1,Tristan,1,C,C,0,1,Default fixed DHH canonical identity (Tristan/Teo),Tristan,tristan
+15,Walsh,0,C,C,0,1,,Walsh,walsh

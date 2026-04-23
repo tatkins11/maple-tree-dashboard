@@ -1,0 +1,7 @@
+{
+  "innings_per_game": 7,
+  "steals_allowed": false,
+  "fixed_dhh_enabled": true,
+  "max_home_runs_non_dhh": 3,
+  "ignore_slaughter_rule": true
+}

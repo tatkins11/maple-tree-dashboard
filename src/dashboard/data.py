@@ -1,0 +1,2331 @@
+from __future__ import annotations
+
+import re
+import sqlite3
+from datetime import date, datetime
+from pathlib import Path
+
+import pandas as pd
+
+from src.models.advanced_analytics import (
+    ADVANCED_RUNS_PER_WIN,
+    ARCHETYPE_DISPLAY_ORDER,
+    REPLACEMENT_LEVEL_MIN_PA,
+    REPLACEMENT_LEVEL_PERCENTILE,
+    AdvancedAnalyticsMetadata,
+    build_advanced_leaderboards,
+    build_archetype_summary,
+    build_player_comparison,
+    calculate_advanced_analytics,
+)
+from src.models.optimizer import OptimizationResult, optimize_lineup
+from src.models.roster import (
+    DEFAULT_ACTIVE_ROSTER_SEASON,
+    DEFAULT_LEAGUE_RULES_PATH,
+    load_league_rules,
+    select_game_day_projections,
+)
+from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
+from src.utils.db import connect_app_db
+
+
+DEFAULT_DB_PATH = Path("db/all_seasons_identity.sqlite")
+DEFAULT_DASHBOARD_SEASON = "Maple Tree Spring 2026"
+DEFAULT_STATS_SEASON = DEFAULT_DASHBOARD_SEASON
+WRITEUP_EMPTY_OPPONENT_SCOUTING = "No completed opponent results are loaded yet, so this week starts the scouting baseline."
+WRITEUP_INVALID_DOUBLEHEADER_MESSAGE = "Phase 1 write-up generation expects a two-game Maple Tree doubleheader for the selected week."
+WRITEUP_BYE_WEEK_MESSAGE = "The selected week is a bye week, so phase 1 write-up generation is disabled."
+
+COUNTING_RECORD_COLUMNS = {
+    "Games": "games",
+    "PA": "pa",
+    "AB": "ab",
+    "Hits": "hits",
+    "Singles": "1b",
+    "Doubles": "2b",
+    "Triples": "3b",
+    "HR": "hr",
+    "RBI": "rbi",
+    "Runs": "r",
+    "Walks": "bb",
+    "Total Bases": "tb",
+}
+
+RATE_RECORD_COLUMNS = {
+    "AVG": "avg",
+    "OBP": "obp",
+    "SLG": "slg",
+    "OPS": "ops",
+}
+
+DISPLAY_COLUMN_LABELS = {
+    "season": "Season",
+    "player": "Player",
+    "pa": "PA",
+    "games": "Games",
+    "ab": "AB",
+    "hits": "Hits",
+    "1b": "Singles",
+    "2b": "Doubles",
+    "3b": "Triples",
+    "hr": "HR",
+    "rbi": "RBI",
+    "r": "Runs",
+    "bb": "Walks",
+    "tb": "Total Bases",
+    "avg": "AVG",
+    "obp": "OBP",
+    "slg": "SLG",
+    "ops": "OPS",
+}
+
+MILESTONE_LADDERS = {
+    "Games": (25, 50, 75, 100, 125, 150),
+    "PA": (50, 100, 150, 200, 250, 300, 400, 500),
+    "AB": (50, 100, 150, 200, 250, 300, 400),
+    "Hits": (25, 50, 75, 100, 125, 150, 200),
+    "Singles": (25, 50, 75, 100, 125),
+    "Doubles": (10, 20, 30, 40, 50),
+    "Triples": (5, 10, 15, 20),
+    "HR": (5, 10, 15, 20, 25, 30, 40),
+    "RBI": (25, 50, 75, 100, 125, 150),
+    "Runs": (25, 50, 75, 100, 125, 150),
+    "Walks": (10, 25, 50, 75, 100),
+    "Total Bases": (50, 100, 150, 200, 250, 300),
+}
+
+
+def get_connection(db_path: Path | str = DEFAULT_DB_PATH) -> sqlite3.Connection:
+    return connect_app_db(Path(db_path))
+
+
+def sort_seasons(seasons: list[str]) -> list[str]:
+    season_rank = {"spring": 1, "summer": 2, "fall": 3, "winter": 4}
+
+    def key(value: str) -> tuple[int, int, str]:
+        year_match = re.search(r"(20\d{2})", value)
+        year = int(year_match.group(1)) if year_match else 0
+        lowered = value.lower()
+        phase = 0
+        for label, rank in season_rank.items():
+            if label in lowered:
+                phase = rank
+                break
+        return (year, phase, value.lower())
+
+    return sorted(seasons, key=key, reverse=True)
+
+
+def with_dashboard_default_season(seasons: list[str]) -> list[str]:
+    ordered = sort_seasons(list(seasons))
+    for preferred_season in (DEFAULT_STATS_SEASON, DEFAULT_DASHBOARD_SEASON):
+        if preferred_season in ordered:
+            return [
+                preferred_season,
+                *[season for season in ordered if season != preferred_season],
+            ]
+    return ordered
+
+
+def dashboard_default_season_index(seasons: list[str]) -> int:
+    for preferred_season in (DEFAULT_STATS_SEASON, DEFAULT_DASHBOARD_SEASON):
+        if preferred_season in seasons:
+            return seasons.index(preferred_season)
+    return 0
+
+
+def _compact_season_label(value: str) -> str:
+    year_match = re.search(r"(20\d{2})", value)
+    year = year_match.group(1) if year_match else ""
+    lowered = value.lower()
+    if "maple tree fall" in lowered:
+        return f"Fall {year}".strip()
+    if "maple tree tappers" in lowered:
+        return f"Tappers {year}".strip()
+    if "smoking bunts" in lowered:
+        return f"Bunts {year}".strip()
+    if "soviet sluggers" in lowered:
+        return f"Sluggers {year}".strip()
+    return value
+
+
+def fetch_seasons(connection: sqlite3.Connection) -> list[str]:
+    rows = connection.execute(
+        "SELECT DISTINCT season FROM season_batting_stats WHERE season <> ''"
+    ).fetchall()
+    return sort_seasons([str(row["season"]) for row in rows])
+
+
+def fetch_projection_seasons(connection: sqlite3.Connection) -> list[str]:
+    rows = connection.execute(
+        "SELECT DISTINCT projection_season FROM hitter_projections WHERE projection_season <> ''"
+    ).fetchall()
+    return sort_seasons([str(row["projection_season"]) for row in rows])
+
+
+def fetch_team_summary(connection: sqlite3.Connection, season: str) -> dict[str, float | int]:
+    row = connection.execute(
+        """
+        SELECT
+            COALESCE(MAX(games), 0) AS team_games,
+            COUNT(DISTINCT player_id) AS hitters,
+            COALESCE(SUM(plate_appearances), 0) AS plate_appearances,
+            COALESCE(SUM(at_bats), 0) AS at_bats,
+            COALESCE(SUM(hits), 0) AS hits,
+            COALESCE(SUM(home_runs), 0) AS home_runs,
+            COALESCE(SUM(runs), 0) AS runs,
+            COALESCE(SUM(rbi), 0) AS rbi,
+            COALESCE(SUM(walks), 0) AS walks,
+            COALESCE(SUM(sacrifice_flies), 0) AS sacrifice_flies,
+            COALESCE(SUM(total_bases), 0) AS total_bases
+        FROM season_batting_stats
+        WHERE season = ?
+        """,
+        (season,),
+    ).fetchone()
+    at_bats = int(row["at_bats"])
+    hits = int(row["hits"])
+    walks = int(row["walks"])
+    sf = int(row["sacrifice_flies"])
+    total_bases = int(row["total_bases"])
+    obp_denom = at_bats + walks + sf
+    return {
+        "team_games": int(row["team_games"]),
+        "hitters": int(row["hitters"]),
+        "plate_appearances": int(row["plate_appearances"]),
+        "runs": int(row["runs"]),
+        "home_runs": int(row["home_runs"]),
+        "rbi": int(row["rbi"]),
+        "avg": _safe_divide(hits, at_bats),
+        "obp": _safe_divide(hits + walks, obp_denom),
+        "slg": _safe_divide(total_bases, at_bats),
+        "ops": _safe_divide(hits + walks, obp_denom) + _safe_divide(total_bases, at_bats),
+    }
+
+
+def fetch_current_season_stats(
+    connection: sqlite3.Connection,
+    season: str,
+    include_projections: bool = False,
+    projection_season: str | None = None,
+) -> pd.DataFrame:
+    dataframe = pd.read_sql_query(
+        """
+        SELECT
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            s.games,
+            s.plate_appearances AS pa,
+            s.at_bats AS ab,
+            s.hits,
+            s.singles AS "1b",
+            s.doubles AS "2b",
+            s.triples AS "3b",
+            s.home_runs AS hr,
+            s.walks AS bb,
+            s.runs AS r,
+            s.rbi,
+            s.total_bases AS tb,
+            s.reached_on_error AS roe,
+            s.fielder_choice AS fc,
+            s.grounded_into_double_play AS gidp,
+            s.batting_average AS avg,
+            s.on_base_percentage AS obp,
+            s.slugging_percentage AS slg,
+            s.ops
+        FROM season_batting_stats s
+        JOIN player_identity pi ON pi.player_id = s.player_id
+        JOIN player_metadata pm ON pm.player_id = s.player_id
+        WHERE s.season = ?
+        ORDER BY s.ops DESC, pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=(season,),
+    )
+    if include_projections and projection_season:
+        projection_df = pd.read_sql_query(
+            """
+            SELECT
+                pm.preferred_display_name AS player,
+                hp.projection_source,
+                hp.projected_on_base_rate AS proj_obp,
+                hp.projected_total_base_rate AS proj_tb_rate,
+                hp.projected_extra_base_hit_rate AS proj_xbh_rate,
+                hp.p_home_run AS proj_hr_rate,
+                hp.current_season_weight,
+                hp.weighted_prior_plate_appearances
+            FROM hitter_projections hp
+            JOIN player_metadata pm ON pm.player_id = hp.player_id
+            WHERE hp.projection_season = ?
+            """,
+            connection,
+            params=(projection_season,),
+        )
+        dataframe = dataframe.merge(projection_df, on="player", how="left")
+    return dataframe
+
+
+def fetch_top_hitters(
+    connection: sqlite3.Connection,
+    season: str,
+    min_pa: int = 20,
+    limit: int = 6,
+) -> pd.DataFrame:
+    dataframe = fetch_current_season_stats(connection, season)
+    filtered = dataframe[dataframe["pa"] >= min_pa].copy()
+    filtered = filtered.sort_values(["ops", "obp", "slg"], ascending=False)
+    return filtered.head(limit)[["player", "pa", "hr", "r", "rbi", "avg", "obp", "slg", "ops"]]
+
+
+def fetch_career_stats(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if seasons:
+        placeholders = ",".join("?" for _ in seasons)
+        where_clause = f"WHERE s.season IN ({placeholders})"
+        params.extend(seasons)
+
+    dataframe = pd.read_sql_query(
+        f"""
+        SELECT
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            COUNT(DISTINCT s.season) AS seasons_played,
+            SUM(s.games) AS games,
+            SUM(s.plate_appearances) AS pa,
+            SUM(s.at_bats) AS ab,
+            SUM(s.hits) AS hits,
+            SUM(s.singles) AS "1b",
+            SUM(s.doubles) AS "2b",
+            SUM(s.triples) AS "3b",
+            SUM(s.home_runs) AS hr,
+            SUM(s.walks) AS bb,
+            SUM(s.runs) AS r,
+            SUM(s.rbi) AS rbi,
+            SUM(s.total_bases) AS tb,
+            SUM(s.sacrifice_flies) AS sf
+        FROM season_batting_stats s
+        JOIN player_identity pi ON pi.player_id = s.player_id
+        JOIN player_metadata pm ON pm.player_id = s.player_id
+        {where_clause}
+        GROUP BY pm.preferred_display_name, pi.canonical_name
+        """,
+        connection,
+        params=params,
+    )
+    if dataframe.empty:
+        return dataframe
+
+    dataframe = dataframe.assign(
+        avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
+        obp=dataframe.apply(
+            lambda row: _safe_divide(
+                row["hits"] + row["bb"],
+                row["ab"] + row["bb"] + row["sf"],
+            ),
+            axis=1,
+        ),
+        slg=dataframe.apply(lambda row: _safe_divide(row["tb"], row["ab"]), axis=1),
+    )
+    dataframe = dataframe.assign(ops=dataframe["obp"] + dataframe["slg"])
+    filtered = dataframe[dataframe["pa"] >= min_pa].copy()
+    filtered = filtered.sort_values(["ops", "pa"], ascending=[False, False])
+    return filtered
+
+
+def fetch_all_time_leaders(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> dict[str, pd.DataFrame]:
+    career = fetch_career_stats(connection, seasons=seasons, min_pa=min_pa)
+    if career.empty:
+        return {}
+    return {
+        "OPS": career.sort_values(["ops", "pa"], ascending=[False, False]).head(10)[["player", "pa", "ops"]],
+        "AVG": career.sort_values(["avg", "pa"], ascending=[False, False]).head(10)[["player", "pa", "avg"]],
+        "OBP": career.sort_values(["obp", "pa"], ascending=[False, False]).head(10)[["player", "pa", "obp"]],
+        "HR": career.sort_values(["hr", "pa"], ascending=[False, False]).head(10)[["player", "hr", "pa"]],
+        "RBI": career.sort_values(["rbi", "pa"], ascending=[False, False]).head(10)[["player", "rbi", "pa"]],
+    }
+
+
+def fetch_single_season_stats(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if seasons:
+        placeholders = ",".join("?" for _ in seasons)
+        where_clause = f"WHERE s.season IN ({placeholders})"
+        params.extend(seasons)
+
+    dataframe = pd.read_sql_query(
+        f"""
+        SELECT
+            s.season,
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            s.games,
+            s.plate_appearances AS pa,
+            s.at_bats AS ab,
+            s.hits,
+            s.singles AS "1b",
+            s.doubles AS "2b",
+            s.triples AS "3b",
+            s.home_runs AS hr,
+            s.walks AS bb,
+            s.runs AS r,
+            s.rbi,
+            s.total_bases AS tb,
+            s.sacrifice_flies AS sf,
+            s.batting_average AS avg,
+            s.on_base_percentage AS obp,
+            s.slugging_percentage AS slg,
+            s.ops
+        FROM season_batting_stats s
+        JOIN player_identity pi ON pi.player_id = s.player_id
+        JOIN player_metadata pm ON pm.player_id = s.player_id
+        {where_clause}
+        ORDER BY s.season DESC, s.ops DESC, pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=params,
+    )
+    if dataframe.empty:
+        return dataframe
+    return dataframe[dataframe["pa"] >= min_pa].copy()
+
+
+def fetch_advanced_analytics_view(
+    connection: sqlite3.Connection,
+    *,
+    view_mode: str,
+    selected_season: str | None = None,
+    selected_seasons: list[str] | None = None,
+    min_pa: int = 0,
+    active_only: bool = False,
+) -> tuple[pd.DataFrame, AdvancedAnalyticsMetadata]:
+    if view_mode == "Season":
+        if not selected_season:
+            raise ValueError("selected_season is required for Season mode")
+        source = _fetch_advanced_season_source(connection, selected_season)
+        comparison_label = selected_season
+    elif view_mode == "Career":
+        source = _fetch_advanced_career_source(connection, selected_seasons)
+        comparison_label = "All selected seasons"
+    else:
+        raise ValueError(f"Unsupported analytics view mode: {view_mode}")
+
+    if source.empty:
+        empty_metadata = AdvancedAnalyticsMetadata(
+            mode=view_mode,
+            comparison_group_label=comparison_label,
+            baseline_player_count=0,
+            average_offensive_run_rate=0.0,
+            replacement_offensive_run_rate=0.0,
+            replacement_percentile=REPLACEMENT_LEVEL_PERCENTILE,
+            replacement_min_pa=max(REPLACEMENT_LEVEL_MIN_PA, min_pa),
+            runs_per_win=ADVANCED_RUNS_PER_WIN,
+        )
+        return source, empty_metadata
+
+    if active_only:
+        active_names = set(_fetch_active_roster_names(connection))
+        source = source[source["player"].isin(active_names)].copy()
+        if source.empty:
+            empty_metadata = AdvancedAnalyticsMetadata(
+                mode=view_mode,
+                comparison_group_label=comparison_label,
+                baseline_player_count=0,
+                average_offensive_run_rate=0.0,
+                replacement_offensive_run_rate=0.0,
+                replacement_percentile=REPLACEMENT_LEVEL_PERCENTILE,
+                replacement_min_pa=max(REPLACEMENT_LEVEL_MIN_PA, min_pa),
+                runs_per_win=ADVANCED_RUNS_PER_WIN,
+            )
+            return source, empty_metadata
+
+    comparison_source = source[source["pa"] >= max(min_pa, 1)].copy()
+    if comparison_source.empty:
+        comparison_source = source.copy()
+
+    analytics, metadata = calculate_advanced_analytics(
+        source,
+        comparison_dataframe=comparison_source,
+        mode=view_mode,
+        comparison_group_label=comparison_label,
+        replacement_percentile=REPLACEMENT_LEVEL_PERCENTILE,
+        replacement_min_pa=max(REPLACEMENT_LEVEL_MIN_PA, min_pa),
+        runs_per_win=ADVANCED_RUNS_PER_WIN,
+    )
+    filtered = analytics[analytics["pa"] >= min_pa].copy()
+    filtered = filtered.sort_values(["rar", "team_relative_ops", "pa"], ascending=[False, False, False]).reset_index(drop=True)
+    return filtered, metadata
+
+
+def fetch_advanced_analytics_leaderboards(dataframe: pd.DataFrame, limit: int = 5) -> dict[str, pd.DataFrame]:
+    return build_advanced_leaderboards(dataframe, limit=limit)
+
+
+def fetch_advanced_analytics_archetype_summary(dataframe: pd.DataFrame) -> pd.DataFrame:
+    return build_archetype_summary(dataframe)
+
+
+def fetch_advanced_player_comparison(dataframe: pd.DataFrame, players: list[str]) -> pd.DataFrame:
+    return build_player_comparison(dataframe, players)
+
+
+def fetch_advanced_methodology_summary(metadata: AdvancedAnalyticsMetadata) -> dict[str, str]:
+    return {
+        "Comparison group": metadata.comparison_group_label,
+        "Baseline hitters": str(metadata.baseline_player_count),
+        "Replacement level": f"{int(metadata.replacement_percentile * 100)}th percentile offense rate (min {metadata.replacement_min_pa} PA)",
+        "Runs per win": f"{metadata.runs_per_win:.1f}",
+        "Model scope": "Offense-only, team-specific RAA / RAR / oWAR",
+    }
+
+
+def fetch_advanced_archetype_order() -> list[str]:
+    return ARCHETYPE_DISPLAY_ORDER.copy()
+
+
+def fetch_schedule_seasons(connection: sqlite3.Connection) -> list[str]:
+    rows = connection.execute(
+        "SELECT DISTINCT season FROM schedule_games WHERE COALESCE(season, '') <> ''"
+    ).fetchall()
+    return sort_seasons([str(row["season"]) for row in rows])
+
+
+def fetch_schedule_team_names(
+    connection: sqlite3.Connection,
+    season: str | None = None,
+) -> list[str]:
+    params: list[object] = []
+    where_clause = ""
+    if season:
+        where_clause = "WHERE season = ?"
+        params.append(season)
+    rows = connection.execute(
+        f"""
+        SELECT DISTINCT team_name
+        FROM schedule_games
+        {where_clause}
+        ORDER BY team_name COLLATE NOCASE
+        """,
+        params,
+    ).fetchall()
+    return [str(row["team_name"]) for row in rows]
+
+
+def fetch_schedule_weeks(
+    connection: sqlite3.Connection,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+) -> list[str]:
+    rows = connection.execute(
+        """
+        SELECT DISTINCT week_label
+        FROM schedule_games
+        WHERE season = ? AND team_name = ? AND COALESCE(week_label, '') <> ''
+        ORDER BY game_date, game_time
+        """,
+        (season, team_name),
+    ).fetchall()
+    return [str(row["week_label"]) for row in rows]
+
+
+def fetch_current_schedule_week(
+    connection: sqlite3.Connection,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> str | None:
+    next_game = fetch_next_game(connection, season=season, team_name=team_name, as_of=as_of)
+    if next_game and next_game.get("week_label"):
+        return str(next_game["week_label"])
+
+    weeks = fetch_schedule_weeks(connection, season, team_name)
+    return weeks[0] if weeks else None
+
+
+def fetch_schedule_opponents(
+    connection: sqlite3.Connection,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+) -> list[str]:
+    rows = connection.execute(
+        """
+        SELECT DISTINCT opponent_name
+        FROM schedule_games
+        WHERE season = ?
+          AND team_name = ?
+          AND is_bye = 0
+          AND COALESCE(opponent_name, '') <> ''
+        ORDER BY opponent_name COLLATE NOCASE
+        """,
+        (season, team_name),
+    ).fetchall()
+    return [str(row["opponent_name"]) for row in rows]
+
+
+def fetch_schedule_games(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    view_filter: str = "Upcoming only",
+    opponent: str | None = None,
+    week_label: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    dataframe = pd.read_sql_query(
+        """
+        SELECT
+            game_id,
+            season,
+            league_name,
+            division_name,
+            week_label,
+            game_date,
+            game_time,
+            team_name,
+            opponent_name,
+            home_away,
+            location_or_field,
+            status,
+            completed_flag,
+            is_bye,
+            result,
+            runs_for,
+            runs_against,
+            notes,
+            source
+        FROM schedule_games
+        WHERE season = ? AND team_name = ?
+        ORDER BY game_date, COALESCE(game_time, ''), week_label
+        """,
+        connection,
+        params=(season, team_name),
+    )
+    if dataframe.empty:
+        return dataframe
+
+    filtered = dataframe.copy()
+    filtered.loc[:, "game_datetime"] = filtered.apply(_combine_schedule_datetime, axis=1)
+    filtered.loc[:, "schedule_date"] = pd.to_datetime(filtered["game_date"], errors="coerce")
+    reference_dt = _coerce_schedule_reference_datetime(as_of)
+
+    filtered = filtered.astype({"completed_flag": int, "is_bye": bool})
+    completed_mask = filtered.apply(_schedule_completed_mask, axis=1)
+    if view_filter == "Upcoming only":
+        filtered = filtered.loc[~completed_mask & (filtered["game_datetime"] >= reference_dt)].copy()
+    elif view_filter == "Completed only":
+        filtered = filtered.loc[(completed_mask | ((filtered["game_datetime"] < reference_dt) & ~filtered["is_bye"]))].copy()
+
+    if opponent and opponent != "All opponents":
+        filtered = filtered[filtered["opponent_name"].fillna("") == opponent].copy()
+    if week_label and week_label != "All weeks":
+        filtered = filtered[filtered["week_label"].fillna("") == week_label].copy()
+
+    filtered.loc[:, "date_display"] = filtered["schedule_date"].dt.strftime("%a %m/%d/%y").fillna(filtered["game_date"])
+    filtered.loc[:, "time_display"] = filtered["game_time"].fillna("")
+    filtered.loc[:, "opponent_display"] = filtered.apply(
+        lambda row: "BYE" if bool(row["is_bye"]) else str(row["opponent_name"] or ""),
+        axis=1,
+    )
+    filtered.loc[:, "home_away_display"] = filtered.apply(
+        lambda row: "Bye"
+        if bool(row["is_bye"])
+        else ("Home" if str(row.get("home_away") or "").strip().lower() == "home" else "Away"),
+        axis=1,
+    )
+    filtered.loc[:, "status_display"] = filtered.apply(_schedule_status_display, axis=1)
+    filtered.loc[:, "result_display"] = filtered.apply(_schedule_result_display, axis=1)
+    filtered.loc[:, "rf_ra_display"] = filtered.apply(
+        lambda row: ""
+        if pd.isna(row["runs_for"]) and pd.isna(row["runs_against"])
+        else f"{int(row['runs_for'])}-{int(row['runs_against'])}",
+        axis=1,
+    )
+
+    return filtered.sort_values(["game_datetime", "week_label", "game_id"]).reset_index(drop=True)
+
+
+def fetch_schedule_season_summary(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, int | float | str]:
+    games = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if games.empty:
+        return {
+            "record": "0-0",
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "runs_for": 0,
+            "runs_against": 0,
+            "games_completed": 0,
+            "games_remaining": 0,
+            "non_bye_games": 0,
+        }
+
+    non_bye_games = games.loc[~games["is_bye"]].copy()
+    completed_games = non_bye_games.loc[non_bye_games.apply(_schedule_completed_mask, axis=1)].copy()
+
+    wins = int((completed_games["result_display"] == "W").sum()) if not completed_games.empty else 0
+    losses = int((completed_games["result_display"] == "L").sum()) if not completed_games.empty else 0
+    ties = int((completed_games["result_display"] == "T").sum()) if not completed_games.empty else 0
+    runs_for = int(completed_games["runs_for"].fillna(0).sum()) if not completed_games.empty else 0
+    runs_against = int(completed_games["runs_against"].fillna(0).sum()) if not completed_games.empty else 0
+    games_completed = int(len(completed_games))
+    games_remaining = int(len(non_bye_games) - games_completed)
+
+    return {
+        "record": _format_team_record(wins, losses),
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "runs_for": runs_for,
+        "runs_against": runs_against,
+        "games_completed": games_completed,
+        "games_remaining": games_remaining,
+        "non_bye_games": int(len(non_bye_games)),
+    }
+
+
+def fetch_next_game(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, object] | None:
+    all_games = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if all_games.empty:
+        return None
+    reference_dt = _coerce_schedule_reference_datetime(as_of)
+    upcoming_games = all_games.loc[
+        (~all_games["is_bye"].astype(bool)) & (all_games["game_datetime"] >= reference_dt)
+    ].copy()
+    if upcoming_games.empty:
+        return None
+    upcoming_games = upcoming_games.sort_values(["game_datetime", "week_label", "game_id"]).reset_index(drop=True)
+    return upcoming_games.iloc[0].to_dict()
+
+
+def fetch_upcoming_schedule(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    limit: int = 6,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    upcoming = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="Upcoming only",
+        as_of=as_of,
+    )
+    return upcoming.head(limit).reset_index(drop=True)
+
+
+def fetch_maple_tree_week_bundle(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    week_label: str | None = None,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, object]:
+    resolved_week = week_label or fetch_current_schedule_week(
+        connection,
+        season=season,
+        team_name=team_name,
+        as_of=as_of,
+    )
+    if not resolved_week:
+        return {
+            "season": season,
+            "team_name": team_name,
+            "week_label": "",
+            "games": pd.DataFrame(),
+            "non_bye_games": pd.DataFrame(),
+            "opponent_names": [],
+            "league_name": "",
+            "division_name": "",
+            "primary_game_date": "",
+            "generation_enabled": False,
+            "validation_message": "No Maple Tree schedule week is currently loaded.",
+        }
+
+    games = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="All",
+        week_label=resolved_week,
+        as_of=as_of,
+    )
+    if games.empty:
+        return {
+            "season": season,
+            "team_name": team_name,
+            "week_label": resolved_week,
+            "games": games,
+            "non_bye_games": games,
+            "opponent_names": [],
+            "league_name": "",
+            "division_name": "",
+            "primary_game_date": "",
+            "generation_enabled": False,
+            "validation_message": "No Maple Tree games are loaded for the selected week.",
+        }
+
+    ordered_games = games.sort_values(["game_datetime", "week_label", "game_id"]).reset_index(drop=True)
+    non_bye_games = ordered_games.loc[~ordered_games["is_bye"].astype(bool)].copy().reset_index(drop=True)
+    opponent_names = [
+        str(name)
+        for name in non_bye_games["opponent_name"].fillna("").tolist()
+        if str(name).strip()
+    ]
+    unique_opponents = sorted(set(opponent_names))
+
+    validation_message = ""
+    generation_enabled = True
+    if not ordered_games.empty and ordered_games["is_bye"].astype(bool).all():
+        validation_message = WRITEUP_BYE_WEEK_MESSAGE
+        generation_enabled = False
+    elif len(ordered_games) != 2 or len(non_bye_games) != 2:
+        validation_message = WRITEUP_INVALID_DOUBLEHEADER_MESSAGE
+        generation_enabled = False
+
+    source_row = non_bye_games.iloc[0] if not non_bye_games.empty else ordered_games.iloc[0]
+    return {
+        "season": season,
+        "team_name": team_name,
+        "week_label": resolved_week,
+        "games": ordered_games,
+        "non_bye_games": non_bye_games,
+        "opponent_names": unique_opponents,
+        "league_name": str(source_row.get("league_name") or ""),
+        "division_name": str(source_row.get("division_name") or ""),
+        "primary_game_date": str(source_row.get("game_date") or ""),
+        "generation_enabled": generation_enabled,
+        "validation_message": validation_message,
+    }
+
+
+def fetch_writeup_milestone_watch(
+    connection: sqlite3.Connection,
+    *,
+    distance_threshold: int = 10,
+    limit: int = 5,
+) -> list[str]:
+    active_milestones = fetch_career_milestones(
+        connection,
+        active_only=True,
+        max_remaining=distance_threshold,
+        sort_by="nearest milestone",
+    )
+    in_play = select_in_play_milestones(
+        active_milestones,
+        distance_threshold=distance_threshold,
+        limit=limit,
+    )
+    if in_play.empty:
+        return []
+
+    lines: list[str] = []
+    for _, row in in_play.iterrows():
+        remaining = int(row["remaining"])
+        next_milestone = int(row["next_milestone"])
+        player = str(row["player"])
+        stat = str(row["stat"])
+        club_label = str(row.get("club_label") or "").strip()
+        line = f"{player} is {_writeup_remaining_phrase(remaining)} from {next_milestone} {stat}"
+        extras = [value for value in (club_label,) if value]
+        if extras:
+            line += f" ({'; '.join(extras)})"
+        lines.append(line + ".")
+    return [line for line in lines if line.strip()]
+
+
+def fetch_writeup_opponent_scouting(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    opponent_names: list[str],
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> list[str]:
+    unique_opponents = [name for name in sorted(set(opponent_names)) if str(name).strip()]
+    if not unique_opponents:
+        return [WRITEUP_EMPTY_OPPONENT_SCOUTING]
+
+    standings = fetch_latest_standings_snapshot(
+        connection,
+        season=season,
+        division_name=division_name,
+    )
+    standings_lookup = (
+        standings.set_index("team_name").to_dict("index")
+        if not standings.empty and "team_name" in standings.columns
+        else {}
+    )
+
+    lines: list[str] = []
+    any_completed_data = False
+    for opponent_name in unique_opponents:
+        summary = fetch_league_team_summary(
+            connection,
+            season=season,
+            team_name=opponent_name,
+            division_name=division_name,
+            as_of=as_of,
+        )
+        recent = fetch_league_team_recent_results(
+            connection,
+            season=season,
+            team_name=opponent_name,
+            division_name=division_name,
+            limit=3,
+            as_of=as_of,
+        )
+        if recent.empty or int(summary["games_completed"]) == 0:
+            if len(unique_opponents) == 1:
+                return [WRITEUP_EMPTY_OPPONENT_SCOUTING]
+            lines.append(f"{opponent_name}: {WRITEUP_EMPTY_OPPONENT_SCOUTING}")
+            continue
+
+        any_completed_data = True
+        standing_row = standings_lookup.get(opponent_name, {})
+        parts = [f"{opponent_name}: record {summary['record']}"]
+        if standing_row:
+            parts.append(
+                f"standings {int(standing_row.get('wins', 0))}-{int(standing_row.get('losses', 0))}"
+            )
+        parts.append(f"runs {int(summary['runs_for'])}-{int(summary['runs_against'])}")
+        recent_lines = [
+            f"{row['team_result']} {row['score_display']} vs {row['home_team'] if row['away_team'] == opponent_name else row['away_team']}"
+            for _, row in recent.iterrows()
+        ]
+        if recent_lines:
+            parts.append("recent: " + "; ".join(recent_lines))
+        lines.append(" | ".join(parts) + ".")
+
+    if not any_completed_data:
+        return [WRITEUP_EMPTY_OPPONENT_SCOUTING]
+    return [line for line in lines if line.strip()]
+
+
+def fetch_writeup_record_context(
+    connection: sqlite3.Connection,
+    *,
+    milestone_limit: int = 2,
+) -> list[str]:
+    lines: list[str] = []
+    milestone_lines = fetch_writeup_milestone_watch(
+        connection,
+        distance_threshold=10,
+        limit=milestone_limit,
+    )
+    for line in milestone_lines:
+        lines.append(f"Current milestone watch: {line}")
+
+    headliners = fetch_record_headliners(connection, active_only=False)
+    for label in ("Career HR Leader", "Career OPS Leader"):
+        payload = headliners.get(label, {})
+        player = str(payload.get("player", "")).strip()
+        formatted_value = str(payload.get("formatted_value", "")).strip()
+        value_label = str(payload.get("value_label", "")).strip()
+        context = str(payload.get("context", "")).strip()
+        if not player or player == "No data" or not formatted_value or not value_label:
+            continue
+        line = f"Current {label}: {player} ({formatted_value} {value_label}"
+        if context:
+            line += f", {context}"
+        line += ")."
+        lines.append(line)
+    return lines[:4]
+
+
+def save_weekly_writeup(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    week_label: str,
+    phase: str,
+    markdown: str,
+    title: str | None = None,
+    source: str = "dashboard",
+) -> int:
+    normalized_phase = phase.strip().lower()
+    normalized_title = (title or _title_from_markdown(markdown) or f"{week_label} {normalized_phase.title()}").strip()
+    connection.execute(
+        """
+        INSERT INTO writeups (
+            season,
+            week_label,
+            phase,
+            title,
+            markdown,
+            source
+        ) VALUES (?, ?, ?, ?, ?, ?)
+        ON CONFLICT(season, week_label, phase) DO UPDATE SET
+            title = excluded.title,
+            markdown = excluded.markdown,
+            source = excluded.source,
+            updated_at = CURRENT_TIMESTAMP
+        """,
+        (
+            season.strip(),
+            week_label.strip(),
+            normalized_phase,
+            normalized_title,
+            markdown,
+            source.strip() or "dashboard",
+        ),
+    )
+    connection.commit()
+    row = connection.execute(
+        """
+        SELECT writeup_id
+        FROM writeups
+        WHERE season = ? AND week_label = ? AND phase = ?
+        """,
+        (season.strip(), week_label.strip(), normalized_phase),
+    ).fetchone()
+    return int(row["writeup_id"]) if row else 0
+
+
+def fetch_saved_writeup(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    week_label: str,
+    phase: str,
+) -> dict[str, object] | None:
+    row = connection.execute(
+        """
+        SELECT
+            writeup_id,
+            season,
+            week_label,
+            phase,
+            title,
+            markdown,
+            source,
+            created_at,
+            updated_at
+        FROM writeups
+        WHERE season = ? AND week_label = ? AND phase = ?
+        """,
+        (season.strip(), week_label.strip(), phase.strip().lower()),
+    ).fetchone()
+    return dict(row) if row else None
+
+
+def fetch_saved_writeups(
+    connection: sqlite3.Connection,
+    *,
+    season: str | None = None,
+    phase: str | None = None,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_parts: list[str] = []
+    if season:
+        where_parts.append("season = ?")
+        params.append(season.strip())
+    if phase:
+        where_parts.append("phase = ?")
+        params.append(phase.strip().lower())
+
+    where_clause = f"WHERE {' AND '.join(where_parts)}" if where_parts else ""
+    return pd.read_sql_query(
+        f"""
+        SELECT
+            writeup_id,
+            season,
+            week_label,
+            phase,
+            title,
+            markdown,
+            source,
+            created_at,
+            updated_at
+        FROM writeups
+        {where_clause}
+        ORDER BY season DESC, week_label DESC, updated_at DESC, writeup_id DESC
+        """,
+        connection,
+        params=params,
+    )
+
+
+def fetch_latest_standings_snapshot(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    league_name: str | None = None,
+    division_name: str | None = None,
+) -> pd.DataFrame:
+    params: list[object] = [season]
+    where_parts = ["season = ?"]
+    if league_name:
+        where_parts.append("league_name = ?")
+        params.append(league_name)
+    if division_name:
+        where_parts.append("division_name = ?")
+        params.append(division_name)
+
+    where_clause = " AND ".join(where_parts)
+    latest_date_row = connection.execute(
+        f"SELECT MAX(snapshot_date) AS snapshot_date FROM standings_snapshot WHERE {where_clause}",
+        params,
+    ).fetchone()
+    snapshot_date = latest_date_row["snapshot_date"] if latest_date_row else None
+    if not snapshot_date:
+        return pd.DataFrame()
+
+    params_with_date = [*params, snapshot_date]
+    dataframe = pd.read_sql_query(
+        f"""
+        SELECT
+            team_name,
+            wins,
+            losses,
+            ties,
+            win_pct,
+            games_back,
+            snapshot_date,
+            league_name,
+            division_name
+        FROM standings_snapshot
+        WHERE {where_clause} AND snapshot_date = ?
+        ORDER BY win_pct DESC, wins DESC, team_name COLLATE NOCASE
+        """,
+        connection,
+        params=params_with_date,
+    )
+    if dataframe.empty:
+        return dataframe
+    dataframe = dataframe.drop_duplicates(subset=["team_name"], keep="last").reset_index(drop=True)
+    return dataframe
+
+
+def fetch_league_schedule_seasons(connection: sqlite3.Connection) -> list[str]:
+    rows = connection.execute(
+        "SELECT DISTINCT season FROM league_schedule_games WHERE COALESCE(season, '') <> ''"
+    ).fetchall()
+    return sort_seasons([str(row["season"]) for row in rows])
+
+
+def fetch_league_divisions(
+    connection: sqlite3.Connection,
+    season: str,
+) -> list[str]:
+    rows = connection.execute(
+        """
+        SELECT DISTINCT division_name
+        FROM league_schedule_games
+        WHERE season = ? AND COALESCE(division_name, '') <> ''
+        ORDER BY division_name COLLATE NOCASE
+        """,
+        (season,),
+    ).fetchall()
+    return [str(row["division_name"]) for row in rows]
+
+
+def fetch_league_team_names(
+    connection: sqlite3.Connection,
+    season: str,
+    division_name: str | None = None,
+) -> list[str]:
+    params: list[object] = [season]
+    where_parts = ["season = ?"]
+    if division_name and division_name != "All divisions":
+        where_parts.append("division_name = ?")
+        params.append(division_name)
+    where_clause = " AND ".join(where_parts)
+    rows = connection.execute(
+        f"""
+        SELECT team_name
+        FROM (
+            SELECT home_team AS team_name FROM league_schedule_games WHERE {where_clause}
+            UNION
+            SELECT away_team AS team_name FROM league_schedule_games WHERE {where_clause}
+        )
+        ORDER BY team_name COLLATE NOCASE
+        """,
+        [*params, *params],
+    ).fetchall()
+    return [str(row["team_name"]) for row in rows]
+
+
+def fetch_league_weeks(
+    connection: sqlite3.Connection,
+    season: str,
+    division_name: str | None = None,
+) -> list[str]:
+    params: list[object] = [season]
+    where_parts = ["season = ?"]
+    if division_name and division_name != "All divisions":
+        where_parts.append("division_name = ?")
+        params.append(division_name)
+    where_clause = " AND ".join(where_parts)
+    rows = connection.execute(
+        f"""
+        SELECT DISTINCT week_label
+        FROM league_schedule_games
+        WHERE {where_clause} AND COALESCE(week_label, '') <> ''
+        ORDER BY game_date, COALESCE(game_time, ''), week_label
+        """,
+        params,
+    ).fetchall()
+    return [str(row["week_label"]) for row in rows]
+
+
+def fetch_current_league_week(
+    connection: sqlite3.Connection,
+    season: str,
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> str | None:
+    upcoming = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        view_filter="Upcoming only",
+        as_of=as_of,
+    )
+    if not upcoming.empty:
+        return str(upcoming.iloc[0]["week_label"])
+
+    weeks = fetch_league_weeks(connection, season, division_name)
+    return weeks[0] if weeks else None
+
+
+def fetch_league_schedule_games(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    division_name: str | None = None,
+    week_label: str | None = None,
+    team_name: str | None = None,
+    opponent: str | None = None,
+    view_filter: str = "All",
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    params: list[object] = [season]
+    where_parts = ["season = ?"]
+    if division_name and division_name != "All divisions":
+        where_parts.append("division_name = ?")
+        params.append(division_name)
+    where_clause = " AND ".join(where_parts)
+    dataframe = pd.read_sql_query(
+        f"""
+        SELECT
+            league_game_id,
+            season,
+            league_name,
+            division_name,
+            week_label,
+            game_date,
+            game_time,
+            location_or_field,
+            home_team,
+            away_team,
+            status,
+            completed_flag,
+            home_runs,
+            away_runs,
+            result_summary,
+            notes,
+            source
+        FROM league_schedule_games
+        WHERE {where_clause}
+        ORDER BY game_date, COALESCE(game_time, ''), COALESCE(location_or_field, '')
+        """,
+        connection,
+        params=params,
+    )
+    if dataframe.empty:
+        return dataframe
+
+    filtered = dataframe.copy()
+    filtered.loc[:, "game_datetime"] = filtered.apply(_combine_schedule_datetime, axis=1)
+    filtered.loc[:, "schedule_date"] = pd.to_datetime(filtered["game_date"], errors="coerce")
+    reference_dt = _coerce_schedule_reference_datetime(as_of)
+    filtered = filtered.astype({"completed_flag": int})
+    completed_mask = filtered.apply(_league_game_completed_mask, axis=1)
+
+    if view_filter == "Upcoming only":
+        filtered = filtered.loc[~completed_mask & (filtered["game_datetime"] >= reference_dt)].copy()
+    elif view_filter == "Completed only":
+        filtered = filtered.loc[completed_mask | (filtered["game_datetime"] < reference_dt)].copy()
+
+    if week_label and week_label != "All weeks":
+        filtered = filtered[filtered["week_label"].fillna("") == week_label].copy()
+
+    if team_name and team_name != "All teams":
+        filtered = filtered[
+            (filtered["home_team"].fillna("") == team_name)
+            | (filtered["away_team"].fillna("") == team_name)
+        ].copy()
+
+    if opponent and opponent != "All opponents" and team_name and team_name != "All teams":
+        filtered = filtered[
+            (
+                (filtered["home_team"].fillna("") == team_name)
+                & (filtered["away_team"].fillna("") == opponent)
+            )
+            | (
+                (filtered["away_team"].fillna("") == team_name)
+                & (filtered["home_team"].fillna("") == opponent)
+            )
+        ].copy()
+
+    if filtered.empty:
+        return filtered.reset_index(drop=True)
+
+    filtered.loc[:, "date_display"] = filtered["schedule_date"].dt.strftime("%a %m/%d/%y").fillna(filtered["game_date"])
+    filtered.loc[:, "time_display"] = filtered["game_time"].fillna("")
+    filtered.loc[:, "matchup_display"] = filtered["away_team"].fillna("") + " @ " + filtered["home_team"].fillna("")
+    filtered.loc[:, "status_display"] = filtered.apply(_league_status_display, axis=1)
+    filtered.loc[:, "score_display"] = filtered.apply(_league_score_display, axis=1)
+    filtered.loc[:, "team_result"] = filtered.apply(
+        lambda row: _league_team_result_for_row(row, team_name) if team_name and team_name != "All teams" else "",
+        axis=1,
+    )
+    return filtered.sort_values(["game_datetime", "week_label", "league_game_id"]).reset_index(drop=True)
+
+
+def fetch_league_team_week_opponents(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str,
+    week_label: str,
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> list[str]:
+    games = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        week_label=week_label,
+        team_name=team_name,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if games.empty:
+        return []
+
+    opponents = []
+    for _, row in games.iterrows():
+        if str(row["home_team"]) == team_name:
+            opponents.append(str(row["away_team"]))
+        else:
+            opponents.append(str(row["home_team"]))
+    return sorted(set(opponents))
+
+
+def fetch_week_scoreboard(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    division_name: str | None = None,
+    week_label: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    scoreboard = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        week_label=week_label,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if scoreboard.empty:
+        return scoreboard
+    return scoreboard
+
+
+def fetch_league_team_summary(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str,
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, object]:
+    games = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        team_name=team_name,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if games.empty:
+        return {
+            "record": "0-0",
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "runs_for": 0,
+            "runs_against": 0,
+            "games_completed": 0,
+            "games_remaining": 0,
+        }
+
+    completed = games.loc[games.apply(_league_game_completed_mask, axis=1)].copy()
+    wins = losses = ties = runs_for = runs_against = 0
+    for _, row in completed.iterrows():
+        team_runs, opp_runs = _team_runs_for_league_row(row, team_name)
+        if team_runs is None or opp_runs is None:
+            continue
+        runs_for += team_runs
+        runs_against += opp_runs
+        if team_runs > opp_runs:
+            wins += 1
+        elif team_runs < opp_runs:
+            losses += 1
+        else:
+            ties += 1
+    games_completed = int(len(completed))
+    games_remaining = int(len(games) - games_completed)
+    return {
+        "record": _format_team_record(wins, losses),
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "runs_for": runs_for,
+        "runs_against": runs_against,
+        "games_completed": games_completed,
+        "games_remaining": games_remaining,
+    }
+
+
+def fetch_league_team_recent_results(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str,
+    division_name: str | None = None,
+    limit: int = 3,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    games = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        team_name=team_name,
+        view_filter="Completed only",
+        as_of=as_of,
+    )
+    if games.empty:
+        return games
+    return games.sort_values(["game_datetime", "league_game_id"], ascending=[False, False]).head(limit).reset_index(drop=True)
+
+
+def fetch_league_team_upcoming_games(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str,
+    division_name: str | None = None,
+    limit: int = 3,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    games = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        team_name=team_name,
+        view_filter="Upcoming only",
+        as_of=as_of,
+    )
+    if games.empty:
+        return games
+    return games.head(limit).reset_index(drop=True)
+
+
+def _coerce_schedule_reference_datetime(
+    as_of: date | datetime | str | None,
+) -> datetime:
+    if as_of is None:
+        return datetime.now()
+    if isinstance(as_of, datetime):
+        return as_of
+    if isinstance(as_of, date):
+        return datetime.combine(as_of, datetime.min.time())
+
+    parsed = pd.to_datetime(as_of, errors="coerce")
+    if pd.isna(parsed):
+        return datetime.now()
+    return parsed.to_pydatetime()
+
+
+def _combine_schedule_datetime(row: pd.Series) -> datetime:
+    date_value = pd.to_datetime(row.get("game_date"), errors="coerce")
+    if pd.isna(date_value):
+        return datetime.max
+
+    time_text = str(row.get("game_time") or "").strip()
+    if not time_text:
+        return datetime.combine(date_value.date(), datetime.min.time())
+
+    for fmt in ("%I:%M %p", "%H:%M"):
+        try:
+            parsed_time = datetime.strptime(time_text, fmt).time()
+            return datetime.combine(date_value.date(), parsed_time)
+        except ValueError:
+            continue
+    return datetime.combine(date_value.date(), datetime.min.time())
+
+
+def _league_game_completed_mask(row: pd.Series) -> bool:
+    if int(row.get("completed_flag", 0) or 0) == 1:
+        return True
+    status = str(row.get("status") or "").strip().lower()
+    return status in {"completed", "final"}
+
+
+def _league_status_display(row: pd.Series) -> str:
+    if _league_game_completed_mask(row):
+        return "Final"
+    status = str(row.get("status") or "").strip()
+    return status.title() if status else "Scheduled"
+
+
+def _league_score_display(row: pd.Series) -> str:
+    if pd.isna(row.get("away_runs")) or pd.isna(row.get("home_runs")):
+        return ""
+    return f"{int(row['away_runs'])}-{int(row['home_runs'])}"
+
+
+def _team_runs_for_league_row(row: pd.Series, team_name: str) -> tuple[int | None, int | None]:
+    if str(row.get("home_team") or "") == team_name:
+        return (
+            None if pd.isna(row.get("home_runs")) else int(row["home_runs"]),
+            None if pd.isna(row.get("away_runs")) else int(row["away_runs"]),
+        )
+    if str(row.get("away_team") or "") == team_name:
+        return (
+            None if pd.isna(row.get("away_runs")) else int(row["away_runs"]),
+            None if pd.isna(row.get("home_runs")) else int(row["home_runs"]),
+        )
+    return (None, None)
+
+
+def _league_team_result_for_row(row: pd.Series, team_name: str) -> str:
+    team_runs, opp_runs = _team_runs_for_league_row(row, team_name)
+    if team_runs is None or opp_runs is None:
+        return ""
+    if team_runs > opp_runs:
+        return "W"
+    if team_runs < opp_runs:
+        return "L"
+    return "T"
+
+
+def _schedule_completed_mask(row: pd.Series) -> bool:
+    if bool(row.get("completed_flag")):
+        return True
+    status = str(row.get("status") or "").strip().lower()
+    if status in {"completed", "final"}:
+        return True
+    if str(row.get("result") or "").strip():
+        return True
+    runs_for = row.get("runs_for")
+    runs_against = row.get("runs_against")
+    return not pd.isna(runs_for) and not pd.isna(runs_against)
+
+
+def _schedule_status_display(row: pd.Series) -> str:
+    if bool(row.get("is_bye")):
+        return "Bye"
+    if _schedule_completed_mask(row):
+        return "Final"
+    status = str(row.get("status") or "").strip()
+    return status.title() if status else "Scheduled"
+
+
+def _schedule_result_display(row: pd.Series) -> str:
+    if bool(row.get("is_bye")):
+        return ""
+    explicit = str(row.get("result") or "").strip().upper()
+    if explicit:
+        return explicit
+    runs_for = row.get("runs_for")
+    runs_against = row.get("runs_against")
+    if pd.isna(runs_for) or pd.isna(runs_against):
+        return ""
+    if int(runs_for) > int(runs_against):
+        return "W"
+    if int(runs_for) < int(runs_against):
+        return "L"
+    return "T"
+
+
+def _fetch_advanced_season_source(connection: sqlite3.Connection, season: str) -> pd.DataFrame:
+    return pd.read_sql_query(
+        """
+        SELECT
+            s.season,
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            s.games,
+            s.plate_appearances AS pa,
+            s.at_bats AS ab,
+            s.hits,
+            s.singles AS "1b",
+            s.doubles AS "2b",
+            s.triples AS "3b",
+            s.home_runs AS hr,
+            s.walks AS bb,
+            s.strikeouts AS so,
+            s.hit_by_pitch AS hbp,
+            s.sacrifice_hits AS sac,
+            s.sacrifice_flies AS sf,
+            s.reached_on_error AS roe,
+            s.fielder_choice AS fc,
+            s.grounded_into_double_play AS gidp,
+            s.runs AS r,
+            s.rbi,
+            s.total_bases AS tb,
+            s.batting_average_risp AS ba_risp,
+            s.two_out_rbi,
+            s.left_on_base AS lob
+        FROM season_batting_stats s
+        JOIN player_identity pi ON pi.player_id = s.player_id
+        JOIN player_metadata pm ON pm.player_id = s.player_id
+        WHERE s.season = ?
+        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=(season,),
+    )
+
+
+def _fetch_advanced_career_source(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if seasons:
+        placeholders = ",".join("?" for _ in seasons)
+        where_clause = f"WHERE s.season IN ({placeholders})"
+        params.extend(seasons)
+
+    return pd.read_sql_query(
+        f"""
+        SELECT
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            COUNT(DISTINCT s.season) AS seasons_played,
+            SUM(s.games) AS games,
+            SUM(s.plate_appearances) AS pa,
+            SUM(s.at_bats) AS ab,
+            SUM(s.hits) AS hits,
+            SUM(s.singles) AS "1b",
+            SUM(s.doubles) AS "2b",
+            SUM(s.triples) AS "3b",
+            SUM(s.home_runs) AS hr,
+            SUM(s.walks) AS bb,
+            SUM(s.strikeouts) AS so,
+            SUM(s.hit_by_pitch) AS hbp,
+            SUM(s.sacrifice_hits) AS sac,
+            SUM(s.sacrifice_flies) AS sf,
+            SUM(s.reached_on_error) AS roe,
+            SUM(s.fielder_choice) AS fc,
+            SUM(s.grounded_into_double_play) AS gidp,
+            SUM(s.runs) AS r,
+            SUM(s.rbi) AS rbi,
+            SUM(s.total_bases) AS tb,
+            SUM(s.two_out_rbi) AS two_out_rbi,
+            SUM(s.left_on_base) AS lob,
+            CASE
+                WHEN SUM(s.plate_appearances) = 0 THEN 0
+                ELSE SUM(s.batting_average_risp * s.plate_appearances) / SUM(s.plate_appearances)
+            END AS ba_risp
+        FROM season_batting_stats s
+        JOIN player_identity pi ON pi.player_id = s.player_id
+        JOIN player_metadata pm ON pm.player_id = s.player_id
+        {where_clause}
+        GROUP BY pm.preferred_display_name, pi.canonical_name
+        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=params,
+    )
+
+
+def fetch_record_leaderboards(
+    connection: sqlite3.Connection,
+    scope: str,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+    limit: int = 10,
+    active_only: bool = False,
+) -> dict[str, pd.DataFrame]:
+    active_names = set(_fetch_active_roster_names(connection))
+
+    def _unique_columns(columns: list[str]) -> list[str]:
+        seen: set[str] = set()
+        ordered: list[str] = []
+        for column in columns:
+            if column in seen:
+                continue
+            seen.add(column)
+            ordered.append(column)
+        return ordered
+
+    if scope == "career":
+        source = fetch_career_stats(connection, seasons=seasons, min_pa=0)
+        group_columns = ["player"]
+    elif scope == "single_season":
+        source = fetch_single_season_stats(connection, seasons=seasons, min_pa=0)
+        group_columns = ["season", "player"]
+    else:
+        raise ValueError(f"Unsupported record scope: {scope}")
+
+    if source.empty:
+        return {}
+
+    if active_only:
+        source = source[source["player"].isin(active_names)].copy()
+        if source.empty:
+            return {}
+
+    leaderboards: dict[str, pd.DataFrame] = {}
+    for label, column_name in COUNTING_RECORD_COLUMNS.items():
+        leaderboard = source.sort_values([column_name, *group_columns], ascending=[False, *([True] * len(group_columns))]).head(limit)
+        columns = _unique_columns(group_columns + [column_name])
+        leaderboards[label] = _finalize_record_leaderboard(
+            leaderboard[columns].copy(),
+            value_column=column_name,
+        )
+
+    eligible_for_rates = source[source["pa"] >= min_pa].copy()
+    for label, column_name in RATE_RECORD_COLUMNS.items():
+        if eligible_for_rates.empty:
+            empty_columns = _unique_columns(group_columns + [column_name])
+            leaderboards[label] = _finalize_record_leaderboard(
+                pd.DataFrame(columns=empty_columns),
+                value_column=column_name,
+            )
+            continue
+        leaderboard = eligible_for_rates.sort_values(
+            [column_name, "pa", *group_columns],
+            ascending=[False, False, *([True] * len(group_columns))],
+        ).head(limit)
+        columns = _unique_columns(group_columns + ["pa", column_name])
+        leaderboards[label] = _finalize_record_leaderboard(
+            leaderboard[columns].copy(),
+            value_column=column_name,
+        )
+    return leaderboards
+
+
+def fetch_record_headliners(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+    active_only: bool = False,
+) -> dict[str, dict[str, object]]:
+    active_names = set(_fetch_active_roster_names(connection))
+    career = fetch_record_leaderboards(
+        connection,
+        scope="career",
+        seasons=seasons,
+        min_pa=min_pa,
+        limit=1,
+        active_only=active_only,
+    )
+    single_season = fetch_record_leaderboards(
+        connection,
+        scope="single_season",
+        seasons=seasons,
+        min_pa=min_pa,
+        limit=1,
+        active_only=active_only,
+    )
+    return {
+        "Career OPS Leader": _headliner_from_board(career.get("OPS"), active_names),
+        "Career HR Leader": _headliner_from_board(career.get("HR"), active_names),
+        "Single-Season OPS": _headliner_from_board(single_season.get("OPS"), active_names),
+        "Single-Season HR": _headliner_from_board(single_season.get("HR"), active_names),
+    }
+
+
+def calculate_next_milestone_state(total: int | float, ladder: tuple[int, ...] | list[int]) -> dict[str, object]:
+    numeric_total = int(round(float(total)))
+    ordered_ladder = tuple(sorted(int(value) for value in ladder))
+    highest_cleared = max((value for value in ordered_ladder if numeric_total >= value), default=None)
+    next_milestone = next((value for value in ordered_ladder if numeric_total < value), None)
+
+    if next_milestone is None:
+        return {
+            "next_milestone": None,
+            "remaining": None,
+            "highest_cleared_milestone": highest_cleared,
+            "progress_to_next": 1.0,
+            "status": "All listed milestones cleared",
+        }
+
+    progress_to_next = max(0.0, min(1.0, numeric_total / max(next_milestone, 1)))
+    return {
+        "next_milestone": next_milestone,
+        "remaining": next_milestone - numeric_total,
+        "highest_cleared_milestone": highest_cleared,
+        "progress_to_next": progress_to_next,
+        "status": f"{next_milestone - numeric_total} away",
+    }
+
+
+def fetch_career_milestones(
+    connection: sqlite3.Connection,
+    categories: list[str] | None = None,
+    active_only: bool = False,
+    max_remaining: int | None = None,
+    min_current_total: int = 0,
+    sort_by: str = "nearest milestone",
+) -> pd.DataFrame:
+    career = fetch_career_stats(connection, min_pa=0)
+    if career.empty:
+        return pd.DataFrame(
+            columns=[
+                "player",
+                "stat",
+                "current_total",
+                "next_milestone",
+                "next_milestone_display",
+                "remaining",
+                "progress_to_next",
+                "highest_cleared_milestone",
+                "status",
+                "active_roster",
+                "urgency",
+            ]
+        )
+
+    selected_categories = categories or list(MILESTONE_LADDERS.keys())
+    active_names = set(_fetch_active_roster_names(connection))
+    club_reference_totals = {
+        category: career[COUNTING_RECORD_COLUMNS[category]].fillna(0).astype(int)
+        for category in selected_categories
+        if category in COUNTING_RECORD_COLUMNS
+    }
+    rows: list[dict[str, object]] = []
+
+    for _, row in career.iterrows():
+        player_name = str(row["player"])
+        is_active = player_name in active_names
+        if active_only and not is_active:
+            continue
+
+        for category in selected_categories:
+            column_name = COUNTING_RECORD_COLUMNS.get(category)
+            ladder = MILESTONE_LADDERS.get(category)
+            if column_name is None or ladder is None:
+                continue
+
+            current_total = int(round(float(row.get(column_name, 0) or 0)))
+            if current_total < min_current_total:
+                continue
+
+            milestone_state = calculate_next_milestone_state(current_total, ladder)
+            remaining = milestone_state["remaining"]
+            if max_remaining is not None and (remaining is None or int(remaining) > max_remaining):
+                continue
+
+            rows.append(
+                {
+                    "player": player_name,
+                    "stat": category,
+                    "current_total": current_total,
+                    "next_milestone": milestone_state["next_milestone"],
+                    "next_milestone_display": (
+                        milestone_state["next_milestone"]
+                        if milestone_state["next_milestone"] is not None
+                        else "All listed milestones cleared"
+                    ),
+                    "remaining": remaining,
+                    "progress_to_next": milestone_state["progress_to_next"],
+                    "highest_cleared_milestone": milestone_state["highest_cleared_milestone"],
+                    "status": milestone_state["status"],
+                    "active_roster": is_active,
+                    "urgency": _milestone_urgency_label(remaining),
+                }
+            )
+
+    dataframe = pd.DataFrame(rows)
+    if dataframe.empty:
+        return dataframe
+
+    dataframe = _add_milestone_club_context(dataframe, club_reference_totals)
+
+    if sort_by == "player name":
+        return dataframe.sort_values(["player", "stat"], ascending=[True, True]).reset_index(drop=True)
+    if sort_by == "stat category":
+        sortable = dataframe.assign(
+            _remaining_sort=dataframe["remaining"].fillna(10**9),
+        )
+        return sortable.sort_values(
+            ["stat", "_remaining_sort", "club_size", "next_milestone_sort", "player"],
+            ascending=[True, True, True, False, True],
+        ).drop(
+            columns="_remaining_sort"
+        ).reset_index(drop=True)
+
+    sortable = dataframe.assign(
+        _remaining_sort=dataframe["remaining"].fillna(10**9),
+        _active_sort=~dataframe["active_roster"],
+    )
+    return sortable.sort_values(
+        ["_remaining_sort", "_active_sort", "club_size", "next_milestone_sort", "player", "stat"],
+        ascending=[True, True, True, False, True, True],
+    ).drop(columns=["_remaining_sort", "_active_sort"]).reset_index(drop=True)
+
+
+def fetch_passed_milestones_summary(
+    connection: sqlite3.Connection,
+    categories: list[str] | None = None,
+    active_only: bool = False,
+    min_current_total: int = 0,
+    limit: int = 20,
+) -> pd.DataFrame:
+    milestone_df = fetch_career_milestones(
+        connection,
+        categories=categories,
+        active_only=active_only,
+        min_current_total=min_current_total,
+        sort_by="stat category",
+    )
+    if milestone_df.empty:
+        return milestone_df
+
+    passed = milestone_df[milestone_df["highest_cleared_milestone"].notna()].copy()
+    if passed.empty:
+        return passed
+
+    passed.loc[:, "highest_cleared_milestone"] = passed["highest_cleared_milestone"].astype(int)
+    passed = passed.sort_values(
+        ["stat", "highest_cleared_milestone", "current_total", "player"],
+        ascending=[True, False, False, True],
+    )
+    return passed.head(limit).reset_index(drop=True)
+
+
+def select_in_play_milestones(
+    dataframe: pd.DataFrame,
+    distance_threshold: int = 5,
+    limit: int = 10,
+) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+
+    in_play = dataframe[
+        dataframe["remaining"].notna()
+        & (dataframe["remaining"] <= distance_threshold)
+    ].copy()
+    if in_play.empty:
+        return in_play
+
+    urgency_rank = {"1 away": 0, "2-5 away": 1, "6-10 away": 2, "": 3}
+    in_play = in_play.assign(
+        _urgency_rank=in_play["urgency"].map(lambda value: urgency_rank.get(str(value), 3)),
+        _next_milestone_sort=in_play["next_milestone"].fillna(-1),
+    )
+    in_play = in_play.sort_values(
+        ["_urgency_rank", "remaining", "club_size", "_next_milestone_sort", "player", "stat"],
+        ascending=[True, True, True, False, True, True],
+    )
+    in_play = in_play.drop_duplicates(subset=["player"], keep="first")
+    return in_play.drop(columns=["_urgency_rank", "_next_milestone_sort"]).head(limit).reset_index(drop=True)
+
+
+def select_first_to_milestones(
+    dataframe: pd.DataFrame,
+    progress_threshold: float = 0.85,
+    max_remaining: int | None = 10,
+    limit: int = 12,
+) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+
+    first_to = dataframe[
+        dataframe["remaining"].notna()
+        & (dataframe["club_size"] == 0)
+        & (dataframe["progress_to_next"] >= progress_threshold)
+    ].copy()
+    if max_remaining is not None:
+        first_to = first_to[first_to["remaining"] <= max_remaining].copy()
+    if first_to.empty:
+        return first_to
+
+    urgency_rank = {"1 away": 0, "2-5 away": 1, "6-10 away": 2, "": 3}
+    first_to = first_to.assign(
+        _urgency_rank=first_to["urgency"].map(lambda value: urgency_rank.get(str(value), 3)),
+        _next_milestone_sort=first_to["next_milestone"].fillna(-1),
+    )
+    first_to = first_to.sort_values(
+        ["_urgency_rank", "remaining", "_next_milestone_sort", "player", "stat"],
+        ascending=[True, True, False, True, True],
+    )
+    return first_to.drop(columns=["_urgency_rank", "_next_milestone_sort"]).head(limit).reset_index(drop=True)
+
+
+def fetch_player_identities(connection: sqlite3.Connection) -> pd.DataFrame:
+    return pd.read_sql_query(
+        """
+        SELECT
+            pi.player_id,
+            pm.preferred_display_name,
+            pi.player_name AS canonical_player_name,
+            pi.canonical_name,
+            pm.is_fixed_dhh,
+            pm.active_flag
+        FROM player_identity pi
+        JOIN player_metadata pm ON pm.player_id = pi.player_id
+        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+    )
+
+
+def fetch_player_aliases(connection: sqlite3.Connection) -> pd.DataFrame:
+    return pd.read_sql_query(
+        """
+        SELECT
+            pm.preferred_display_name,
+            pi.canonical_name,
+            pa.source_name,
+            pa.source_type,
+            pa.match_method,
+            pa.approved_flag
+        FROM player_aliases pa
+        JOIN player_identity pi ON pi.player_id = pa.player_id
+        JOIN player_metadata pm ON pm.player_id = pa.player_id
+        ORDER BY pm.preferred_display_name COLLATE NOCASE, pa.source_name COLLATE NOCASE
+        """,
+        connection,
+    )
+
+
+def fetch_player_metadata(connection: sqlite3.Connection) -> pd.DataFrame:
+    return pd.read_sql_query(
+        """
+        SELECT
+            pm.player_id,
+            pm.preferred_display_name,
+            pm.is_fixed_dhh,
+            pm.baserunning_grade,
+            pm.consistency_grade,
+            pm.speed_flag,
+            pm.active_flag,
+            COALESCE(pm.notes, '') AS notes
+        FROM player_metadata pm
+        ORDER BY pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+    )
+
+
+def fetch_active_roster(
+    connection: sqlite3.Connection,
+    season_name: str = DEFAULT_ACTIVE_ROSTER_SEASON,
+) -> pd.DataFrame:
+    return pd.read_sql_query(
+        """
+        SELECT
+            sr.season_name,
+            pm.preferred_display_name,
+            pi.canonical_name,
+            pm.is_fixed_dhh,
+            COALESCE(sr.notes, '') AS notes
+        FROM season_rosters sr
+        JOIN player_identity pi ON pi.player_id = sr.player_id
+        JOIN player_metadata pm ON pm.player_id = sr.player_id
+        WHERE sr.season_name = ? AND sr.active_flag = 1
+        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=(season_name,),
+    )
+
+
+def fetch_projection_inventory(
+    connection: sqlite3.Connection,
+    projection_season: str | None = None,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if projection_season:
+        where_clause = "WHERE hp.projection_season = ?"
+        params.append(projection_season)
+    return pd.read_sql_query(
+        f"""
+        SELECT
+            hp.projection_season,
+            pm.preferred_display_name AS player,
+            hp.projection_source,
+            hp.current_plate_appearances AS current_pa,
+            hp.career_plate_appearances AS career_pa,
+            hp.weighted_prior_plate_appearances AS weighted_prior_pa,
+            hp.current_season_weight,
+            hp.projected_on_base_rate,
+            hp.projected_total_base_rate,
+            hp.projected_extra_base_hit_rate
+        FROM hitter_projections hp
+        JOIN player_metadata pm ON pm.player_id = hp.player_id
+        {where_clause}
+        ORDER BY hp.projection_season DESC, pm.preferred_display_name COLLATE NOCASE
+        """,
+        connection,
+        params=params,
+    )
+
+
+def fetch_projection_source_counts(
+    connection: sqlite3.Connection,
+    projection_season: str | None = None,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if projection_season:
+        where_clause = "WHERE projection_season = ?"
+        params.append(projection_season)
+    return pd.read_sql_query(
+        f"""
+        SELECT projection_source, COUNT(*) AS players
+        FROM hitter_projections
+        {where_clause}
+        GROUP BY projection_source
+        ORDER BY players DESC, projection_source
+        """,
+        connection,
+        params=params,
+    )
+
+
+def fetch_available_projection_rows(
+    connection: sqlite3.Connection,
+    projection_season: str,
+    available_names: list[str],
+) -> pd.DataFrame:
+    rows = select_game_day_projections(
+        connection=connection,
+        projection_season=projection_season,
+        available_player_names=available_names,
+    )
+    return pd.DataFrame(
+        [
+            {
+                "player": row.preferred_display_name,
+                "canonical_name": row.canonical_name,
+                "projection_source": row.projection_source,
+                "fixed_dhh": row.is_fixed_dhh,
+                "proj_obp": row.projected_on_base_rate,
+                "proj_tb_rate": row.projected_total_base_rate,
+                "proj_run_rate": row.projected_run_rate,
+                "proj_rbi_rate": row.projected_rbi_rate,
+                "proj_xbh_rate": row.projected_extra_base_hit_rate,
+            }
+            for row in rows
+        ]
+    )
+
+
+def run_optimizer(
+    connection: sqlite3.Connection,
+    projection_season: str,
+    game_date: str,
+    available_player_names: list[str],
+    mode: str,
+    simulations: int,
+    seed: int,
+) -> OptimizationResult:
+    rules = load_league_rules(DEFAULT_LEAGUE_RULES_PATH)
+    return optimize_lineup(
+        connection=connection,
+        projection_season=projection_season,
+        game_date=game_date,
+        league_rules=rules,
+        simulations=simulations,
+        seed=seed,
+        mode=mode,
+        available_player_names_override=available_player_names,
+    )
+
+
+def _safe_divide(numerator: float, denominator: float) -> float:
+    if denominator == 0:
+        return 0.0
+    return float(numerator) / float(denominator)
+
+
+def _title_from_markdown(markdown: str) -> str:
+    for line in markdown.splitlines():
+        stripped = line.strip()
+        if stripped.startswith("# "):
+            return stripped[2:].strip()
+    return ""
+
+
+def _writeup_remaining_phrase(remaining: int) -> str:
+    if remaining == 1:
+        return "1 away"
+    return f"{remaining} away"
+
+
+def _format_team_record(wins: int, losses: int) -> str:
+    return f"{wins}-{losses}"
+
+
+def _fetch_active_roster_names(
+    connection: sqlite3.Connection,
+    season_name: str = DEFAULT_ACTIVE_ROSTER_SEASON,
+) -> list[str]:
+    rows = connection.execute(
+        """
+        SELECT pm.preferred_display_name
+        FROM season_rosters sr
+        JOIN player_metadata pm ON pm.player_id = sr.player_id
+        WHERE sr.season_name = ? AND sr.active_flag = 1
+        """,
+        (season_name,),
+    ).fetchall()
+    return [str(row["preferred_display_name"]) for row in rows]
+
+
+def _finalize_record_leaderboard(
+    dataframe: pd.DataFrame,
+    value_column: str,
+) -> pd.DataFrame:
+    if dataframe.empty:
+        columns = [column for column in dataframe.columns]
+        labeled_columns = ["#", *[DISPLAY_COLUMN_LABELS.get(column, column) for column in columns]]
+        return pd.DataFrame(columns=labeled_columns)
+
+    result = dataframe.copy().reset_index(drop=True)
+    result.insert(0, "#", range(1, len(result) + 1))
+    if "season" in result.columns:
+        result.loc[:, "season"] = result["season"].map(lambda value: _compact_season_label(str(value)))
+    ordered_columns = ["#", *[column for column in result.columns if column != "#"]]
+    result = result[ordered_columns]
+    return result.rename(columns={column: DISPLAY_COLUMN_LABELS.get(column, column) for column in result.columns})
+
+
+def _headliner_from_board(dataframe: pd.DataFrame | None, active_names: set[str]) -> dict[str, object]:
+    if dataframe is None or dataframe.empty:
+        return {"label": "", "player": "No data", "value": "", "context": "", "is_active": False}
+    row = dataframe.iloc[0].to_dict()
+    value_columns = [column for column in dataframe.columns if column not in {"#", "Season", "Player", "PA"}]
+    value_column = value_columns[0] if value_columns else ""
+    context_parts: list[str] = []
+    if "Season" in row:
+        context_parts.append(_compact_season_label(str(row["Season"])))
+    if "PA" in row and value_column in RATE_RECORD_COLUMNS:
+        context_parts.append(f"PA {row['PA']}")
+    value = row.get(value_column, "")
+    return {
+        "player": row.get("Player", ""),
+        "value": value,
+        "formatted_value": _format_record_value(value_column, value),
+        "context": " | ".join(context_parts),
+        "value_label": value_column,
+        "is_active": str(row.get("Player", "")) in active_names,
+    }
+
+
+def _format_record_value(value_label: str, value: object) -> str:
+    if value in ("", None):
+        return ""
+    if value_label in RATE_RECORD_COLUMNS:
+        return f"{float(value):.3f}"
+    if value_label in COUNTING_RECORD_COLUMNS or value_label == "PA":
+        return f"{int(round(float(value)))}"
+    return str(value)
+
+
+def _milestone_urgency_label(remaining: object) -> str:
+    if remaining in (None, "") or pd.isna(remaining):
+        return ""
+    numeric_remaining = int(remaining)
+    if numeric_remaining <= 1:
+        return "1 away"
+    if numeric_remaining <= 5:
+        return "2-5 away"
+    if numeric_remaining <= 10:
+        return "6-10 away"
+    return ""
+
+
+def _add_milestone_club_context(
+    dataframe: pd.DataFrame,
+    club_reference_totals: dict[str, pd.Series],
+) -> pd.DataFrame:
+    result = dataframe.copy()
+    club_sizes = result.apply(
+        lambda row: _club_size_for_row(club_reference_totals, row["stat"], row["next_milestone"]),
+        axis=1,
+    )
+    return result.assign(
+        club_size=club_sizes,
+        club_label=club_sizes.combine(
+            result["next_milestone"],
+            lambda club_size, next_milestone: _club_label_for_row(club_size, next_milestone),
+        ),
+        is_first_time_milestone=club_sizes == 0,
+        next_milestone_sort=result["next_milestone"].fillna(-1),
+    )
+
+
+def _club_size_for_row(
+    club_reference_totals: dict[str, pd.Series],
+    stat_label: object,
+    next_milestone: object,
+) -> int:
+    if stat_label in (None, "") or next_milestone in (None, "") or pd.isna(next_milestone):
+        return 0
+    totals = club_reference_totals.get(str(stat_label))
+    if totals is None or totals.empty:
+        return 0
+    return int((totals >= int(next_milestone)).sum())
+
+
+def _club_label_for_row(club_size: object, next_milestone: object) -> str:
+    numeric_club_size = int(club_size or 0)
+    if next_milestone in (None, "") or pd.isna(next_milestone):
+        return ""
+    if numeric_club_size == 0:
+        return f"First to {int(next_milestone)}"
+    return f"{numeric_club_size} in club"

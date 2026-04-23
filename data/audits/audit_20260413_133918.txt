@@ -1,0 +1,11 @@
+slowpitch_optimizer audit report
+generated_at: 2026-04-13T13:39:18
+
+players_loaded: 15
+season_batting_rows_loaded: 15
+games_loaded: 0
+player_game_rows_loaded: 0
+rows_with_parsing_uncertainty: 0
+
+uncertainties:
+- none
