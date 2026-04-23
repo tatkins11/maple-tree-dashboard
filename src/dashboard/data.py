@@ -1562,7 +1562,8 @@ def _schedule_completed_mask(row: pd.Series) -> bool:
     status = str(row.get("status") or "").strip().lower()
     if status in {"completed", "final"}:
         return True
-    if str(row.get("result") or "").strip():
+    result_value = row.get("result")
+    if result_value is not None and not pd.isna(result_value) and str(result_value).strip():
         return True
     runs_for = row.get("runs_for")
     runs_against = row.get("runs_against")
@@ -1581,8 +1582,13 @@ def _schedule_status_display(row: pd.Series) -> str:
 def _schedule_result_display(row: pd.Series) -> str:
     if bool(row.get("is_bye")):
         return ""
-    explicit = str(row.get("result") or "").strip().upper()
-    if explicit:
+    explicit_value = row.get("result")
+    explicit = (
+        str(explicit_value).strip().upper()
+        if explicit_value is not None and not pd.isna(explicit_value)
+        else ""
+    )
+    if explicit and explicit != "NAN":
         return explicit
     runs_for = row.get("runs_for")
     runs_against = row.get("runs_against")
