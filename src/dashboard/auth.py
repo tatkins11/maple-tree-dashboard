@@ -14,6 +14,10 @@ from src.dashboard.config import (
 ROLE_ADMIN = "admin"
 ROLE_VIEWER = "viewer"
 ROLE_NONE = ""
+VIEWER_HIDDEN_PAGE_SLUGS = (
+    "Lineup_Optimizer",
+    "Admin_Data",
+)
 
 
 @dataclass(frozen=True)
@@ -88,8 +92,31 @@ def _render_session_controls() -> None:
     role = current_role()
     if not role:
         return
+    _render_role_based_sidebar_visibility(role)
     st.sidebar.caption(f"Access: {role.title()}")
     if st.sidebar.button("Log out", key="auth_logout"):
         st.session_state.pop("auth_role", None)
         st.rerun()
 
+
+def role_based_sidebar_css(role: str) -> str:
+    if role != ROLE_VIEWER:
+        return ""
+
+    selectors: list[str] = []
+    for slug in VIEWER_HIDDEN_PAGE_SLUGS:
+        selectors.append(f'section[data-testid="stSidebar"] li:has(a[href*="{slug}"])')
+        selectors.append(f'section[data-testid="stSidebar"] a[href*="{slug}"]')
+
+    return (
+        "<style>\n"
+        + ",\n".join(selectors)
+        + "\n{display: none !important;}\n"
+        + "</style>"
+    )
+
+
+def _render_role_based_sidebar_visibility(role: str) -> None:
+    css = role_based_sidebar_css(role)
+    if css:
+        st.markdown(css, unsafe_allow_html=True)
