@@ -11,9 +11,10 @@ from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     DEFAULT_DASHBOARD_SEASON,
+    build_schedule_filter_summary,
     fetch_current_league_week,
     fetch_current_schedule_week,
-    fetch_latest_standings_snapshot,
+    fetch_enriched_standings_snapshot,
     fetch_league_divisions,
     fetch_league_schedule_games,
     fetch_league_schedule_seasons,
@@ -23,7 +24,6 @@ from src.dashboard.data import (
     fetch_league_team_upcoming_games,
     fetch_league_team_week_opponents,
     fetch_league_weeks,
-    fetch_next_game,
     fetch_schedule_games,
     fetch_schedule_opponents,
     fetch_schedule_season_summary,
@@ -80,18 +80,10 @@ def _inject_schedule_css() -> None:
             margin-top: -0.1rem;
             margin-bottom: 0.35rem;
         }
-        .schedule-chip-row {
-            display: flex;
-            gap: 0.55rem;
-            flex-wrap: wrap;
-            margin: 0.08rem 0 0.4rem 0;
-        }
-        .schedule-chip {
-            border: 1px solid rgba(49, 51, 63, 0.12);
-            border-radius: 999px;
-            padding: 0.2rem 0.58rem;
-            font-size: 0.82rem;
-            background: white;
+        .schedule-filter-summary {
+            font-size: 0.85rem;
+            color: #4b5563;
+            margin: 0.15rem 0 0.7rem 0;
         }
         .schedule-scout-card {
             border: 1px solid rgba(49, 51, 63, 0.10);
@@ -125,7 +117,7 @@ def _team_schedule_column_config() -> dict[str, st.column_config.Column]:
         "status_display": st.column_config.TextColumn("Status", width="small"),
         "result_display": st.column_config.TextColumn("Result", width="small"),
         "rf_ra_display": st.column_config.TextColumn("Score", width="small"),
-        "notes": st.column_config.TextColumn("Notes", width="large"),
+        "notes": st.column_config.TextColumn("Notes", width="medium"),
     }
 
 
@@ -137,13 +129,12 @@ def _league_schedule_column_config() -> dict[str, st.column_config.Column]:
         "matchup_display": st.column_config.TextColumn("Matchup", width="large"),
         "location_or_field": st.column_config.TextColumn("Field", width="medium"),
         "status_display": st.column_config.TextColumn("Status", width="small"),
-        "team_result": st.column_config.TextColumn("Result", width="small"),
-        "score_display": st.column_config.TextColumn("Score", width="small"),
-        "notes": st.column_config.TextColumn("Notes", width="large"),
+        "result_label": st.column_config.TextColumn("Result", width="large"),
+        "notes": st.column_config.TextColumn("Notes", width="medium"),
     }
 
 
-def _team_schedule_display_table(dataframe: pd.DataFrame) -> pd.DataFrame:
+def _team_schedule_display_table(dataframe: pd.DataFrame, *, include_notes: bool = False) -> pd.DataFrame:
     if dataframe.empty:
         return dataframe
     columns = [
@@ -156,14 +147,23 @@ def _team_schedule_display_table(dataframe: pd.DataFrame) -> pd.DataFrame:
         "status_display",
         "result_display",
         "rf_ra_display",
-        "notes",
     ]
+    if include_notes:
+        columns.append("notes")
     return dataframe[[column for column in columns if column in dataframe.columns]].copy()
 
 
-def _league_schedule_display_table(dataframe: pd.DataFrame, include_result: bool = True) -> pd.DataFrame:
+def _league_schedule_display_table(
+    dataframe: pd.DataFrame,
+    *,
+    result_column: str | None = None,
+    include_notes: bool = False,
+) -> pd.DataFrame:
     if dataframe.empty:
         return dataframe
+    working = dataframe.copy()
+    if result_column and result_column in working.columns:
+        working.loc[:, "result_label"] = working[result_column].fillna("")
     columns = [
         "week_label",
         "date_display",
@@ -172,10 +172,11 @@ def _league_schedule_display_table(dataframe: pd.DataFrame, include_result: bool
         "location_or_field",
         "status_display",
     ]
-    if include_result:
-        columns.extend(["team_result", "score_display"])
-    columns.append("notes")
-    return dataframe[[column for column in columns if column in dataframe.columns]].copy()
+    if result_column and "result_label" in working.columns:
+        columns.append("result_label")
+    if include_notes:
+        columns.append("notes")
+    return working[[column for column in columns if column in working.columns]].copy()
 
 
 def _render_summary_chips(chips: list[str]) -> None:
@@ -199,6 +200,54 @@ def _render_next_game(next_game: dict[str, object] | None) -> None:
           <div class="schedule-next-meta">{next_game.get('date_display', '')} at {next_game.get('time_display', '')}</div>
           <div class="schedule-next-meta">{next_game.get('home_away_display', '')}{' • ' + field if field else ''}</div>
           <div class="schedule-next-meta">{next_game.get('status_display', '')}</div>
+          {f"<div class='schedule-note'>{notes}</div>" if notes else ""}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _clean_display_text(value: object) -> str:
+    if value is None:
+        return ""
+    text = str(value).strip()
+    return "" if not text or text.lower() == "nan" else text
+
+
+def _render_filter_summary(summary_text: str) -> None:
+    st.markdown(f"<div class='schedule-filter-summary'>Showing: {summary_text}</div>", unsafe_allow_html=True)
+
+
+def _render_next_up(upcoming_games: pd.DataFrame) -> None:
+    st.subheader("Next Up")
+    if upcoming_games.empty:
+        st.info("No upcoming scheduled game is currently loaded for the selected filters.")
+        return
+
+    first_game = upcoming_games.iloc[0]
+    grouped_games = upcoming_games.loc[
+        (upcoming_games["week_label"] == first_game["week_label"])
+        & (upcoming_games["date_display"] == first_game["date_display"])
+        & (upcoming_games["opponent_display"] == first_game["opponent_display"])
+        & (upcoming_games["location_or_field"].fillna("") == str(first_game.get("location_or_field") or ""))
+    ].copy()
+    is_doubleheader = len(grouped_games) > 1
+    notes = _clean_display_text(first_game.get("notes"))
+    field = _clean_display_text(first_game.get("location_or_field"))
+    side = _clean_display_text(first_game.get("home_away_display"))
+    opponent = _clean_display_text(first_game.get("opponent_display"))
+    title = f"Doubleheader vs {opponent}" if is_doubleheader else f"vs {opponent}"
+    time_values = [_clean_display_text(value) for value in grouped_games["time_display"].tolist()]
+    time_values = [value for value in time_values if value]
+    time_label = ", ".join(time_values)
+    st.markdown(
+        f"""
+        <div class="schedule-next-card">
+          <div class="schedule-next-label">{_clean_display_text(first_game.get('week_label'))}</div>
+          <div class="schedule-next-opponent">{title}</div>
+          <div class="schedule-next-meta">{_clean_display_text(first_game.get('date_display'))}{f" at {time_label}" if time_label else ""}</div>
+          <div class="schedule-next-meta">{side}{f" &bull; {field}" if field else ""}</div>
+          <div class="schedule-next-meta">{_clean_display_text(first_game.get('status_display'))}</div>
           {f"<div class='schedule-note'>{notes}</div>" if notes else ""}
         </div>
         """,
@@ -255,6 +304,44 @@ def _render_maple_tree_week_callout(
     )
 
 
+def _render_standings(standings: pd.DataFrame, *, selected_team: str) -> None:
+    if standings.empty:
+        return
+
+    st.subheader("Standings")
+    as_of = _clean_display_text(standings.iloc[0].get("snapshot_date"))
+    summary = "Latest local standings snapshot loaded for the selected season."
+    if as_of:
+        summary += f" As of {as_of}."
+    st.markdown(f"<div class='schedule-note'>{summary}</div>", unsafe_allow_html=True)
+
+    standings_display = standings.copy()
+    standings_display.loc[:, "Selected"] = standings_display["team_name"].apply(lambda value: "*" if str(value) == selected_team else "")
+    standings_display = standings_display.rename(
+        columns={
+            "team_name": "Team",
+            "wins": "W",
+            "losses": "L",
+            "win_pct": "Pct",
+            "games_back": "GB",
+            "runs_for": "RF",
+            "runs_against": "RA",
+            "run_diff": "RD",
+        }
+    )[["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]]
+    st.dataframe(
+        standings_display,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Selected": st.column_config.TextColumn("", width="small"),
+            "Pct": st.column_config.NumberColumn("Pct", format="%.3f"),
+            "GB": st.column_config.NumberColumn("GB", format="%.1f"),
+            "RD": st.column_config.NumberColumn("RD", format="%d"),
+        },
+    )
+
+
 def _render_team_schedule(connection, selected_season: str) -> None:
     control_row_one = st.columns([1.1, 1.1, 1, 1], gap="small")
     season_team_options = fetch_schedule_team_names(connection, selected_season)
@@ -272,14 +359,16 @@ def _render_team_schedule(connection, selected_season: str) -> None:
         default_week = current_week if current_week in week_options else "All weeks"
         week_filter = st.selectbox("Week", options=week_options, index=week_options.index(default_week))
 
-    _render_summary_chips(
-        [
-            f"<strong>Season:</strong> {selected_season}",
-            f"<strong>Team:</strong> {team_name}",
-            f"<strong>View:</strong> {view_filter}",
-            f"<strong>Opponent:</strong> {opponent_filter}",
-            f"<strong>Week:</strong> {week_filter}",
-        ]
+    _render_filter_summary(
+        build_schedule_filter_summary(
+            [
+                ("Season", selected_season),
+                ("Team", team_name),
+                ("View", view_filter),
+                ("Opponent", opponent_filter),
+                ("Week", week_filter),
+            ]
+        )
     )
 
     all_games = fetch_schedule_games(
@@ -291,9 +380,17 @@ def _render_team_schedule(connection, selected_season: str) -> None:
         week_label=week_filter,
         as_of=date.today(),
     )
-    next_game = fetch_next_game(connection, season=selected_season, team_name=team_name, as_of=date.today())
     upcoming_games = fetch_upcoming_schedule(connection, season=selected_season, team_name=team_name, limit=8, as_of=date.today())
-    standings = fetch_latest_standings_snapshot(connection, season=selected_season)
+    recent_games = fetch_schedule_games(
+        connection,
+        season=selected_season,
+        team_name=team_name,
+        view_filter="Completed only",
+        opponent=opponent_filter,
+        week_label=week_filter,
+        as_of=date.today(),
+    )
+    standings = fetch_enriched_standings_snapshot(connection, season=selected_season)
     season_summary = fetch_schedule_season_summary(connection, season=selected_season, team_name=team_name, as_of=date.today())
 
     st.subheader("Season Summary")
@@ -304,70 +401,58 @@ def _render_team_schedule(connection, selected_season: str) -> None:
     summary_cols[3].metric("Completed", int(season_summary["games_completed"]))
     summary_cols[4].metric("Remaining", int(season_summary["games_remaining"]))
 
-    _render_next_game(next_game)
+    _render_next_up(upcoming_games)
+    _render_standings(standings, selected_team=team_name)
 
-    if not standings.empty:
-        st.subheader("Standings")
-        st.markdown(
-            "<div class='schedule-note'>Latest local standings snapshot loaded for the selected season.</div>",
-            unsafe_allow_html=True,
-        )
-        standings_display = standings.rename(
-            columns={
-                "team_name": "Team",
-                "wins": "W",
-                "losses": "L",
-                "win_pct": "Pct",
-                "games_back": "GB",
-            }
-        )[["Team", "W", "L", "Pct", "GB"]]
-        st.dataframe(
-            standings_display,
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "Pct": st.column_config.NumberColumn("Pct", format="%.3f"),
-                "GB": st.column_config.NumberColumn("GB", format="%.1f"),
-            },
-        )
-
-    st.subheader("Upcoming Games")
+    st.subheader("Schedule Tables")
     st.markdown(
-        "<div class='schedule-note'>Next few loaded games for the selected team. Byes are shown clearly when present.</div>",
+        "<div class='schedule-note'>Use these views to scan what is next, what already happened, and the fully filtered schedule.</div>",
         unsafe_allow_html=True,
     )
-    upcoming_display = _team_schedule_display_table(upcoming_games)
-    if upcoming_display.empty:
-        st.info("No upcoming games are currently loaded for this team.")
-    else:
-        st.dataframe(
-            upcoming_display,
-            use_container_width=True,
-            hide_index=True,
-            column_config=_team_schedule_column_config(),
-        )
+    upcoming_tab, recent_tab, full_tab = st.tabs(["Upcoming", "Recent Results", "Full Schedule"])
 
-    st.subheader("Full Schedule")
-    st.markdown(
-        "<div class='schedule-note'>Filtered schedule view with room for future results, scores, and recap links.</div>",
-        unsafe_allow_html=True,
-    )
-    display_table = _team_schedule_display_table(all_games)
-    if display_table.empty:
-        st.info("No schedule rows match the current filters.")
-    else:
-        st.dataframe(
-            display_table,
-            use_container_width=True,
-            hide_index=True,
-            column_config=_team_schedule_column_config(),
-        )
+    with upcoming_tab:
+        upcoming_display = _team_schedule_display_table(upcoming_games, include_notes=False)
+        if upcoming_display.empty:
+            st.info("No upcoming games are currently loaded for this team.")
+        else:
+            st.dataframe(
+                upcoming_display,
+                use_container_width=True,
+                hide_index=True,
+                column_config=_team_schedule_column_config(),
+            )
+
+    with recent_tab:
+        recent_display = _team_schedule_display_table(recent_games, include_notes=False)
+        if recent_display.empty:
+            st.info("No completed games match the current filters.")
+        else:
+            st.dataframe(
+                recent_display,
+                use_container_width=True,
+                hide_index=True,
+                column_config=_team_schedule_column_config(),
+            )
+
+    with full_tab:
+        display_table = _team_schedule_display_table(all_games, include_notes=True)
+        if display_table.empty:
+            st.info("No schedule rows match the current filters.")
+        else:
+            st.dataframe(
+                display_table,
+                use_container_width=True,
+                hide_index=True,
+                column_config=_team_schedule_column_config(),
+            )
 
 
 def _render_team_scout_card(summary: dict[str, object], recent_results: pd.DataFrame, upcoming_games: pd.DataFrame, team_name: str) -> None:
     last_results = ", ".join(
-        f"{row['team_result']} {row['score_display']} vs {row['home_team'] if row['away_team'] == team_name else row['away_team']}"
+        str(row["team_result_display"])
         for _, row in recent_results.iterrows()
+        if _clean_display_text(row.get("team_result_display"))
     ) if not recent_results.empty else "No completed league results loaded yet"
     next_games = ", ".join(
         f"{row['date_display']} vs {row['home_team'] if row['away_team'] == team_name else row['away_team']}"
@@ -430,14 +515,16 @@ def _render_league_scouting(connection, selected_season: str) -> None:
             opponent_options.extend(other_teams)
         opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
 
-    _render_summary_chips(
-        [
-            f"<strong>Season:</strong> {selected_season}",
-            f"<strong>Division:</strong> {division_name}",
-            f"<strong>Team:</strong> {team_name}",
-            f"<strong>View:</strong> {view_filter}",
-            f"<strong>Week:</strong> {week_filter}",
-        ]
+    _render_filter_summary(
+        build_schedule_filter_summary(
+            [
+                ("Season", selected_season),
+                ("Division", division_name),
+                ("Scout team", team_name),
+                ("View", view_filter),
+                ("Week", week_filter),
+            ]
+        )
     )
 
     callout_week = week_filter if week_filter != "All weeks" else current_week
@@ -531,19 +618,19 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No league games are currently loaded for the selected filters.")
     else:
         st.dataframe(
-            _league_schedule_display_table(scoreboard, include_result=False),
+            _league_schedule_display_table(scoreboard, result_column="league_result_display", include_notes=False),
             use_container_width=True,
             hide_index=True,
             column_config=_league_schedule_column_config(),
         )
 
-    st.subheader("Team Scout Card")
+    st.subheader("Scout Team Summary")
     if team_name == "All teams" or scout_summary is None:
         st.info("Choose a specific team to view a compact scouting summary.")
     else:
         _render_team_scout_card(scout_summary, recent_results, upcoming_games, team_name)
 
-    st.subheader("Opponent Schedule / Results")
+    st.subheader("Scout Team Schedule / Results")
     note = (
         "Showing the selected team's full loaded schedule/results across all weeks for scouting."
         if team_name != "All teams"
@@ -554,13 +641,17 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No league schedule rows match the current scouting filters.")
     else:
         st.dataframe(
-            _league_schedule_display_table(opponent_schedule),
+            _league_schedule_display_table(
+                opponent_schedule,
+                result_column="team_result_display" if team_name != "All teams" else "league_result_display",
+                include_notes=False,
+            ),
             use_container_width=True,
             hide_index=True,
             column_config=_league_schedule_column_config(),
         )
 
-    st.subheader("League Schedule")
+    st.subheader("Full League Schedule")
     league_schedule = fetch_league_schedule_games(
         connection,
         season=selected_season,
@@ -573,7 +664,7 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No league schedule is currently loaded for the selected filters.")
     else:
         st.dataframe(
-            _league_schedule_display_table(league_schedule, include_result=False),
+            _league_schedule_display_table(league_schedule, result_column="league_result_display", include_notes=True),
             use_container_width=True,
             hide_index=True,
             column_config=_league_schedule_column_config(),

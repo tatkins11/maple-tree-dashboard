@@ -1138,6 +1138,40 @@ def fetch_latest_standings_snapshot(
     return dataframe
 
 
+def fetch_enriched_standings_snapshot(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    league_name: str | None = None,
+    division_name: str | None = None,
+) -> pd.DataFrame:
+    standings = fetch_latest_standings_snapshot(
+        connection,
+        season=season,
+        league_name=league_name,
+        division_name=division_name,
+    )
+    if standings.empty:
+        return standings
+
+    enrichment = fetch_league_standings_enrichment(
+        connection,
+        season=season,
+        division_name=division_name,
+    )
+    if enrichment.empty:
+        standings = standings.copy()
+        standings.loc[:, "runs_for"] = 0
+        standings.loc[:, "runs_against"] = 0
+        standings.loc[:, "run_diff"] = 0
+        return standings
+
+    merged = standings.merge(enrichment, on="team_name", how="left")
+    for column in ("runs_for", "runs_against", "run_diff"):
+        merged.loc[:, column] = merged[column].fillna(0).astype(int)
+    return merged
+
+
 def fetch_league_schedule_seasons(connection: sqlite3.Connection) -> list[str]:
     rows = connection.execute(
         "SELECT DISTINCT season FROM league_schedule_games WHERE COALESCE(season, '') <> ''"
@@ -1319,8 +1353,13 @@ def fetch_league_schedule_games(
     filtered.loc[:, "matchup_display"] = filtered["away_team"].fillna("") + " @ " + filtered["home_team"].fillna("")
     filtered.loc[:, "status_display"] = filtered.apply(_league_status_display, axis=1)
     filtered.loc[:, "score_display"] = filtered.apply(_league_score_display, axis=1)
+    filtered.loc[:, "league_result_display"] = filtered.apply(_league_result_display, axis=1)
     filtered.loc[:, "team_result"] = filtered.apply(
         lambda row: _league_team_result_for_row(row, team_name) if team_name and team_name != "All teams" else "",
+        axis=1,
+    )
+    filtered.loc[:, "team_result_display"] = filtered.apply(
+        lambda row: _league_team_result_display(row, team_name) if team_name and team_name != "All teams" else "",
         axis=1,
     )
     return filtered.sort_values(["game_datetime", "week_label", "league_game_id"]).reset_index(drop=True)
@@ -1375,6 +1414,79 @@ def fetch_week_scoreboard(
     if scoreboard.empty:
         return scoreboard
     return scoreboard
+
+
+def fetch_league_standings_enrichment(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> pd.DataFrame:
+    games = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        view_filter="All",
+        as_of=as_of,
+    )
+    if games.empty:
+        return pd.DataFrame(columns=["team_name", "runs_for", "runs_against", "run_diff"])
+
+    completed = games.loc[games.apply(_league_game_completed_mask, axis=1)].copy()
+    if completed.empty:
+        team_names = fetch_league_team_names(connection, season, division_name)
+        if not team_names:
+            return pd.DataFrame(columns=["team_name", "runs_for", "runs_against", "run_diff"])
+        return pd.DataFrame(
+            {
+                "team_name": team_names,
+                "runs_for": [0] * len(team_names),
+                "runs_against": [0] * len(team_names),
+                "run_diff": [0] * len(team_names),
+            }
+        )
+
+    rows: list[dict[str, int | str]] = []
+    for _, row in completed.iterrows():
+        away_runs = None if pd.isna(row.get("away_runs")) else int(row["away_runs"])
+        home_runs = None if pd.isna(row.get("home_runs")) else int(row["home_runs"])
+        if away_runs is None or home_runs is None:
+            continue
+        rows.append(
+            {
+                "team_name": str(row["away_team"]),
+                "runs_for": away_runs,
+                "runs_against": home_runs,
+            }
+        )
+        rows.append(
+            {
+                "team_name": str(row["home_team"]),
+                "runs_for": home_runs,
+                "runs_against": away_runs,
+            }
+        )
+
+    team_totals = pd.DataFrame(rows)
+    if team_totals.empty:
+        return pd.DataFrame(columns=["team_name", "runs_for", "runs_against", "run_diff"])
+
+    grouped = (
+        team_totals.groupby("team_name", as_index=False)[["runs_for", "runs_against"]]
+        .sum()
+        .sort_values("team_name")
+        .reset_index(drop=True)
+    )
+    grouped.loc[:, "run_diff"] = grouped["runs_for"] - grouped["runs_against"]
+
+    all_team_names = fetch_league_team_names(connection, season, division_name)
+    if all_team_names:
+        all_teams = pd.DataFrame({"team_name": all_team_names})
+        grouped = all_teams.merge(grouped, on="team_name", how="left")
+        for column in ("runs_for", "runs_against", "run_diff"):
+            grouped.loc[:, column] = grouped[column].fillna(0).astype(int)
+    return grouped
 
 
 def fetch_league_team_summary(
@@ -1477,6 +1589,11 @@ def fetch_league_team_upcoming_games(
     return games.head(limit).reset_index(drop=True)
 
 
+def build_schedule_filter_summary(parts: list[tuple[str, str]]) -> str:
+    visible_parts = [f"{label}: {value}" for label, value in parts if str(value).strip()]
+    return " | ".join(visible_parts)
+
+
 def _coerce_schedule_reference_datetime(
     as_of: date | datetime | str | None,
 ) -> datetime:
@@ -1531,6 +1648,22 @@ def _league_score_display(row: pd.Series) -> str:
     return f"{int(row['away_runs'])}-{int(row['home_runs'])}"
 
 
+def _league_result_display(row: pd.Series) -> str:
+    if not _league_game_completed_mask(row):
+        return ""
+    away_runs = None if pd.isna(row.get("away_runs")) else int(row["away_runs"])
+    home_runs = None if pd.isna(row.get("home_runs")) else int(row["home_runs"])
+    if away_runs is None or home_runs is None:
+        return ""
+    away_team = str(row.get("away_team") or "")
+    home_team = str(row.get("home_team") or "")
+    if away_runs > home_runs:
+        return f"{away_team} def. {home_team}, {away_runs}-{home_runs}"
+    if home_runs > away_runs:
+        return f"{home_team} def. {away_team}, {home_runs}-{away_runs}"
+    return f"{away_team} tied {home_team}, {away_runs}-{home_runs}"
+
+
 def _team_runs_for_league_row(row: pd.Series, team_name: str) -> tuple[int | None, int | None]:
     if str(row.get("home_team") or "") == team_name:
         return (
@@ -1554,6 +1687,24 @@ def _league_team_result_for_row(row: pd.Series, team_name: str) -> str:
     if team_runs < opp_runs:
         return "L"
     return "T"
+
+
+def _league_team_result_display(row: pd.Series, team_name: str) -> str:
+    team_runs, opp_runs = _team_runs_for_league_row(row, team_name)
+    if team_runs is None or opp_runs is None:
+        return ""
+
+    opponent_name = ""
+    if str(row.get("home_team") or "") == team_name:
+        opponent_name = str(row.get("away_team") or "")
+    elif str(row.get("away_team") or "") == team_name:
+        opponent_name = str(row.get("home_team") or "")
+
+    result = _league_team_result_for_row(row, team_name)
+    score = f"{team_runs}-{opp_runs}"
+    if result == "T":
+        return f"T {score} vs {opponent_name}"
+    return f"{result} {score} vs {opponent_name}"
 
 
 def _schedule_completed_mask(row: pd.Series) -> bool:

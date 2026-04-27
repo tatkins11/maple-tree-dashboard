@@ -4,9 +4,12 @@ from datetime import date
 from pathlib import Path
 
 from src.dashboard.data import (
+    build_schedule_filter_summary,
     fetch_current_league_week,
     fetch_current_schedule_week,
+    fetch_enriched_standings_snapshot,
     fetch_league_schedule_games,
+    fetch_league_standings_enrichment,
     fetch_league_team_recent_results,
     fetch_league_team_summary,
     fetch_league_team_upcoming_games,
@@ -139,6 +142,17 @@ def test_next_game_skips_bye_rows(tmp_path: Path) -> None:
         assert next_game["opponent_display"] == "Wasted Talent"
     finally:
         connection.close()
+
+
+def test_schedule_filter_summary_and_nan_cleanup_inputs_are_supported() -> None:
+    summary = build_schedule_filter_summary(
+        [
+            ("Season", "Spring 2026"),
+            ("Team", "Maple Tree"),
+            ("Opponent", "All opponents"),
+        ]
+    )
+    assert summary == "Season: Spring 2026 | Team: Maple Tree | Opponent: All opponents"
 
 
 def test_current_week_helpers_default_to_next_relevant_week(tmp_path: Path) -> None:
@@ -278,6 +292,7 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
         )
         assert list(scoreboard["league_game_id"]) == ["lg1", "lg2"]
         assert scoreboard.iloc[0]["score_display"] == "18-22"
+        assert scoreboard.iloc[0]["league_result_display"] == "Maple Tree def. Soft Ballz, 22-18"
         assert scoreboard.iloc[0]["status_display"] == "Final"
 
         summary = fetch_league_team_summary(
@@ -302,6 +317,7 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
             as_of=date(2026, 4, 23),
         )
         assert list(recent["league_game_id"]) == ["lg1"]
+        assert recent.iloc[0]["team_result_display"] == "W 22-18 vs Soft Ballz"
 
         upcoming = fetch_league_team_upcoming_games(
             connection,
@@ -323,6 +339,7 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
             as_of=date(2026, 4, 23),
         )
         assert set(filtered["league_game_id"]) == {"lg3", "lg4"}
+        assert set(filtered["team_result_display"]) == {""}
 
         maple_tree_week_two = fetch_league_team_week_opponents(
             connection,
@@ -333,5 +350,55 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
             as_of=date(2026, 4, 23),
         )
         assert maple_tree_week_two == ["Bullseyes"]
+    finally:
+        connection.close()
+
+
+def test_enriched_standings_include_runs_for_against_and_diff(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "schedule.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(connection, _build_schedule_csv(tmp_path), _build_standings_csv(tmp_path), _build_league_schedule_csv(tmp_path))
+
+        enrichment = fetch_league_standings_enrichment(
+            connection,
+            season="Spring 2026",
+            division_name="Blue Division",
+            as_of=date(2026, 4, 23),
+        )
+        maple_tree = enrichment.loc[enrichment["team_name"] == "Maple Tree"].iloc[0]
+        assert maple_tree["runs_for"] == 22
+        assert maple_tree["runs_against"] == 18
+        assert maple_tree["run_diff"] == 4
+
+        standings = fetch_enriched_standings_snapshot(
+            connection,
+            season="Spring 2026",
+            division_name="Blue Division",
+        )
+        assert list(standings["team_name"]) == ["Maple Tree", "Soft Ballz"]
+        soft_ballz = standings.loc[standings["team_name"] == "Soft Ballz"].iloc[0]
+        assert soft_ballz["runs_for"] == 18
+        assert soft_ballz["runs_against"] == 22
+        assert soft_ballz["run_diff"] == -4
+    finally:
+        connection.close()
+
+
+def test_enriched_standings_default_to_zero_when_no_completed_games_exist(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "schedule.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(connection, _build_schedule_csv(tmp_path), _build_standings_csv(tmp_path), None)
+
+        standings = fetch_enriched_standings_snapshot(
+            connection,
+            season="Spring 2026",
+            division_name="Blue Division",
+        )
+        maple_tree = standings.loc[standings["team_name"] == "Maple Tree"].iloc[0]
+        assert maple_tree["runs_for"] == 0
+        assert maple_tree["runs_against"] == 0
+        assert maple_tree["run_diff"] == 0
     finally:
         connection.close()
