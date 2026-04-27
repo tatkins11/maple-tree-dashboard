@@ -56,15 +56,17 @@ def is_admin() -> bool:
     return current_role() == ROLE_ADMIN
 
 
-def ensure_authenticated() -> str:
+def ensure_authenticated(*, render_session_controls: bool = True) -> str:
     config = get_auth_config()
     if current_role():
-        _render_session_controls()
+        if render_session_controls:
+            _render_session_controls()
         return current_role()
 
     if not config.requires_password:
         st.session_state["auth_role"] = ROLE_ADMIN
-        _render_session_controls()
+        if render_session_controls:
+            _render_session_controls()
         return ROLE_ADMIN
 
     st.title("Maple Tree Dashboard")
