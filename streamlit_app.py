@@ -29,7 +29,7 @@ from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 st.set_page_config(
     page_title="Maple Tree Home",
-    page_icon=":house:",
+    page_icon="🏠",
     layout="wide",
 )
 
@@ -41,7 +41,7 @@ def get_db_connection(db_path: str, cache_key: str):
 
 def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
     viewer_pages = [
-        {"page": render_home_page, "title": "Home", "icon": ":house:", "default": True},
+        {"page": render_home_page, "title": "Home", "icon": "🏠", "default": True},
         {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats"},
         {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats"},
         {"page": "pages/5_Records.py", "title": "Records"},
