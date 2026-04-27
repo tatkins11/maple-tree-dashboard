@@ -359,6 +359,77 @@ def fetch_career_stats(
     return filtered
 
 
+def fetch_career_summary(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> dict[str, float | int]:
+    career = fetch_career_stats(connection, seasons=seasons, min_pa=min_pa)
+    selected_season_count = len(seasons) if seasons else len(fetch_seasons(connection))
+    if career.empty:
+        return {
+            "players": 0,
+            "seasons": selected_season_count,
+            "pa": 0,
+            "runs": 0,
+            "home_runs": 0,
+            "avg": 0.0,
+            "obp": 0.0,
+            "slg": 0.0,
+            "ops": 0.0,
+        }
+
+    hits = float(career["hits"].sum())
+    at_bats = float(career["ab"].sum())
+    walks = float(career["bb"].sum())
+    sacrifice_flies = float(career["sf"].sum()) if "sf" in career.columns else 0.0
+    total_bases = float(career["tb"].sum())
+
+    avg = _safe_divide(hits, at_bats)
+    obp = _safe_divide(hits + walks, at_bats + walks + sacrifice_flies)
+    slg = _safe_divide(total_bases, at_bats)
+
+    return {
+        "players": int(len(career)),
+        "seasons": selected_season_count,
+        "pa": int(career["pa"].sum()),
+        "runs": int(career["r"].sum()),
+        "home_runs": int(career["hr"].sum()),
+        "avg": avg,
+        "obp": obp,
+        "slg": slg,
+        "ops": obp + slg,
+    }
+
+
+def fetch_career_leader_snapshot(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> dict[str, str]:
+    career = fetch_career_stats(connection, seasons=seasons, min_pa=min_pa)
+    if career.empty:
+        return {
+            "ops_leader": "",
+            "hr_leader": "",
+            "rbi_leader": "",
+            "avg_leader": "",
+            "most_seasons": "",
+        }
+
+    ordered = career.copy()
+    most_seasons_df = ordered.sort_values(["seasons_played", "pa", "ops", "player"], ascending=[False, False, False, True]).reset_index(drop=True)
+    most_seasons_row = most_seasons_df.iloc[0]
+
+    return {
+        "ops_leader": _format_leader_label(ordered, sort_columns=["ops", "obp", "slg"], value_column="ops", label="OPS", value_format=".3f"),
+        "hr_leader": _format_leader_label(ordered, sort_columns=["hr", "rbi", "ops"], value_column="hr", label="HR", value_format=".0f"),
+        "rbi_leader": _format_leader_label(ordered, sort_columns=["rbi", "hr", "ops"], value_column="rbi", label="RBI", value_format=".0f"),
+        "avg_leader": _format_leader_label(ordered, sort_columns=["avg", "ops", "obp"], value_column="avg", label="AVG", value_format=".3f"),
+        "most_seasons": f"{most_seasons_row['player']} (Seasons {int(most_seasons_row['seasons_played'])})",
+    }
+
+
 def fetch_all_time_leaders(
     connection: sqlite3.Connection,
     seasons: list[str] | None = None,

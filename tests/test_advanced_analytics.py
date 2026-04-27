@@ -6,6 +6,9 @@ from src.dashboard.data import (
     fetch_advanced_analytics_archetype_summary,
     fetch_advanced_analytics_view,
     fetch_advanced_archetype_order,
+    fetch_career_leader_snapshot,
+    fetch_career_stats,
+    fetch_career_summary,
     fetch_current_season_leader_snapshot,
     fetch_current_season_stats,
     fetch_advanced_methodology_summary,
@@ -538,3 +541,190 @@ def test_current_season_stats_helpers_support_team_facing_page(tmp_path: Path) -
     assert set(["player", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]).issubset(
         advanced.columns
     )
+
+
+def test_career_stats_helpers_support_team_facing_page(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "career_stats.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Jj", "jj")
+        _insert_player(connection, 3, "Glove", "glove")
+
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=2,
+            pa=8,
+            ab=5,
+            hits=4,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=3,
+            walks=2,
+            strikeouts=0,
+            runs=5,
+            rbi=6,
+            tb=13,
+            raw_source_file="tristan-2026.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=1,
+            games=4,
+            pa=15,
+            ab=12,
+            hits=7,
+            singles=3,
+            doubles=2,
+            triples=0,
+            hr=2,
+            walks=3,
+            strikeouts=1,
+            runs=6,
+            rbi=7,
+            tb=15,
+            raw_source_file="tristan-2025.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=2,
+            games=2,
+            pa=8,
+            ab=6,
+            hits=4,
+            singles=2,
+            doubles=0,
+            triples=1,
+            hr=1,
+            walks=2,
+            strikeouts=0,
+            runs=3,
+            rbi=3,
+            tb=9,
+            raw_source_file="jj-2026.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=2,
+            games=3,
+            pa=8,
+            ab=7,
+            hits=3,
+            singles=2,
+            doubles=1,
+            triples=0,
+            hr=0,
+            walks=1,
+            strikeouts=1,
+            runs=2,
+            rbi=2,
+            tb=4,
+            raw_source_file="jj-2025.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=3,
+            games=2,
+            pa=5,
+            ab=5,
+            hits=1,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=0,
+            walks=0,
+            strikeouts=1,
+            runs=1,
+            rbi=0,
+            tb=1,
+            raw_source_file="glove-2026.csv",
+        )
+        connection.commit()
+
+        seasons = ["Maple Tree Spring 2026", "Maple Tree Fall 2025"]
+        summary = fetch_career_summary(connection, seasons=seasons, min_pa=8)
+        leaders = fetch_career_leader_snapshot(connection, seasons=seasons, min_pa=8)
+        stats = fetch_career_stats(connection, seasons=seasons, min_pa=8)
+        advanced, _ = fetch_advanced_analytics_view(
+            connection,
+            view_mode="Career",
+            selected_seasons=seasons,
+            min_pa=8,
+            active_only=False,
+        )
+    finally:
+        connection.close()
+
+    assert "canonical_name" in stats.columns
+    assert list(stats["player"]) == ["Tristan", "Jj"]
+    assert summary["players"] == 2
+    assert summary["seasons"] == 2
+    assert summary["pa"] == 39
+    assert summary["runs"] == 16
+    assert summary["home_runs"] == 6
+    assert round(summary["avg"], 3) == 0.600
+    assert round(summary["obp"], 3) == 0.684
+    assert round(summary["slg"], 3) == 1.367
+    assert round(summary["ops"], 3) == 2.051
+    assert leaders["ops_leader"] == "Tristan (OPS 2.374)"
+    assert leaders["hr_leader"] == "Tristan (HR 5)"
+    assert leaders["rbi_leader"] == "Tristan (RBI 13)"
+    assert leaders["avg_leader"] == "Tristan (AVG 0.647)"
+    assert leaders["most_seasons"] == "Tristan (Seasons 2)"
+    assert set(["player", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]).issubset(
+        advanced.columns
+    )
+
+
+def test_career_helpers_handle_empty_filtered_views(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "career_empty.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=2,
+            pa=8,
+            ab=5,
+            hits=4,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=3,
+            walks=2,
+            strikeouts=0,
+            runs=5,
+            rbi=6,
+            tb=13,
+            raw_source_file="tristan.csv",
+        )
+        connection.commit()
+
+        summary = fetch_career_summary(connection, seasons=["Maple Tree Spring 2026"], min_pa=50)
+        leaders = fetch_career_leader_snapshot(connection, seasons=["Maple Tree Spring 2026"], min_pa=50)
+    finally:
+        connection.close()
+
+    assert summary["players"] == 0
+    assert summary["seasons"] == 1
+    assert summary["pa"] == 0
+    assert summary["ops"] == 0.0
+    assert leaders["ops_leader"] == ""
+    assert leaders["most_seasons"] == ""
+
+
+def test_all_time_page_standard_columns_hide_canonical_name() -> None:
+    page_path = Path("C:/Slowpitch/slowpitch_optimizer/pages/2_All_Time_Career_Stats.py")
+    contents = page_path.read_text()
+
+    assert "STANDARD_CAREER_COLUMNS" in contents
+    assert '"canonical_name"' not in contents
