@@ -13,6 +13,7 @@ from src.dashboard.data import (
     DEFAULT_DASHBOARD_SEASON,
     build_schedule_filter_summary,
     fetch_current_league_week,
+    fetch_previous_completed_league_week,
     fetch_current_schedule_week,
     fetch_enriched_standings_snapshot,
     fetch_league_divisions,
@@ -349,15 +350,13 @@ def _render_team_schedule(connection, selected_season: str) -> None:
     with control_row_one[0]:
         team_name = st.selectbox("Team", options=season_team_options, index=season_team_options.index(default_team))
     with control_row_one[1]:
-        view_filter = st.selectbox("Games view", options=["Upcoming only", "Completed only", "All"], index=0)
+        view_filter = st.selectbox("Games view", options=["Upcoming only", "Completed only", "All"], index=2)
     with control_row_one[2]:
         opponent_options = ["All opponents", *fetch_schedule_opponents(connection, selected_season, team_name)]
         opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
     with control_row_one[3]:
         week_options = ["All weeks", *fetch_schedule_weeks(connection, selected_season, team_name)]
-        current_week = fetch_current_schedule_week(connection, selected_season, team_name, as_of=date.today())
-        default_week = current_week if current_week in week_options else "All weeks"
-        week_filter = st.selectbox("Week", options=week_options, index=week_options.index(default_week))
+        week_filter = st.selectbox("Week", options=week_options, index=0)
 
     _render_filter_summary(
         build_schedule_filter_summary(
@@ -564,7 +563,12 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         connection,
         season=selected_season,
         division_name=normalized_division,
-        week_label=None if week_filter == "All weeks" else week_filter,
+        week_label=fetch_previous_completed_league_week(
+            connection,
+            selected_season,
+            normalized_division,
+            as_of=date.today(),
+        ),
         as_of=date.today(),
     )
 
@@ -611,11 +615,11 @@ def _render_league_scouting(connection, selected_season: str) -> None:
 
     st.subheader("Week Scoreboard")
     st.markdown(
-        "<div class='schedule-note'>Completed games show final scores. Scheduled games keep time and field for weekly scouting.</div>",
+        "<div class='schedule-note'>Most recent completed league week results. Use Full League Schedule below for upcoming games and broader schedule context.</div>",
         unsafe_allow_html=True,
     )
     if scoreboard.empty:
-        st.info("No league games are currently loaded for the selected filters.")
+        st.info("No completed league week results are currently loaded.")
     else:
         st.dataframe(
             _league_schedule_display_table(scoreboard, result_column="league_result_display", include_notes=False),

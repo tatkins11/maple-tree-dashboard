@@ -8,6 +8,7 @@ from src.dashboard.data import (
     fetch_current_league_week,
     fetch_current_schedule_week,
     fetch_enriched_standings_snapshot,
+    fetch_previous_completed_league_week,
     fetch_league_schedule_games,
     fetch_league_standings_enrichment,
     fetch_league_team_recent_results,
@@ -290,7 +291,7 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
             week_label="Week 1",
             as_of=date(2026, 4, 23),
         )
-        assert list(scoreboard["league_game_id"]) == ["lg1", "lg2"]
+        assert list(scoreboard["league_game_id"]) == ["lg1"]
         assert scoreboard.iloc[0]["score_display"] == "18-22"
         assert scoreboard.iloc[0]["league_result_display"] == "Maple Tree def. Soft Ballz, 22-18"
         assert scoreboard.iloc[0]["status_display"] == "Final"
@@ -350,6 +351,23 @@ def test_league_scouting_helpers_return_scoreboard_summary_and_team_views(tmp_pa
             as_of=date(2026, 4, 23),
         )
         assert maple_tree_week_two == ["Bullseyes"]
+    finally:
+        connection.close()
+
+
+def test_previous_completed_league_week_returns_latest_finished_week(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "schedule.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(connection, _build_schedule_csv(tmp_path), None, _build_league_schedule_csv(tmp_path))
+
+        previous_week = fetch_previous_completed_league_week(
+            connection,
+            season="Spring 2026",
+            division_name="Blue Division",
+            as_of=date(2026, 4, 23),
+        )
+        assert previous_week == "Week 1"
     finally:
         connection.close()
 

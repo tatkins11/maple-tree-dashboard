@@ -1265,6 +1265,30 @@ def fetch_current_league_week(
     return weeks[0] if weeks else None
 
 
+def fetch_previous_completed_league_week(
+    connection: sqlite3.Connection,
+    season: str,
+    division_name: str | None = None,
+    as_of: date | datetime | str | None = None,
+) -> str | None:
+    completed = fetch_league_schedule_games(
+        connection,
+        season=season,
+        division_name=division_name,
+        view_filter="Completed only",
+        as_of=as_of,
+    )
+    if completed.empty or "week_label" not in completed.columns:
+        return None
+
+    completed = completed.loc[completed["week_label"].fillna("") != ""].copy()
+    if completed.empty:
+        return None
+
+    completed = completed.sort_values(["game_datetime", "league_game_id"], ascending=[False, False]).reset_index(drop=True)
+    return str(completed.iloc[0]["week_label"])
+
+
 def fetch_league_schedule_games(
     connection: sqlite3.Connection,
     *,
@@ -1408,12 +1432,13 @@ def fetch_week_scoreboard(
         season=season,
         division_name=division_name,
         week_label=week_label,
-        view_filter="All",
+        view_filter="Completed only",
         as_of=as_of,
     )
     if scoreboard.empty:
         return scoreboard
-    return scoreboard
+    scoreboard = scoreboard.loc[scoreboard.apply(_league_game_completed_mask, axis=1)].copy()
+    return scoreboard.reset_index(drop=True)
 
 
 def fetch_league_standings_enrichment(
