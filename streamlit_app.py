@@ -23,7 +23,12 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context, render_mobile_install_help
+from src.dashboard.ui import (
+    database_path_control,
+    get_responsive_layout_context,
+    render_mobile_install_help,
+    render_mobile_standings_cards,
+)
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 
@@ -255,26 +260,24 @@ def _render_home_standings(standings, *, is_mobile_layout: bool) -> None:
         "selected_team",
         display["team_name"].map(lambda value: "•" if str(value) == DEFAULT_SCHEDULE_TEAM_NAME else ""),
     )
+    if is_mobile_layout:
+        render_mobile_standings_cards(
+            display,
+            selected_team=DEFAULT_SCHEDULE_TEAM_NAME,
+            css_class_prefix="home-standings",
+        )
+        return
     display_columns = [
         "selected_team",
         "team_name",
         "wins",
         "losses",
+        "win_pct",
         "games_back",
+        "runs_for",
+        "runs_against",
         "run_diff",
     ]
-    if not is_mobile_layout:
-        display_columns = [
-            "selected_team",
-            "team_name",
-            "wins",
-            "losses",
-            "win_pct",
-            "games_back",
-            "runs_for",
-            "runs_against",
-            "run_diff",
-        ]
     st.dataframe(
         display[[column for column in display_columns if column in display.columns]],
         use_container_width=True,

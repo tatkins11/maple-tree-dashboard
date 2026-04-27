@@ -36,7 +36,11 @@ from src.dashboard.data import (
     get_connection,
     sort_seasons,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context
+from src.dashboard.ui import (
+    database_path_control,
+    get_responsive_layout_context,
+    render_mobile_standings_cards,
+)
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 
@@ -356,6 +360,13 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_
 
     standings_display = standings.copy()
     standings_display.loc[:, "Selected"] = standings_display["team_name"].apply(lambda value: "*" if str(value) == selected_team else "")
+    if is_mobile_layout:
+        render_mobile_standings_cards(
+            standings_display,
+            selected_team=selected_team,
+            css_class_prefix="schedule-standings",
+        )
+        return
     standings_display = standings_display.rename(
         columns={
             "team_name": "Team",
@@ -368,7 +379,7 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_
             "run_diff": "RD",
         }
     )
-    display_columns = ["Selected", "Team", "W", "L", "GB", "RD"] if is_mobile_layout else ["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]
+    display_columns = ["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]
     st.dataframe(
         standings_display[[column for column in display_columns if column in standings_display.columns]],
         use_container_width=True,
@@ -376,10 +387,6 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_
         column_config={
             "Selected": st.column_config.TextColumn("", width="small"),
             "Pct": st.column_config.NumberColumn("Pct", format="%.3f"),
-            "GB": st.column_config.NumberColumn("GB", format="%.1f"),
-            "RD": st.column_config.NumberColumn("RD", format="%d"),
-        } if not is_mobile_layout else {
-            "Selected": st.column_config.TextColumn("", width="small"),
             "GB": st.column_config.NumberColumn("GB", format="%.1f"),
             "RD": st.column_config.NumberColumn("RD", format="%d"),
         },

@@ -155,9 +155,10 @@ def _render_mobile_standard_cards(dataframe) -> None:
             f"""
             <div class="current-stats-card">
               <div class="current-stats-card-title">{row['player']}</div>
-              <div class="current-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>H:</strong> {int(row['hits'])} &nbsp; <strong>HR:</strong> {int(row['hr'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])}</div>
-              <div class="current-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f}</div>
-              <div class="current-stats-card-row"><strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
+              <div class="current-stats-card-row"><strong>G:</strong> {int(row['games'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])}</div>
+              <div class="current-stats-card-row"><strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
+              <div class="current-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+              <div class="current-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -171,7 +172,7 @@ def _render_mobile_advanced_cards(dataframe) -> None:
             <div class="current-stats-card">
               <div class="current-stats-card-title">{row['player']}</div>
               <div class="current-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
-              <div class="current-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
+              <div class="current-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f} &nbsp; <strong>Team OPS+:</strong> {row['team_relative_ops']:.0f}</div>
               <div class="current-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
               <div class="current-stats-card-row"><strong>Archetype:</strong> {row['archetype']}</div>
             </div>
@@ -226,7 +227,7 @@ else:
             "<div class='current-stats-note'>Core season batting line with the highest-signal counting and rate stats.</div>",
             unsafe_allow_html=True,
         )
-        standard_columns = ["player", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "avg", "obp", "slg", "ops"]
+        standard_columns = ["player", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "avg", "obp", "slg", "ops"]
         standard_display = standard_stats[[column for column in standard_columns if column in standard_stats.columns]]
         if layout.is_mobile_layout:
             _render_mobile_standard_cards(standard_display)
