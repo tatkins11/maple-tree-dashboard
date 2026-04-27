@@ -6,7 +6,10 @@ from src.dashboard.data import (
     fetch_advanced_analytics_archetype_summary,
     fetch_advanced_analytics_view,
     fetch_advanced_archetype_order,
+    fetch_current_season_leader_snapshot,
+    fetch_current_season_stats,
     fetch_advanced_methodology_summary,
+    fetch_team_summary,
 )
 from src.models.advanced_analytics import calculate_advanced_analytics
 from src.utils.db import connect_db, initialize_database
@@ -441,3 +444,97 @@ def test_fetch_advanced_analytics_view_respects_canonical_identity(tmp_path: Pat
     assert row["pa"] == 125
     assert row["hr"] == 18
     assert metadata.baseline_player_count == 1
+
+
+def test_current_season_stats_helpers_support_team_facing_page(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "current_stats.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Jj", "jj")
+        _insert_player(connection, 3, "Glove", "glove")
+
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=2,
+            pa=8,
+            ab=5,
+            hits=4,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=3,
+            walks=2,
+            strikeouts=0,
+            runs=5,
+            rbi=6,
+            tb=13,
+            raw_source_file="tristan.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=2,
+            games=2,
+            pa=8,
+            ab=6,
+            hits=4,
+            singles=2,
+            doubles=0,
+            triples=1,
+            hr=1,
+            walks=2,
+            strikeouts=0,
+            runs=3,
+            rbi=3,
+            tb=9,
+            raw_source_file="jj.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=3,
+            games=2,
+            pa=8,
+            ab=8,
+            hits=5,
+            singles=4,
+            doubles=0,
+            triples=0,
+            hr=1,
+            walks=0,
+            strikeouts=0,
+            runs=5,
+            rbi=5,
+            tb=8,
+            raw_source_file="glove.csv",
+        )
+        connection.commit()
+
+        stats = fetch_current_season_stats(connection, "Maple Tree Spring 2026")
+        summary = fetch_team_summary(connection, "Maple Tree Spring 2026")
+        leaders = fetch_current_season_leader_snapshot(connection, "Maple Tree Spring 2026")
+        advanced, _ = fetch_advanced_analytics_view(
+            connection,
+            view_mode="Season",
+            selected_season="Maple Tree Spring 2026",
+            min_pa=0,
+            active_only=False,
+        )
+    finally:
+        connection.close()
+
+    assert "canonical_name" in stats.columns
+    assert list(stats["player"]) == ["Tristan", "Jj", "Glove"]
+    assert summary["runs"] == 13
+    assert summary["home_runs"] == 5
+    assert round(summary["ops"], 3) == 2.318
+    assert leaders["ops_leader"] == "Tristan (OPS 3.457)"
+    assert leaders["hr_leader"] == "Tristan (HR 3)"
+    assert leaders["rbi_leader"] == "Tristan (RBI 6)"
+    assert leaders["avg_leader"] == "Tristan (AVG 0.800)"
+    assert set(["player", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]).issubset(
+        advanced.columns
+    )

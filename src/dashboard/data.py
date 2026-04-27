@@ -277,6 +277,28 @@ def fetch_top_hitters(
     return filtered.head(limit)[["player", "pa", "hr", "r", "rbi", "avg", "obp", "slg", "ops"]]
 
 
+def fetch_current_season_leader_snapshot(
+    connection: sqlite3.Connection,
+    season: str,
+) -> dict[str, str]:
+    dataframe = fetch_current_season_stats(connection, season)
+    if dataframe.empty:
+        return {
+            "ops_leader": "",
+            "hr_leader": "",
+            "rbi_leader": "",
+            "avg_leader": "",
+        }
+
+    ordered = dataframe.copy()
+    return {
+        "ops_leader": _format_leader_label(ordered, sort_columns=["ops", "obp", "slg"], value_column="ops", label="OPS", value_format=".3f"),
+        "hr_leader": _format_leader_label(ordered, sort_columns=["hr", "rbi", "ops"], value_column="hr", label="HR", value_format=".0f"),
+        "rbi_leader": _format_leader_label(ordered, sort_columns=["rbi", "hr", "ops"], value_column="rbi", label="RBI", value_format=".0f"),
+        "avg_leader": _format_leader_label(ordered, sort_columns=["avg", "ops", "obp"], value_column="avg", label="AVG", value_format=".3f"),
+    }
+
+
 def fetch_career_stats(
     connection: sqlite3.Connection,
     seasons: list[str] | None = None,
@@ -1775,6 +1797,24 @@ def _schedule_result_display(row: pd.Series) -> str:
     if int(runs_for) < int(runs_against):
         return "L"
     return "T"
+
+
+def _format_leader_label(
+    dataframe: pd.DataFrame,
+    *,
+    sort_columns: list[str],
+    value_column: str,
+    label: str,
+    value_format: str,
+) -> str:
+    if dataframe.empty:
+        return ""
+    sorted_df = dataframe.sort_values(sort_columns + ["player"], ascending=[False] * len(sort_columns) + [True]).reset_index(drop=True)
+    row = sorted_df.iloc[0]
+    value = row.get(value_column)
+    if value is None or pd.isna(value):
+        return str(row["player"])
+    return f"{row['player']} ({label} {format(float(value), value_format)})"
 
 
 def _fetch_advanced_season_source(connection: sqlite3.Connection, season: str) -> pd.DataFrame:
