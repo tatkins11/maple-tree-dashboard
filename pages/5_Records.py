@@ -17,7 +17,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, get_responsive_layout_context
 
 
 st.set_page_config(page_title="Records", page_icon="🥎", layout="wide")
@@ -161,30 +161,33 @@ def _render_context_bar(
     )
 
 
-def _render_headliners(headliners: dict[str, dict[str, object]]) -> None:
+def _render_headliners(headliners: dict[str, dict[str, object]], *, is_mobile_layout: bool) -> None:
     st.markdown("### Record Holders")
-    columns = st.columns(4, gap="small")
-    for column, (label, payload) in zip(columns, headliners.items()):
-        badge = (
-            '<span class="records-active-badge">Active</span>'
-            if payload.get("is_active")
-            else ""
-        )
-        value_label = escape(str(payload.get("value_label", "")))
-        value = escape(str(payload.get("formatted_value", "")))
-        player = escape(str(payload.get("player", "")))
-        context = escape(str(payload.get("context", "")))
-        column.markdown(
-            f"""
-            <div class="records-card">
-              <div class="records-card-label">{escape(label)}</div>
-              <div class="records-card-number">{value} {value_label}</div>
-              <div class="records-card-player">{player}{badge}</div>
-              <div class="records-card-context">{context}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
+    per_row = 2 if is_mobile_layout else 4
+    items = list(headliners.items())
+    for start in range(0, len(items), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, payload) in zip(columns, items[start:start + per_row]):
+            badge = (
+                '<span class="records-active-badge">Active</span>'
+                if payload.get("is_active")
+                else ""
+            )
+            value_label = escape(str(payload.get("value_label", "")))
+            value = escape(str(payload.get("formatted_value", "")))
+            player = escape(str(payload.get("player", "")))
+            context = escape(str(payload.get("context", "")))
+            column.markdown(
+                f"""
+                <div class="records-card">
+                  <div class="records-card-label">{escape(label)}</div>
+                  <div class="records-card-number">{value} {value_label}</div>
+                  <div class="records-card-player">{player}{badge}</div>
+                  <div class="records-card-context">{context}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 def _base_column_config() -> dict[str, st.column_config.Column]:
@@ -243,7 +246,9 @@ def _column_config_for_board(scope: str, stat_view: str, label: str) -> dict[str
     return config
 
 
-def _grid_size(scope: str, stat_view: str) -> int:
+def _grid_size(scope: str, stat_view: str, *, is_mobile_layout: bool) -> int:
+    if is_mobile_layout:
+        return 1
     if scope == "Single-Season Records":
         return 2
     if stat_view == "Rate Stats":
@@ -251,7 +256,7 @@ def _grid_size(scope: str, stat_view: str) -> int:
     return 3
 
 
-def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view: str, rate_min_pa: int) -> None:
+def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view: str, rate_min_pa: int, *, is_mobile_layout: bool) -> None:
     if not leaderboards:
         st.info("No record rows match the current filters.")
         return
@@ -275,7 +280,7 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
         )
 
     column_config = _base_column_config()
-    per_row = _grid_size(scope, stat_view)
+    per_row = _grid_size(scope, stat_view, is_mobile_layout=is_mobile_layout)
     for start in range(0, len(labels), per_row):
         columns = st.columns(per_row, gap="small")
         for column, label in zip(columns, labels[start:start + per_row]):
@@ -293,6 +298,7 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
 
 _inject_records_css()
 ensure_authenticated()
+layout = get_responsive_layout_context(key="records")
 
 st.title("Records")
 st.caption("Team hitter records across career totals and single seasons.")
@@ -304,19 +310,29 @@ seasons = with_dashboard_default_season(fetch_seasons(connection))
 st.markdown('<div class="records-controls">', unsafe_allow_html=True)
 selected_seasons = st.multiselect("Season filter", options=seasons, default=seasons)
 
-control_columns = st.columns([1.2, 1, 1.3, 0.9], gap="small")
-with control_columns[0]:
+if layout.is_mobile_layout:
     rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
-with control_columns[1]:
     top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=1)
-with control_columns[2]:
     scope = st.segmented_control(
         "Record scope",
         options=["Career Records", "Single-Season Records"],
         default="Career Records",
     )
-with control_columns[3]:
     active_only = st.toggle("Show active roster only", value=False)
+else:
+    control_columns = st.columns([1.2, 1, 1.3, 0.9], gap="small")
+    with control_columns[0]:
+        rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
+    with control_columns[1]:
+        top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=1)
+    with control_columns[2]:
+        scope = st.segmented_control(
+            "Record scope",
+            options=["Career Records", "Single-Season Records"],
+            default="Career Records",
+        )
+    with control_columns[3]:
+        active_only = st.toggle("Show active roster only", value=False)
 
 st.markdown('</div>', unsafe_allow_html=True)
 
@@ -332,7 +348,7 @@ headliners = fetch_record_headliners(
     min_pa=rate_min_pa,
     active_only=active_only,
 )
-_render_headliners(headliners)
+_render_headliners(headliners, is_mobile_layout=layout.is_mobile_layout)
 
 leaderboards = fetch_record_leaderboards(
     connection,
@@ -342,4 +358,4 @@ leaderboards = fetch_record_leaderboards(
     limit=top_n,
     active_only=active_only,
 )
-_render_leaderboards(leaderboards, scope, stat_view, rate_min_pa)
+_render_leaderboards(leaderboards, scope, stat_view, rate_min_pa, is_mobile_layout=layout.is_mobile_layout)

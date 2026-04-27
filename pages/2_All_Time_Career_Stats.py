@@ -17,7 +17,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, get_responsive_layout_context
 
 
 st.set_page_config(page_title="All-Time / Career Stats", page_icon=":bar_chart:", layout="wide")
@@ -86,6 +86,23 @@ def _inject_career_stats_css() -> None:
             color: #6b7280;
             margin-top: -0.1rem;
             margin-bottom: 0.45rem;
+        }
+        .career-stats-card {
+            border: 1px solid rgba(49, 51, 63, 0.10);
+            border-radius: 0.9rem;
+            padding: 0.8rem 0.9rem;
+            background: #fafafa;
+            margin-bottom: 0.55rem;
+        }
+        .career-stats-card-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+        .career-stats-card-row {
+            font-size: 0.9rem;
+            color: #374151;
+            margin: 0.12rem 0;
         }
         div[data-testid="stDataFrame"] div[role="table"] {
             font-size: 0.9rem;
@@ -159,8 +176,48 @@ def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
+def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None:
+    for start in range(0, len(metrics), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, value) in zip(columns, metrics[start:start + per_row]):
+            column.metric(label, value)
+
+
+def _render_mobile_career_cards(dataframe) -> None:
+    for _, row in dataframe.iterrows():
+        st.markdown(
+            f"""
+            <div class="career-stats-card">
+              <div class="career-stats-card-title">{row['player']}</div>
+              <div class="career-stats-card-row"><strong>Seasons:</strong> {int(row['seasons_played'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
+              <div class="career-stats-card-row"><strong>H:</strong> {int(row['hits'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>Runs:</strong> {int(row['r'])}</div>
+              <div class="career-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f}</div>
+              <div class="career-stats-card-row"><strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_mobile_advanced_cards(dataframe) -> None:
+    for _, row in dataframe.iterrows():
+        st.markdown(
+            f"""
+            <div class="career-stats-card">
+              <div class="career-stats-card-title">{row['player']}</div>
+              <div class="career-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
+              <div class="career-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
+              <div class="career-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
+              <div class="career-stats-card-row"><strong>Archetype:</strong> {row['archetype']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 _inject_career_stats_css()
 ensure_authenticated()
+layout = get_responsive_layout_context(key="career_stats")
 
 st.title("All-Time / Career Stats")
 db_path = database_path_control(DEFAULT_DB_PATH, key="career_stats_db_path")
@@ -185,16 +242,20 @@ else:
     )
     leaders = fetch_all_time_leaders(connection, seasons=selected_seasons, min_pa=min_pa)
 
-    summary_cols = st.columns(9)
-    summary_cols[0].metric("Players", int(career_summary["players"]))
-    summary_cols[1].metric("Seasons", int(career_summary["seasons"]))
-    summary_cols[2].metric("PA", int(career_summary["pa"]))
-    summary_cols[3].metric("Runs", int(career_summary["runs"]))
-    summary_cols[4].metric("HR", int(career_summary["home_runs"]))
-    summary_cols[5].metric("AVG", f"{career_summary['avg']:.3f}")
-    summary_cols[6].metric("OBP", f"{career_summary['obp']:.3f}")
-    summary_cols[7].metric("SLG", f"{career_summary['slg']:.3f}")
-    summary_cols[8].metric("OPS", f"{career_summary['ops']:.3f}")
+    _render_metric_grid(
+        [
+            ("Players", str(int(career_summary["players"]))),
+            ("Seasons", str(int(career_summary["seasons"]))),
+            ("PA", str(int(career_summary["pa"]))),
+            ("Runs", str(int(career_summary["runs"]))),
+            ("HR", str(int(career_summary["home_runs"]))),
+            ("AVG", f"{career_summary['avg']:.3f}"),
+            ("OBP", f"{career_summary['obp']:.3f}"),
+            ("SLG", f"{career_summary['slg']:.3f}"),
+            ("OPS", f"{career_summary['ops']:.3f}"),
+        ],
+        per_row=2 if layout.is_mobile_layout else 3,
+    )
 
     _render_leader_snapshot(leader_snapshot)
 
@@ -208,12 +269,16 @@ else:
                 "<div class='career-stats-note'>Career batting totals across the selected seasons with the highest-signal counting and rate stats.</div>",
                 unsafe_allow_html=True,
             )
-            st.dataframe(
-                career_stats[[column for column in STANDARD_CAREER_COLUMNS if column in career_stats.columns]],
-                use_container_width=True,
-                hide_index=True,
-                column_config=_standard_stats_column_config(),
-            )
+            career_display = career_stats[[column for column in STANDARD_CAREER_COLUMNS if column in career_stats.columns]]
+            if layout.is_mobile_layout:
+                _render_mobile_career_cards(career_display)
+            else:
+                st.dataframe(
+                    career_display,
+                    use_container_width=True,
+                    hide_index=True,
+                    column_config=_standard_stats_column_config(),
+                )
 
         with advanced_tab:
             st.markdown(
@@ -223,16 +288,25 @@ else:
             if advanced_stats.empty:
                 st.info("No advanced career metrics are available for the current filter.")
             else:
-                st.dataframe(
-                    advanced_stats[[column for column in ADVANCED_CAREER_COLUMNS if column in advanced_stats.columns]],
-                    use_container_width=True,
-                    hide_index=True,
-                    column_config=_advanced_stats_column_config(),
-                )
+                advanced_display = advanced_stats[[column for column in ADVANCED_CAREER_COLUMNS if column in advanced_stats.columns]]
+                if layout.is_mobile_layout:
+                    _render_mobile_advanced_cards(advanced_display)
+                else:
+                    st.dataframe(
+                        advanced_display,
+                        use_container_width=True,
+                        hide_index=True,
+                        column_config=_advanced_stats_column_config(),
+                    )
 
     if leaders:
         st.subheader("All-Time Leaders")
-        leader_cols = st.columns(len(leaders))
-        for column, (label, dataframe) in zip(leader_cols, leaders.items()):
-            column.markdown(f"**{label}**")
-            column.dataframe(dataframe, hide_index=True, use_container_width=True)
+        if layout.is_mobile_layout:
+            for label, dataframe in leaders.items():
+                st.markdown(f"**{label}**")
+                st.dataframe(dataframe, hide_index=True, use_container_width=True)
+        else:
+            leader_cols = st.columns(len(leaders))
+            for column, (label, dataframe) in zip(leader_cols, leaders.items()):
+                column.markdown(f"**{label}**")
+                column.dataframe(dataframe, hide_index=True, use_container_width=True)

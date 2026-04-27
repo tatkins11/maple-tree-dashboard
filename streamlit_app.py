@@ -23,7 +23,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, render_mobile_install_help
+from src.dashboard.ui import database_path_control, get_responsive_layout_context, render_mobile_install_help
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 
@@ -229,7 +229,14 @@ def _home_standings_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
-def _render_home_standings(standings) -> None:
+def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None:
+    for start in range(0, len(metrics), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, value) in zip(columns, metrics[start:start + per_row]):
+            column.metric(label, value)
+
+
+def _render_home_standings(standings, *, is_mobile_layout: bool) -> None:
     st.markdown("### League Standings")
     if standings.empty:
         st.info("No league standings snapshot is currently loaded for the current season.")
@@ -253,12 +260,21 @@ def _render_home_standings(standings) -> None:
         "team_name",
         "wins",
         "losses",
-        "win_pct",
         "games_back",
-        "runs_for",
-        "runs_against",
         "run_diff",
     ]
+    if not is_mobile_layout:
+        display_columns = [
+            "selected_team",
+            "team_name",
+            "wins",
+            "losses",
+            "win_pct",
+            "games_back",
+            "runs_for",
+            "runs_against",
+            "run_diff",
+        ]
     st.dataframe(
         display[[column for column in display_columns if column in display.columns]],
         use_container_width=True,
@@ -270,6 +286,7 @@ def _render_home_standings(standings) -> None:
 def render_home_page() -> None:
     role = ensure_authenticated()
     _inject_home_css()
+    layout = get_responsive_layout_context(key="home")
 
     st.title("Maple Tree Home")
     st.caption("Maple Tree team dashboard for stats, schedule, records, analytics, and write-ups.")
@@ -309,26 +326,31 @@ def render_home_page() -> None:
     standings = fetch_enriched_standings_snapshot(connection, season=schedule_season)
 
     st.markdown("### Team Snapshot")
-    metric_cols = st.columns(5)
-    metric_cols[0].metric("Record", str(schedule_summary["record"]))
-    metric_cols[1].metric("Games", int(summary["team_games"]))
-    metric_cols[2].metric("Runs", int(summary["runs"]))
-    metric_cols[3].metric("HR", int(summary["home_runs"]))
-    metric_cols[4].metric("Hitters", int(summary["hitters"]))
+    _render_metric_grid(
+        [
+            ("Record", str(schedule_summary["record"])),
+            ("Games", str(int(summary["team_games"]))),
+            ("Runs", str(int(summary["runs"]))),
+            ("HR", str(int(summary["home_runs"]))),
+            ("Hitters", str(int(summary["hitters"]))),
+            ("AVG", f"{summary['avg']:.3f}"),
+            ("OBP", f"{summary['obp']:.3f}"),
+            ("SLG", f"{summary['slg']:.3f}"),
+            ("OPS", f"{summary['ops']:.3f}"),
+        ],
+        per_row=2 if layout.is_mobile_layout else 5,
+    )
 
-    rate_cols = st.columns(4)
-    rate_cols[0].metric("AVG", f"{summary['avg']:.3f}")
-    rate_cols[1].metric("OBP", f"{summary['obp']:.3f}")
-    rate_cols[2].metric("SLG", f"{summary['slg']:.3f}")
-    rate_cols[3].metric("OPS", f"{summary['ops']:.3f}")
+    _render_home_standings(standings, is_mobile_layout=layout.is_mobile_layout)
 
-    _render_home_standings(standings)
-
-    detail_cols = st.columns([1.1, 1], gap="small")
+    detail_cols = st.columns(1 if layout.is_mobile_layout else 2, gap="small")
     with detail_cols[0]:
         _render_next_game_card(next_game)
-    with detail_cols[1]:
+    if layout.is_mobile_layout:
         _render_milestone_card(milestone_lines)
+    else:
+        with detail_cols[1]:
+            _render_milestone_card(milestone_lines)
 
     _render_postgame_card(saved_postgames)
 

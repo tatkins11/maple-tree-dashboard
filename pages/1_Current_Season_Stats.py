@@ -17,7 +17,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, get_responsive_layout_context
 
 
 st.set_page_config(page_title="Current Season Stats", page_icon=":bar_chart:", layout="wide")
@@ -54,6 +54,23 @@ def _inject_current_stats_css() -> None:
             color: #6b7280;
             margin-top: -0.1rem;
             margin-bottom: 0.45rem;
+        }
+        .current-stats-card {
+            border: 1px solid rgba(49, 51, 63, 0.10);
+            border-radius: 0.9rem;
+            padding: 0.8rem 0.9rem;
+            background: #fafafa;
+            margin-bottom: 0.55rem;
+        }
+        .current-stats-card-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            margin-bottom: 0.3rem;
+        }
+        .current-stats-card-row {
+            font-size: 0.9rem;
+            color: #374151;
+            margin: 0.12rem 0;
         }
         div[data-testid="stDataFrame"] div[role="table"] {
             font-size: 0.9rem;
@@ -125,8 +142,47 @@ def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
+def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None:
+    for start in range(0, len(metrics), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, value) in zip(columns, metrics[start:start + per_row]):
+            column.metric(label, value)
+
+
+def _render_mobile_standard_cards(dataframe) -> None:
+    for _, row in dataframe.iterrows():
+        st.markdown(
+            f"""
+            <div class="current-stats-card">
+              <div class="current-stats-card-title">{row['player']}</div>
+              <div class="current-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>H:</strong> {int(row['hits'])} &nbsp; <strong>HR:</strong> {int(row['hr'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])}</div>
+              <div class="current-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f}</div>
+              <div class="current-stats-card-row"><strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+def _render_mobile_advanced_cards(dataframe) -> None:
+    for _, row in dataframe.iterrows():
+        st.markdown(
+            f"""
+            <div class="current-stats-card">
+              <div class="current-stats-card-title">{row['player']}</div>
+              <div class="current-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
+              <div class="current-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
+              <div class="current-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
+              <div class="current-stats-card-row"><strong>Archetype:</strong> {row['archetype']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 _inject_current_stats_css()
 ensure_authenticated()
+layout = get_responsive_layout_context(key="current_stats")
 
 st.title("Current Season Stats")
 db_path = database_path_control(DEFAULT_DB_PATH, key="current_stats_db_path")
@@ -149,13 +205,17 @@ else:
         active_only=False,
     )
 
-    summary_cols = st.columns(6)
-    summary_cols[0].metric("Runs", int(team_summary["runs"]))
-    summary_cols[1].metric("HR", int(team_summary["home_runs"]))
-    summary_cols[2].metric("AVG", f"{team_summary['avg']:.3f}")
-    summary_cols[3].metric("OBP", f"{team_summary['obp']:.3f}")
-    summary_cols[4].metric("SLG", f"{team_summary['slg']:.3f}")
-    summary_cols[5].metric("OPS", f"{team_summary['ops']:.3f}")
+    _render_metric_grid(
+        [
+            ("Runs", str(int(team_summary["runs"]))),
+            ("HR", str(int(team_summary["home_runs"]))),
+            ("AVG", f"{team_summary['avg']:.3f}"),
+            ("OBP", f"{team_summary['obp']:.3f}"),
+            ("SLG", f"{team_summary['slg']:.3f}"),
+            ("OPS", f"{team_summary['ops']:.3f}"),
+        ],
+        per_row=2 if layout.is_mobile_layout else 6,
+    )
 
     _render_leader_snapshot(leader_snapshot)
 
@@ -167,12 +227,16 @@ else:
             unsafe_allow_html=True,
         )
         standard_columns = ["player", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "avg", "obp", "slg", "ops"]
-        st.dataframe(
-            standard_stats[[column for column in standard_columns if column in standard_stats.columns]],
-            use_container_width=True,
-            hide_index=True,
-            column_config=_standard_stats_column_config(),
-        )
+        standard_display = standard_stats[[column for column in standard_columns if column in standard_stats.columns]]
+        if layout.is_mobile_layout:
+            _render_mobile_standard_cards(standard_display)
+        else:
+            st.dataframe(
+                standard_display,
+                use_container_width=True,
+                hide_index=True,
+                column_config=_standard_stats_column_config(),
+            )
 
     with advanced_tab:
         st.markdown(
@@ -180,9 +244,13 @@ else:
             unsafe_allow_html=True,
         )
         advanced_columns = ["player", "pa", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]
-        st.dataframe(
-            advanced_stats[[column for column in advanced_columns if column in advanced_stats.columns]],
-            use_container_width=True,
-            hide_index=True,
-            column_config=_advanced_stats_column_config(),
-        )
+        advanced_display = advanced_stats[[column for column in advanced_columns if column in advanced_stats.columns]]
+        if layout.is_mobile_layout:
+            _render_mobile_advanced_cards(advanced_display)
+        else:
+            st.dataframe(
+                advanced_display,
+                use_container_width=True,
+                hide_index=True,
+                column_config=_advanced_stats_column_config(),
+            )

@@ -36,7 +36,7 @@ from src.dashboard.data import (
     get_connection,
     sort_seasons,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, get_responsive_layout_context
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 
@@ -135,6 +135,25 @@ def _league_schedule_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
+def _mobile_team_schedule_column_config() -> dict[str, st.column_config.Column]:
+    return {
+        "week_label": st.column_config.TextColumn("Week", width="small"),
+        "date_display": st.column_config.TextColumn("Date", width="small"),
+        "opponent_display": st.column_config.TextColumn("Opponent", width="medium"),
+        "status_display": st.column_config.TextColumn("Status", width="small"),
+        "result_display": st.column_config.TextColumn("Result", width="small"),
+    }
+
+
+def _mobile_league_schedule_column_config() -> dict[str, st.column_config.Column]:
+    return {
+        "week_label": st.column_config.TextColumn("Week", width="small"),
+        "matchup_display": st.column_config.TextColumn("Matchup", width="medium"),
+        "status_display": st.column_config.TextColumn("Status", width="small"),
+        "result_label": st.column_config.TextColumn("Result", width="medium"),
+    }
+
+
 def _team_schedule_display_table(dataframe: pd.DataFrame, *, include_notes: bool = False) -> pd.DataFrame:
     if dataframe.empty:
         return dataframe
@@ -177,6 +196,25 @@ def _league_schedule_display_table(
         columns.append("result_label")
     if include_notes:
         columns.append("notes")
+    return working[[column for column in columns if column in working.columns]].copy()
+
+
+def _mobile_team_schedule_display_table(dataframe: pd.DataFrame) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+    columns = ["week_label", "date_display", "opponent_display", "status_display", "result_display"]
+    return dataframe[[column for column in columns if column in dataframe.columns]].copy()
+
+
+def _mobile_league_schedule_display_table(dataframe: pd.DataFrame, *, result_column: str | None = None) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+    working = dataframe.copy()
+    if result_column and result_column in working.columns:
+        working.loc[:, "result_label"] = working[result_column].fillna("")
+    columns = ["week_label", "matchup_display", "status_display"]
+    if result_column and "result_label" in working.columns:
+        columns.append("result_label")
     return working[[column for column in columns if column in working.columns]].copy()
 
 
@@ -305,7 +343,7 @@ def _render_maple_tree_week_callout(
     )
 
 
-def _render_standings(standings: pd.DataFrame, *, selected_team: str) -> None:
+def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_layout: bool) -> None:
     if standings.empty:
         return
 
@@ -329,9 +367,10 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str) -> None:
             "runs_against": "RA",
             "run_diff": "RD",
         }
-    )[["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]]
+    )
+    display_columns = ["Selected", "Team", "W", "L", "GB", "RD"] if is_mobile_layout else ["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]
     st.dataframe(
-        standings_display,
+        standings_display[[column for column in display_columns if column in standings_display.columns]],
         use_container_width=True,
         hide_index=True,
         column_config={
@@ -339,24 +378,36 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str) -> None:
             "Pct": st.column_config.NumberColumn("Pct", format="%.3f"),
             "GB": st.column_config.NumberColumn("GB", format="%.1f"),
             "RD": st.column_config.NumberColumn("RD", format="%d"),
+        } if not is_mobile_layout else {
+            "Selected": st.column_config.TextColumn("", width="small"),
+            "GB": st.column_config.NumberColumn("GB", format="%.1f"),
+            "RD": st.column_config.NumberColumn("RD", format="%d"),
         },
     )
 
 
-def _render_team_schedule(connection, selected_season: str) -> None:
-    control_row_one = st.columns([1.1, 1.1, 1, 1], gap="small")
+def _render_team_schedule(connection, selected_season: str, *, is_mobile_layout: bool) -> None:
+    control_row_one = st.columns([1.1, 1.1, 1, 1], gap="small") if not is_mobile_layout else None
     season_team_options = fetch_schedule_team_names(connection, selected_season)
     default_team = DEFAULT_SCHEDULE_TEAM_NAME if DEFAULT_SCHEDULE_TEAM_NAME in season_team_options else season_team_options[0]
-    with control_row_one[0]:
+    if is_mobile_layout:
         team_name = st.selectbox("Team", options=season_team_options, index=season_team_options.index(default_team))
-    with control_row_one[1]:
         view_filter = st.selectbox("Games view", options=["Upcoming only", "Completed only", "All"], index=2)
-    with control_row_one[2]:
         opponent_options = ["All opponents", *fetch_schedule_opponents(connection, selected_season, team_name)]
         opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
-    with control_row_one[3]:
         week_options = ["All weeks", *fetch_schedule_weeks(connection, selected_season, team_name)]
         week_filter = st.selectbox("Week", options=week_options, index=0)
+    else:
+        with control_row_one[0]:
+            team_name = st.selectbox("Team", options=season_team_options, index=season_team_options.index(default_team))
+        with control_row_one[1]:
+            view_filter = st.selectbox("Games view", options=["Upcoming only", "Completed only", "All"], index=2)
+        with control_row_one[2]:
+            opponent_options = ["All opponents", *fetch_schedule_opponents(connection, selected_season, team_name)]
+            opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
+        with control_row_one[3]:
+            week_options = ["All weeks", *fetch_schedule_weeks(connection, selected_season, team_name)]
+            week_filter = st.selectbox("Week", options=week_options, index=0)
 
     _render_filter_summary(
         build_schedule_filter_summary(
@@ -393,15 +444,21 @@ def _render_team_schedule(connection, selected_season: str) -> None:
     season_summary = fetch_schedule_season_summary(connection, season=selected_season, team_name=team_name, as_of=date.today())
 
     st.subheader("Season Summary")
-    summary_cols = st.columns(5)
-    summary_cols[0].metric("Record", str(season_summary["record"]))
-    summary_cols[1].metric("Runs For", int(season_summary["runs_for"]))
-    summary_cols[2].metric("Runs Against", int(season_summary["runs_against"]))
-    summary_cols[3].metric("Completed", int(season_summary["games_completed"]))
-    summary_cols[4].metric("Remaining", int(season_summary["games_remaining"]))
+    summary_metrics = [
+        ("Record", str(season_summary["record"])),
+        ("Runs For", str(int(season_summary["runs_for"]))),
+        ("Runs Against", str(int(season_summary["runs_against"]))),
+        ("Completed", str(int(season_summary["games_completed"]))),
+        ("Remaining", str(int(season_summary["games_remaining"]))),
+    ]
+    per_row = 2 if is_mobile_layout else 5
+    for start in range(0, len(summary_metrics), per_row):
+        summary_cols = st.columns(per_row, gap="small")
+        for column, (label, value) in zip(summary_cols, summary_metrics[start:start + per_row]):
+            column.metric(label, value)
 
     _render_next_up(upcoming_games)
-    _render_standings(standings, selected_team=team_name)
+    _render_standings(standings, selected_team=team_name, is_mobile_layout=is_mobile_layout)
 
     st.subheader("Schedule Tables")
     st.markdown(
@@ -416,10 +473,10 @@ def _render_team_schedule(connection, selected_season: str) -> None:
             st.info("No upcoming games are currently loaded for this team.")
         else:
             st.dataframe(
-                upcoming_display,
+                _mobile_team_schedule_display_table(upcoming_display) if is_mobile_layout else upcoming_display,
                 use_container_width=True,
                 hide_index=True,
-                column_config=_team_schedule_column_config(),
+                column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
 
     with recent_tab:
@@ -428,10 +485,10 @@ def _render_team_schedule(connection, selected_season: str) -> None:
             st.info("No completed games match the current filters.")
         else:
             st.dataframe(
-                recent_display,
+                _mobile_team_schedule_display_table(recent_display) if is_mobile_layout else recent_display,
                 use_container_width=True,
                 hide_index=True,
-                column_config=_team_schedule_column_config(),
+                column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
 
     with full_tab:
@@ -440,10 +497,10 @@ def _render_team_schedule(connection, selected_season: str) -> None:
             st.info("No schedule rows match the current filters.")
         else:
             st.dataframe(
-                display_table,
+                _mobile_team_schedule_display_table(display_table) if is_mobile_layout else display_table,
                 use_container_width=True,
                 hide_index=True,
-                column_config=_team_schedule_column_config(),
+                column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
 
 
@@ -472,12 +529,15 @@ def _render_team_scout_card(summary: dict[str, object], recent_results: pd.DataF
     )
 
 
-def _render_league_scouting(connection, selected_season: str) -> None:
+def _render_league_scouting(connection, selected_season: str, *, is_mobile_layout: bool) -> None:
     divisions = fetch_league_divisions(connection, selected_season)
     division_options = ["All divisions", *divisions] if divisions else ["All divisions"]
-    control_row_one = st.columns([1.1, 1.1, 1, 1, 1], gap="small")
-    with control_row_one[0]:
+    control_row_one = st.columns([1.1, 1.1, 1, 1, 1], gap="small") if not is_mobile_layout else None
+    if is_mobile_layout:
         division_name = st.selectbox("Division", options=division_options, index=0)
+    else:
+        with control_row_one[0]:
+            division_name = st.selectbox("Division", options=division_options, index=0)
     normalized_division = None if division_name == "All divisions" else division_name
     current_week = fetch_current_league_week(connection, selected_season, normalized_division, as_of=date.today())
     focus_week = current_week or "All weeks"
@@ -493,26 +553,36 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         if current_week
         else []
     )
-    with control_row_one[1]:
-        team_options = ["All teams", *fetch_league_team_names(connection, selected_season, division_name)]
-        default_team = "All teams"
-        if len(maple_tree_opponents) == 1 and maple_tree_opponents[0] in team_options:
-            default_team = maple_tree_opponents[0]
-        elif DEFAULT_SCHEDULE_TEAM_NAME in team_options:
-            default_team = DEFAULT_SCHEDULE_TEAM_NAME
+    team_options = ["All teams", *fetch_league_team_names(connection, selected_season, division_name)]
+    default_team = "All teams"
+    if len(maple_tree_opponents) == 1 and maple_tree_opponents[0] in team_options:
+        default_team = maple_tree_opponents[0]
+    elif DEFAULT_SCHEDULE_TEAM_NAME in team_options:
+        default_team = DEFAULT_SCHEDULE_TEAM_NAME
+    week_options = ["All weeks", *fetch_league_weeks(connection, selected_season, division_name)]
+    default_week = current_week if current_week in week_options else "All weeks"
+    if is_mobile_layout:
         team_name = st.selectbox("Scout team", options=team_options, index=team_options.index(default_team))
-    with control_row_one[2]:
         view_filter = st.selectbox("League view", options=["All", "Upcoming only", "Completed only"], index=0)
-    with control_row_one[3]:
-        week_options = ["All weeks", *fetch_league_weeks(connection, selected_season, division_name)]
-        default_week = current_week if current_week in week_options else "All weeks"
         week_filter = st.selectbox("Week", options=week_options, index=week_options.index(default_week))
-    with control_row_one[4]:
         opponent_options = ["All opponents"]
         if team_name != "All teams":
             other_teams = [name for name in fetch_league_team_names(connection, selected_season, division_name) if name != team_name]
             opponent_options.extend(other_teams)
         opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
+    else:
+        with control_row_one[1]:
+            team_name = st.selectbox("Scout team", options=team_options, index=team_options.index(default_team))
+        with control_row_one[2]:
+            view_filter = st.selectbox("League view", options=["All", "Upcoming only", "Completed only"], index=0)
+        with control_row_one[3]:
+            week_filter = st.selectbox("Week", options=week_options, index=week_options.index(default_week))
+        with control_row_one[4]:
+            opponent_options = ["All opponents"]
+            if team_name != "All teams":
+                other_teams = [name for name in fetch_league_team_names(connection, selected_season, division_name) if name != team_name]
+                opponent_options.extend(other_teams)
+            opponent_filter = st.selectbox("Opponent", options=opponent_options, index=0)
 
     _render_filter_summary(
         build_schedule_filter_summary(
@@ -622,10 +692,10 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No completed league week results are currently loaded.")
     else:
         st.dataframe(
-            _league_schedule_display_table(scoreboard, result_column="league_result_display", include_notes=False),
+            _mobile_league_schedule_display_table(scoreboard, result_column="league_result_display") if is_mobile_layout else _league_schedule_display_table(scoreboard, result_column="league_result_display", include_notes=False),
             use_container_width=True,
             hide_index=True,
-            column_config=_league_schedule_column_config(),
+            column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
 
     st.subheader("Scout Team Summary")
@@ -645,14 +715,17 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No league schedule rows match the current scouting filters.")
     else:
         st.dataframe(
-            _league_schedule_display_table(
+            _mobile_league_schedule_display_table(
+                opponent_schedule,
+                result_column="team_result_display" if team_name != "All teams" else "league_result_display",
+            ) if is_mobile_layout else _league_schedule_display_table(
                 opponent_schedule,
                 result_column="team_result_display" if team_name != "All teams" else "league_result_display",
                 include_notes=False,
             ),
             use_container_width=True,
             hide_index=True,
-            column_config=_league_schedule_column_config(),
+            column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
 
     st.subheader("Full League Schedule")
@@ -668,15 +741,16 @@ def _render_league_scouting(connection, selected_season: str) -> None:
         st.info("No league schedule is currently loaded for the selected filters.")
     else:
         st.dataframe(
-            _league_schedule_display_table(league_schedule, result_column="league_result_display", include_notes=True),
+            _mobile_league_schedule_display_table(league_schedule, result_column="league_result_display") if is_mobile_layout else _league_schedule_display_table(league_schedule, result_column="league_result_display", include_notes=True),
             use_container_width=True,
             hide_index=True,
-            column_config=_league_schedule_column_config(),
+            column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
 
 
 _inject_schedule_css()
 ensure_authenticated()
+layout = get_responsive_layout_context(key="schedule")
 
 st.title("Schedule")
 st.caption("Local team schedule plus league-wide scouting powered by imported CSV data.")
@@ -692,17 +766,25 @@ if not all_seasons:
     st.stop()
 
 default_season = DEFAULT_DASHBOARD_SEASON if DEFAULT_DASHBOARD_SEASON in all_seasons else all_seasons[0]
-top_controls = st.columns([1, 1.4], gap="small")
-with top_controls[0]:
+if layout.is_mobile_layout:
     selected_season = st.selectbox("Season", options=all_seasons, index=all_seasons.index(default_season))
-with top_controls[1]:
     schedule_mode = st.segmented_control(
         "Schedule Mode",
         options=["Team Schedule", "League Scouting"],
         default="Team Schedule",
     )
+else:
+    top_controls = st.columns([1, 1.4], gap="small")
+    with top_controls[0]:
+        selected_season = st.selectbox("Season", options=all_seasons, index=all_seasons.index(default_season))
+    with top_controls[1]:
+        schedule_mode = st.segmented_control(
+            "Schedule Mode",
+            options=["Team Schedule", "League Scouting"],
+            default="Team Schedule",
+        )
 
 if schedule_mode == "League Scouting":
-    _render_league_scouting(connection, selected_season)
+    _render_league_scouting(connection, selected_season, is_mobile_layout=layout.is_mobile_layout)
 else:
-    _render_team_schedule(connection, selected_season)
+    _render_team_schedule(connection, selected_season, is_mobile_layout=layout.is_mobile_layout)

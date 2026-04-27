@@ -16,7 +16,7 @@ from src.dashboard.data import (
     select_first_to_milestones,
     select_in_play_milestones,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, get_responsive_layout_context
 
 
 st.set_page_config(page_title="Milestone Tracker", page_icon="🥎", layout="wide")
@@ -231,6 +231,13 @@ def _milestone_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
+def _mobile_table(dataframe: pd.DataFrame) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+    preferred = [column for column in ["Player", "Stat", "Current", "Next", "Remaining", "Watch"] if column in dataframe.columns]
+    return dataframe[preferred].copy()
+
+
 def _style_milestone_rows(dataframe: pd.DataFrame):
     if dataframe.empty:
         return dataframe.style
@@ -264,7 +271,7 @@ def _club_badge_markup(label: str, is_first_time: bool) -> str:
     return f'<div class="milestone-in-play-club">{label}</div>'
 
 
-def _render_in_play_section(dataframe: pd.DataFrame) -> None:
+def _render_in_play_section(dataframe: pd.DataFrame, *, is_mobile_layout: bool) -> None:
     st.subheader("In Play This Season")
     st.markdown(
         "<div class='milestone-note'>Active-roster milestones that are realistically in play right now based on the current distance threshold.</div>",
@@ -275,10 +282,11 @@ def _render_in_play_section(dataframe: pd.DataFrame) -> None:
         return
 
     st.markdown("<div class='milestone-in-play-wrap'>", unsafe_allow_html=True)
-    columns = st.columns(4, gap="small")
+    column_count = 2 if is_mobile_layout else 4
+    columns = st.columns(column_count, gap="small")
     for index, (_, row) in enumerate(dataframe.iterrows()):
         watch = str(row["urgency"])
-        with columns[index % 4]:
+        with columns[index % column_count]:
             club_label = str(row["club_label"])
             club_markup = _club_badge_markup(club_label, bool(row["is_first_time_milestone"]))
             st.markdown(
@@ -307,7 +315,7 @@ def _render_first_to_section(dataframe: pd.DataFrame) -> None:
 
     first_to_table = _prepare_display_table(dataframe, include_active=False)
     st.dataframe(
-        _style_milestone_rows(first_to_table),
+        _style_milestone_rows(_mobile_table(first_to_table) if layout.is_mobile_layout else first_to_table),
         use_container_width=True,
         hide_index=True,
         column_config=_milestone_column_config(),
@@ -316,6 +324,7 @@ def _render_first_to_section(dataframe: pd.DataFrame) -> None:
 
 _inject_milestone_css()
 ensure_authenticated()
+layout = get_responsive_layout_context(key="milestones")
 
 st.title("Milestone Tracker")
 st.caption("Career batting milestones based on canonical player identities and verified career totals.")
@@ -336,23 +345,31 @@ max_remaining_options = {
 }
 
 st.markdown("<div class='milestone-controls'>", unsafe_allow_html=True)
-control_row_one = st.columns([1.8, 1, 1, 1], gap="small")
-with control_row_one[0]:
+if layout.is_mobile_layout:
     selected_categories = st.multiselect("Categories", options=all_categories, default=all_categories)
-with control_row_one[1]:
     max_remaining_label = st.selectbox("Max remaining", options=list(max_remaining_options.keys()), index=3)
-with control_row_one[2]:
     min_current_total = st.number_input("Minimum current total", min_value=0, max_value=500, value=0, step=5)
-with control_row_one[3]:
     active_only = st.toggle("Active roster only", value=True)
-
-control_row_two = st.columns([1.2, 1, 2], gap="small")
-with control_row_two[0]:
     sort_by = st.selectbox("Sort by", options=sort_options, index=0)
-with control_row_two[1]:
     category_focus = st.selectbox("Milestones by category", options=all_categories, index=all_categories.index("Hits"))
-with control_row_two[2]:
-    st.markdown("", unsafe_allow_html=True)
+else:
+    control_row_one = st.columns([1.8, 1, 1, 1], gap="small")
+    with control_row_one[0]:
+        selected_categories = st.multiselect("Categories", options=all_categories, default=all_categories)
+    with control_row_one[1]:
+        max_remaining_label = st.selectbox("Max remaining", options=list(max_remaining_options.keys()), index=3)
+    with control_row_one[2]:
+        min_current_total = st.number_input("Minimum current total", min_value=0, max_value=500, value=0, step=5)
+    with control_row_one[3]:
+        active_only = st.toggle("Active roster only", value=True)
+
+    control_row_two = st.columns([1.2, 1, 2], gap="small")
+    with control_row_two[0]:
+        sort_by = st.selectbox("Sort by", options=sort_options, index=0)
+    with control_row_two[1]:
+        category_focus = st.selectbox("Milestones by category", options=all_categories, index=all_categories.index("Hits"))
+    with control_row_two[2]:
+        st.markdown("", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 max_remaining = max_remaining_options[max_remaining_label]
@@ -380,6 +397,8 @@ active_upcoming = active_milestones[active_milestones["remaining"].notna()].copy
 in_play_threshold = max_remaining if max_remaining is not None else 5
 _render_in_play_section(
     select_in_play_milestones(active_upcoming, distance_threshold=in_play_threshold, limit=8)
+    ,
+    is_mobile_layout=layout.is_mobile_layout
 )
 _render_first_to_section(
     select_first_to_milestones(active_upcoming, progress_threshold=0.85, max_remaining=10, limit=12)
@@ -395,7 +414,7 @@ if overall_table.empty:
     st.info("No upcoming milestones match the current filters.")
 else:
     st.dataframe(
-        _style_milestone_rows(overall_table),
+        _style_milestone_rows(_mobile_table(overall_table) if layout.is_mobile_layout else overall_table),
         use_container_width=True,
         hide_index=True,
         column_config=_milestone_column_config(),
@@ -411,7 +430,7 @@ if active_table.empty:
     st.info("No active-roster milestones match the current filters.")
 else:
     st.dataframe(
-        _style_milestone_rows(active_table),
+        _style_milestone_rows(_mobile_table(active_table) if layout.is_mobile_layout else active_table),
         use_container_width=True,
         hide_index=True,
         column_config=_milestone_column_config(),
@@ -435,7 +454,7 @@ if category_table.empty:
     st.info("No player rows match the selected category and filters.")
 else:
     st.dataframe(
-        _style_milestone_rows(category_table),
+        _style_milestone_rows(_mobile_table(category_table) if layout.is_mobile_layout else category_table),
         use_container_width=True,
         hide_index=True,
         column_config=_milestone_column_config(),
@@ -458,7 +477,7 @@ if passed_table.empty:
     st.info("No cleared milestone rows match the current filters.")
 else:
     st.dataframe(
-        passed_table,
+        _mobile_table(passed_table) if layout.is_mobile_layout else passed_table,
         use_container_width=True,
         hide_index=True,
         column_config=_milestone_column_config(),
