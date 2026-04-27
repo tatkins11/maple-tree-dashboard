@@ -11,7 +11,7 @@ from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
     DEFAULT_DASHBOARD_SEASON,
-    dashboard_default_season_index,
+    fetch_enriched_standings_snapshot,
     fetch_next_game,
     fetch_saved_writeups,
     fetch_seasons,
@@ -58,6 +58,11 @@ def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
             ]
         )
     return viewer_pages
+
+
+def get_home_selected_season(seasons: list[str]) -> str:
+    ordered = with_dashboard_default_season(seasons)
+    return ordered[0] if ordered else ""
 
 
 def _build_navigation(role: str) -> list[Any]:
@@ -210,6 +215,60 @@ def _render_postgame_card(saved_postgames) -> None:
     st.page_link("pages/9_Write_Ups.py", label="Open saved write-ups")
 
 
+def _home_standings_column_config() -> dict[str, st.column_config.Column]:
+    return {
+        "selected_team": st.column_config.TextColumn("", width="small"),
+        "team_name": st.column_config.TextColumn("Team", width="medium"),
+        "wins": st.column_config.NumberColumn("W", format="%d", width="small"),
+        "losses": st.column_config.NumberColumn("L", format="%d", width="small"),
+        "ties": st.column_config.NumberColumn("T", format="%d", width="small"),
+        "win_pct": st.column_config.NumberColumn("Pct", format="%.3f", width="small"),
+        "games_back": st.column_config.NumberColumn("GB", format="%.1f", width="small"),
+        "runs_for": st.column_config.NumberColumn("RF", format="%d", width="small"),
+        "runs_against": st.column_config.NumberColumn("RA", format="%d", width="small"),
+        "run_diff": st.column_config.NumberColumn("RD", format="%d", width="small"),
+    }
+
+
+def _render_home_standings(standings) -> None:
+    st.markdown("### League Standings")
+    if standings.empty:
+        st.info("No league standings snapshot is currently loaded for the current season.")
+        return
+
+    snapshot_date = str(standings["snapshot_date"].iloc[0]) if "snapshot_date" in standings.columns else ""
+    if snapshot_date:
+        st.markdown(
+            f"<div class='home-section-note'>Latest local standings snapshot for the current season. As of {escape(snapshot_date)}.</div>",
+            unsafe_allow_html=True,
+        )
+
+    display = standings.copy()
+    display.insert(
+        0,
+        "selected_team",
+        display["team_name"].map(lambda value: "•" if str(value) == DEFAULT_SCHEDULE_TEAM_NAME else ""),
+    )
+    display_columns = [
+        "selected_team",
+        "team_name",
+        "wins",
+        "losses",
+        "ties",
+        "win_pct",
+        "games_back",
+        "runs_for",
+        "runs_against",
+        "run_diff",
+    ]
+    st.dataframe(
+        display[[column for column in display_columns if column in display.columns]],
+        use_container_width=True,
+        hide_index=True,
+        column_config=_home_standings_column_config(),
+    )
+
+
 def render_home_page() -> None:
     role = ensure_authenticated()
     _inject_home_css()
@@ -224,13 +283,7 @@ def render_home_page() -> None:
         st.info("No season batting stats found yet.")
         return
 
-    season_col, _ = st.columns([1.15, 2], gap="small")
-    with season_col:
-        selected_season = st.selectbox(
-            "Overview season",
-            options=seasons,
-            index=dashboard_default_season_index(seasons),
-        )
+    selected_season = get_home_selected_season(seasons)
 
     summary = fetch_team_summary(connection, selected_season)
     schedule_seasons = fetch_schedule_seasons(connection)
@@ -255,6 +308,7 @@ def render_home_page() -> None:
     )
     saved_postgames = fetch_saved_writeups(connection, season=selected_season, phase="postgame")
     milestone_lines = fetch_writeup_milestone_watch(connection, limit=4)
+    standings = fetch_enriched_standings_snapshot(connection, season=schedule_season)
 
     st.markdown("### Team Snapshot")
     metric_cols = st.columns(5)
@@ -269,6 +323,8 @@ def render_home_page() -> None:
     rate_cols[1].metric("OBP", f"{summary['obp']:.3f}")
     rate_cols[2].metric("SLG", f"{summary['slg']:.3f}")
     rate_cols[3].metric("OPS", f"{summary['ops']:.3f}")
+
+    _render_home_standings(standings)
 
     detail_cols = st.columns([1.1, 1], gap="small")
     with detail_cols[0]:
