@@ -7,6 +7,7 @@ from src.dashboard.auth import (
     role_based_sidebar_css,
     resolve_role_for_password,
 )
+from src.dashboard.ui import PLAYER_CARD_URL_PATH
 from streamlit_app import get_navigation_page_specs
 
 
@@ -51,6 +52,9 @@ def test_navigation_specs_default_to_home_for_viewers() -> None:
     assert specs[0]["title"] == "Home"
     assert specs[0]["default"] is True
     titles = [spec["title"] for spec in specs]
+    hidden_player_spec = next(spec for spec in specs if spec["title"] == "Player Card")
+    assert hidden_player_spec["url_path"] == PLAYER_CARD_URL_PATH
+    assert hidden_player_spec["visibility"] == "hidden"
     assert "Lineup Optimizer" not in titles
     assert "Admin / Data" not in titles
 

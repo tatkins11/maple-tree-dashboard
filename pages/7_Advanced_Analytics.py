@@ -25,7 +25,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control
+from src.dashboard.ui import database_path_control, player_link_column_config, with_player_link_column
 
 
 st.set_page_config(page_title="Advanced Analytics", page_icon="🥎", layout="wide")
@@ -323,6 +323,7 @@ _render_methodology_box(fetch_advanced_methodology_summary(metadata))
 player_options = analytics_df["player"].tolist()
 selected_players = st.multiselect("Player filter", options=player_options, default=[])
 display_df = analytics_df if not selected_players else analytics_df[analytics_df["player"].isin(selected_players)].copy()
+player_keys = analytics_df[["player", "canonical_name"]].drop_duplicates()
 
 st.subheader("Advanced Analytics Table")
 default_columns = [
@@ -357,12 +358,16 @@ context_columns = [
     "hbp_rate",
 ]
 table_columns = default_columns + (context_columns if show_context else [])
+table_display = with_player_link_column(
+    display_df[[column for column in ["canonical_name", *table_columns] if column in display_df.columns]],
+    output_column="player",
+)
 st.dataframe(
-    display_df[table_columns],
+    table_display[[column for column in table_columns if column in table_display.columns]],
     use_container_width=True,
     hide_index=True,
     column_config={
-        "player": st.column_config.TextColumn("Player", width="medium"),
+        "player": player_link_column_config(),
         "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
         "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
         "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
@@ -398,12 +403,16 @@ leaderboard_columns = st.columns(3, gap="small")
 for index, (label, board) in enumerate(leaderboards.items()):
     with leaderboard_columns[index % 3]:
         st.markdown(f"**{label}**")
+        linked_board = with_player_link_column(
+            board.merge(player_keys, on="player", how="left"),
+            output_column="player",
+        )
         st.dataframe(
-            board,
+            linked_board[[column for column in linked_board.columns if column != "canonical_name"]],
             hide_index=True,
             use_container_width=True,
             column_config={
-                "player": st.column_config.TextColumn("Player", width="medium"),
+                "player": player_link_column_config(),
                 "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
                 "team_relative_obp": st.column_config.NumberColumn("Team OBP+", format="%.0f", width="small"),
                 "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
@@ -582,18 +591,20 @@ with archetype_columns[0]:
     )
 with archetype_columns[1]:
     st.markdown("**Players by Archetype**")
-    player_archetypes = analytics_df[["player", "pa", "archetype", "team_relative_ops", "rar", "owar"]].copy()
+    player_archetypes = analytics_df[["player", "canonical_name", "pa", "archetype", "team_relative_ops", "rar", "owar"]].copy()
     player_archetypes["archetype_rank"] = player_archetypes["archetype"].apply(
         lambda value: archetype_order.index(value) if value in archetype_order else len(archetype_order)
     )
+    player_archetypes = player_archetypes.sort_values(["archetype_rank", "rar", "player"], ascending=[True, False, True])
+    player_archetypes = with_player_link_column(player_archetypes, output_column="player")
     st.dataframe(
-        player_archetypes.sort_values(["archetype_rank", "rar", "player"], ascending=[True, False, True]).drop(
-            columns=["archetype_rank"]
+        player_archetypes.drop(
+            columns=["archetype_rank", "canonical_name"]
         ),
         hide_index=True,
         use_container_width=True,
         column_config={
-            "player": st.column_config.TextColumn("Player", width="medium"),
+            "player": player_link_column_config(),
             "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
             "archetype": st.column_config.TextColumn("Archetype", width="medium"),
             "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),

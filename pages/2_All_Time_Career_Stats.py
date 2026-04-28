@@ -17,13 +17,20 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context
+from src.dashboard.ui import (
+    build_player_link_html,
+    database_path_control,
+    get_responsive_layout_context,
+    player_link_column_config,
+    with_player_link_column,
+)
 
 
 st.set_page_config(page_title="All-Time / Career Stats", page_icon=":bar_chart:", layout="wide")
 
 STANDARD_CAREER_COLUMNS = [
     "player",
+    "canonical_name",
     "seasons_played",
     "games",
     "pa",
@@ -44,6 +51,7 @@ STANDARD_CAREER_COLUMNS = [
 ]
 ADVANCED_CAREER_COLUMNS = [
     "player",
+    "canonical_name",
     "pa",
     "iso",
     "xbh_rate",
@@ -142,7 +150,7 @@ def _render_leader_snapshot(leaders: dict[str, str]) -> None:
 
 def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
     return {
-        "player": st.column_config.TextColumn("Player", width="medium"),
+        "player": player_link_column_config(),
         "seasons_played": st.column_config.NumberColumn("Seasons", format="%d", width="small"),
         "games": st.column_config.NumberColumn("G", format="%d", width="small"),
         "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
@@ -164,7 +172,7 @@ def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
 
 def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
     return {
-        "player": st.column_config.TextColumn("Player", width="medium"),
+        "player": player_link_column_config(),
         "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
         "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
         "xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f", width="small"),
@@ -186,10 +194,11 @@ def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None
 
 def _render_mobile_career_cards(dataframe) -> None:
     for _, row in dataframe.iterrows():
+        player_markup = build_player_link_html(str(row["player"]), str(row.get("canonical_name") or ""))
         st.markdown(
             f"""
             <div class="career-stats-card">
-              <div class="career-stats-card-title">{row['player']}</div>
+              <div class="career-stats-card-title">{player_markup}</div>
               <div class="career-stats-card-row"><strong>Seasons:</strong> {int(row['seasons_played'])} &nbsp; <strong>G:</strong> {int(row['games'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])}</div>
               <div class="career-stats-card-row"><strong>H:</strong> {int(row['hits'])} &nbsp; <strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
               <div class="career-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
@@ -202,10 +211,11 @@ def _render_mobile_career_cards(dataframe) -> None:
 
 def _render_mobile_advanced_cards(dataframe) -> None:
     for _, row in dataframe.iterrows():
+        player_markup = build_player_link_html(str(row["player"]), str(row.get("canonical_name") or ""))
         st.markdown(
             f"""
             <div class="career-stats-card">
-              <div class="career-stats-card-title">{row['player']}</div>
+              <div class="career-stats-card-title">{player_markup}</div>
               <div class="career-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
               <div class="career-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f} &nbsp; <strong>Team OPS+:</strong> {row['team_relative_ops']:.0f}</div>
               <div class="career-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
@@ -274,8 +284,9 @@ else:
             if layout.is_mobile_layout:
                 _render_mobile_career_cards(career_display)
             else:
+                career_table = with_player_link_column(career_display, output_column="player")
                 st.dataframe(
-                    career_display,
+                    career_table[[column for column in STANDARD_CAREER_COLUMNS if column in career_table.columns and column != "canonical_name"]],
                     use_container_width=True,
                     hide_index=True,
                     column_config=_standard_stats_column_config(),
@@ -293,8 +304,9 @@ else:
                 if layout.is_mobile_layout:
                     _render_mobile_advanced_cards(advanced_display)
                 else:
+                    advanced_table = with_player_link_column(advanced_display, output_column="player")
                     st.dataframe(
-                        advanced_display,
+                        advanced_table[[column for column in ADVANCED_CAREER_COLUMNS if column in advanced_table.columns and column != "canonical_name"]],
                         use_container_width=True,
                         hide_index=True,
                         column_config=_advanced_stats_column_config(),

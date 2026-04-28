@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
+from urllib.parse import quote
 
 import pandas as pd
 import streamlit as st
@@ -15,6 +16,8 @@ RESPONSIVE_MOBILE = "Mobile"
 RESPONSIVE_FULL = "Full"
 RESPONSIVE_LAYOUT_OPTIONS = [RESPONSIVE_AUTO, RESPONSIVE_MOBILE, RESPONSIVE_FULL]
 RESPONSIVE_BREAKPOINT = 768
+PLAYER_CARD_URL_PATH = "player-card"
+PLAYER_LINK_DISPLAY_REGEX = r"#(.*)$"
 
 
 @dataclass(frozen=True)
@@ -178,6 +181,49 @@ def render_mobile_standings_cards(
             """,
             unsafe_allow_html=True,
         )
+
+
+def build_player_page_href(canonical_name: str, display_name: str | None = None) -> str:
+    canonical = str(canonical_name).strip()
+    label = str(display_name or canonical).strip()
+    if not canonical:
+        return "#"
+    return f"./{PLAYER_CARD_URL_PATH}?player={quote(canonical, safe='')}#{label}"
+
+
+def build_player_link_html(display_name: str, canonical_name: str) -> str:
+    if not str(canonical_name).strip():
+        return escape(display_name)
+    href = build_player_page_href(canonical_name, display_name)
+    return f'<a href="{escape(href)}" target="_self">{escape(display_name)}</a>'
+
+
+def with_player_link_column(
+    dataframe: pd.DataFrame,
+    *,
+    player_column: str = "player",
+    canonical_column: str = "canonical_name",
+    output_column: str = "player_link",
+) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe.copy()
+
+    working = dataframe.copy()
+    if player_column not in working.columns or canonical_column not in working.columns:
+        return working
+
+    working.loc[:, output_column] = [
+        build_player_page_href(
+            str(canonical_name or ""),
+            str(display_name or canonical_name or ""),
+        )
+        for display_name, canonical_name in zip(working[player_column], working[canonical_column])
+    ]
+    return working
+
+
+def player_link_column_config(*, label: str = "Player", width: str = "medium") -> st.column_config.LinkColumn:
+    return st.column_config.LinkColumn(label, width=width, display_text=PLAYER_LINK_DISPLAY_REGEX)
 
 
 def database_path_control(default_path: Path, *, key: str) -> str:

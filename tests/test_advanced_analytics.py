@@ -6,13 +6,22 @@ from src.dashboard.data import (
     fetch_advanced_analytics_archetype_summary,
     fetch_advanced_analytics_view,
     fetch_advanced_archetype_order,
+    fetch_career_milestones,
     fetch_career_leader_snapshot,
     fetch_career_stats,
     fetch_career_summary,
     fetch_current_season_leader_snapshot,
     fetch_current_season_stats,
     fetch_advanced_methodology_summary,
+    fetch_passed_milestones_summary,
+    fetch_player_advanced_history,
+    fetch_player_milestone_context,
+    fetch_player_profile_summary,
+    fetch_player_record_context,
+    fetch_player_season_history,
     fetch_team_summary,
+    fetch_top_hitters,
+    format_player_season_label,
 )
 from src.models.advanced_analytics import calculate_advanced_analytics
 from src.utils.db import connect_db, initialize_database
@@ -722,9 +731,225 @@ def test_career_helpers_handle_empty_filtered_views(tmp_path: Path) -> None:
     assert leaders["most_seasons"] == ""
 
 
-def test_all_time_page_standard_columns_hide_canonical_name() -> None:
+def test_all_time_page_standard_table_filters_out_canonical_name() -> None:
     page_path = Path("C:/Slowpitch/slowpitch_optimizer/pages/2_All_Time_Career_Stats.py")
-    contents = page_path.read_text()
+    contents = page_path.read_text(encoding="utf-8")
 
     assert "STANDARD_CAREER_COLUMNS" in contents
-    assert '"canonical_name"' not in contents
+    assert 'column != "canonical_name"' in contents
+
+
+def test_format_player_season_label_uses_short_suffixes() -> None:
+    assert format_player_season_label("Maple Tree Spring 2026") == "2026 Sp"
+    assert format_player_season_label("Maple Tree Summer 2025") == "2025 S"
+    assert format_player_season_label("Maple Tree Fall 2024") == "2024 F"
+    assert format_player_season_label("Maple Tree Winter 2024") == "Maple Tree Winter 2024"
+
+
+def test_fetch_top_hitters_keeps_canonical_name_for_linking(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "top_hitters_links.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=2,
+            pa=8,
+            ab=5,
+            hits=4,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=3,
+            walks=2,
+            strikeouts=0,
+            runs=5,
+            rbi=6,
+            tb=13,
+            raw_source_file="tristan.csv",
+        )
+        connection.commit()
+
+        top_hitters = fetch_top_hitters(connection, "Maple Tree Spring 2026", min_pa=0, limit=5)
+    finally:
+        connection.close()
+
+    assert "canonical_name" in top_hitters.columns
+    assert top_hitters.iloc[0]["canonical_name"] == "tristan"
+
+
+def test_player_card_helpers_return_summary_and_histories(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "player_card_helpers.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Jj", "jj")
+        connection.execute(
+            """
+            INSERT INTO player_aliases (
+                player_id, source_name, normalized_source_name, source_type, source_file, match_method, approved_flag
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (1, "Teo", "teo", "manual_override", "aliases.csv", "manual_override", 1),
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=1,
+            games=10,
+            pa=28,
+            ab=24,
+            hits=14,
+            singles=8,
+            doubles=3,
+            triples=1,
+            hr=2,
+            walks=4,
+            strikeouts=1,
+            runs=10,
+            rbi=11,
+            tb=25,
+            raw_source_file="fall.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=8,
+            pa=24,
+            ab=20,
+            hits=12,
+            singles=6,
+            doubles=2,
+            triples=1,
+            hr=3,
+            walks=4,
+            strikeouts=0,
+            runs=9,
+            rbi=10,
+            tb=25,
+            raw_source_file="spring.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=2,
+            games=8,
+            pa=22,
+            ab=20,
+            hits=8,
+            singles=6,
+            doubles=1,
+            triples=0,
+            hr=1,
+            walks=2,
+            strikeouts=1,
+            runs=5,
+            rbi=4,
+            tb=12,
+            raw_source_file="jj.csv",
+        )
+        connection.commit()
+
+        summary = fetch_player_profile_summary(connection, "tristan")
+        season_history = fetch_player_season_history(connection, "tristan")
+        advanced_history = fetch_player_advanced_history(connection, "tristan")
+    finally:
+        connection.close()
+
+    assert summary is not None
+    assert summary["player"] == "Tristan"
+    assert summary["canonical_name"] == "tristan"
+    assert summary["seasons_played"] == 2
+    assert summary["pa"] == 52
+    assert summary["hits"] == 26
+    assert summary["hr"] == 5
+    assert "Teo" in summary["aliases"]
+    assert set(season_history["season_label"]) == {"2025 F", "2026 Sp"}
+    assert set(advanced_history["season_label"]) == {"2025 F", "2026 Sp"}
+    assert {"iso", "team_relative_ops", "rar", "owar", "archetype"}.issubset(advanced_history.columns)
+
+
+def test_player_card_helpers_filter_milestones_and_records_to_one_player(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "player_card_context.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Jj", "jj")
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=1,
+            games=10,
+            pa=30,
+            ab=26,
+            hits=18,
+            singles=9,
+            doubles=4,
+            triples=1,
+            hr=4,
+            walks=4,
+            strikeouts=1,
+            runs=12,
+            rbi=14,
+            tb=36,
+            raw_source_file="fall.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=8,
+            pa=24,
+            ab=20,
+            hits=14,
+            singles=6,
+            doubles=3,
+            triples=1,
+            hr=4,
+            walks=4,
+            strikeouts=0,
+            runs=10,
+            rbi=12,
+            tb=31,
+            raw_source_file="spring.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=2,
+            games=8,
+            pa=22,
+            ab=20,
+            hits=7,
+            singles=6,
+            doubles=1,
+            triples=0,
+            hr=0,
+            walks=2,
+            strikeouts=1,
+            runs=3,
+            rbi=4,
+            tb=8,
+            raw_source_file="jj.csv",
+        )
+        connection.commit()
+
+        milestone_context = fetch_player_milestone_context(connection, "tristan")
+        record_context = fetch_player_record_context(connection, "tristan")
+        passed_summary = fetch_passed_milestones_summary(connection, categories=["Hits"], active_only=False, min_current_total=0, limit=10)
+        all_milestones = fetch_career_milestones(connection, categories=["Hits"], active_only=False, min_current_total=0)
+    finally:
+        connection.close()
+
+    assert not all_milestones.empty
+    assert not passed_summary.empty
+    if not milestone_context["upcoming"].empty:
+        assert set(milestone_context["upcoming"]["canonical_name"]) == {"tristan"}
+    if not milestone_context["cleared"].empty:
+        assert set(milestone_context["cleared"]["canonical_name"]) == {"tristan"}
+    assert not record_context["placements"].empty
+    assert set(record_context["placements"]["scope"]).issubset({"Career", "Single Season"})
+    assert any(label in {"2025 F", "2026 Sp", ""} for label in record_context["placements"]["season_label"].tolist())

@@ -24,10 +24,13 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    PLAYER_CARD_URL_PATH,
     database_path_control,
     get_responsive_layout_context,
+    player_link_column_config,
     render_mobile_install_help,
     render_mobile_standings_cards,
+    with_player_link_column,
 )
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
@@ -47,6 +50,12 @@ def get_db_connection(db_path: str, cache_key: str):
 def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
     viewer_pages = [
         {"page": render_home_page, "title": "Home", "icon": "🏠", "default": True},
+        {
+            "page": "pages/10_Player_Card.py",
+            "title": "Player Card",
+            "url_path": PLAYER_CARD_URL_PATH,
+            "visibility": "hidden",
+        },
         {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats"},
         {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats"},
         {"page": "pages/5_Records.py", "title": "Records"},
@@ -78,6 +87,8 @@ def _build_navigation(role: str) -> list[Any]:
             title=str(spec["title"]),
             icon=str(spec["icon"]) if spec.get("icon") else None,
             default=bool(spec.get("default", False)),
+            url_path=str(spec["url_path"]) if spec.get("url_path") else None,
+            visibility=str(spec["visibility"]) if spec.get("visibility") else "visible",
         )
         for spec in specs
     ]
@@ -376,11 +387,13 @@ def render_home_page() -> None:
         unsafe_allow_html=True,
     )
     top_hitters = fetch_top_hitters(connection, selected_season, min_pa=0, limit=8)
+    top_hitters = with_player_link_column(top_hitters, output_column="player")
     st.dataframe(
-        top_hitters,
+        top_hitters[[column for column in top_hitters.columns if column != "canonical_name"]],
         use_container_width=True,
         hide_index=True,
         column_config={
+            "player": player_link_column_config(),
             "avg": st.column_config.NumberColumn("AVG", format="%.3f"),
             "obp": st.column_config.NumberColumn("OBP", format="%.3f"),
             "slg": st.column_config.NumberColumn("SLG", format="%.3f"),

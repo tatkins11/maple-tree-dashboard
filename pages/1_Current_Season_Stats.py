@@ -18,6 +18,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import database_path_control, get_responsive_layout_context
+from src.dashboard.ui import build_player_link_html, player_link_column_config, with_player_link_column
 
 
 st.set_page_config(page_title="Current Season Stats", page_icon=":bar_chart:", layout="wide")
@@ -108,7 +109,7 @@ def _render_leader_snapshot(leaders: dict[str, str]) -> None:
 
 def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
     return {
-        "player": st.column_config.TextColumn("Player", width="medium"),
+        "player": player_link_column_config(),
         "games": st.column_config.NumberColumn("G", format="%d", width="small"),
         "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
         "ab": st.column_config.NumberColumn("AB", format="%d", width="small"),
@@ -129,7 +130,7 @@ def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
 
 def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
     return {
-        "player": st.column_config.TextColumn("Player", width="medium"),
+        "player": player_link_column_config(),
         "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
         "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
         "xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f", width="small"),
@@ -151,10 +152,11 @@ def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None
 
 def _render_mobile_standard_cards(dataframe) -> None:
     for _, row in dataframe.iterrows():
+        player_markup = build_player_link_html(str(row["player"]), str(row.get("canonical_name") or ""))
         st.markdown(
             f"""
             <div class="current-stats-card">
-              <div class="current-stats-card-title">{row['player']}</div>
+              <div class="current-stats-card-title">{player_markup}</div>
               <div class="current-stats-card-row"><strong>G:</strong> {int(row['games'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])}</div>
               <div class="current-stats-card-row"><strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
               <div class="current-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
@@ -167,10 +169,11 @@ def _render_mobile_standard_cards(dataframe) -> None:
 
 def _render_mobile_advanced_cards(dataframe) -> None:
     for _, row in dataframe.iterrows():
+        player_markup = build_player_link_html(str(row["player"]), str(row.get("canonical_name") or ""))
         st.markdown(
             f"""
             <div class="current-stats-card">
-              <div class="current-stats-card-title">{row['player']}</div>
+              <div class="current-stats-card-title">{player_markup}</div>
               <div class="current-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
               <div class="current-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f} &nbsp; <strong>Team OPS+:</strong> {row['team_relative_ops']:.0f}</div>
               <div class="current-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
@@ -227,13 +230,14 @@ else:
             "<div class='current-stats-note'>Core season batting line with the highest-signal counting and rate stats.</div>",
             unsafe_allow_html=True,
         )
-        standard_columns = ["player", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "avg", "obp", "slg", "ops"]
+        standard_columns = ["player", "canonical_name", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "avg", "obp", "slg", "ops"]
         standard_display = standard_stats[[column for column in standard_columns if column in standard_stats.columns]]
         if layout.is_mobile_layout:
             _render_mobile_standard_cards(standard_display)
         else:
+            standard_table = with_player_link_column(standard_display, output_column="player")
             st.dataframe(
-                standard_display,
+                standard_table[[column for column in standard_columns if column in standard_table.columns and column != "canonical_name"]],
                 use_container_width=True,
                 hide_index=True,
                 column_config=_standard_stats_column_config(),
@@ -244,13 +248,14 @@ else:
             "<div class='current-stats-note'>Curated advanced metrics for quick team-facing evaluation. The deeper methodology and expanded views remain on Advanced Analytics.</div>",
             unsafe_allow_html=True,
         )
-        advanced_columns = ["player", "pa", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]
+        advanced_columns = ["player", "canonical_name", "pa", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]
         advanced_display = advanced_stats[[column for column in advanced_columns if column in advanced_stats.columns]]
         if layout.is_mobile_layout:
             _render_mobile_advanced_cards(advanced_display)
         else:
+            advanced_table = with_player_link_column(advanced_display, output_column="player")
             st.dataframe(
-                advanced_display,
+                advanced_table[[column for column in advanced_columns if column in advanced_table.columns and column != "canonical_name"]],
                 use_container_width=True,
                 hide_index=True,
                 column_config=_advanced_stats_column_config(),

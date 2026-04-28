@@ -4,8 +4,11 @@ from src.dashboard.ui import (
     RESPONSIVE_AUTO,
     RESPONSIVE_FULL,
     RESPONSIVE_MOBILE,
+    PLAYER_CARD_URL_PATH,
+    build_player_page_href,
     build_mobile_standings_cards,
     resolve_responsive_layout_mode,
+    with_player_link_column,
 )
 
 
@@ -66,3 +69,21 @@ def test_mobile_standings_cards_preserve_runs_and_selected_team_without_ties() -
     assert cards[0].runs_against == 31
     assert cards[0].run_diff == 13
     assert not hasattr(cards[0], "ties")
+
+
+def test_build_player_page_href_uses_canonical_name_and_display_anchor() -> None:
+    assert build_player_page_href("tristan", "Tristan") == f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan"
+
+
+def test_with_player_link_column_creates_hidden_player_route_links() -> None:
+    dataframe = pd.DataFrame(
+        [
+            {"player": "Tristan", "canonical_name": "tristan", "ops": 1.2},
+            {"player": "Glove", "canonical_name": "glove", "ops": 1.0},
+        ]
+    )
+
+    linked = with_player_link_column(dataframe, output_column="player")
+
+    assert linked.loc[0, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan"
+    assert linked.loc[1, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=glove#Glove"

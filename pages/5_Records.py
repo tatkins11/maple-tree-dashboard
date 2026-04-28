@@ -18,6 +18,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import database_path_control, get_responsive_layout_context
+from src.dashboard.ui import build_player_link_html, player_link_column_config, with_player_link_column
 
 
 st.set_page_config(page_title="Records", page_icon="🥎", layout="wide")
@@ -175,7 +176,10 @@ def _render_headliners(headliners: dict[str, dict[str, object]], *, is_mobile_la
             )
             value_label = escape(str(payload.get("value_label", "")))
             value = escape(str(payload.get("formatted_value", "")))
-            player = escape(str(payload.get("player", "")))
+            player = build_player_link_html(
+                str(payload.get("player", "")),
+                str(payload.get("canonical_name") or ""),
+            )
             context = escape(str(payload.get("context", "")))
             column.markdown(
                 f"""
@@ -194,7 +198,7 @@ def _base_column_config() -> dict[str, st.column_config.Column]:
     return {
         "#": st.column_config.NumberColumn("#", width="small", format="%d"),
         "Season": st.column_config.TextColumn("Season", width="small"),
-        "Player": st.column_config.TextColumn("Player", width="medium"),
+        "Player": player_link_column_config(label="Player"),
         "PA": st.column_config.NumberColumn("PA", width="small", format="%d"),
         "Games": st.column_config.NumberColumn("Games", width="small", format="%d"),
         "AB": st.column_config.NumberColumn("AB", width="small", format="%d"),
@@ -237,7 +241,7 @@ def _column_config_for_board(scope: str, stat_view: str, label: str) -> dict[str
         "Season",
         width="medium" if scope == "Career Records" else "small",
     )
-    config["Player"] = st.column_config.TextColumn("Player", width="medium")
+    config["Player"] = player_link_column_config(label="Player")
 
     if stat_view == "Counting Stats":
         config[label] = st.column_config.NumberColumn(label, width="small", format="%d")
@@ -286,9 +290,15 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
         for column, label in zip(columns, labels[start:start + per_row]):
             column.markdown(f'<div class="records-section-title"><strong>{label}</strong></div>', unsafe_allow_html=True)
             board = leaderboards[label]
+            board = with_player_link_column(
+                board,
+                player_column="Player",
+                canonical_column="canonical_name",
+                output_column="Player",
+            )
             display_columns = _display_columns_for_board(scope, stat_view, label, board)
             column.dataframe(
-                board[display_columns],
+                board[[column_name for column_name in display_columns if column_name != "canonical_name"]],
                 hide_index=True,
                 use_container_width=True,
                 height=260,
