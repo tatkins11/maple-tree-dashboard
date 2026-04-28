@@ -232,6 +232,7 @@ else:
                     "slg": "{:.3f}",
                     "ops": "{:.3f}",
                 },
+                link_columns=["player"],
                 css_class="current-stats-standard-table",
             )
 
@@ -269,5 +270,6 @@ else:
                     "rar": "{:.2f}",
                     "owar": "{:.2f}",
                 },
+                link_columns=["player"],
                 css_class="current-stats-advanced-table",
             )

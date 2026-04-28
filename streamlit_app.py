@@ -408,6 +408,7 @@ def render_home_page() -> None:
             "slg": "{:.3f}",
             "ops": "{:.3f}",
         },
+        link_columns=["player"],
         css_class="home-top-hitters-table",
     )
 

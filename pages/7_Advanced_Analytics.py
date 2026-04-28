@@ -417,6 +417,7 @@ render_static_table(
         "fc_rate": "{:.3f}",
         "hbp_rate": "{:.3f}",
     },
+    link_columns=["player"],
     css_class="advanced-analytics-table",
 )
 
@@ -460,6 +461,7 @@ for index, (label, board) in enumerate(leaderboards.items()):
                 "rar": "{:.2f}",
                 "owar": "{:.2f}",
             },
+            link_columns=["player"],
             css_class="advanced-leaderboard-table",
         )
 
@@ -647,6 +649,7 @@ with archetype_columns[1]:
             "rar": "{:.2f}",
             "owar": "{:.2f}",
         },
+        link_columns=["player"],
         css_class="advanced-archetype-table",
     )
 

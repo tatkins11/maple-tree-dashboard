@@ -279,6 +279,7 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
                     "SLG": "{:.3f}",
                     "OPS": "{:.3f}",
                 },
+                link_columns=["Player"],
                 css_class="records-leaderboard-table",
             )
 

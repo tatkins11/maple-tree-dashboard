@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote, urlsplit
 
 import pandas as pd
 import streamlit as st
@@ -236,11 +236,23 @@ def _format_table_cell(value, formatter) -> str:
     return str(value)
 
 
+def _format_link_cell(value) -> str:
+    if pd.isna(value):
+        return ""
+    href = str(value).strip()
+    if not href or href == "#":
+        return ""
+    parsed = urlsplit(href)
+    label = unquote(parsed.fragment).strip() or href
+    return f'<a href="{escape(href, quote=True)}">{escape(label)}</a>'
+
+
 def render_static_table(
     dataframe: pd.DataFrame,
     *,
     column_labels: dict[str, str] | None = None,
     formatters: dict[str, object] | None = None,
+    link_columns: list[str] | None = None,
     css_class: str = "dashboard-static-table",
 ) -> None:
     if dataframe.empty:
@@ -251,6 +263,9 @@ def render_static_table(
     for column, formatter in formatters.items():
         if column in display.columns:
             display[column] = display[column].map(lambda value: _format_table_cell(value, formatter))
+    for column in link_columns or []:
+        if column in display.columns:
+            display[column] = display[column].map(_format_link_cell)
 
     if column_labels:
         ordered_columns = [column for column in dataframe.columns if column in display.columns]

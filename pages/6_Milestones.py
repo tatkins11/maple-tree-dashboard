@@ -324,7 +324,7 @@ def _render_first_to_section(dataframe: pd.DataFrame) -> None:
     first_to_table = _prepare_display_table(dataframe, include_active=False)
     first_to_table = _link_player_table(first_to_table)
     first_to_display = _mobile_table(first_to_table) if layout.is_mobile_layout else first_to_table[[column for column in first_to_table.columns if column != "canonical_name"]]
-    render_static_table(first_to_display, css_class="milestone-table")
+    render_static_table(first_to_display, link_columns=["Player"], css_class="milestone-table")
 
 
 _inject_milestone_css()
@@ -420,7 +420,7 @@ if overall_table.empty:
 else:
     overall_table = _link_player_table(overall_table)
     overall_display = _mobile_table(overall_table) if layout.is_mobile_layout else overall_table[[column for column in overall_table.columns if column != "canonical_name"]]
-    render_static_table(overall_display, css_class="milestone-table")
+    render_static_table(overall_display, link_columns=["Player"], css_class="milestone-table")
 
 st.subheader("Active Roster Milestones")
 st.markdown(
@@ -433,7 +433,7 @@ if active_table.empty:
 else:
     active_table = _link_player_table(active_table)
     active_display = _mobile_table(active_table) if layout.is_mobile_layout else active_table[[column for column in active_table.columns if column != "canonical_name"]]
-    render_static_table(active_display, css_class="milestone-table")
+    render_static_table(active_display, link_columns=["Player"], css_class="milestone-table")
 
 st.subheader("Milestones by Category")
 st.markdown(
@@ -454,7 +454,7 @@ if category_table.empty:
 else:
     category_table = _link_player_table(category_table)
     category_display = _mobile_table(category_table) if layout.is_mobile_layout else category_table[[column for column in category_table.columns if column != "canonical_name"]]
-    render_static_table(category_display, css_class="milestone-table")
+    render_static_table(category_display, link_columns=["Player"], css_class="milestone-table")
 
 st.subheader("Passed Milestones Summary")
 st.markdown(
@@ -474,4 +474,4 @@ if passed_table.empty:
 else:
     passed_table = _link_player_table(passed_table)
     passed_display = _mobile_table(passed_table) if layout.is_mobile_layout else passed_table[[column for column in passed_table.columns if column != "canonical_name"]]
-    render_static_table(passed_display, css_class="milestone-table")
+    render_static_table(passed_display, link_columns=["Player"], css_class="milestone-table")

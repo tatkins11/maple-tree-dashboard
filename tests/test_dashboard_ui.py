@@ -5,6 +5,7 @@ from src.dashboard.ui import (
     RESPONSIVE_FULL,
     RESPONSIVE_MOBILE,
     PLAYER_CARD_URL_PATH,
+    _format_link_cell,
     build_player_page_href,
     build_mobile_standings_cards,
     resolve_responsive_layout_mode,
@@ -87,3 +88,10 @@ def test_with_player_link_column_creates_hidden_player_route_links() -> None:
 
     assert linked.loc[0, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan"
     assert linked.loc[1, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=glove#Glove"
+
+
+def test_format_link_cell_renders_same_tab_anchor_with_player_name() -> None:
+    html = _format_link_cell(f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan")
+
+    assert 'href="./player-card?player=tristan#Tristan"' in html
+    assert ">Tristan</a>" in html
