@@ -188,7 +188,7 @@ def build_player_page_href(canonical_name: str, display_name: str | None = None)
     label = str(display_name or canonical).strip()
     if not canonical:
         return "#"
-    return f"./?next={PLAYER_CARD_URL_PATH}&player={quote(canonical, safe='')}#{label}"
+    return f"./{PLAYER_CARD_URL_PATH}?player={quote(canonical, safe='')}#{label}"
 
 
 def build_player_link_html(display_name: str, canonical_name: str) -> str:
@@ -226,32 +226,83 @@ def player_link_column_config(*, label: str = "Player", width: str = "medium") -
     return st.column_config.LinkColumn(label, width=width, display_text=PLAYER_LINK_DISPLAY_REGEX)
 
 
-def inject_same_tab_player_link_script() -> None:
+def _format_table_cell(value, formatter) -> str:
+    if pd.isna(value):
+        return ""
+    if callable(formatter):
+        return str(formatter(value))
+    if isinstance(formatter, str):
+        return formatter.format(value)
+    return str(value)
+
+
+def render_static_table(
+    dataframe: pd.DataFrame,
+    *,
+    column_labels: dict[str, str] | None = None,
+    formatters: dict[str, object] | None = None,
+    css_class: str = "dashboard-static-table",
+) -> None:
+    if dataframe.empty:
+        return
+
+    display = dataframe.copy()
+    formatters = formatters or {}
+    for column, formatter in formatters.items():
+        if column in display.columns:
+            display.loc[:, column] = display[column].map(lambda value: _format_table_cell(value, formatter))
+
+    if column_labels:
+        ordered_columns = [column for column in dataframe.columns if column in display.columns]
+        display = display[ordered_columns].rename(columns=column_labels)
+
     st.markdown(
         f"""
-        <script>
-        (function() {{
-          if (window.__mapleTreePlayerLinkHandlerInstalled) {{
-            return;
-          }}
-          window.__mapleTreePlayerLinkHandlerInstalled = true;
-          document.addEventListener("click", function(event) {{
-            const anchor = event.target && event.target.closest
-              ? event.target.closest('a[href*="?next={PLAYER_CARD_URL_PATH}"]')
-              : null;
-            if (!anchor) {{
-              return;
-            }}
-            event.preventDefault();
-            event.stopPropagation();
-            window.location.assign(anchor.href);
-          }}, true);
-        }})();
-        </script>
+        <style>
+        .{css_class}-wrap {{
+            overflow-x: auto;
+            margin-bottom: 0.4rem;
+        }}
+        table.{css_class} {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: white;
+        }}
+        table.{css_class} thead th {{
+            text-align: left;
+            font-weight: 700;
+            color: #374151;
+            padding: 0.55rem 0.65rem;
+            border-bottom: 1px solid rgba(49, 51, 63, 0.12);
+            background: #fafafa;
+            white-space: nowrap;
+        }}
+        table.{css_class} tbody td {{
+            padding: 0.5rem 0.65rem;
+            border-bottom: 1px solid rgba(49, 51, 63, 0.08);
+            color: #1f2937;
+            white-space: nowrap;
+            vertical-align: top;
+        }}
+        table.{css_class} tbody tr:nth-child(even) {{
+            background: rgba(249, 250, 251, 0.7);
+        }}
+        table.{css_class} a {{
+            color: #2563eb;
+            text-decoration: none;
+        }}
+        table.{css_class} a:hover {{
+            text-decoration: underline;
+        }}
+        </style>
         """,
         unsafe_allow_html=True,
     )
-
+    st.markdown(
+        f'<div class="{css_class}-wrap">{display.to_html(index=False, escape=False, classes=css_class, border=0)}</div>',
+        unsafe_allow_html=True,
+    )
 
 def database_path_control(default_path: Path, *, key: str) -> str:
     if should_use_hosted_database():

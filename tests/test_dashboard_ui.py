@@ -72,7 +72,7 @@ def test_mobile_standings_cards_preserve_runs_and_selected_team_without_ties() -
 
 
 def test_build_player_page_href_uses_canonical_name_and_display_anchor() -> None:
-    assert build_player_page_href("tristan", "Tristan") == f"./?next={PLAYER_CARD_URL_PATH}&player=tristan#Tristan"
+    assert build_player_page_href("tristan", "Tristan") == f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan"
 
 
 def test_with_player_link_column_creates_hidden_player_route_links() -> None:
@@ -85,5 +85,5 @@ def test_with_player_link_column_creates_hidden_player_route_links() -> None:
 
     linked = with_player_link_column(dataframe, output_column="player")
 
-    assert linked.loc[0, "player"] == f"./?next={PLAYER_CARD_URL_PATH}&player=tristan#Tristan"
-    assert linked.loc[1, "player"] == f"./?next={PLAYER_CARD_URL_PATH}&player=glove#Glove"
+    assert linked.loc[0, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan"
+    assert linked.loc[1, "player"] == f"./{PLAYER_CARD_URL_PATH}?player=glove#Glove"

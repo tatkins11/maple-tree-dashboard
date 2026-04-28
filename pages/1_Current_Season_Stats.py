@@ -17,8 +17,13 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context
-from src.dashboard.ui import build_player_link_html, player_link_column_config, with_player_link_column
+from src.dashboard.ui import (
+    build_player_link_html,
+    database_path_control,
+    get_responsive_layout_context,
+    render_static_table,
+    with_player_link_column,
+)
 
 
 st.set_page_config(page_title="Current Season Stats", page_icon=":bar_chart:", layout="wide")
@@ -105,42 +110,6 @@ def _render_leader_snapshot(leaders: dict[str, str]) -> None:
         """,
         unsafe_allow_html=True,
     )
-
-
-def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "player": player_link_column_config(),
-        "games": st.column_config.NumberColumn("G", format="%d", width="small"),
-        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-        "ab": st.column_config.NumberColumn("AB", format="%d", width="small"),
-        "hits": st.column_config.NumberColumn("H", format="%d", width="small"),
-        "1b": st.column_config.NumberColumn("1B", format="%d", width="small"),
-        "2b": st.column_config.NumberColumn("2B", format="%d", width="small"),
-        "3b": st.column_config.NumberColumn("3B", format="%d", width="small"),
-        "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
-        "bb": st.column_config.NumberColumn("BB", format="%d", width="small"),
-        "r": st.column_config.NumberColumn("R", format="%d", width="small"),
-        "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
-        "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
-        "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
-        "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
-        "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
-    }
-
-
-def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "player": player_link_column_config(),
-        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-        "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
-        "xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f", width="small"),
-        "hr_rate": st.column_config.NumberColumn("HR Rate", format="%.3f", width="small"),
-        "tb_per_pa": st.column_config.NumberColumn("TB / PA", format="%.3f", width="small"),
-        "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
-        "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
-        "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
-        "archetype": st.column_config.TextColumn("Archetype", width="medium"),
-    }
 
 
 def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None:
@@ -236,11 +205,34 @@ else:
             _render_mobile_standard_cards(standard_display)
         else:
             standard_table = with_player_link_column(standard_display, output_column="player")
-            st.dataframe(
+            render_static_table(
                 standard_table[[column for column in standard_columns if column in standard_table.columns and column != "canonical_name"]],
-                use_container_width=True,
-                hide_index=True,
-                column_config=_standard_stats_column_config(),
+                column_labels={
+                    "player": "Player",
+                    "games": "G",
+                    "pa": "PA",
+                    "ab": "AB",
+                    "hits": "H",
+                    "1b": "1B",
+                    "2b": "2B",
+                    "3b": "3B",
+                    "hr": "HR",
+                    "bb": "BB",
+                    "r": "R",
+                    "rbi": "RBI",
+                    "tb": "TB",
+                    "avg": "AVG",
+                    "obp": "OBP",
+                    "slg": "SLG",
+                    "ops": "OPS",
+                },
+                formatters={
+                    "avg": "{:.3f}",
+                    "obp": "{:.3f}",
+                    "slg": "{:.3f}",
+                    "ops": "{:.3f}",
+                },
+                css_class="current-stats-standard-table",
             )
 
     with advanced_tab:
@@ -254,9 +246,28 @@ else:
             _render_mobile_advanced_cards(advanced_display)
         else:
             advanced_table = with_player_link_column(advanced_display, output_column="player")
-            st.dataframe(
+            render_static_table(
                 advanced_table[[column for column in advanced_columns if column in advanced_table.columns and column != "canonical_name"]],
-                use_container_width=True,
-                hide_index=True,
-                column_config=_advanced_stats_column_config(),
+                column_labels={
+                    "player": "Player",
+                    "pa": "PA",
+                    "iso": "ISO",
+                    "xbh_rate": "XBH Rate",
+                    "hr_rate": "HR Rate",
+                    "tb_per_pa": "TB / PA",
+                    "team_relative_ops": "Team OPS+",
+                    "rar": "RAR",
+                    "owar": "oWAR",
+                    "archetype": "Archetype",
+                },
+                formatters={
+                    "iso": "{:.3f}",
+                    "xbh_rate": "{:.3f}",
+                    "hr_rate": "{:.3f}",
+                    "tb_per_pa": "{:.3f}",
+                    "team_relative_ops": "{:.0f}",
+                    "rar": "{:.2f}",
+                    "owar": "{:.2f}",
+                },
+                css_class="current-stats-advanced-table",
             )

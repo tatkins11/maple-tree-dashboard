@@ -25,7 +25,7 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, player_link_column_config, with_player_link_column
+from src.dashboard.ui import database_path_control, render_static_table, with_player_link_column
 
 
 st.set_page_config(page_title="Advanced Analytics", page_icon="🥎", layout="wide")
@@ -362,39 +362,62 @@ table_display = with_player_link_column(
     display_df[[column for column in ["canonical_name", *table_columns] if column in display_df.columns]],
     output_column="player",
 )
-st.dataframe(
+render_static_table(
     table_display[[column for column in table_columns if column in table_display.columns]],
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "player": player_link_column_config(),
-        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-        "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
-        "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
-        "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
-        "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
-        "xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f", width="small"),
-        "hr_rate": st.column_config.NumberColumn("HR Rate", format="%.3f", width="small"),
-        "tb_per_pa": st.column_config.NumberColumn("TB / PA", format="%.3f", width="small"),
-        "non_out_rate": st.column_config.NumberColumn("Non-Out Rate", format="%.3f", width="small"),
-        "walk_rate": st.column_config.NumberColumn("BB Rate", format="%.3f", width="small"),
-        "rbi_per_pa": st.column_config.NumberColumn("RBI / PA", format="%.3f", width="small"),
-        "runs_per_on_base_event": st.column_config.NumberColumn("R / OBE", format="%.3f", width="small"),
-        "team_relative_obp": st.column_config.NumberColumn("Team OBP+", format="%.0f", width="small"),
-        "team_relative_slg": st.column_config.NumberColumn("Team SLG+", format="%.0f", width="small"),
-        "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
-        "archetype": st.column_config.TextColumn("Archetype", width="medium"),
-        "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
-        "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
-        "ba_risp": st.column_config.NumberColumn("BA / RISP", format="%.3f", width="small"),
-        "two_out_rbi": st.column_config.NumberColumn("2OUTRBI", format="%d", width="small"),
-        "two_out_rbi_rate": st.column_config.NumberColumn("2OUTRBI Rate", format="%.3f", width="small"),
-        "lob": st.column_config.NumberColumn("LOB", format="%d", width="small"),
-        "lob_per_pa": st.column_config.NumberColumn("LOB / PA", format="%.3f", width="small"),
-        "roe_rate": st.column_config.NumberColumn("ROE Rate", format="%.3f", width="small"),
-        "fc_rate": st.column_config.NumberColumn("FC Rate", format="%.3f", width="small"),
-        "hbp_rate": st.column_config.NumberColumn("HBP Rate", format="%.3f", width="small"),
+    column_labels={
+        "player": "Player",
+        "pa": "PA",
+        "obp": "OBP",
+        "slg": "SLG",
+        "ops": "OPS",
+        "iso": "ISO",
+        "hr_rate": "HR Rate",
+        "tb_per_pa": "TB / PA",
+        "non_out_rate": "Non-Out Rate",
+        "rbi_per_pa": "RBI / PA",
+        "team_relative_ops": "Team OPS+",
+        "archetype": "Archetype",
+        "rar": "RAR",
+        "owar": "oWAR",
+        "xbh_rate": "XBH Rate",
+        "walk_rate": "BB Rate",
+        "runs_per_on_base_event": "R / OBE",
+        "team_relative_obp": "Team OBP+",
+        "team_relative_slg": "Team SLG+",
+        "ba_risp": "BA / RISP",
+        "two_out_rbi": "2OUTRBI",
+        "two_out_rbi_rate": "2OUTRBI Rate",
+        "lob": "LOB",
+        "lob_per_pa": "LOB / PA",
+        "roe_rate": "ROE Rate",
+        "fc_rate": "FC Rate",
+        "hbp_rate": "HBP Rate",
     },
+    formatters={
+        "obp": "{:.3f}",
+        "slg": "{:.3f}",
+        "ops": "{:.3f}",
+        "iso": "{:.3f}",
+        "hr_rate": "{:.3f}",
+        "tb_per_pa": "{:.3f}",
+        "non_out_rate": "{:.3f}",
+        "rbi_per_pa": "{:.3f}",
+        "team_relative_ops": "{:.0f}",
+        "xbh_rate": "{:.3f}",
+        "walk_rate": "{:.3f}",
+        "runs_per_on_base_event": "{:.3f}",
+        "team_relative_obp": "{:.0f}",
+        "team_relative_slg": "{:.0f}",
+        "rar": "{:.2f}",
+        "owar": "{:.2f}",
+        "ba_risp": "{:.3f}",
+        "two_out_rbi_rate": "{:.3f}",
+        "lob_per_pa": "{:.3f}",
+        "roe_rate": "{:.3f}",
+        "fc_rate": "{:.3f}",
+        "hbp_rate": "{:.3f}",
+    },
+    css_class="advanced-analytics-table",
 )
 
 st.subheader("Category Leaders")
@@ -407,25 +430,37 @@ for index, (label, board) in enumerate(leaderboards.items()):
             board.merge(player_keys, on="player", how="left"),
             output_column="player",
         )
-        st.dataframe(
+        render_static_table(
             linked_board[[column for column in linked_board.columns if column != "canonical_name"]],
-            hide_index=True,
-            use_container_width=True,
-            column_config={
-                "player": player_link_column_config(),
-                "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
-                "team_relative_obp": st.column_config.NumberColumn("Team OBP+", format="%.0f", width="small"),
-                "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
-                "hr_rate": st.column_config.NumberColumn("HR Rate", format="%.3f", width="small"),
-                "tb_per_pa": st.column_config.NumberColumn("TB / PA", format="%.3f", width="small"),
-                "rbi_per_pa": st.column_config.NumberColumn("RBI / PA", format="%.3f", width="small"),
-                "runs_per_on_base_event": st.column_config.NumberColumn("R / OBE", format="%.3f", width="small"),
-                "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
-                "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
-                "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
-                "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
-                "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
+            column_labels={
+                "player": "Player",
+                "obp": "OBP",
+                "team_relative_obp": "Team OBP+",
+                "iso": "ISO",
+                "hr_rate": "HR Rate",
+                "tb_per_pa": "TB / PA",
+                "rbi_per_pa": "RBI / PA",
+                "runs_per_on_base_event": "R / OBE",
+                "team_relative_ops": "Team OPS+",
+                "ops": "OPS",
+                "rar": "RAR",
+                "owar": "oWAR",
+                "pa": "PA",
             },
+            formatters={
+                "obp": "{:.3f}",
+                "team_relative_obp": "{:.0f}",
+                "iso": "{:.3f}",
+                "hr_rate": "{:.3f}",
+                "tb_per_pa": "{:.3f}",
+                "rbi_per_pa": "{:.3f}",
+                "runs_per_on_base_event": "{:.3f}",
+                "team_relative_ops": "{:.0f}",
+                "ops": "{:.3f}",
+                "rar": "{:.2f}",
+                "owar": "{:.2f}",
+            },
+            css_class="advanced-leaderboard-table",
         )
 
 st.subheader("OBP vs SLG")
@@ -597,20 +632,22 @@ with archetype_columns[1]:
     )
     player_archetypes = player_archetypes.sort_values(["archetype_rank", "rar", "player"], ascending=[True, False, True])
     player_archetypes = with_player_link_column(player_archetypes, output_column="player")
-    st.dataframe(
-        player_archetypes.drop(
-            columns=["archetype_rank", "canonical_name"]
-        ),
-        hide_index=True,
-        use_container_width=True,
-        column_config={
-            "player": player_link_column_config(),
-            "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-            "archetype": st.column_config.TextColumn("Archetype", width="medium"),
-            "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
-            "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
-            "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
+    render_static_table(
+        player_archetypes.drop(columns=["archetype_rank", "canonical_name"]),
+        column_labels={
+            "player": "Player",
+            "pa": "PA",
+            "archetype": "Archetype",
+            "team_relative_ops": "Team OPS+",
+            "rar": "RAR",
+            "owar": "oWAR",
         },
+        formatters={
+            "team_relative_ops": "{:.0f}",
+            "rar": "{:.2f}",
+            "owar": "{:.2f}",
+        },
+        css_class="advanced-archetype-table",
     )
 
 st.subheader("Player Comparison")

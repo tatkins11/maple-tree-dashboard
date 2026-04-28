@@ -27,7 +27,7 @@ from src.dashboard.ui import (
     PLAYER_CARD_URL_PATH,
     database_path_control,
     get_responsive_layout_context,
-    player_link_column_config,
+    render_static_table,
     render_mobile_install_help,
     render_mobile_standings_cards,
     with_player_link_column,
@@ -92,19 +92,6 @@ def _build_navigation(role: str) -> list[Any]:
         )
         for spec in specs
     ]
-
-
-def _handle_pending_player_redirect() -> None:
-    next_page = str(st.query_params.get("next") or "").strip()
-    if next_page != PLAYER_CARD_URL_PATH:
-        return
-
-    player = str(st.query_params.get("player") or "").strip()
-    pending_params = {"player": player} if player else {}
-    st.query_params.clear()
-    for key, value in pending_params.items():
-        st.query_params[key] = value
-    st.switch_page("pages/10_Player_Card.py")
 
 
 def _inject_home_css() -> None:
@@ -401,17 +388,27 @@ def render_home_page() -> None:
     )
     top_hitters = fetch_top_hitters(connection, selected_season, min_pa=0, limit=8)
     top_hitters = with_player_link_column(top_hitters, output_column="player")
-    st.dataframe(
-        top_hitters[[column for column in top_hitters.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "player": player_link_column_config(),
-            "avg": st.column_config.NumberColumn("AVG", format="%.3f"),
-            "obp": st.column_config.NumberColumn("OBP", format="%.3f"),
-            "slg": st.column_config.NumberColumn("SLG", format="%.3f"),
-            "ops": st.column_config.NumberColumn("OPS", format="%.3f"),
+    top_hitters_display = top_hitters[[column for column in top_hitters.columns if column != "canonical_name"]]
+    render_static_table(
+        top_hitters_display,
+        column_labels={
+            "player": "Player",
+            "pa": "PA",
+            "hr": "HR",
+            "r": "R",
+            "rbi": "RBI",
+            "avg": "AVG",
+            "obp": "OBP",
+            "slg": "SLG",
+            "ops": "OPS",
         },
+        formatters={
+            "avg": "{:.3f}",
+            "obp": "{:.3f}",
+            "slg": "{:.3f}",
+            "ops": "{:.3f}",
+        },
+        css_class="home-top-hitters-table",
     )
 
     st.markdown("### Quick Season Totals")
@@ -424,7 +421,6 @@ def render_home_page() -> None:
 
 def main() -> None:
     role = ensure_authenticated(render_session_controls=False)
-    _handle_pending_player_redirect()
     navigation = st.navigation(_build_navigation(role), position="sidebar")
     navigation.run()
 

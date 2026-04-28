@@ -94,9 +94,6 @@ def _render_session_controls() -> None:
     role = current_role()
     if not role:
         return
-    from src.dashboard.ui import inject_same_tab_player_link_script
-
-    inject_same_tab_player_link_script()
     _render_role_based_sidebar_visibility(role)
     st.sidebar.caption(f"Access: {role.title()}")
     if st.sidebar.button("Log out", key="auth_logout"):

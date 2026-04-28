@@ -20,7 +20,7 @@ from src.dashboard.ui import (
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
-    player_link_column_config,
+    render_static_table,
     with_player_link_column,
 )
 
@@ -223,18 +223,7 @@ def _prepare_passed_table(dataframe: pd.DataFrame, include_active: bool = True) 
 
 
 def _milestone_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "Player": player_link_column_config(label="Player"),
-        "Stat": st.column_config.TextColumn("Stat", width="small"),
-        "Current": st.column_config.NumberColumn("Current", format="%d", width="small"),
-        "Next": st.column_config.TextColumn("Next", width="small"),
-        "Club": st.column_config.TextColumn("Club", width="medium"),
-        "Remaining": st.column_config.TextColumn("Remaining", width="small"),
-        "Watch": st.column_config.TextColumn("Watch", width="small"),
-        "Progress": st.column_config.ProgressColumn("Progress", min_value=0, max_value=100, format="%d%%", width="medium"),
-        "Active": st.column_config.TextColumn("Active", width="small"),
-        "Highest Cleared": st.column_config.TextColumn("Highest Cleared", width="small"),
-    }
+    return {}
 
 
 def _mobile_table(dataframe: pd.DataFrame) -> pd.DataFrame:
@@ -334,12 +323,8 @@ def _render_first_to_section(dataframe: pd.DataFrame) -> None:
 
     first_to_table = _prepare_display_table(dataframe, include_active=False)
     first_to_table = _link_player_table(first_to_table)
-    st.dataframe(
-        _mobile_table(first_to_table) if layout.is_mobile_layout else first_to_table[[column for column in first_to_table.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config=_milestone_column_config(),
-    )
+    first_to_display = _mobile_table(first_to_table) if layout.is_mobile_layout else first_to_table[[column for column in first_to_table.columns if column != "canonical_name"]]
+    render_static_table(first_to_display, css_class="milestone-table")
 
 
 _inject_milestone_css()
@@ -434,12 +419,8 @@ if overall_table.empty:
     st.info("No upcoming milestones match the current filters.")
 else:
     overall_table = _link_player_table(overall_table)
-    st.dataframe(
-        _mobile_table(overall_table) if layout.is_mobile_layout else overall_table[[column for column in overall_table.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config=_milestone_column_config(),
-    )
+    overall_display = _mobile_table(overall_table) if layout.is_mobile_layout else overall_table[[column for column in overall_table.columns if column != "canonical_name"]]
+    render_static_table(overall_display, css_class="milestone-table")
 
 st.subheader("Active Roster Milestones")
 st.markdown(
@@ -451,12 +432,8 @@ if active_table.empty:
     st.info("No active-roster milestones match the current filters.")
 else:
     active_table = _link_player_table(active_table)
-    st.dataframe(
-        _mobile_table(active_table) if layout.is_mobile_layout else active_table[[column for column in active_table.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config=_milestone_column_config(),
-    )
+    active_display = _mobile_table(active_table) if layout.is_mobile_layout else active_table[[column for column in active_table.columns if column != "canonical_name"]]
+    render_static_table(active_display, css_class="milestone-table")
 
 st.subheader("Milestones by Category")
 st.markdown(
@@ -476,12 +453,8 @@ if category_table.empty:
     st.info("No player rows match the selected category and filters.")
 else:
     category_table = _link_player_table(category_table)
-    st.dataframe(
-        _mobile_table(category_table) if layout.is_mobile_layout else category_table[[column for column in category_table.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config=_milestone_column_config(),
-    )
+    category_display = _mobile_table(category_table) if layout.is_mobile_layout else category_table[[column for column in category_table.columns if column != "canonical_name"]]
+    render_static_table(category_display, css_class="milestone-table")
 
 st.subheader("Passed Milestones Summary")
 st.markdown(
@@ -500,9 +473,5 @@ if passed_table.empty:
     st.info("No cleared milestone rows match the current filters.")
 else:
     passed_table = _link_player_table(passed_table)
-    st.dataframe(
-        _mobile_table(passed_table) if layout.is_mobile_layout else passed_table[[column for column in passed_table.columns if column != "canonical_name"]],
-        use_container_width=True,
-        hide_index=True,
-        column_config=_milestone_column_config(),
-    )
+    passed_display = _mobile_table(passed_table) if layout.is_mobile_layout else passed_table[[column for column in passed_table.columns if column != "canonical_name"]]
+    render_static_table(passed_display, css_class="milestone-table")

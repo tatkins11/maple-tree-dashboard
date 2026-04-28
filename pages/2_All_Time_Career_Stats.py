@@ -21,7 +21,7 @@ from src.dashboard.ui import (
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
-    player_link_column_config,
+    render_static_table,
     with_player_link_column,
 )
 
@@ -148,43 +148,6 @@ def _render_leader_snapshot(leaders: dict[str, str]) -> None:
     )
 
 
-def _standard_stats_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "player": player_link_column_config(),
-        "seasons_played": st.column_config.NumberColumn("Seasons", format="%d", width="small"),
-        "games": st.column_config.NumberColumn("G", format="%d", width="small"),
-        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-        "ab": st.column_config.NumberColumn("AB", format="%d", width="small"),
-        "hits": st.column_config.NumberColumn("H", format="%d", width="small"),
-        "1b": st.column_config.NumberColumn("1B", format="%d", width="small"),
-        "2b": st.column_config.NumberColumn("2B", format="%d", width="small"),
-        "3b": st.column_config.NumberColumn("3B", format="%d", width="small"),
-        "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
-        "bb": st.column_config.NumberColumn("BB", format="%d", width="small"),
-        "r": st.column_config.NumberColumn("Runs", format="%d", width="small"),
-        "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
-        "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
-        "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
-        "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
-        "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
-    }
-
-
-def _advanced_stats_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "player": player_link_column_config(),
-        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
-        "iso": st.column_config.NumberColumn("ISO", format="%.3f", width="small"),
-        "xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f", width="small"),
-        "hr_rate": st.column_config.NumberColumn("HR Rate", format="%.3f", width="small"),
-        "tb_per_pa": st.column_config.NumberColumn("TB / PA", format="%.3f", width="small"),
-        "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
-        "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
-        "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
-        "archetype": st.column_config.TextColumn("Archetype", width="medium"),
-    }
-
-
 def _render_metric_grid(metrics: list[tuple[str, str]], *, per_row: int) -> None:
     for start in range(0, len(metrics), per_row):
         columns = st.columns(per_row, gap="small")
@@ -285,11 +248,35 @@ else:
                 _render_mobile_career_cards(career_display)
             else:
                 career_table = with_player_link_column(career_display, output_column="player")
-                st.dataframe(
+                render_static_table(
                     career_table[[column for column in STANDARD_CAREER_COLUMNS if column in career_table.columns and column != "canonical_name"]],
-                    use_container_width=True,
-                    hide_index=True,
-                    column_config=_standard_stats_column_config(),
+                    column_labels={
+                        "player": "Player",
+                        "seasons_played": "Seasons",
+                        "games": "G",
+                        "pa": "PA",
+                        "ab": "AB",
+                        "hits": "H",
+                        "1b": "1B",
+                        "2b": "2B",
+                        "3b": "3B",
+                        "hr": "HR",
+                        "bb": "BB",
+                        "r": "Runs",
+                        "rbi": "RBI",
+                        "tb": "TB",
+                        "avg": "AVG",
+                        "obp": "OBP",
+                        "slg": "SLG",
+                        "ops": "OPS",
+                    },
+                    formatters={
+                        "avg": "{:.3f}",
+                        "obp": "{:.3f}",
+                        "slg": "{:.3f}",
+                        "ops": "{:.3f}",
+                    },
+                    css_class="career-stats-standard-table",
                 )
 
         with advanced_tab:
@@ -305,11 +292,30 @@ else:
                     _render_mobile_advanced_cards(advanced_display)
                 else:
                     advanced_table = with_player_link_column(advanced_display, output_column="player")
-                    st.dataframe(
+                    render_static_table(
                         advanced_table[[column for column in ADVANCED_CAREER_COLUMNS if column in advanced_table.columns and column != "canonical_name"]],
-                        use_container_width=True,
-                        hide_index=True,
-                        column_config=_advanced_stats_column_config(),
+                        column_labels={
+                            "player": "Player",
+                            "pa": "PA",
+                            "iso": "ISO",
+                            "xbh_rate": "XBH Rate",
+                            "hr_rate": "HR Rate",
+                            "tb_per_pa": "TB / PA",
+                            "team_relative_ops": "Team OPS+",
+                            "rar": "RAR",
+                            "owar": "oWAR",
+                            "archetype": "Archetype",
+                        },
+                        formatters={
+                            "iso": "{:.3f}",
+                            "xbh_rate": "{:.3f}",
+                            "hr_rate": "{:.3f}",
+                            "tb_per_pa": "{:.3f}",
+                            "team_relative_ops": "{:.0f}",
+                            "rar": "{:.2f}",
+                            "owar": "{:.2f}",
+                        },
+                        css_class="career-stats-advanced-table",
                     )
 
     if leaders:

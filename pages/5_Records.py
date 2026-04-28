@@ -17,8 +17,13 @@ from src.dashboard.data import (
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context
-from src.dashboard.ui import build_player_link_html, player_link_column_config, with_player_link_column
+from src.dashboard.ui import (
+    build_player_link_html,
+    database_path_control,
+    get_responsive_layout_context,
+    render_static_table,
+    with_player_link_column,
+)
 
 
 st.set_page_config(page_title="Records", page_icon="🥎", layout="wide")
@@ -195,27 +200,7 @@ def _render_headliners(headliners: dict[str, dict[str, object]], *, is_mobile_la
 
 
 def _base_column_config() -> dict[str, st.column_config.Column]:
-    return {
-        "#": st.column_config.NumberColumn("#", width="small", format="%d"),
-        "Season": st.column_config.TextColumn("Season", width="small"),
-        "Player": player_link_column_config(label="Player"),
-        "PA": st.column_config.NumberColumn("PA", width="small", format="%d"),
-        "Games": st.column_config.NumberColumn("Games", width="small", format="%d"),
-        "AB": st.column_config.NumberColumn("AB", width="small", format="%d"),
-        "Hits": st.column_config.NumberColumn("Hits", width="small", format="%d"),
-        "Singles": st.column_config.NumberColumn("Singles", width="small", format="%d"),
-        "Doubles": st.column_config.NumberColumn("Doubles", width="small", format="%d"),
-        "Triples": st.column_config.NumberColumn("Triples", width="small", format="%d"),
-        "HR": st.column_config.NumberColumn("HR", width="small", format="%d"),
-        "RBI": st.column_config.NumberColumn("RBI", width="small", format="%d"),
-        "Runs": st.column_config.NumberColumn("Runs", width="small", format="%d"),
-        "Walks": st.column_config.NumberColumn("Walks", width="small", format="%d"),
-        "Total Bases": st.column_config.NumberColumn("Total Bases", width="small", format="%d"),
-        "AVG": st.column_config.NumberColumn("AVG", width="small", format="%.3f"),
-        "OBP": st.column_config.NumberColumn("OBP", width="small", format="%.3f"),
-        "SLG": st.column_config.NumberColumn("SLG", width="small", format="%.3f"),
-        "OPS": st.column_config.NumberColumn("OPS", width="small", format="%.3f"),
-    }
+    return {}
 
 
 def _display_columns_for_board(scope: str, stat_view: str, label: str, dataframe) -> list[str]:
@@ -236,18 +221,7 @@ def _display_columns_for_board(scope: str, stat_view: str, label: str, dataframe
 
 
 def _column_config_for_board(scope: str, stat_view: str, label: str) -> dict[str, st.column_config.Column]:
-    config = _base_column_config()
-    config["Season"] = st.column_config.TextColumn(
-        "Season",
-        width="medium" if scope == "Career Records" else "small",
-    )
-    config["Player"] = player_link_column_config(label="Player")
-
-    if stat_view == "Counting Stats":
-        config[label] = st.column_config.NumberColumn(label, width="small", format="%d")
-    else:
-        config[label] = st.column_config.NumberColumn(label, width="small", format="%.3f")
-    return config
+    return {}
 
 
 def _grid_size(scope: str, stat_view: str, *, is_mobile_layout: bool) -> int:
@@ -297,12 +271,15 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
                 output_column="Player",
             )
             display_columns = _display_columns_for_board(scope, stat_view, label, board)
-            column.dataframe(
+            render_static_table(
                 board[[column_name for column_name in display_columns if column_name != "canonical_name"]],
-                hide_index=True,
-                use_container_width=True,
-                height=260,
-                column_config=_column_config_for_board(scope, stat_view, label),
+                formatters={
+                    "AVG": "{:.3f}",
+                    "OBP": "{:.3f}",
+                    "SLG": "{:.3f}",
+                    "OPS": "{:.3f}",
+                },
+                css_class="records-leaderboard-table",
             )
 
 
