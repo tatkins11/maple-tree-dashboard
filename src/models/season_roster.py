@@ -130,9 +130,13 @@ def sync_season_roster_additive(
 
 
 def fetch_active_roster_rows(
-    connection: sqlite3.Connection, season_name: str
-) -> list[sqlite3.Row]:
-    return connection.execute(
+    connection: sqlite3.Connection,
+    season_name: str,
+    csv_path: Path | None = DEFAULT_SEASON_ROSTER_PATH,
+) -> list[dict[str, object]]:
+    rows = [
+        dict(row)
+        for row in connection.execute(
         """
         SELECT
             sr.season_name,
@@ -152,7 +156,16 @@ def fetch_active_roster_rows(
         ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
         """,
         (season_name,),
-    ).fetchall()
+        ).fetchall()
+    ]
+    if csv_path is not None:
+        rows = _merge_csv_roster_rows(
+            connection=connection,
+            season_name=season_name,
+            csv_path=csv_path,
+            existing_rows=rows,
+        )
+    return rows
 
 
 def seed_availability_from_active_roster(
@@ -212,17 +225,104 @@ def _resolve_roster_player_id(connection: sqlite3.Connection, player_name: str) 
     if direct:
         return int(direct["player_id"])
 
-    alias = connection.execute(
-        """
-        SELECT player_id FROM player_aliases
-        WHERE normalized_source_name = ?
-        LIMIT 1
-        """,
-        (normalize_player_name(player_name),),
-    ).fetchone()
+    try:
+        alias = connection.execute(
+            """
+            SELECT player_id FROM player_aliases
+            WHERE normalized_source_name = ?
+            LIMIT 1
+            """,
+            (normalize_player_name(player_name),),
+        ).fetchone()
+    except Exception as exc:
+        if not _is_missing_alias_object(exc):
+            raise
+        alias = None
     if alias:
         return int(alias["player_id"])
     return None
+
+
+def _merge_csv_roster_rows(
+    connection: sqlite3.Connection,
+    season_name: str,
+    csv_path: Path,
+    existing_rows: list[dict[str, object]],
+) -> list[dict[str, object]]:
+    if not csv_path.exists():
+        return existing_rows
+
+    existing_ids = {
+        int(row["player_id"])
+        for row in existing_rows
+        if row.get("player_id") is not None
+    }
+    merged_rows = list(existing_rows)
+
+    with csv_path.open("r", newline="", encoding="utf-8-sig") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            row_season = (row.get("season_name") or "").strip()
+            if row_season and row_season != season_name:
+                continue
+            if _to_bool_int(row.get("active_flag"), default=1) != 1:
+                continue
+            player_name = (row.get("player_name") or "").strip()
+            if not player_name:
+                continue
+            player_id = _resolve_roster_player_id(connection, player_name)
+            if player_id is None or player_id in existing_ids:
+                continue
+            profile = connection.execute(
+                """
+                SELECT
+                    pm.player_id,
+                    pm.preferred_display_name,
+                    pm.is_fixed_dhh,
+                    pm.active_flag AS metadata_active_flag,
+                    pi.canonical_name
+                FROM player_metadata pm
+                JOIN player_identity pi ON pi.player_id = pm.player_id
+                WHERE pm.player_id = ?
+                LIMIT 1
+                """,
+                (player_id,),
+            ).fetchone()
+            if profile is None:
+                continue
+            merged_rows.append(
+                {
+                    "season_name": season_name,
+                    "player_id": int(profile["player_id"]),
+                    "source_name": player_name,
+                    "active_flag": 1,
+                    "roster_notes": (row.get("notes") or "").strip(),
+                    "preferred_display_name": str(profile["preferred_display_name"]),
+                    "is_fixed_dhh": bool(profile["is_fixed_dhh"]),
+                    "metadata_active_flag": bool(profile["metadata_active_flag"]),
+                    "canonical_name": str(profile["canonical_name"]),
+                }
+            )
+            existing_ids.add(player_id)
+
+    return sorted(
+        merged_rows,
+        key=lambda roster_row: (
+            0 if roster_row.get("is_fixed_dhh") else 1,
+            str(roster_row.get("preferred_display_name") or "").lower(),
+        ),
+    )
+
+
+def _is_missing_alias_object(exc: Exception) -> bool:
+    sqlstate = getattr(exc, "sqlstate", None)
+    if sqlstate in {"42P01", "42703"}:
+        return True
+    return exc.__class__.__name__ in {
+        "UndefinedObject",
+        "UndefinedTable",
+        "UndefinedColumn",
+    }
 
 
 def _to_bool_int(value: object, default: int = 0) -> int:

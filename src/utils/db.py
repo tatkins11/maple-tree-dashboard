@@ -604,7 +604,6 @@ def initialize_postgres_database(connection) -> None:
             """
         )
     connection.commit()
-    _sync_default_active_roster(connection)
 
 
 def get_or_create_player(
@@ -1017,18 +1016,4 @@ def _backfill_player_metadata(connection: sqlite3.Connection) -> None:
             WHERE canonical_name = 'snaxx'
         )
         """
-    )
-
-
-def _sync_default_active_roster(connection) -> None:
-    from src.models.season_roster import (
-        DEFAULT_ACTIVE_ROSTER_SEASON,
-        DEFAULT_SEASON_ROSTER_PATH,
-        sync_season_roster_additive,
-    )
-
-    sync_season_roster_additive(
-        connection=connection,
-        csv_path=DEFAULT_SEASON_ROSTER_PATH,
-        season_name=DEFAULT_ACTIVE_ROSTER_SEASON,
     )

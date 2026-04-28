@@ -26,6 +26,7 @@ from src.models.roster import (
     select_game_day_projections,
 )
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
+from src.models.season_roster import fetch_active_roster_rows
 from src.utils.db import connect_app_db
 
 
@@ -2684,22 +2685,21 @@ def fetch_active_roster(
     connection: sqlite3.Connection,
     season_name: str = DEFAULT_ACTIVE_ROSTER_SEASON,
 ) -> pd.DataFrame:
-    return pd.read_sql_query(
-        """
-        SELECT
-            sr.season_name,
-            pm.preferred_display_name,
-            pi.canonical_name,
-            pm.is_fixed_dhh,
-            COALESCE(sr.notes, '') AS notes
-        FROM season_rosters sr
-        JOIN player_identity pi ON pi.player_id = sr.player_id
-        JOIN player_metadata pm ON pm.player_id = sr.player_id
-        WHERE sr.season_name = ? AND sr.active_flag = 1
-        ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
-        """,
-        connection,
-        params=(season_name,),
+    rows = fetch_active_roster_rows(
+        connection=connection,
+        season_name=season_name,
+    )
+    return pd.DataFrame(
+        [
+            {
+                "season_name": row["season_name"],
+                "preferred_display_name": row["preferred_display_name"],
+                "canonical_name": row["canonical_name"],
+                "is_fixed_dhh": row["is_fixed_dhh"],
+                "notes": row["roster_notes"],
+            }
+            for row in rows
+        ]
     )
 
 
@@ -2835,15 +2835,7 @@ def _fetch_active_roster_names(
     connection: sqlite3.Connection,
     season_name: str = DEFAULT_ACTIVE_ROSTER_SEASON,
 ) -> list[str]:
-    rows = connection.execute(
-        """
-        SELECT pm.preferred_display_name
-        FROM season_rosters sr
-        JOIN player_metadata pm ON pm.player_id = sr.player_id
-        WHERE sr.season_name = ? AND sr.active_flag = 1
-        """,
-        (season_name,),
-    ).fetchall()
+    rows = fetch_active_roster_rows(connection=connection, season_name=season_name)
     return [str(row["preferred_display_name"]) for row in rows]
 
 

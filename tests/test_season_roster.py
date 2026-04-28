@@ -200,3 +200,48 @@ def test_sync_season_roster_additive_adds_missing_player_without_deleting_existi
     assert result.matched_count == 2
     assert result.review_items == []
     assert [row["preferred_display_name"] for row in rows] == ["Tristan", "Corey", "Slomka"]
+
+
+def test_fetch_active_roster_rows_includes_missing_csv_players_without_db_sync(
+    tmp_path: Path,
+) -> None:
+    connection = connect_db(tmp_path / "roster.sqlite")
+    roster_csv = tmp_path / "roster.csv"
+    roster_csv.write_text(
+        "\n".join(
+            [
+                "season_name,player_name,active_flag,notes",
+                "Current Spring,Tristan,yes,",
+                "Current Spring,Slomka,yes,",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    try:
+        initialize_database(connection)
+        for player_id, player_name, canonical_name in [
+            (1, "Tristan", "tristan"),
+            (2, "Slomka", "slomka"),
+        ]:
+            connection.execute(
+                "INSERT INTO players (player_id, player_name, canonical_name, active_flag) VALUES (?, ?, ?, 1)",
+                (player_id, player_name, canonical_name),
+            )
+            connection.execute(
+                "INSERT INTO player_identity (player_id, player_name, canonical_name, active_flag) VALUES (?, ?, ?, 1)",
+                (player_id, player_name, canonical_name),
+            )
+        initialize_database(connection)
+        connection.execute(
+            """
+            INSERT INTO season_rosters (season_name, player_id, source_name, active_flag, notes)
+            VALUES (?, ?, ?, 1, '')
+            """,
+            ("Current Spring", 1, "Tristan"),
+        )
+        rows = fetch_active_roster_rows(connection, "Current Spring", csv_path=roster_csv)
+    finally:
+        connection.close()
+
+    assert [row["preferred_display_name"] for row in rows] == ["Tristan", "Slomka"]
