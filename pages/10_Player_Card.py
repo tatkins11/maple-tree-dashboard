@@ -389,6 +389,44 @@ def _append_career_row(dataframe: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([ordered, totals_frame], ignore_index=True)
 
 
+def _append_advanced_career_row(
+    connection,
+    canonical_name: str,
+    dataframe: pd.DataFrame,
+) -> pd.DataFrame:
+    if dataframe.empty or "season" not in dataframe.columns:
+        return dataframe.copy()
+
+    seasons = dataframe["season"].astype(str).dropna().tolist()
+    if not seasons:
+        return dataframe.copy()
+
+    career_analytics, _ = fetch_advanced_analytics_view(
+        connection,
+        view_mode="Career",
+        selected_seasons=seasons,
+        min_pa=0,
+        active_only=False,
+    )
+    if career_analytics.empty or "canonical_name" not in career_analytics.columns:
+        return dataframe.copy()
+
+    player_rows = career_analytics[career_analytics["canonical_name"] == canonical_name].copy()
+    if player_rows.empty:
+        return dataframe.copy()
+
+    career_row = player_rows.iloc[0].to_dict()
+    career_row["season"] = ""
+    career_row["season_label"] = "Career"
+
+    ordered = dataframe.copy()
+    for column in career_row:
+        if column not in ordered.columns:
+            ordered[column] = None
+    totals_frame = pd.DataFrame([{column: career_row.get(column, None) for column in ordered.columns}])
+    return pd.concat([ordered, totals_frame], ignore_index=True)
+
+
 def _render_standard_mobile_cards(dataframe: pd.DataFrame) -> None:
     for _, row in dataframe.iterrows():
         st.markdown(
@@ -760,6 +798,7 @@ with advanced_tab:
             "archetype",
         ]
         advanced_display = _ascending_history(advanced_history[[column for column in advanced_columns if column in advanced_history.columns]])
+        advanced_display = _append_advanced_career_row(connection, player_query, advanced_display)
         advanced_display = advanced_display[[column for column in advanced_display.columns if column != "season"]]
         if layout.is_mobile_layout:
             _render_advanced_mobile_cards(advanced_display)
