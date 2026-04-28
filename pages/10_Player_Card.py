@@ -189,8 +189,8 @@ def _render_trend_chart(history: pd.DataFrame) -> None:
         st.info("No season trend data is available for this player yet.")
         return
 
-    season_order = history["season_label"].astype(str).tolist()
-    chart_source = history[["season_label", "ops", "pa", "hr"]].copy()
+    chart_source = history.iloc[::-1][["season_label", "ops", "pa", "hr"]].reset_index(drop=True).copy()
+    season_order = chart_source["season_label"].astype(str).tolist()
     chart_source["ops_display"] = chart_source["ops"].round(3)
     chart_source["pa_display"] = chart_source["pa"].astype(int)
     chart_source["hr_display"] = chart_source["hr"].astype(int)
