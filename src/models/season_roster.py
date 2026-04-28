@@ -149,7 +149,7 @@ def fetch_active_roster_rows(
         JOIN player_metadata pm ON pm.player_id = sr.player_id
         WHERE sr.season_name = ?
           AND sr.active_flag = 1
-        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
         """,
         (season_name,),
     ).fetchall()

@@ -189,7 +189,7 @@ def fetch_identity_review_rows(connection: sqlite3.Connection) -> list[sqlite3.R
             a.approved_flag
         FROM player_identity i
         LEFT JOIN player_aliases a ON a.player_id = i.player_id
-        ORDER BY i.player_name COLLATE NOCASE, a.source_name COLLATE NOCASE
+        ORDER BY LOWER(i.player_name), LOWER(COALESCE(a.source_name, ''))
         """
     ).fetchall()
 

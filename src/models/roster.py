@@ -177,7 +177,7 @@ def select_game_day_projections(
                     AND pa.normalized_source_name IN ({placeholders})
               )
           )
-        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
         """,
             (projection_season, *normalized_names, *normalized_names),
         ).fetchall()
@@ -225,7 +225,7 @@ def select_game_day_projections(
         WHERE hp.projection_season = ?
           AND pm.active_flag = 1
           AND pi.canonical_name IN ({placeholders})
-        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        ORDER BY pm.is_fixed_dhh DESC, LOWER(pm.preferred_display_name)
         """,
             (projection_season, *normalized_names),
         ).fetchall()
