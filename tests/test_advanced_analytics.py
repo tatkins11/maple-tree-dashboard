@@ -998,3 +998,50 @@ def test_player_card_helpers_filter_milestones_and_records_to_one_player(tmp_pat
     assert not record_context["placements"].empty
     assert set(record_context["placements"]["scope"]).issubset({"Career", "Single Season"})
     assert any(label in {"2025 F", "2026 Sp", ""} for label in record_context["placements"]["season_label"].tolist())
+
+
+def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "passed_milestone_clubs.sqlite")
+    try:
+        initialize_database(connection)
+        totals = [61, 58, 56, 54, 52, 45]
+        for index, singles in enumerate(totals, start=1):
+            _insert_player(connection, index, f"Player {index}", f"player_{index}")
+            _insert_season_row(
+                connection,
+                season="Maple Tree Spring 2026",
+                player_id=index,
+                games=10,
+                pa=singles + 5,
+                ab=singles + 5,
+                hits=singles,
+                singles=singles,
+                doubles=0,
+                triples=0,
+                hr=0,
+                walks=0,
+                strikeouts=0,
+                runs=singles // 2,
+                rbi=singles // 2,
+                tb=singles,
+                raw_source_file=f"player_{index}.csv",
+            )
+        connection.commit()
+
+        passed_summary = fetch_passed_milestones_summary(
+            connection,
+            categories=["Singles"],
+            active_only=False,
+            min_current_total=0,
+            limit=20,
+        )
+    finally:
+        connection.close()
+
+    player_one_singles = passed_summary[
+        (passed_summary["canonical_name"] == "player_1")
+        & (passed_summary["stat"] == "Singles")
+    ]
+    assert not player_one_singles.empty
+    assert int(player_one_singles.iloc[0]["highest_cleared_milestone"]) == 50
+    assert player_one_singles.iloc[0]["club_label"] == "5 in club"

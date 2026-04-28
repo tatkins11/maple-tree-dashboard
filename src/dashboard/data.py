@@ -2683,6 +2683,15 @@ def fetch_passed_milestones_summary(
     if passed.empty:
         return passed
 
+    club_reference_totals = {
+        str(stat): stat_rows["current_total"].fillna(0).astype(int)
+        for stat, stat_rows in milestone_df.groupby("stat")
+    }
+    passed = _add_milestone_club_context(
+        passed,
+        club_reference_totals,
+        threshold_column="highest_cleared_milestone",
+    )
     passed.loc[:, "highest_cleared_milestone"] = passed["highest_cleared_milestone"].astype(int)
     passed = passed.sort_values(
         ["stat", "highest_cleared_milestone", "current_total", "player"],
@@ -3055,20 +3064,23 @@ def _milestone_urgency_label(remaining: object) -> str:
 def _add_milestone_club_context(
     dataframe: pd.DataFrame,
     club_reference_totals: dict[str, pd.Series],
+    *,
+    threshold_column: str = "next_milestone",
 ) -> pd.DataFrame:
     result = dataframe.copy()
+    thresholds = result[threshold_column]
     club_sizes = result.apply(
-        lambda row: _club_size_for_row(club_reference_totals, row["stat"], row["next_milestone"]),
+        lambda row: _club_size_for_row(club_reference_totals, row["stat"], row[threshold_column]),
         axis=1,
     )
     return result.assign(
         club_size=club_sizes,
         club_label=club_sizes.combine(
-            result["next_milestone"],
-            lambda club_size, next_milestone: _club_label_for_row(club_size, next_milestone),
+            thresholds,
+            lambda club_size, milestone_threshold: _club_label_for_row(club_size, milestone_threshold),
         ),
         is_first_time_milestone=club_sizes == 0,
-        next_milestone_sort=result["next_milestone"].fillna(-1),
+        next_milestone_sort=thresholds.fillna(-1),
     )
 
 
