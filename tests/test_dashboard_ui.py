@@ -94,4 +94,5 @@ def test_format_link_cell_renders_same_tab_anchor_with_player_name() -> None:
     html = _format_link_cell(f"./{PLAYER_CARD_URL_PATH}?player=tristan#Tristan")
 
     assert 'href="./player-card?player=tristan#Tristan"' in html
+    assert 'target="_self"' in html
     assert ">Tristan</a>" in html

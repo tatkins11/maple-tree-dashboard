@@ -54,7 +54,6 @@ def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
             "page": "pages/10_Player_Card.py",
             "title": "Player Card",
             "url_path": PLAYER_CARD_URL_PATH,
-            "visibility": "hidden",
         },
         {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats"},
         {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats"},

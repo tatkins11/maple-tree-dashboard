@@ -195,7 +195,7 @@ def build_player_link_html(display_name: str, canonical_name: str) -> str:
     if not str(canonical_name).strip():
         return escape(display_name)
     href = build_player_page_href(canonical_name, display_name)
-    return f'<a href="{escape(href)}" target="_self">{escape(display_name)}</a>'
+    return f'<a href="{escape(href, quote=True)}" target="_self">{escape(display_name)}</a>'
 
 
 def with_player_link_column(
@@ -244,7 +244,7 @@ def _format_link_cell(value) -> str:
         return ""
     parsed = urlsplit(href)
     label = unquote(parsed.fragment).strip() or href
-    return f'<a href="{escape(href, quote=True)}">{escape(label)}</a>'
+    return f'<a href="{escape(href, quote=True)}" target="_self">{escape(label)}</a>'
 
 
 def render_static_table(

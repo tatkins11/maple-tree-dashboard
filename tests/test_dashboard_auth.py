@@ -54,7 +54,7 @@ def test_navigation_specs_default_to_home_for_viewers() -> None:
     titles = [spec["title"] for spec in specs]
     hidden_player_spec = next(spec for spec in specs if spec["title"] == "Player Card")
     assert hidden_player_spec["url_path"] == PLAYER_CARD_URL_PATH
-    assert hidden_player_spec["visibility"] == "hidden"
+    assert "visibility" not in hidden_player_spec
     assert "Lineup Optimizer" not in titles
     assert "Admin / Data" not in titles
 
