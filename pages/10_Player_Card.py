@@ -166,15 +166,10 @@ def _profile_pills(summary: dict[str, object]) -> str:
         pills.append('<span class="player-pill">DHH</span>')
     if summary.get("speed_flag"):
         pills.append('<span class="player-pill">Speed flag</span>')
-    baserunning = str(summary.get("baserunning_grade") or "").strip()
-    consistency = str(summary.get("consistency_grade") or "").strip()
-    if baserunning:
-        pills.append(f'<span class="player-pill">Baserunning: {escape(baserunning)}</span>')
-    if consistency:
-        pills.append(f'<span class="player-pill">Consistency: {escape(consistency)}</span>')
-    aliases = [str(alias).strip() for alias in summary.get("aliases", []) if str(alias).strip()]
-    if aliases:
-        pills.append(f'<span class="player-pill">Aliases: {escape(", ".join(aliases[:4]))}</span>')
+    best_rank = _build_rank_highlights(summary)
+    if best_rank:
+        top_rank = best_rank[0]
+        pills.append(f'<span class="player-pill">Best rank: #{int(top_rank["rank"])} {escape(str(top_rank["stat"]))}</span>')
     return "".join(pills)
 
 
@@ -184,14 +179,14 @@ def _render_header(summary: dict[str, object]) -> None:
     ops_value = f"{float(summary.get('ops') or 0.0):.3f}"
     subtitle = f"{seasons_played} seasons • {active_text} • Career OPS {ops_value}"
     notes = str(summary.get("notes") or "").strip()
+    pill_markup = _profile_pills(summary)
     note_markup = f"<div class='player-card-subtitle'>{escape(notes)}</div>" if notes else ""
     st.markdown(
         f"""
         <div class="player-card-header">
           <div class="player-card-title">{escape(str(summary.get("player") or "Player"))}</div>
           <div class="player-card-subtitle">{escape(subtitle)}</div>
-          <div class="player-pill-row">{_profile_pills(summary)}</div>
-          <div class="player-card-meta">Canonical key: {escape(str(summary.get("canonical_name") or ""))}</div>
+          {"<div class='player-pill-row'>" + pill_markup + "</div>" if pill_markup else ""}
           {note_markup}
         </div>
         """,
