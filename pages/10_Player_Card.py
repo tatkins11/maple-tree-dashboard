@@ -415,15 +415,12 @@ def _append_advanced_career_row(
     if player_rows.empty:
         return dataframe.copy()
 
-    career_row = player_rows.iloc[0].to_dict()
+    ordered = dataframe.copy()
+    source_row = player_rows.iloc[0].to_dict()
+    career_row = {column: source_row.get(column, None) for column in ordered.columns}
     career_row["season"] = ""
     career_row["season_label"] = "Career"
-
-    ordered = dataframe.copy()
-    for column in career_row:
-        if column not in ordered.columns:
-            ordered[column] = None
-    totals_frame = pd.DataFrame([{column: career_row.get(column, None) for column in ordered.columns}])
+    totals_frame = pd.DataFrame([career_row], columns=ordered.columns)
     return pd.concat([ordered, totals_frame], ignore_index=True)
 
 
