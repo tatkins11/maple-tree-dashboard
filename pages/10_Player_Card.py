@@ -11,6 +11,7 @@ from src.dashboard.auth import ensure_authenticated
 from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
+    fetch_advanced_analytics_view,
     fetch_player_advanced_history,
     fetch_player_identities,
     fetch_player_milestone_context,
@@ -273,6 +274,7 @@ def _render_rank_highlights(summary: dict[str, object], *, is_mobile_layout: boo
 
 
 def _build_trend_history(
+    connection,
     season_history: pd.DataFrame,
     advanced_history: pd.DataFrame,
 ) -> pd.DataFrame:
@@ -315,7 +317,81 @@ def _build_trend_history(
             _season_order=merged["season"].astype(str).map(lambda value: order_lookup.get(value, 10**9))
         ).sort_values(["_season_order", "season_label"], ascending=[True, True]).drop(columns="_season_order")
 
+    baseline_rows: list[dict[str, object]] = []
+    seasons = merged["season"].astype(str).dropna().tolist() if "season" in merged.columns else []
+    for season in seasons:
+        season_analytics, _ = fetch_advanced_analytics_view(
+            connection,
+            view_mode="Season",
+            selected_season=season,
+            min_pa=0,
+            active_only=False,
+        )
+        if season_analytics.empty:
+            continue
+        baseline_rows.append(
+            {
+                "season": season,
+                "team_avg_ops": float(season_analytics["ops"].mean()) if "ops" in season_analytics.columns else None,
+                "team_avg_team_relative_ops": float(season_analytics["team_relative_ops"].mean()) if "team_relative_ops" in season_analytics.columns else None,
+                "team_avg_owar": float(season_analytics["owar"].mean()) if "owar" in season_analytics.columns else None,
+                "team_avg_rar": float(season_analytics["rar"].mean()) if "rar" in season_analytics.columns else None,
+                "team_avg_iso": float(season_analytics["iso"].mean()) if "iso" in season_analytics.columns else None,
+            }
+        )
+
+    if baseline_rows:
+        baseline_frame = pd.DataFrame(baseline_rows)
+        merged = merged.merge(baseline_frame, on="season", how="left")
+
     return merged.reset_index(drop=True)
+
+
+def _ascending_history(dataframe: pd.DataFrame) -> pd.DataFrame:
+    if dataframe.empty or "season" not in dataframe.columns:
+        return dataframe.copy()
+    chronological = list(reversed(sort_seasons(dataframe["season"].astype(str).dropna().tolist())))
+    order_lookup = {season: index for index, season in enumerate(chronological)}
+    return dataframe.assign(
+        _season_order=dataframe["season"].astype(str).map(lambda value: order_lookup.get(value, 10**9))
+    ).sort_values(["_season_order", "season_label"], ascending=[True, True]).drop(columns="_season_order").reset_index(drop=True)
+
+
+def _append_career_row(dataframe: pd.DataFrame) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe.copy()
+
+    totals_row = {
+        "season": "",
+        "season_label": "Career",
+        "games": int(dataframe["games"].sum()),
+        "pa": int(dataframe["pa"].sum()),
+        "ab": int(dataframe["ab"].sum()),
+        "hits": int(dataframe["hits"].sum()),
+        "1b": int(dataframe["1b"].sum()),
+        "2b": int(dataframe["2b"].sum()),
+        "3b": int(dataframe["3b"].sum()),
+        "hr": int(dataframe["hr"].sum()),
+        "bb": int(dataframe["bb"].sum()),
+        "r": int(dataframe["r"].sum()),
+        "rbi": int(dataframe["rbi"].sum()),
+        "tb": int(dataframe["tb"].sum()),
+    }
+    hits = totals_row["hits"]
+    at_bats = totals_row["ab"]
+    walks = totals_row["bb"]
+    total_bases = totals_row["tb"]
+    totals_row["avg"] = hits / at_bats if at_bats else 0.0
+    totals_row["obp"] = (hits + walks) / (at_bats + walks) if (at_bats + walks) else 0.0
+    totals_row["slg"] = total_bases / at_bats if at_bats else 0.0
+    totals_row["ops"] = totals_row["obp"] + totals_row["slg"]
+
+    ordered = dataframe.copy()
+    for column, value in totals_row.items():
+        if column not in ordered.columns:
+            ordered[column] = None
+    totals_frame = pd.DataFrame([{column: totals_row.get(column, None) for column in ordered.columns}])
+    return pd.concat([ordered, totals_frame], ignore_index=True)
 
 
 def _render_standard_mobile_cards(dataframe: pd.DataFrame) -> None:
@@ -351,10 +427,11 @@ def _render_advanced_mobile_cards(dataframe: pd.DataFrame) -> None:
 
 
 def _render_analytics_trend_chart(
+    connection,
     season_history: pd.DataFrame,
     advanced_history: pd.DataFrame,
 ) -> None:
-    chart_source = _build_trend_history(season_history, advanced_history)
+    chart_source = _build_trend_history(connection, season_history, advanced_history)
     if chart_source.empty:
         st.info("No season trend data is available for this player yet.")
         return
@@ -392,11 +469,13 @@ def _render_analytics_trend_chart(
     season_order = chart_source["season_label"].astype(str).tolist()
     chart_source = chart_source.copy()
     chart_source["metric_value"] = chart_source[metric_column].astype(float)
+    baseline_column = f"team_avg_{metric_column}"
+    chart_source["team_avg_value"] = chart_source[baseline_column].astype(float) if baseline_column in chart_source.columns else None
     chart_source["ops_display"] = chart_source["ops"].fillna(0.0).astype(float).round(3)
     chart_source["pa_display"] = chart_source["pa"].fillna(0).astype(int)
     chart_source["hr_display"] = chart_source["hr"].fillna(0).astype(int)
 
-    chart = (
+    player_line = (
         alt.Chart(chart_source)
         .mark_line(point=True)
         .encode(
@@ -412,6 +491,21 @@ def _render_analytics_trend_chart(
         )
         .properties(height=260)
     )
+    chart = player_line
+    if "team_avg_value" in chart_source.columns and chart_source["team_avg_value"].notna().any():
+        baseline_line = (
+            alt.Chart(chart_source)
+            .mark_line(strokeDash=[6, 4], color="#6b7280")
+            .encode(
+                x=alt.X("season_label:N", title="Season", sort=season_order),
+                y=alt.Y("team_avg_value:Q", title=metric_config["title"]),
+                tooltip=[
+                    alt.Tooltip("season_label:N", title="Season"),
+                    alt.Tooltip("team_avg_value:Q", title=f"Team Avg {metric_config['title']}", format=metric_config["format"]),
+                ],
+            )
+        )
+        chart = (baseline_line + player_line).properties(height=260)
     st.altair_chart(chart, use_container_width=True)
 
 
@@ -568,7 +662,7 @@ st.caption("Full player hub with career snapshot, season-by-season stats, milest
 _render_header(summary)
 _render_rank_highlights(summary, is_mobile_layout=layout.is_mobile_layout)
 _render_grouped_metrics(summary, is_mobile_layout=layout.is_mobile_layout)
-_render_analytics_trend_chart(season_history, advanced_history)
+_render_analytics_trend_chart(connection, season_history, advanced_history)
 
 overview_tab, standard_tab, advanced_tab, context_tab = st.tabs(
     ["Overview", "Season-by-Season Stats", "Advanced History", "Milestones & Records"]
@@ -616,6 +710,7 @@ with standard_tab:
         st.info("No season-by-season batting history is available for this player.")
     else:
         standard_columns = [
+            "season",
             "season_label",
             "games",
             "pa",
@@ -635,6 +730,8 @@ with standard_tab:
             "ops",
         ]
         standard_display = season_history[[column for column in standard_columns if column in season_history.columns]]
+        standard_display = _append_career_row(_ascending_history(standard_display))
+        standard_display = standard_display[[column for column in standard_display.columns if column != "season"]]
         if layout.is_mobile_layout:
             _render_standard_mobile_cards(standard_display)
         else:
@@ -654,6 +751,7 @@ with advanced_tab:
         st.info("No advanced season history is available for this player yet.")
     else:
         advanced_columns = [
+            "season",
             "season_label",
             "pa",
             "iso",
@@ -666,7 +764,8 @@ with advanced_tab:
             "owar",
             "archetype",
         ]
-        advanced_display = advanced_history[[column for column in advanced_columns if column in advanced_history.columns]]
+        advanced_display = _ascending_history(advanced_history[[column for column in advanced_columns if column in advanced_history.columns]])
+        advanced_display = advanced_display[[column for column in advanced_display.columns if column != "season"]]
         if layout.is_mobile_layout:
             _render_advanced_mobile_cards(advanced_display)
         else:
