@@ -225,6 +225,8 @@ def test_fetch_writeup_opponent_scouting_uses_two_part_standings_record(tmp_path
     assert len(scouting_lines) == 1
     assert "standings 2-0" in scouting_lines[0]
     assert "standings 2-0-0" not in scouting_lines[0]
+    assert "scores 17.0/game and allows 21.0/game" in scouting_lines[0]
+    assert "Maple Tree scores 22.0/game and allows 18.0/game" in scouting_lines[0]
 
 
 def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_path: Path) -> None:
@@ -399,6 +401,13 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             "proj_run_rate": 0.420,
             "proj_rbi_rate": 0.210,
             "proj_xbh_rate": 0.311,
+            "season_pa": 8,
+            "season_r": 5,
+            "season_rbi": 6,
+            "season_avg": 0.800,
+            "season_obp": 0.750,
+            "season_slg": 2.600,
+            "season_ops": 3.350,
         },
         {
             "spot": 2,
@@ -408,6 +417,13 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             "proj_run_rate": 0.530,
             "proj_rbi_rate": 0.460,
             "proj_xbh_rate": 0.444,
+            "season_pa": 8,
+            "season_r": 5,
+            "season_rbi": 5,
+            "season_avg": 0.625,
+            "season_obp": 0.625,
+            "season_slg": 1.000,
+            "season_ops": 1.625,
         },
         {
             "spot": 3,
@@ -417,6 +433,13 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             "proj_run_rate": 0.410,
             "proj_rbi_rate": 0.625,
             "proj_xbh_rate": 0.512,
+            "season_pa": 8,
+            "season_r": 5,
+            "season_rbi": 6,
+            "season_avg": 0.800,
+            "season_obp": 0.750,
+            "season_slg": 2.600,
+            "season_ops": 3.350,
         },
         {
             "spot": 4,
@@ -426,6 +449,13 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             "proj_run_rate": 0.470,
             "proj_rbi_rate": 0.509,
             "proj_xbh_rate": 0.488,
+            "season_pa": 8,
+            "season_r": 2,
+            "season_rbi": 2,
+            "season_avg": 0.500,
+            "season_obp": 0.500,
+            "season_slg": 0.750,
+            "season_ops": 1.250,
         },
         {
             "spot": 5,
@@ -435,6 +465,13 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             "proj_run_rate": 0.330,
             "proj_rbi_rate": 0.427,
             "proj_xbh_rate": 0.377,
+            "season_pa": 7,
+            "season_r": 2,
+            "season_rbi": 5,
+            "season_avg": 0.571,
+            "season_obp": 0.571,
+            "season_slg": 0.714,
+            "season_ops": 1.286,
         },
     ]
     markdown = build_pregame_markdown(
@@ -481,19 +518,32 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
         overview_insight_lines=build_pregame_overview_insight_lines(
             lineup_rows,
             projected_runs_per_game=16.4,
+            lineup_season_summary={
+                "pa": 39,
+                "runs": 19,
+                "rbi": 24,
+                "home_runs": 4,
+                "avg": 0.659,
+                "obp": 0.640,
+                "slg": 1.590,
+                "ops": 2.230,
+            },
         ),
     )
 
     assert "Projection snapshot: the recommended order simulates to 16.4 runs per game." in markdown
     assert (
+        "Current season lineup snapshot: tonight's available group is slashing 0.659/0.640/1.590 (2.230 OPS) with 19 runs, 4 homers, and 24 RBI across 39 PA."
+    ) in markdown
+    assert (
         "Biggest lineup edge: Glove, Tristan, Tim form the heaviest pressure pocket with average projected RBI rate 0.531 "
         "and XBH rate 0.481."
     ) in markdown
-    assert "1. Jj - Run-pressure engine (Proj run rate 0.420)" in markdown
-    assert "2. Glove - Basepath agitator (Proj run rate 0.530)" in markdown
-    assert "3. Tristan (DHH) - Traffic finisher (Proj RBI rate 0.625)" in markdown
-    assert "4. Tim - Extra-base menace (Proj XBH rate 0.488)" in markdown
-    assert "5. Kives - Crooked-number broker (Proj RBI rate 0.427)" in markdown
+    assert "1. Jj - Run-pressure engine (Proj run rate 0.420) Current season: 0.800/0.750/2.600 (3.350 OPS) in 8 PA, 5 R, 6 RBI." in markdown
+    assert "2. Glove - Basepath agitator (Proj run rate 0.530) Current season: 0.625/0.625/1.000 (1.625 OPS) in 8 PA, 5 R, 5 RBI." in markdown
+    assert "3. Tristan (DHH) - Traffic finisher (Proj RBI rate 0.625) Current season: 0.800/0.750/2.600 (3.350 OPS) in 8 PA, 5 R, 6 RBI." in markdown
+    assert "4. Tim - Extra-base menace (Proj XBH rate 0.488) Current season: 0.500/0.500/0.750 (1.250 OPS) in 8 PA, 2 R, 2 RBI." in markdown
+    assert "5. Kives - Crooked-number broker (Proj RBI rate 0.427) Current season: 0.571/0.571/0.714 (1.286 OPS) in 7 PA, 2 R, 5 RBI." in markdown
     assert "BAT" not in markdown
     assert "TB rate" not in markdown
     assert "baseball" not in markdown
@@ -513,10 +563,21 @@ def test_build_pregame_overview_insight_lines_surfaces_scoring_and_pressure_pock
             {"spot": 5, "player": "Kives", "proj_rbi_rate": 0.427, "proj_xbh_rate": 0.377},
         ],
         projected_runs_per_game=16.4,
+        lineup_season_summary={
+            "pa": 75,
+            "runs": 24,
+            "rbi": 22,
+            "home_runs": 5,
+            "avg": 0.515,
+            "obp": 0.547,
+            "slg": 0.809,
+            "ops": 1.355,
+        },
     )
 
     assert lines == [
         "Projection snapshot: the recommended order simulates to 16.4 runs per game.",
+        "Current season lineup snapshot: tonight's available group is slashing 0.515/0.547/0.809 (1.355 OPS) with 24 runs, 5 homers, and 22 RBI across 75 PA.",
         "Biggest lineup edge: Glove, Tristan, Tim form the heaviest pressure pocket with average projected RBI rate 0.531 and XBH rate 0.481.",
     ]
 

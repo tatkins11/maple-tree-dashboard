@@ -137,6 +137,8 @@ def build_pregame_overview_insight_lines(
     lineup_rows: list[dict[str, object]],
     *,
     projected_runs_per_game: float | None = None,
+    lineup_season_summary: dict[str, object] | None = None,
+    lineup_descriptor: str = "recommended order",
 ) -> list[str]:
     ordered_rows = sorted(
         [dict(row) for row in lineup_rows if str(row.get("player") or "").strip()],
@@ -146,7 +148,20 @@ def build_pregame_overview_insight_lines(
 
     if projected_runs_per_game is not None and projected_runs_per_game > 0:
         lines.append(
-            f"Projection snapshot: the recommended order simulates to {float(projected_runs_per_game):.1f} runs per game."
+            f"Projection snapshot: the {lineup_descriptor} simulates to {float(projected_runs_per_game):.1f} runs per game."
+        )
+
+    if lineup_season_summary and int(lineup_season_summary.get("pa", 0) or 0) > 0:
+        lines.append(
+            "Current season lineup snapshot: tonight's available group is slashing "
+            f"{float(lineup_season_summary.get('avg', 0.0) or 0.0):.3f}/"
+            f"{float(lineup_season_summary.get('obp', 0.0) or 0.0):.3f}/"
+            f"{float(lineup_season_summary.get('slg', 0.0) or 0.0):.3f} "
+            f"({float(lineup_season_summary.get('ops', 0.0) or 0.0):.3f} OPS) with "
+            f"{int(lineup_season_summary.get('runs', 0) or 0)} runs, "
+            f"{int(lineup_season_summary.get('home_runs', 0) or 0)} homers, and "
+            f"{int(lineup_season_summary.get('rbi', 0) or 0)} RBI across "
+            f"{int(lineup_season_summary.get('pa', 0) or 0)} PA."
         )
 
     pressure_pocket = _build_pressure_pocket_line(ordered_rows)
@@ -195,7 +210,7 @@ def build_pregame_markdown(
         *[f"- {line}" for line in (overview_insight_lines or []) if str(line).strip()],
         f"- {_build_pregame_context_line(season_summary)}",
         "",
-        "## Projected Lineup",
+        "## Tonight's Lineup",
     ]
 
     if annotated_lineup_rows:
@@ -204,9 +219,11 @@ def build_pregame_markdown(
             lineup_note = str(row.get("lineup_note") or "").strip()
             note_suffix = f" ({lineup_note})" if lineup_note else ""
             strength_note = str(row.get("strength_note") or "Projection snapshot pending").strip()
-            lines.append(
-                f"{int(row.get('spot', 0))}. {player_name}{note_suffix} - {strength_note}"
-            )
+            season_note = _build_lineup_season_metrics_note(row)
+            line = f"{int(row.get('spot', 0))}. {player_name}{note_suffix} - {strength_note}"
+            if season_note:
+                line += f" Current season: {season_note}"
+            lines.append(line)
     else:
         lines.append("No optimizer lineup is available yet for the selected player pool.")
 
@@ -427,6 +444,19 @@ def _build_pregame_context_line(season_summary: dict[str, object]) -> str:
     if games_completed == 0 and runs_for == 0 and runs_against == 0:
         return "Opening night means the standings are clean, the scouting report is thin, and every slowpitch lineup card still looks unbeatable on paper."
     return f"Current team context: {record} with {runs_for} runs scored and {runs_against} allowed."
+
+
+def _build_lineup_season_metrics_note(row: dict[str, object]) -> str:
+    season_pa = int(row.get("season_pa", 0) or 0)
+    if season_pa <= 0:
+        return ""
+    return (
+        f"{float(row.get('season_avg', 0.0) or 0.0):.3f}/"
+        f"{float(row.get('season_obp', 0.0) or 0.0):.3f}/"
+        f"{float(row.get('season_slg', 0.0) or 0.0):.3f} "
+        f"({float(row.get('season_ops', 0.0) or 0.0):.3f} OPS) in {season_pa} PA, "
+        f"{int(row.get('season_r', 0) or 0)} R, {int(row.get('season_rbi', 0) or 0)} RBI."
+    )
 
 
 def _build_manager_corner(

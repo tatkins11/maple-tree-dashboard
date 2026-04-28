@@ -13,9 +13,11 @@ from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DASHBOARD_SEASON,
     DEFAULT_DB_PATH,
+    evaluate_manual_lineup,
     fetch_active_roster,
     fetch_available_projection_rows,
     fetch_current_schedule_week,
+    fetch_lineup_current_season_context,
     fetch_league_schedule_seasons,
     fetch_maple_tree_week_bundle,
     fetch_projection_seasons,
@@ -141,6 +143,64 @@ def _lineup_table(ordered_names: list[str], projection_rows: pd.DataFrame) -> pd
             }
         )
     return pd.DataFrame(rows)
+
+
+def _attach_lineup_current_season_context(
+    lineup_df: pd.DataFrame,
+    season_context: dict[str, object],
+) -> pd.DataFrame:
+    if lineup_df.empty:
+        return lineup_df
+
+    player_metrics = season_context.get("player_metrics", {}) if isinstance(season_context, dict) else {}
+    enriched = lineup_df.copy()
+    for column, metric_key in (
+        ("season_pa", "pa"),
+        ("season_r", "r"),
+        ("season_rbi", "rbi"),
+        ("season_hr", "hr"),
+        ("season_avg", "avg"),
+        ("season_obp", "obp"),
+        ("season_slg", "slg"),
+        ("season_ops", "ops"),
+    ):
+        enriched.loc[:, column] = enriched["player"].map(
+            lambda player_name: (player_metrics.get(str(player_name), {}) or {}).get(metric_key, 0)
+        )
+    return enriched
+
+
+def _build_manual_lineup_order(
+    player_pool: list[str],
+    *,
+    key_prefix: str,
+) -> list[str]:
+    if not player_pool:
+        return []
+
+    ordered_names: list[str] = []
+    remaining_names = list(player_pool)
+    columns = st.columns(3, gap="small")
+
+    for spot, _ in enumerate(player_pool, start=1):
+        state_key = f"{key_prefix}_spot_{spot}"
+        current_value = st.session_state.get(state_key)
+        if current_value not in remaining_names:
+            current_value = remaining_names[0]
+            st.session_state[state_key] = current_value
+
+        with columns[(spot - 1) % len(columns)]:
+            selected_name = st.selectbox(
+                f"Spot {spot}",
+                options=remaining_names,
+                index=remaining_names.index(current_value),
+                key=state_key,
+            )
+
+        ordered_names.append(selected_name)
+        remaining_names.remove(selected_name)
+
+    return ordered_names
 
 
 def _render_week_cards(games: pd.DataFrame, week_label: str) -> None:
@@ -317,7 +377,7 @@ def main() -> None:
         state_prefix = _state_key("pregame", selected_season, selected_week)
 
         st.markdown("<div class='writeups-controls'>", unsafe_allow_html=True)
-        pregame_row_one = st.columns([1.1, 1.2, 1], gap="small")
+        pregame_row_one = st.columns([1.05, 1.05, 1.25, 1], gap="small")
         with pregame_row_one[0]:
             projection_season = st.selectbox(
                 "Projection season",
@@ -326,14 +386,23 @@ def main() -> None:
                 key=f"{state_prefix}_projection_season",
             ) if projection_seasons else ""
         with pregame_row_one[1]:
+            lineup_source = st.radio(
+                "Lineup source",
+                options=["Optimizer", "Manual"],
+                horizontal=True,
+                index=0,
+                key=f"{state_prefix}_lineup_source",
+            )
+        with pregame_row_one[2]:
             optimizer_mode = st.radio(
                 "Optimizer mode",
                 options=["team_aware", "unconstrained"],
                 horizontal=True,
                 index=0,
                 key=f"{state_prefix}_optimizer_mode",
+                disabled=lineup_source != "Optimizer",
             )
-        with pregame_row_one[2]:
+        with pregame_row_one[3]:
             simulations = st.slider(
                 "Simulation count",
                 min_value=200,
@@ -347,7 +416,7 @@ def main() -> None:
             "Available players",
             options=active_names,
             default=active_names,
-            help="Phase 1 uses the optimizer with the players you mark as available for the doubleheader date.",
+            help="Choose who is available, then either optimize the order or set it manually and simulate that exact lineup.",
             key=f"{state_prefix}_players",
         )
         st.markdown("</div>", unsafe_allow_html=True)
@@ -357,6 +426,14 @@ def main() -> None:
             if projection_season and selected_players
             else pd.DataFrame()
         )
+        projected_player_names = (
+            projection_rows["player"].dropna().astype(str).tolist()
+            if not projection_rows.empty and "player" in projection_rows.columns
+            else []
+        )
+        missing_projection_players = [
+            name for name in selected_players if str(name).strip() and name not in projected_player_names
+        ]
         if projection_seasons and not projection_rows.empty:
             st.dataframe(
                 projection_rows[
@@ -380,10 +457,23 @@ def main() -> None:
                     "proj_xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f"),
                 },
             )
+            if missing_projection_players:
+                st.warning(
+                    "These available players do not currently have usable projection rows and will be left out of lineup simulation: "
+                    + ", ".join(missing_projection_players)
+                )
         elif projection_seasons and selected_players:
             st.info("No usable projection rows were found for the currently selected player pool.")
         else:
             st.info("Load hitter projections before generating a pregame write-up.")
+
+        manual_lineup_order: list[str] = []
+        if lineup_source == "Manual" and projected_player_names:
+            st.caption("Manual mode simulates exactly the batting order you set below.")
+            manual_lineup_order = _build_manual_lineup_order(
+                projected_player_names,
+                key_prefix=f"{state_prefix}_manual_lineup",
+            )
 
         generate_pregame = st.button(
             "Generate Pregame Write-Up",
@@ -394,22 +484,45 @@ def main() -> None:
                 or not week_date
                 or not selected_players
                 or projection_rows.empty
+                or (lineup_source == "Manual" and len(manual_lineup_order) != len(projected_player_names))
             ),
             key=f"{state_prefix}_generate",
         )
 
         if generate_pregame:
             try:
-                result = run_optimizer(
-                    connection=connection,
-                    projection_season=projection_season,
-                    game_date=week_date,
-                    available_player_names=selected_players,
-                    mode=optimizer_mode,
-                    simulations=simulations,
-                    seed=42,
+                if lineup_source == "Manual":
+                    ordered_names = manual_lineup_order
+                    simulation_summary = evaluate_manual_lineup(
+                        connection=connection,
+                        projection_season=projection_season,
+                        ordered_player_names=ordered_names,
+                        available_player_names=projected_player_names,
+                        simulations=simulations,
+                        seed=42,
+                    )
+                    lineup_title = "Manual Lineup"
+                else:
+                    result = run_optimizer(
+                        connection=connection,
+                        projection_season=projection_season,
+                        game_date=week_date,
+                        available_player_names=projected_player_names,
+                        mode=optimizer_mode,
+                        simulations=simulations,
+                        seed=42,
+                    )
+                    ordered_names = result.best_lineup.ordered_player_names
+                    simulation_summary = result.best_lineup.summary
+                    lineup_title = "Recommended Lineup"
+
+                lineup_df = _lineup_table(ordered_names, projection_rows)
+                lineup_season_context = fetch_lineup_current_season_context(
+                    connection,
+                    season=selected_season,
+                    ordered_player_names=ordered_names,
                 )
-                lineup_df = _lineup_table(result.best_lineup.ordered_player_names, projection_rows)
+                lineup_df = _attach_lineup_current_season_context(lineup_df, lineup_season_context)
                 annotated_lineup_rows = annotate_pregame_lineup(lineup_df.to_dict("records"))
                 milestone_lines = fetch_writeup_milestone_watch(connection)
                 opponent_lines = fetch_writeup_opponent_scouting(
@@ -439,18 +552,28 @@ def main() -> None:
                     ),
                     overview_insight_lines=build_pregame_overview_insight_lines(
                         annotated_lineup_rows,
-                        projected_runs_per_game=result.best_lineup.summary.expected_runs_per_game,
+                        projected_runs_per_game=simulation_summary.expected_runs_per_game,
+                        lineup_season_summary=(
+                            lineup_season_context.get("summary")
+                            if isinstance(lineup_season_context, dict)
+                            else None
+                        ),
+                        lineup_descriptor=(
+                            "manual order" if lineup_source == "Manual" else "recommended order"
+                        ),
                     ),
                 )
                 st.session_state[f"{state_prefix}_lineup"] = annotated_lineup_rows
+                st.session_state[f"{state_prefix}_lineup_title"] = lineup_title
                 st.session_state[f"{state_prefix}_markdown"] = markdown
             except Exception as exc:
                 st.error(f"Pregame generation failed: {exc}")
 
         saved_lineup_rows = st.session_state.get(f"{state_prefix}_lineup", [])
+        saved_lineup_title = str(st.session_state.get(f"{state_prefix}_lineup_title", "Recommended Lineup"))
         saved_pregame_markdown = str(st.session_state.get(f"{state_prefix}_markdown", ""))
         if saved_lineup_rows:
-            st.subheader("Recommended Lineup")
+            st.subheader(saved_lineup_title)
             st.dataframe(
                 pd.DataFrame(saved_lineup_rows),
                 use_container_width=True,
@@ -462,6 +585,11 @@ def main() -> None:
                     "proj_run_rate": st.column_config.NumberColumn("Proj Run Rate", format="%.3f"),
                     "proj_rbi_rate": st.column_config.NumberColumn("Proj RBI Rate", format="%.3f"),
                     "proj_xbh_rate": st.column_config.NumberColumn("XBH Rate", format="%.3f"),
+                    "season_pa": st.column_config.NumberColumn("Season PA", format="%d"),
+                    "season_avg": st.column_config.NumberColumn("Season AVG", format="%.3f"),
+                    "season_obp": st.column_config.NumberColumn("Season OBP", format="%.3f"),
+                    "season_slg": st.column_config.NumberColumn("Season SLG", format="%.3f"),
+                    "season_ops": st.column_config.NumberColumn("Season OPS", format="%.3f"),
                 },
             )
         if saved_pregame_markdown:

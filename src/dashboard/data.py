@@ -18,6 +18,7 @@ from src.models.advanced_analytics import (
     build_player_comparison,
     calculate_advanced_analytics,
 )
+from src.models.lineup import build_simulation_lineup_from_order
 from src.models.optimizer import OptimizationResult, optimize_lineup
 from src.models.roster import (
     DEFAULT_ACTIVE_ROSTER_SEASON,
@@ -27,6 +28,7 @@ from src.models.roster import (
 )
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 from src.models.season_roster import fetch_active_roster_rows
+from src.models.simulator import SimulationSummary, simulate_lineup
 from src.utils.db import connect_app_db
 
 
@@ -354,6 +356,76 @@ def fetch_current_season_stats(
         )
         dataframe = dataframe.merge(projection_df, on="player", how="left")
     return dataframe
+
+
+def fetch_lineup_current_season_context(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    ordered_player_names: list[str],
+) -> dict[str, object]:
+    player_names = [str(name).strip() for name in ordered_player_names if str(name).strip()]
+    empty_summary = {
+        "pa": 0,
+        "runs": 0,
+        "rbi": 0,
+        "home_runs": 0,
+        "avg": 0.0,
+        "obp": 0.0,
+        "slg": 0.0,
+        "ops": 0.0,
+    }
+    if not player_names:
+        return {"player_metrics": {}, "summary": empty_summary}
+
+    season_stats = fetch_current_season_stats(connection, season)
+    if season_stats.empty:
+        return {"player_metrics": {}, "summary": empty_summary}
+
+    tracked_columns = ["player", "pa", "ab", "hits", "bb", "tb", "r", "rbi", "hr", "avg", "obp", "slg", "ops"]
+    filtered = season_stats[[column for column in tracked_columns if column in season_stats.columns]].copy()
+    filtered = filtered.drop_duplicates(subset=["player"], keep="first").set_index("player")
+    ordered = filtered.reindex(player_names)
+
+    counting_columns = [column for column in ("pa", "ab", "hits", "bb", "tb", "r", "rbi", "hr") if column in ordered.columns]
+    for column in counting_columns:
+        ordered.loc[:, column] = pd.to_numeric(ordered[column], errors="coerce").fillna(0)
+
+    rate_columns = [column for column in ("avg", "obp", "slg", "ops") if column in ordered.columns]
+    for column in rate_columns:
+        ordered.loc[:, column] = pd.to_numeric(ordered[column], errors="coerce").fillna(0.0)
+
+    player_metrics = {
+        str(player_name): {
+            "pa": int(row.get("pa", 0) or 0),
+            "r": int(row.get("r", 0) or 0),
+            "rbi": int(row.get("rbi", 0) or 0),
+            "hr": int(row.get("hr", 0) or 0),
+            "avg": float(row.get("avg", 0.0) or 0.0),
+            "obp": float(row.get("obp", 0.0) or 0.0),
+            "slg": float(row.get("slg", 0.0) or 0.0),
+            "ops": float(row.get("ops", 0.0) or 0.0),
+        }
+        for player_name, row in ordered.iterrows()
+    }
+
+    total_pa = float(ordered["pa"].sum()) if "pa" in ordered.columns else 0.0
+    total_ab = float(ordered["ab"].sum()) if "ab" in ordered.columns else 0.0
+    total_hits = float(ordered["hits"].sum()) if "hits" in ordered.columns else 0.0
+    total_walks = float(ordered["bb"].sum()) if "bb" in ordered.columns else 0.0
+    total_bases = float(ordered["tb"].sum()) if "tb" in ordered.columns else 0.0
+
+    summary = {
+        "pa": int(total_pa),
+        "runs": int(ordered["r"].sum()) if "r" in ordered.columns else 0,
+        "rbi": int(ordered["rbi"].sum()) if "rbi" in ordered.columns else 0,
+        "home_runs": int(ordered["hr"].sum()) if "hr" in ordered.columns else 0,
+        "avg": _safe_divide(total_hits, total_ab),
+        "obp": _safe_divide(total_hits + total_walks, total_ab + total_walks),
+        "slg": _safe_divide(total_bases, total_ab),
+    }
+    summary["ops"] = float(summary["obp"]) + float(summary["slg"])
+    return {"player_metrics": player_metrics, "summary": summary}
 
 
 def fetch_top_hitters(
@@ -1316,6 +1388,21 @@ def fetch_writeup_opponent_scouting(
         if not standings.empty and "team_name" in standings.columns
         else {}
     )
+    maple_tree_summary = fetch_schedule_season_summary(
+        connection,
+        season=season,
+        team_name=DEFAULT_SCHEDULE_TEAM_NAME,
+        as_of=as_of,
+    )
+    maple_tree_games_completed = int(maple_tree_summary.get("games_completed", 0) or 0)
+    maple_tree_scored_per_game = _safe_divide(
+        float(maple_tree_summary.get("runs_for", 0) or 0),
+        float(maple_tree_games_completed),
+    )
+    maple_tree_allowed_per_game = _safe_divide(
+        float(maple_tree_summary.get("runs_against", 0) or 0),
+        float(maple_tree_games_completed),
+    )
 
     lines: list[str] = []
     any_completed_data = False
@@ -1343,12 +1430,28 @@ def fetch_writeup_opponent_scouting(
 
         any_completed_data = True
         standing_row = standings_lookup.get(opponent_name, {})
+        opponent_games_completed = int(summary.get("games_completed", 0) or 0)
+        opponent_scored_per_game = _safe_divide(
+            float(summary.get("runs_for", 0) or 0),
+            float(opponent_games_completed),
+        )
+        opponent_allowed_per_game = _safe_divide(
+            float(summary.get("runs_against", 0) or 0),
+            float(opponent_games_completed),
+        )
         parts = [f"{opponent_name}: record {summary['record']}"]
         if standing_row:
             parts.append(
                 f"standings {int(standing_row.get('wins', 0))}-{int(standing_row.get('losses', 0))}"
             )
         parts.append(f"runs {int(summary['runs_for'])}-{int(summary['runs_against'])}")
+        parts.append(
+            f"scores {opponent_scored_per_game:.1f}/game and allows {opponent_allowed_per_game:.1f}/game"
+        )
+        if maple_tree_games_completed > 0:
+            parts.append(
+                f"Maple Tree scores {maple_tree_scored_per_game:.1f}/game and allows {maple_tree_allowed_per_game:.1f}/game"
+            )
         recent_lines = [
             f"{row['team_result']} {row['score_display']} vs {row['home_team'] if row['away_team'] == opponent_name else row['away_team']}"
             for _, row in recent.iterrows()
@@ -2804,6 +2907,30 @@ def run_optimizer(
         seed=seed,
         mode=mode,
         available_player_names_override=available_player_names,
+    )
+
+
+def evaluate_manual_lineup(
+    connection: sqlite3.Connection,
+    *,
+    projection_season: str,
+    ordered_player_names: list[str],
+    available_player_names: list[str],
+    simulations: int,
+    seed: int,
+) -> SimulationSummary:
+    rules = load_league_rules(DEFAULT_LEAGUE_RULES_PATH)
+    lineup = build_simulation_lineup_from_order(
+        connection=connection,
+        projection_season=projection_season,
+        ordered_player_names=ordered_player_names,
+        available_player_names=available_player_names,
+    )
+    return simulate_lineup(
+        lineup=lineup,
+        league_rules=rules,
+        simulations=simulations,
+        seed=seed,
     )
 
 
