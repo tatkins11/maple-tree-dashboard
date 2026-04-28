@@ -127,8 +127,9 @@ def select_game_day_projections(
 
     normalized_names = [normalize_player_name(name) for name in available_player_names]
     placeholders = ",".join("?" for _ in normalized_names)
-    rows = connection.execute(
-        f"""
+    try:
+        rows = connection.execute(
+            f"""
         SELECT
             hp.player_id,
             pi.player_name,
@@ -178,8 +179,56 @@ def select_game_day_projections(
           )
         ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
         """,
-        (projection_season, *normalized_names, *normalized_names),
-    ).fetchall()
+            (projection_season, *normalized_names, *normalized_names),
+        ).fetchall()
+    except Exception as exc:
+        if not _is_missing_projection_alias_object(exc):
+            raise
+        rows = connection.execute(
+            f"""
+        SELECT
+            hp.player_id,
+            pi.player_name,
+            pi.canonical_name,
+            pm.preferred_display_name,
+            hp.projection_source,
+            pm.is_fixed_dhh,
+            pm.baserunning_grade,
+            pm.consistency_grade,
+            pm.speed_flag,
+            pm.active_flag,
+            COALESCE(pm.notes, '') AS notes,
+            hp.projection_season,
+            hp.current_plate_appearances,
+            hp.career_plate_appearances,
+            hp.current_season_weight,
+            hp.baserunning_adjustment,
+            hp.p_single,
+            hp.p_double,
+            hp.p_triple,
+            hp.p_home_run,
+            hp.p_walk,
+            hp.projected_strikeout_rate,
+            hp.p_hit_by_pitch,
+            hp.p_reached_on_error,
+            hp.p_fielder_choice,
+            hp.p_grounded_into_double_play,
+            hp.p_out,
+            hp.projected_on_base_rate,
+            hp.projected_total_base_rate,
+            hp.projected_run_rate,
+            hp.projected_rbi_rate,
+            hp.projected_extra_base_hit_rate
+        FROM hitter_projections hp
+        JOIN player_identity pi ON pi.player_id = hp.player_id
+        JOIN player_metadata pm ON pm.player_id = hp.player_id
+        WHERE hp.projection_season = ?
+          AND pm.active_flag = 1
+          AND pi.canonical_name IN ({placeholders})
+        ORDER BY pm.is_fixed_dhh DESC, pm.preferred_display_name COLLATE NOCASE
+        """,
+            (projection_season, *normalized_names),
+        ).fetchall()
     return [
         GameDayProjectionRow(
             player_id=int(row["player_id"]),
@@ -217,3 +266,14 @@ def select_game_day_projections(
         )
         for row in rows
     ]
+
+
+def _is_missing_projection_alias_object(exc: Exception) -> bool:
+    sqlstate = getattr(exc, "sqlstate", None)
+    if sqlstate in {"42P01", "42703"}:
+        return True
+    return exc.__class__.__name__ in {
+        "UndefinedObject",
+        "UndefinedTable",
+        "UndefinedColumn",
+    }

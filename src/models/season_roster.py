@@ -76,6 +76,59 @@ def import_season_roster(
     return SeasonRosterImportResult(matched_count=matched_count, review_items=review_items)
 
 
+def sync_season_roster_additive(
+    connection: sqlite3.Connection,
+    csv_path: Path,
+    season_name: str,
+) -> SeasonRosterImportResult:
+    ensure_season_roster_file(csv_path)
+    matched_count = 0
+    review_items: list[str] = []
+
+    with csv_path.open("r", newline="", encoding="utf-8-sig") as handle:
+        reader = csv.DictReader(handle)
+        for row in reader:
+            row_season = (row.get("season_name") or "").strip()
+            if row_season and row_season != season_name:
+                continue
+            player_name = (row.get("player_name") or "").strip()
+            if not player_name:
+                continue
+            active_flag = _to_bool_int(row.get("active_flag"), default=1)
+            notes = (row.get("notes") or "").strip() or None
+            player_id = _resolve_roster_player_id(connection, player_name)
+            if player_id is None:
+                review_items.append(
+                    f"{season_name}: roster name '{player_name}' did not match a known player identity"
+                )
+                continue
+            cursor = connection.execute(
+                """
+                UPDATE season_rosters
+                SET source_name = ?, active_flag = ?, notes = ?
+                WHERE season_name = ? AND player_id = ?
+                """,
+                (player_name, active_flag, notes, season_name, player_id),
+            )
+            if getattr(cursor, "rowcount", 0) == 0:
+                connection.execute(
+                    """
+                    INSERT INTO season_rosters (
+                        season_name,
+                        player_id,
+                        source_name,
+                        active_flag,
+                        notes
+                    ) VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (season_name, player_id, player_name, active_flag, notes),
+                )
+            matched_count += 1
+
+    connection.commit()
+    return SeasonRosterImportResult(matched_count=matched_count, review_items=review_items)
+
+
 def fetch_active_roster_rows(
     connection: sqlite3.Connection, season_name: str
 ) -> list[sqlite3.Row]:
