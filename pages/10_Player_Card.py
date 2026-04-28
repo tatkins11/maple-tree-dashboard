@@ -11,6 +11,8 @@ from src.dashboard.auth import ensure_authenticated
 from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
+    build_player_rank_highlights,
+    build_player_trend_history,
     fetch_player_advanced_history,
     fetch_player_identities,
     fetch_player_milestone_context,
@@ -37,12 +39,12 @@ def _inject_player_card_css() -> None:
         .player-card-header {
             border: 1px solid rgba(49, 51, 63, 0.10);
             border-radius: 1rem;
-            padding: 1rem 1.05rem;
+            padding: 1.1rem 1.1rem;
             background: #fafafa;
             margin-bottom: 0.8rem;
         }
         .player-card-title {
-            font-size: 2rem;
+            font-size: 2.25rem;
             font-weight: 800;
             line-height: 1.05;
             margin-bottom: 0.25rem;
@@ -57,7 +59,7 @@ def _inject_player_card_css() -> None:
             display: flex;
             flex-wrap: wrap;
             gap: 0.45rem;
-            margin: 0.15rem 0 0.35rem 0;
+            margin: 0.2rem 0 0.35rem 0;
         }
         .player-pill {
             display: inline-block;
@@ -72,11 +74,51 @@ def _inject_player_card_css() -> None:
             background: rgba(59, 130, 246, 0.08);
             color: #1d4ed8;
         }
+        .player-card-meta {
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 0.15rem;
+        }
         .player-section-note {
             font-size: 0.84rem;
             color: #6b7280;
             margin-top: -0.1rem;
             margin-bottom: 0.45rem;
+        }
+        .player-metric-group {
+            border: 1px solid rgba(49, 51, 63, 0.08);
+            border-radius: 0.95rem;
+            padding: 0.9rem 0.95rem 0.5rem 0.95rem;
+            background: white;
+            margin-bottom: 0.7rem;
+        }
+        .player-metric-group h4 {
+            margin: 0 0 0.45rem 0;
+            font-size: 0.96rem;
+            font-weight: 800;
+            color: #111827;
+        }
+        .player-rank-card {
+            border: 1px solid rgba(49, 51, 63, 0.08);
+            border-radius: 0.9rem;
+            padding: 0.8rem 0.9rem;
+            background: #fafafa;
+            min-height: 5.2rem;
+            margin-bottom: 0.55rem;
+        }
+        .player-rank-number {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .player-rank-label {
+            font-size: 0.84rem;
+            color: #4b5563;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
         }
         .player-compact-card {
             border: 1px solid rgba(49, 51, 63, 0.10);
@@ -137,19 +179,81 @@ def _profile_pills(summary: dict[str, object]) -> str:
 
 
 def _render_header(summary: dict[str, object]) -> None:
+    seasons_played = int(summary.get("seasons_played") or 0)
+    active_text = "Active roster" if summary.get("active_roster") else "Roster alum"
+    ops_value = f"{float(summary.get('ops') or 0.0):.3f}"
+    subtitle = f"{seasons_played} seasons • {active_text} • Career OPS {ops_value}"
     notes = str(summary.get("notes") or "").strip()
     note_markup = f"<div class='player-card-subtitle'>{escape(notes)}</div>" if notes else ""
     st.markdown(
         f"""
         <div class="player-card-header">
           <div class="player-card-title">{escape(str(summary.get("player") or "Player"))}</div>
-          <div class="player-card-subtitle">Canonical key: {escape(str(summary.get("canonical_name") or ""))}</div>
+          <div class="player-card-subtitle">{escape(subtitle)}</div>
           <div class="player-pill-row">{_profile_pills(summary)}</div>
+          <div class="player-card-meta">Canonical key: {escape(str(summary.get("canonical_name") or ""))}</div>
           {note_markup}
         </div>
         """,
         unsafe_allow_html=True,
     )
+
+
+def _render_grouped_metrics(summary: dict[str, object], *, is_mobile_layout: bool) -> None:
+    groups = [
+        (
+            "Volume",
+            [
+                ("Seasons", str(int(summary.get("seasons_played") or 0))),
+                ("Games", str(int(summary.get("games") or 0))),
+                ("PA", str(int(summary.get("pa") or 0))),
+            ],
+        ),
+        (
+            "Production",
+            [
+                ("Hits", str(int(summary.get("hits") or 0))),
+                ("Runs", str(int(summary.get("runs") or 0))),
+                ("RBI", str(int(summary.get("rbi") or 0))),
+                ("HR", str(int(summary.get("hr") or 0))),
+            ],
+        ),
+        (
+            "Rates",
+            [
+                ("AVG", f"{float(summary.get('avg') or 0.0):.3f}"),
+                ("OBP", f"{float(summary.get('obp') or 0.0):.3f}"),
+                ("SLG", f"{float(summary.get('slg') or 0.0):.3f}"),
+                ("OPS", f"{float(summary.get('ops') or 0.0):.3f}"),
+            ],
+        ),
+    ]
+    group_columns = st.columns(1 if is_mobile_layout else len(groups), gap="small")
+    for container, (label, metrics) in zip(group_columns, groups):
+        with container:
+            with st.container(border=True):
+                st.markdown(f"#### {label}")
+                _metric_grid(metrics, per_row=2 if len(metrics) > 2 else len(metrics))
+
+
+def _render_rank_highlights(summary: dict[str, object], *, is_mobile_layout: bool) -> None:
+    highlights = build_player_rank_highlights(summary)
+    if not highlights:
+        return
+
+    st.markdown("#### All-Time Rank Highlights")
+    highlight_columns = st.columns(1 if is_mobile_layout else len(highlights), gap="small")
+    for column, item in zip(highlight_columns, highlights):
+        with column:
+            st.markdown(
+                f"""
+                <div class="player-rank-card">
+                  <div class="player-rank-number">#{int(item["rank"])}</div>
+                  <div class="player-rank-label">{escape(str(item["stat"]))}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 
 def _render_standard_mobile_cards(dataframe: pd.DataFrame) -> None:
@@ -184,28 +288,64 @@ def _render_advanced_mobile_cards(dataframe: pd.DataFrame) -> None:
         )
 
 
-def _render_trend_chart(history: pd.DataFrame) -> None:
-    if history.empty:
+def _render_analytics_trend_chart(
+    season_history: pd.DataFrame,
+    advanced_history: pd.DataFrame,
+) -> None:
+    chart_source = build_player_trend_history(season_history, advanced_history)
+    if chart_source.empty:
         st.info("No season trend data is available for this player yet.")
         return
 
-    chart_source = history.iloc[::-1][["season_label", "ops", "pa", "hr"]].reset_index(drop=True).copy()
+    metric_options = {
+        "OPS": {"column": "ops", "title": "OPS", "format": ".3f"},
+        "Team OPS+": {"column": "team_relative_ops", "title": "Team OPS+", "format": ".0f"},
+        "oWAR": {"column": "owar", "title": "oWAR", "format": ".2f"},
+        "RAR": {"column": "rar", "title": "RAR", "format": ".2f"},
+        "ISO": {"column": "iso", "title": "ISO", "format": ".3f"},
+    }
+    selected_metric = st.selectbox(
+        "Analytics trend metric",
+        options=list(metric_options.keys()),
+        index=1,
+        key="player_card_trend_metric",
+    )
+    metric_config = metric_options[selected_metric]
+    metric_column = metric_config["column"]
+    if metric_column not in chart_source.columns:
+        st.info("No trend data is available for that metric yet.")
+        return
+
+    chart_source = chart_source[chart_source[metric_column].notna()].reset_index(drop=True)
+    if chart_source.empty:
+        st.info("No trend data is available for that metric yet.")
+        return
+
+    st.markdown(f"### {selected_metric} Trend")
+    st.markdown(
+        "<div class='player-section-note'>Season labels use the short format you requested, and the chart reads from oldest season on the left to newest season on the right.</div>",
+        unsafe_allow_html=True,
+    )
+
     season_order = chart_source["season_label"].astype(str).tolist()
-    chart_source["ops_display"] = chart_source["ops"].round(3)
-    chart_source["pa_display"] = chart_source["pa"].astype(int)
-    chart_source["hr_display"] = chart_source["hr"].astype(int)
+    chart_source = chart_source.copy()
+    chart_source["metric_value"] = chart_source[metric_column].astype(float)
+    chart_source["ops_display"] = chart_source["ops"].fillna(0.0).astype(float).round(3)
+    chart_source["pa_display"] = chart_source["pa"].fillna(0).astype(int)
+    chart_source["hr_display"] = chart_source["hr"].fillna(0).astype(int)
 
     chart = (
         alt.Chart(chart_source)
         .mark_line(point=True)
         .encode(
             x=alt.X("season_label:N", title="Season", sort=season_order),
-            y=alt.Y("ops:Q", title="OPS"),
+            y=alt.Y("metric_value:Q", title=metric_config["title"]),
             tooltip=[
                 alt.Tooltip("season_label:N", title="Season"),
-                alt.Tooltip("ops_display:Q", title="OPS", format=".3f"),
+                alt.Tooltip("metric_value:Q", title=metric_config["title"], format=metric_config["format"]),
                 alt.Tooltip("pa_display:Q", title="PA", format=".0f"),
                 alt.Tooltip("hr_display:Q", title="HR", format=".0f"),
+                alt.Tooltip("ops_display:Q", title="OPS", format=".3f"),
             ],
         )
         .properties(height=260)
@@ -309,9 +449,6 @@ _inject_player_card_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="player_card")
 
-st.title("Player Card")
-st.caption("Full player hub with career snapshot, season-by-season stats, milestones, records, and trend context.")
-
 db_path = database_path_control(DEFAULT_DB_PATH, key="player_card_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 identities = fetch_player_identities(connection)
@@ -363,44 +500,13 @@ if summary is None:
     st.warning("Player not found. Choose a player from the selector to continue.")
     st.stop()
 
+st.title(str(summary.get("player") or "Player Card"))
+st.caption("Full player hub with career snapshot, season-by-season stats, milestones, records, and trend context.")
+
 _render_header(summary)
-
-rank_bits = [
-    f"OPS rank: #{summary['ops_rank']}" if summary.get("ops_rank") else "",
-    f"HR rank: #{summary['hr_rank']}" if summary.get("hr_rank") else "",
-    f"RBI rank: #{summary['rbi_rank']}" if summary.get("rbi_rank") else "",
-    f"Hits rank: #{summary['hits_rank']}" if summary.get("hits_rank") else "",
-]
-rank_bits = [bit for bit in rank_bits if bit]
-if rank_bits:
-    st.markdown(
-        "<div class='player-section-note'>All-time rank callouts: " + escape(" • ".join(rank_bits)) + "</div>",
-        unsafe_allow_html=True,
-    )
-
-_metric_grid(
-    [
-        ("Seasons", str(int(summary.get("seasons_played") or 0))),
-        ("Games", str(int(summary.get("games") or 0))),
-        ("PA", str(int(summary.get("pa") or 0))),
-        ("Hits", str(int(summary.get("hits") or 0))),
-        ("HR", str(int(summary.get("hr") or 0))),
-        ("RBI", str(int(summary.get("rbi") or 0))),
-        ("Runs", str(int(summary.get("runs") or 0))),
-        ("AVG", f"{float(summary.get('avg') or 0.0):.3f}"),
-        ("OBP", f"{float(summary.get('obp') or 0.0):.3f}"),
-        ("SLG", f"{float(summary.get('slg') or 0.0):.3f}"),
-        ("OPS", f"{float(summary.get('ops') or 0.0):.3f}"),
-    ],
-    per_row=2 if layout.is_mobile_layout else 4,
-)
-
-st.markdown("### OPS Trend")
-st.markdown(
-    "<div class='player-section-note'>Season labels use the short format you requested, with Spring = Sp, Summer = S, and Fall = F.</div>",
-    unsafe_allow_html=True,
-)
-_render_trend_chart(season_history)
+_render_rank_highlights(summary, is_mobile_layout=layout.is_mobile_layout)
+_render_grouped_metrics(summary, is_mobile_layout=layout.is_mobile_layout)
+_render_analytics_trend_chart(season_history, advanced_history)
 
 overview_tab, standard_tab, advanced_tab, context_tab = st.tabs(
     ["Overview", "Season-by-Season Stats", "Advanced History", "Milestones & Records"]

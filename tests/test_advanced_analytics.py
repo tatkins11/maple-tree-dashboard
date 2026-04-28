@@ -3,6 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 from src.dashboard.data import (
+    build_player_rank_highlights,
+    build_player_trend_history,
     fetch_advanced_analytics_archetype_summary,
     fetch_advanced_analytics_view,
     fetch_advanced_archetype_order,
@@ -743,7 +745,50 @@ def test_format_player_season_label_uses_short_suffixes() -> None:
     assert format_player_season_label("Maple Tree Spring 2026") == "2026 Sp"
     assert format_player_season_label("Maple Tree Summer 2025") == "2025 S"
     assert format_player_season_label("Maple Tree Fall 2024") == "2024 F"
+    assert format_player_season_label("Soviet Sluggers 2021") == "2021 S"
+    assert format_player_season_label("Smoking Bunts 2022") == "2022 S"
+    assert format_player_season_label("Tappers 2025") == "2025 S"
     assert format_player_season_label("Maple Tree Winter 2024") == "Maple Tree Winter 2024"
+
+
+def test_build_player_rank_highlights_sorts_best_available_placements() -> None:
+    highlights = build_player_rank_highlights(
+        {
+            "ops_rank": 16,
+            "hr_rank": 8,
+            "rbi_rank": 9,
+            "hits_rank": 7,
+        }
+    )
+
+    assert highlights == [
+        {"stat": "Hits", "rank": 7},
+        {"stat": "HR", "rank": 8},
+        {"stat": "RBI", "rank": 9},
+        {"stat": "OPS", "rank": 16},
+    ]
+
+
+def test_build_player_trend_history_is_chronological_and_metric_ready() -> None:
+    season_history = pd.DataFrame(
+        [
+            {"season": "Maple Tree Spring 2026", "season_label": "2026 Sp", "pa": 24, "hr": 3, "ops": 1.2},
+            {"season": "Maple Tree Fall 2025", "season_label": "2025 F", "pa": 28, "hr": 2, "ops": 0.9},
+            {"season": "Smoking Bunts Summer 2022", "season_label": "2022 S", "pa": 40, "hr": 1, "ops": 0.8},
+        ]
+    )
+    advanced_history = pd.DataFrame(
+        [
+            {"season": "Maple Tree Spring 2026", "season_label": "2026 Sp", "team_relative_ops": 140, "owar": 1.2, "rar": 12.0, "iso": 0.55},
+            {"season": "Maple Tree Fall 2025", "season_label": "2025 F", "team_relative_ops": 105, "owar": 0.4, "rar": 4.0, "iso": 0.21},
+            {"season": "Smoking Bunts Summer 2022", "season_label": "2022 S", "team_relative_ops": 98, "owar": 0.2, "rar": 2.0, "iso": 0.12},
+        ]
+    )
+
+    trend = build_player_trend_history(season_history, advanced_history)
+
+    assert trend["season_label"].tolist() == ["2022 S", "2025 F", "2026 Sp"]
+    assert set(["ops", "team_relative_ops", "owar", "rar", "iso", "pa", "hr"]).issubset(trend.columns)
 
 
 def test_fetch_top_hitters_keeps_canonical_name_for_linking(tmp_path: Path) -> None:

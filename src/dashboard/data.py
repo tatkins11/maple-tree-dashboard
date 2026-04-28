@@ -158,11 +158,85 @@ def format_player_season_label(season: str) -> str:
     lowered = value.lower()
     if "spring" in lowered:
         return f"{year} Sp".strip()
-    if "summer" in lowered:
+    if "summer" in lowered or "sluggers" in lowered or "bunts" in lowered or "tappers" in lowered:
         return f"{year} S".strip()
     if "fall" in lowered:
         return f"{year} F".strip()
     return value
+
+
+def build_player_rank_highlights(
+    summary: dict[str, object] | None,
+    *,
+    limit: int = 4,
+) -> list[dict[str, object]]:
+    if not summary:
+        return []
+
+    rank_fields = [
+        ("hits_rank", "Hits"),
+        ("hr_rank", "HR"),
+        ("rbi_rank", "RBI"),
+        ("ops_rank", "OPS"),
+    ]
+    highlights: list[dict[str, object]] = []
+    for field_name, label in rank_fields:
+        rank = summary.get(field_name)
+        if rank in (None, "", 0):
+            continue
+        highlights.append({"stat": label, "rank": int(rank)})
+
+    highlights.sort(key=lambda item: (int(item["rank"]), str(item["stat"])))
+    return highlights[:limit]
+
+
+def build_player_trend_history(
+    season_history: pd.DataFrame,
+    advanced_history: pd.DataFrame,
+) -> pd.DataFrame:
+    if season_history.empty and advanced_history.empty:
+        return pd.DataFrame(
+            columns=[
+                "season",
+                "season_label",
+                "pa",
+                "hr",
+                "ops",
+                "team_relative_ops",
+                "owar",
+                "rar",
+                "iso",
+            ]
+        )
+
+    standard_columns = ["season", "season_label", "pa", "hr", "ops"]
+    advanced_columns = ["season", "season_label", "team_relative_ops", "owar", "rar", "iso"]
+
+    standard_source = season_history[[column for column in standard_columns if column in season_history.columns]].copy()
+    advanced_source = advanced_history[[column for column in advanced_columns if column in advanced_history.columns]].copy()
+
+    if standard_source.empty:
+        merged = advanced_source.copy()
+    elif advanced_source.empty:
+        merged = standard_source.copy()
+    else:
+        merged = standard_source.merge(
+            advanced_source,
+            on=["season", "season_label"],
+            how="outer",
+        )
+
+    if "season_label" not in merged.columns and "season" in merged.columns:
+        merged.loc[:, "season_label"] = merged["season"].map(lambda value: format_player_season_label(str(value)))
+
+    if "season" in merged.columns:
+        chronological = list(reversed(sort_seasons(merged["season"].astype(str).dropna().tolist())))
+        order_lookup = {season: index for index, season in enumerate(chronological)}
+        merged = merged.assign(
+            _season_order=merged["season"].astype(str).map(lambda value: order_lookup.get(value, 10**9))
+        ).sort_values(["_season_order", "season_label"], ascending=[True, True]).drop(columns="_season_order")
+
+    return merged.reset_index(drop=True)
 
 
 def fetch_seasons(connection: sqlite3.Connection) -> list[str]:
