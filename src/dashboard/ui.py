@@ -246,11 +246,11 @@ def render_static_table(
     if dataframe.empty:
         return
 
-    display = dataframe.copy()
+    display = dataframe.copy().astype(object)
     formatters = formatters or {}
     for column, formatter in formatters.items():
         if column in display.columns:
-            display.loc[:, column] = display[column].map(lambda value: _format_table_cell(value, formatter))
+            display[column] = display[column].map(lambda value: _format_table_cell(value, formatter))
 
     if column_labels:
         ordered_columns = [column for column in dataframe.columns if column in display.columns]
