@@ -100,8 +100,10 @@ def _handle_pending_player_redirect() -> None:
         return
 
     player = str(st.query_params.get("player") or "").strip()
-    if player:
-        st.switch_page("pages/10_Player_Card.py", query_params={"player": player})
+    pending_params = {"player": player} if player else {}
+    st.query_params.clear()
+    for key, value in pending_params.items():
+        st.query_params[key] = value
     st.switch_page("pages/10_Player_Card.py")
 
 

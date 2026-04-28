@@ -226,6 +226,33 @@ def player_link_column_config(*, label: str = "Player", width: str = "medium") -
     return st.column_config.LinkColumn(label, width=width, display_text=PLAYER_LINK_DISPLAY_REGEX)
 
 
+def inject_same_tab_player_link_script() -> None:
+    st.markdown(
+        f"""
+        <script>
+        (function() {{
+          if (window.__mapleTreePlayerLinkHandlerInstalled) {{
+            return;
+          }}
+          window.__mapleTreePlayerLinkHandlerInstalled = true;
+          document.addEventListener("click", function(event) {{
+            const anchor = event.target && event.target.closest
+              ? event.target.closest('a[href*="?next={PLAYER_CARD_URL_PATH}"]')
+              : null;
+            if (!anchor) {{
+              return;
+            }}
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.assign(anchor.href);
+          }}, true);
+        }})();
+        </script>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def database_path_control(default_path: Path, *, key: str) -> str:
     if should_use_hosted_database():
         st.sidebar.caption("Database: hosted Supabase/Postgres")
