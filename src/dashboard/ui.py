@@ -188,7 +188,7 @@ def build_player_page_href(canonical_name: str, display_name: str | None = None)
     label = str(display_name or canonical).strip()
     if not canonical:
         return "#"
-    return f"./{PLAYER_CARD_URL_PATH}?player={quote(canonical, safe='')}#{label}"
+    return f"./?next={PLAYER_CARD_URL_PATH}&player={quote(canonical, safe='')}#{label}"
 
 
 def build_player_link_html(display_name: str, canonical_name: str) -> str:

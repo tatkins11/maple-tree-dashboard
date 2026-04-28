@@ -94,6 +94,17 @@ def _build_navigation(role: str) -> list[Any]:
     ]
 
 
+def _handle_pending_player_redirect() -> None:
+    next_page = str(st.query_params.get("next") or "").strip()
+    if next_page != PLAYER_CARD_URL_PATH:
+        return
+
+    player = str(st.query_params.get("player") or "").strip()
+    if player:
+        st.switch_page("pages/10_Player_Card.py", query_params={"player": player})
+    st.switch_page("pages/10_Player_Card.py")
+
+
 def _inject_home_css() -> None:
     st.markdown(
         """
@@ -411,6 +422,7 @@ def render_home_page() -> None:
 
 def main() -> None:
     role = ensure_authenticated(render_session_controls=False)
+    _handle_pending_player_redirect()
     navigation = st.navigation(_build_navigation(role), position="sidebar")
     navigation.run()
 
