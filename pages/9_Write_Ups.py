@@ -44,6 +44,7 @@ from src.dashboard.writeups import (
     resolve_postgame_games,
     suggest_markdown_filename,
 )
+from src.models.optimizer import DEFAULT_PREFERRED_LINEUP
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 
 
@@ -170,13 +171,43 @@ def _attach_lineup_current_season_context(
     return enriched
 
 
+def _suggest_manual_lineup_order(player_pool: list[str]) -> list[str]:
+    preferred = [name for name in DEFAULT_PREFERRED_LINEUP if name in player_pool]
+    extras = [name for name in player_pool if name not in preferred]
+    return [*preferred, *extras]
+
+
+def _seed_manual_lineup_state(
+    player_pool: list[str],
+    *,
+    default_order: list[str],
+    key_prefix: str,
+) -> None:
+    signature = "|".join(player_pool) + "||" + "|".join(default_order)
+    signature_key = f"{key_prefix}_signature"
+    if st.session_state.get(signature_key) == signature:
+        return
+
+    for spot, player_name in enumerate(default_order, start=1):
+        st.session_state[f"{key_prefix}_spot_{spot}"] = player_name
+    st.session_state[signature_key] = signature
+
+
 def _build_manual_lineup_order(
     player_pool: list[str],
     *,
     key_prefix: str,
+    default_order: list[str] | None = None,
 ) -> list[str]:
     if not player_pool:
         return []
+
+    seeded_order = default_order or player_pool
+    _seed_manual_lineup_state(
+        player_pool,
+        default_order=seeded_order,
+        key_prefix=key_prefix,
+    )
 
     ordered_names: list[str] = []
     remaining_names = list(player_pool)
@@ -470,9 +501,11 @@ def main() -> None:
         manual_lineup_order: list[str] = []
         if lineup_source == "Manual" and projected_player_names:
             st.caption("Manual mode simulates exactly the batting order you set below.")
+            manual_default_order = _suggest_manual_lineup_order(projected_player_names)
             manual_lineup_order = _build_manual_lineup_order(
                 projected_player_names,
                 key_prefix=f"{state_prefix}_manual_lineup",
+                default_order=manual_default_order,
             )
 
         generate_pregame = st.button(
@@ -549,6 +582,8 @@ def main() -> None:
                         lineup_rows=annotated_lineup_rows,
                         milestone_lines=milestone_lines,
                         opponent_lines=opponent_lines,
+                        week_bundle=week_bundle,
+                        season_summary=season_summary,
                     ),
                     overview_insight_lines=build_pregame_overview_insight_lines(
                         annotated_lineup_rows,

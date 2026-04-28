@@ -88,34 +88,62 @@ def build_pregame_key_lines(
     lineup_rows: list[dict[str, object]],
     milestone_lines: list[str],
     opponent_lines: list[str],
+    *,
+    week_bundle: dict[str, object] | None = None,
+    season_summary: dict[str, object] | None = None,
 ) -> list[str]:
     players = [str(row.get("player") or "").strip() for row in lineup_rows if str(row.get("player") or "").strip()]
     top_group = ", ".join(players[:3])
     middle_group = ", ".join(players[3:6])
+    scouting = _parse_opponent_scouting_snapshot(opponent_lines)
+    summary = season_summary or {}
+    week_label = str((week_bundle or {}).get("week_label") or "this week")
+    wins = int(summary.get("wins", 0) or 0)
+    losses = int(summary.get("losses", 0) or 0)
+    games_completed = int(summary.get("games_completed", 0) or 0)
+    runs_for = int(summary.get("runs_for", 0) or 0)
+    runs_against = int(summary.get("runs_against", 0) or 0)
 
     keys: list[str] = []
-    if top_group:
+    if games_completed == 0:
         keys.append(
-            f"Let {top_group} establish traffic early so Maple Tree spends both games hitting with runners aboard instead of launching isolated solo expeditions."
+            f"{week_label} starts the real scouting file, so Game 1 has to establish the pace Maple Tree wants and Game 2 has to cash in whatever the first opener teaches."
         )
-    if middle_group:
+    elif runs_against > runs_for:
         keys.append(
-            f"Ask {middle_group} to turn that early traffic into loud innings and make the other dugout solve real slowpitch problems, not tidy little one-run inconveniences."
+            f"{week_label} needs a cleaner defensive tone than the opener showed: after allowing {runs_against} runs in {games_completed} games, the priority is cutting off free extra bases and forcing Bullseyes to string hits together honestly."
         )
-    if opponent_lines and opponent_lines[0].startswith("No completed opponent results"):
+    else:
         keys.append(
-            "Treat Game 1 like live slowpitch reconnaissance: track outfield depth, relay discipline, and who starts donating extra sixty feet, then cash those notes in before Game 2."
+            f"Maple Tree is {wins}-{losses} right now, so {week_label} is about stacking another composed night instead of letting the doubleheader drift into scramble-ball."
         )
-    elif opponent_lines:
-        keys.append(
-            "Use the scouting notes to attack their soft spots immediately, especially once pressure reaches the corners and routine throws stop feeling routine."
-        )
-    if milestone_lines:
-        focus_player = milestone_lines[0].split(" is ", 1)[0].strip()
-        if focus_player:
+
+    if scouting.get("opponent_name"):
+        opponent_name = str(scouting["opponent_name"])
+        opponent_scored = float(scouting.get("opponent_scored_per_game", 0.0) or 0.0)
+        opponent_allowed = float(scouting.get("opponent_allowed_per_game", 0.0) or 0.0)
+        maple_tree_scored = float(scouting.get("maple_tree_scored_per_game", 0.0) or 0.0)
+        if opponent_scored >= maple_tree_scored + 2.0:
             keys.append(
-                f"Keep {focus_player} in aggressive counts and let any milestone movement happen inside disciplined team swings, not as a dugout-sponsored side quest."
+                f"{opponent_name} is averaging {opponent_scored:.1f} runs a game, so the first job is winning the free-90 battle and keeping one messy inning from becoming their whole night."
             )
+        else:
+            keys.append(
+                f"{opponent_name} has only been allowing {opponent_allowed:.1f} runs a game, so Maple Tree has to build offense through repeated traffic instead of waiting around for one heroic swing."
+            )
+    elif opponent_lines and opponent_lines[0].startswith("No completed opponent results"):
+        keys.append(
+            "Treat Game 1 like live reconnaissance: track outfield depth, relay discipline, and who starts donating extra sixty feet, then press those same seams harder in Game 2."
+        )
+
+    if top_group and middle_group:
+        keys.append(
+            f"Let {top_group} light the first fuse, then ask {middle_group} to turn that traffic into full crooked innings so the other dugout has to solve pressure twice, not just once."
+        )
+    elif top_group:
+        keys.append(
+            f"Let {top_group} set the tone early and keep Maple Tree hitting with people on base instead of trying to survive on solo noise."
+        )
     return keys[:4]
 
 
@@ -248,8 +276,9 @@ def build_pregame_markdown(
     manager_note = _build_manager_corner(
         lineup_rows=lineup_rows,
         opponent_lines=opponent_lines,
-        milestone_lines=milestone_lines,
         opponent_text=opponent_text,
+        week_bundle=week_bundle,
+        season_summary=season_summary,
     )
     lines.extend(["", "## Manager's Corner", manager_note])
 
@@ -463,34 +492,95 @@ def _build_manager_corner(
     *,
     lineup_rows: list[dict[str, object]],
     opponent_lines: list[str],
-    milestone_lines: list[str],
     opponent_text: str,
+    week_bundle: dict[str, object] | None = None,
+    season_summary: dict[str, object] | None = None,
 ) -> str:
     players = [str(row.get("player") or "").strip() for row in lineup_rows if str(row.get("player") or "").strip()]
     top_group = ", ".join(players[:3]) if players else "the top of the order"
     middle_group = ", ".join(players[3:6]) if len(players) >= 6 else "the middle of the order"
     bottom_group = ", ".join(players[6:9]) if len(players) >= 9 else "the rest of the lineup"
-    milestone_focus = ""
-    if milestone_lines:
-        focus_player = milestone_lines[0].split(" is ", 1)[0].strip()
-        if focus_player:
-            milestone_focus = (
-                f" If {focus_player} happens to move a milestone during the operation, that can be entered into the ceremonial record after the more important business of winning the night is handled."
-            )
+    week_label = str((week_bundle or {}).get("week_label") or "this week")
+    summary = season_summary or {}
+    wins = int(summary.get("wins", 0) or 0)
+    losses = int(summary.get("losses", 0) or 0)
+    games_completed = int(summary.get("games_completed", 0) or 0)
+    runs_for = int(summary.get("runs_for", 0) or 0)
+    runs_against = int(summary.get("runs_against", 0) or 0)
+    scouting = _parse_opponent_scouting_snapshot(opponent_lines)
 
-    scouting_sentence = (
-        f"{opponent_text} is still more rumor than report, so Game 1 has to function as live slowpitch intelligence work and Game 2 has to look like the staff knew the answers all along."
-        if opponent_lines and opponent_lines[0].startswith("No completed opponent results")
-        else f"The opponent has enough recent data loaded that Maple Tree should know where the pressure points are before the first pitch of the night."
-    )
+    if games_completed == 0:
+        lead_sentence = (
+            f"{week_label} is the clean slate version of slowpitch: no standings scar tissue yet, just the job of setting Maple Tree's pace before the night gets loud."
+        )
+    elif wins < losses:
+        lead_sentence = (
+            f"{week_label} is the first real answer-back night for Maple Tree. A {wins}-{losses} start and {runs_against} runs allowed through {games_completed} games mean the group does not need panic; it needs sharper edges and fewer free gifts."
+        )
+    elif wins > losses:
+        lead_sentence = (
+            f"{week_label} is a chance to press the standings advantage. Maple Tree has opened {wins}-{losses}, and the next step is making the opponent feel that pressure from the first inning instead of waiting for the game to ask permission."
+        )
+    else:
+        lead_sentence = (
+            f"{week_label} is a pivot point night. Maple Tree's {wins}-{losses} start has been noisy enough to show the upside and messy enough to show exactly where the next level of clean softball has to come from."
+        )
+
+    if scouting.get("opponent_name"):
+        opponent_name = str(scouting["opponent_name"])
+        opponent_scored = float(scouting.get("opponent_scored_per_game", 0.0) or 0.0)
+        opponent_allowed = float(scouting.get("opponent_allowed_per_game", 0.0) or 0.0)
+        maple_tree_scored = float(scouting.get("maple_tree_scored_per_game", 0.0) or 0.0)
+        maple_tree_allowed = float(scouting.get("maple_tree_allowed_per_game", 0.0) or 0.0)
+        scouting_sentence = (
+            f"{opponent_name} is scoring {opponent_scored:.1f} a game and allowing {opponent_allowed:.1f}, while Maple Tree is sitting at {maple_tree_scored:.1f} scored and {maple_tree_allowed:.1f} allowed. That says the doubleheader will be decided less by raw talent than by who controls the free runners, the extra ninety feet, and the one inning where routine play starts to wobble."
+        )
+    elif opponent_lines and opponent_lines[0].startswith("No completed opponent results"):
+        scouting_sentence = (
+            f"{opponent_text} is still more rumor than report, so Game 1 has to function as live reconnaissance and Game 2 has to look like the staff already knew the answers."
+        )
+    else:
+        scouting_sentence = (
+            "The opponent has enough recent data loaded that Maple Tree should know where the pressure points are before the first pitch of the night."
+        )
 
     return (
-        f"Week 1 slowpitch always arrives pretending to be a casual Wednesday and then immediately turns into a test of whether a team can stay organized once an inning gets loud. "
+        f"{lead_sentence} "
         f"The formal assignment is to let {top_group} establish order at the top, let {middle_group} cash in traffic before the defense can recover, and have {bottom_group} keep the line moving long enough for the machine to circle back around. "
-        f"Maple Tree does not need heroic improvisation in the opener. It needs disciplined swings at hittable pitches, aggressive but adult baserunning, and routine defensive plays handled with the kind of boring competence that keeps a scorebook from becoming modern art.\n\n"
+        f"Maple Tree does not need heroic improvisation. It needs disciplined swings at hittable pitches, aggressive but adult baserunning, and routine defensive plays handled with the kind of boring competence that keeps a scorebook from becoming modern art.\n\n"
         f"{scouting_sentence} That means watching who panics on throws, which outfielders turn singles into doubles by accident, and whether the opponent treats a little pressure like a nuisance or a constitutional crisis. "
-        f"If Maple Tree avoids giveaway innings and forces every out to be earned honestly, the order has enough thump to turn the doubleheader into a very serious administrative problem for the other dugout.{milestone_focus}"
+        f"If Maple Tree avoids giveaway innings and forces every out to be earned honestly, the order has enough thump to turn the doubleheader into a very serious administrative problem for the other dugout."
     )
+
+
+def _parse_opponent_scouting_snapshot(opponent_lines: list[str]) -> dict[str, object]:
+    if not opponent_lines:
+        return {}
+    first_line = str(opponent_lines[0] or "").strip()
+    if not first_line or first_line.startswith("No completed opponent results"):
+        return {}
+
+    result: dict[str, object] = {}
+    name_match = re.match(r"^(?P<name>[^:]+):", first_line)
+    if name_match:
+        result["opponent_name"] = name_match.group("name").strip()
+
+    opponent_rate_match = re.search(
+        r"scores (?P<scored>\d+(?:\.\d+)?)/game and allows (?P<allowed>\d+(?:\.\d+)?)/game",
+        first_line,
+    )
+    if opponent_rate_match:
+        result["opponent_scored_per_game"] = float(opponent_rate_match.group("scored"))
+        result["opponent_allowed_per_game"] = float(opponent_rate_match.group("allowed"))
+
+    maple_tree_rate_match = re.search(
+        r"Maple Tree scores (?P<scored>\d+(?:\.\d+)?)/game and allows (?P<allowed>\d+(?:\.\d+)?)/game",
+        first_line,
+    )
+    if maple_tree_rate_match:
+        result["maple_tree_scored_per_game"] = float(maple_tree_rate_match.group("scored"))
+        result["maple_tree_allowed_per_game"] = float(maple_tree_rate_match.group("allowed"))
+    return result
 
 
 def _select_lineup_strength(

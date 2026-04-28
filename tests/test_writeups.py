@@ -250,11 +250,11 @@ def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_pat
             singles=17,
             doubles=4,
             triples=1,
-            hr=1,
+            hr=3,
             walks=4,
             runs=18,
             rbi=16,
-            tb=32,
+            tb=40,
             raw_source_file="jj.csv",
         )
         _insert_season_row(
@@ -282,6 +282,7 @@ def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_pat
         connection.close()
 
     assert any("Jj is 2 away from 25 Hits" in line for line in lines)
+    assert any(line.startswith("First into club watch:") for line in lines)
     assert all(line.strip() for line in lines)
     assert all(line.endswith(".") for line in lines)
     assert not any("Bench" in line for line in lines)
@@ -514,6 +515,8 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
             ],
             milestone_lines=["Glove is 1 away from 15 HR (1 in club)."],
             opponent_lines=[WRITEUP_EMPTY_OPPONENT_SCOUTING],
+            week_bundle={"week_label": "Week 1"},
+            season_summary={"wins": 0, "losses": 0, "games_completed": 0, "runs_for": 0, "runs_against": 0},
         ),
         overview_insight_lines=build_pregame_overview_insight_lines(
             lineup_rows,
@@ -548,9 +551,11 @@ def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> 
     assert "TB rate" not in markdown
     assert "baseball" not in markdown
     assert "## Manager's Corner" in markdown
-    assert "casual Wednesday" in markdown
+    assert "Week 1 starts the real scouting file" in markdown
+    assert "Treat Game 1 like live reconnaissance" in markdown
     assert "administrative problem for the other dugout" in markdown
     assert "Opening night means the standings are clean" in markdown
+    assert "milestone movement" not in markdown
 
 
 def test_build_pregame_overview_insight_lines_surfaces_scoring_and_pressure_pocket() -> None:
@@ -580,6 +585,30 @@ def test_build_pregame_overview_insight_lines_surfaces_scoring_and_pressure_pock
         "Current season lineup snapshot: tonight's available group is slashing 0.515/0.547/0.809 (1.355 OPS) with 24 runs, 5 homers, and 22 RBI across 75 PA.",
         "Biggest lineup edge: Glove, Tristan, Tim form the heaviest pressure pocket with average projected RBI rate 0.531 and XBH rate 0.481.",
     ]
+
+
+def test_build_pregame_key_lines_avoids_milestone_language_and_uses_context() -> None:
+    lines = build_pregame_key_lines(
+        lineup_rows=[
+            {"player": "Jj"},
+            {"player": "Glove"},
+            {"player": "Tristan"},
+            {"player": "Tim"},
+            {"player": "Kives"},
+            {"player": "Porter"},
+        ],
+        milestone_lines=["Glove is 1 away from 20 Doubles (2 in club)."],
+        opponent_lines=[
+            "Bullseyes: record 2-0 | standings 2-0 | runs 40-18 | scores 20.0/game and allows 9.0/game | Maple Tree scores 12.0/game and allows 17.5/game | recent: W 12-22 vs Wasted Potential."
+        ],
+        week_bundle={"week_label": "Week 2"},
+        season_summary={"wins": 0, "losses": 2, "games_completed": 2, "runs_for": 24, "runs_against": 35},
+    )
+
+    assert len(lines) == 3
+    assert "milestone" not in " ".join(lines).lower()
+    assert any("Bullseyes is averaging 20.0 runs a game" in line for line in lines)
+    assert any("Week 2 needs a cleaner defensive tone" in line for line in lines)
 
 
 def test_annotate_pregame_lineup_assigns_unique_archetypes_across_full_order() -> None:

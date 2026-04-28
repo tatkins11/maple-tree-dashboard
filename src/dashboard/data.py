@@ -1349,20 +1349,42 @@ def fetch_writeup_milestone_watch(
         limit=limit,
     )
     if in_play.empty:
-        return []
+        lines: list[str] = []
+    else:
+        lines = []
+        for _, row in in_play.iterrows():
+            remaining = int(row["remaining"])
+            next_milestone = int(row["next_milestone"])
+            player = str(row["player"])
+            stat = str(row["stat"])
+            club_label = str(row.get("club_label") or "").strip()
+            line = f"{player} is {_writeup_remaining_phrase(remaining)} from {next_milestone} {stat}"
+            extras = [value for value in (club_label,) if value]
+            if extras:
+                line += f" ({'; '.join(extras)})"
+            lines.append(line + ".")
 
-    lines: list[str] = []
-    for _, row in in_play.iterrows():
+    first_to_watch = select_first_to_milestones(
+        active_milestones,
+        progress_threshold=0.85,
+        max_remaining=min(distance_threshold, 5),
+        limit=limit,
+    )
+    seen_pairs = {
+        (str(row["player"]), str(row["stat"]), int(row["next_milestone"]))
+        for _, row in in_play.iterrows()
+    } if not in_play.empty else set()
+    for _, row in first_to_watch.iterrows():
+        identifier = (str(row["player"]), str(row["stat"]), int(row["next_milestone"]))
+        if identifier in seen_pairs:
+            continue
         remaining = int(row["remaining"])
         next_milestone = int(row["next_milestone"])
         player = str(row["player"])
         stat = str(row["stat"])
-        club_label = str(row.get("club_label") or "").strip()
-        line = f"{player} is {_writeup_remaining_phrase(remaining)} from {next_milestone} {stat}"
-        extras = [value for value in (club_label,) if value]
-        if extras:
-            line += f" ({'; '.join(extras)})"
-        lines.append(line + ".")
+        lines.append(
+            f"First into club watch: {player} is {_writeup_remaining_phrase(remaining)} from becoming the first Maple Tree hitter to reach {next_milestone} {stat}."
+        )
     return [line for line in lines if line.strip()]
 
 
