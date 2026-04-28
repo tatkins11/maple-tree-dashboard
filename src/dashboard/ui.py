@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from urllib.parse import quote, unquote, urlsplit
+from urllib.parse import parse_qs, quote, unquote, urlsplit
 
 import pandas as pd
 import streamlit as st
@@ -247,6 +247,44 @@ def _format_link_cell(value) -> str:
     return f'<a href="{escape(href, quote=True)}" target="_self">{escape(label)}</a>'
 
 
+def _parse_player_link(value) -> tuple[str, str] | None:
+    if pd.isna(value):
+        return None
+    href = str(value).strip()
+    if not href or href == "#":
+        return None
+    parsed = urlsplit(href)
+    params = parse_qs(parsed.query)
+    player = str((params.get("player") or [""])[0]).strip()
+    if not player:
+        return None
+    label = unquote(parsed.fragment).strip() or href
+    return player, label
+
+
+def _render_streamlit_link_table(dataframe: pd.DataFrame, *, link_columns: list[str]) -> None:
+    widths = [2.4 if column in link_columns else 1 for column in dataframe.columns]
+    header_cols = st.columns(widths, gap="small")
+    for column_container, column_name in zip(header_cols, dataframe.columns):
+        column_container.markdown(f"**{escape(str(column_name))}**")
+
+    for _, row in dataframe.iterrows():
+        row_cols = st.columns(widths, gap="small")
+        for column_container, column_name in zip(row_cols, dataframe.columns):
+            value = row[column_name]
+            if column_name in link_columns:
+                parsed = _parse_player_link(value)
+                if parsed is not None:
+                    player, label = parsed
+                    column_container.page_link(
+                        "pages/10_Player_Card.py",
+                        label=label,
+                        query_params={"player": player},
+                    )
+                    continue
+            column_container.markdown(escape("" if pd.isna(value) else str(value)))
+
+
 def render_static_table(
     dataframe: pd.DataFrame,
     *,
@@ -270,6 +308,10 @@ def render_static_table(
     if column_labels:
         ordered_columns = [column for column in dataframe.columns if column in display.columns]
         display = display[ordered_columns].rename(columns=column_labels)
+
+    if link_columns:
+        _render_streamlit_link_table(display, link_columns=[column_labels.get(column, column) if column_labels else column for column in link_columns])
+        return
 
     st.markdown(
         f"""
