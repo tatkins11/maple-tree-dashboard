@@ -11,14 +11,13 @@ from src.dashboard.auth import ensure_authenticated
 from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
-    build_player_rank_highlights,
-    build_player_trend_history,
     fetch_player_advanced_history,
     fetch_player_identities,
     fetch_player_milestone_context,
     fetch_player_profile_summary,
     fetch_player_record_context,
     fetch_player_season_history,
+    sort_seasons,
     get_connection,
 )
 from src.dashboard.ui import database_path_control, get_responsive_layout_context
@@ -236,8 +235,25 @@ def _render_grouped_metrics(summary: dict[str, object], *, is_mobile_layout: boo
                 _metric_grid(metrics, per_row=2 if len(metrics) > 2 else len(metrics))
 
 
+def _build_rank_highlights(summary: dict[str, object]) -> list[dict[str, object]]:
+    rank_fields = [
+        ("hits_rank", "Hits"),
+        ("hr_rank", "HR"),
+        ("rbi_rank", "RBI"),
+        ("ops_rank", "OPS"),
+    ]
+    highlights: list[dict[str, object]] = []
+    for field_name, label in rank_fields:
+        rank = summary.get(field_name)
+        if rank in (None, "", 0):
+            continue
+        highlights.append({"stat": label, "rank": int(rank)})
+    highlights.sort(key=lambda item: (int(item["rank"]), str(item["stat"])))
+    return highlights[:4]
+
+
 def _render_rank_highlights(summary: dict[str, object], *, is_mobile_layout: bool) -> None:
-    highlights = build_player_rank_highlights(summary)
+    highlights = _build_rank_highlights(summary)
     if not highlights:
         return
 
@@ -254,6 +270,52 @@ def _render_rank_highlights(summary: dict[str, object], *, is_mobile_layout: boo
                 """,
                 unsafe_allow_html=True,
             )
+
+
+def _build_trend_history(
+    season_history: pd.DataFrame,
+    advanced_history: pd.DataFrame,
+) -> pd.DataFrame:
+    if season_history.empty and advanced_history.empty:
+        return pd.DataFrame(
+            columns=[
+                "season",
+                "season_label",
+                "pa",
+                "hr",
+                "ops",
+                "team_relative_ops",
+                "owar",
+                "rar",
+                "iso",
+            ]
+        )
+
+    standard_columns = ["season", "season_label", "pa", "hr", "ops"]
+    advanced_columns = ["season", "season_label", "team_relative_ops", "owar", "rar", "iso"]
+
+    standard_source = season_history[[column for column in standard_columns if column in season_history.columns]].copy()
+    advanced_source = advanced_history[[column for column in advanced_columns if column in advanced_history.columns]].copy()
+
+    if standard_source.empty:
+        merged = advanced_source.copy()
+    elif advanced_source.empty:
+        merged = standard_source.copy()
+    else:
+        merged = standard_source.merge(
+            advanced_source,
+            on=["season", "season_label"],
+            how="outer",
+        )
+
+    if "season" in merged.columns:
+        chronological = list(reversed(sort_seasons(merged["season"].astype(str).dropna().tolist())))
+        order_lookup = {season: index for index, season in enumerate(chronological)}
+        merged = merged.assign(
+            _season_order=merged["season"].astype(str).map(lambda value: order_lookup.get(value, 10**9))
+        ).sort_values(["_season_order", "season_label"], ascending=[True, True]).drop(columns="_season_order")
+
+    return merged.reset_index(drop=True)
 
 
 def _render_standard_mobile_cards(dataframe: pd.DataFrame) -> None:
@@ -292,7 +354,7 @@ def _render_analytics_trend_chart(
     season_history: pd.DataFrame,
     advanced_history: pd.DataFrame,
 ) -> None:
-    chart_source = build_player_trend_history(season_history, advanced_history)
+    chart_source = _build_trend_history(season_history, advanced_history)
     if chart_source.empty:
         st.info("No season trend data is available for this player yet.")
         return
