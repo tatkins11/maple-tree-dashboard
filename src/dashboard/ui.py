@@ -301,9 +301,6 @@ def render_static_table(
     for column, formatter in formatters.items():
         if column in display.columns:
             display[column] = display[column].map(lambda value: _format_table_cell(value, formatter))
-    for column in link_columns or []:
-        if column in display.columns:
-            display[column] = display[column].map(_format_link_cell)
 
     if column_labels:
         ordered_columns = [column for column in dataframe.columns if column in display.columns]
