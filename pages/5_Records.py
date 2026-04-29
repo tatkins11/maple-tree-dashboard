@@ -318,7 +318,7 @@ selected_seasons = st.multiselect("Season filter", options=seasons, default=seas
 
 if layout.is_mobile_layout:
     rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
-    top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=1)
+    top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=0)
     scope = st.segmented_control(
         "Record scope",
         options=["Career Records", "Single-Season Records", "Single-Game Records"],
@@ -330,7 +330,7 @@ else:
     with control_columns[0]:
         rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
     with control_columns[1]:
-        top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=1)
+        top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=0)
     with control_columns[2]:
         scope = st.segmented_control(
             "Record scope",
