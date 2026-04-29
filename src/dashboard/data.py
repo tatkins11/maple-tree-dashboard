@@ -735,6 +735,12 @@ def fetch_single_game_stats(
     if dataframe.empty:
         return dataframe
 
+    for column_name in ["game_date", "game_time", "team_name", "opponent", "season", "player", "canonical_name", "raw_scorebook_file"]:
+        if column_name in dataframe.columns:
+            dataframe.loc[:, column_name] = dataframe[column_name].map(
+                lambda value: "" if value is None or pd.isna(value) else str(value)
+            )
+
     dataframe = dataframe.assign(
         avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
         obp=dataframe.apply(

@@ -1,7 +1,9 @@
+from datetime import date
 from pathlib import Path
 
 import pandas as pd
 
+import src.dashboard.data as dashboard_data
 from src.dashboard.data import (
     build_player_rank_highlights,
     build_player_trend_history,
@@ -120,13 +122,14 @@ def _insert_game(
     opponent_name: str,
     season: str,
     source_file: str,
+    game_time: str | None = None,
 ) -> None:
     connection.execute(
         """
-        INSERT INTO games (game_id, game_date, opponent_name, source_file, season, notes)
-        VALUES (?, ?, ?, ?, ?, '')
+        INSERT INTO games (game_id, game_date, game_time, opponent_name, source_file, season, notes)
+        VALUES (?, ?, ?, ?, ?, ?, '')
         """,
-        (game_id, game_date, opponent_name, source_file, season),
+        (game_id, game_date, game_time, opponent_name, source_file, season),
     )
 
 
@@ -1086,6 +1089,7 @@ def test_single_game_helpers_support_player_cards_and_records(tmp_path: Path) ->
             connection,
             game_id=1,
             game_date="2026-04-22",
+            game_time="6:30 PM",
             opponent_name="Bullseyes",
             season="Maple Tree Spring 2026",
             source_file="2026-04-22-bullseyes.png",
@@ -1179,6 +1183,8 @@ def test_single_game_helpers_support_player_cards_and_records(tmp_path: Path) ->
     assert {"game_date", "opponent", "season_label", "lineup_spot", "hits", "r", "rbi", "ops"}.issubset(single_game_stats.columns)
     assert player_game_log["game_date"].tolist() == ["2026-04-29", "2026-04-22"]
     assert player_game_log.iloc[0]["opponent"] == "Riptide"
+    assert player_game_log.iloc[0]["game_time"] == ""
+    assert player_game_log.iloc[1]["game_time"] == "6:30 PM"
     assert int(player_game_log.iloc[1]["hits"]) == 5
     assert int(player_game_log.iloc[1]["rbi"]) == 6
     hits_board = leaderboards["Hits"]
@@ -1192,7 +1198,77 @@ def test_single_game_helpers_support_player_cards_and_records(tmp_path: Path) ->
     assert headliners["Single-Game TB"]["formatted_value"] == "12"
     assert headliners["Single-Game TB"]["value_label"] == "Total Bases"
     assert "Single Game" in set(record_context["placements"]["scope"])
-    assert "2026-04-22 vs Bullseyes" in set(record_context["placements"]["game"])
+    assert "2026-04-22 6:30 PM vs Bullseyes" in set(record_context["placements"]["game"])
+
+
+def test_fetch_single_game_stats_normalizes_hosted_date_and_time_values(monkeypatch) -> None:
+    raw = pd.DataFrame(
+        [
+            {
+                "game_date": date(2026, 4, 22),
+                "game_time": "6:30 PM",
+                "team_name": "Maple Tree",
+                "opponent": "Bullseyes",
+                "season": "Maple Tree Spring 2026",
+                "player": "Tristan",
+                "canonical_name": "tristan",
+                "lineup_spot": 3,
+                "pa": 5,
+                "ab": 5,
+                "hits": 5,
+                "1b": 2,
+                "2b": 1,
+                "3b": 0,
+                "hr": 2,
+                "bb": 0,
+                "so": 0,
+                "r": 4,
+                "rbi": 6,
+                "tb": 12,
+                "sf": 0,
+                "fc": 0,
+                "dp": 0,
+                "outs": 0,
+                "raw_scorebook_file": "2026-04-22-bullseyes.png",
+            },
+            {
+                "game_date": date(2026, 4, 29),
+                "game_time": None,
+                "team_name": None,
+                "opponent": "Riptide",
+                "season": "Maple Tree Spring 2026",
+                "player": "Tristan",
+                "canonical_name": "tristan",
+                "lineup_spot": 2,
+                "pa": 4,
+                "ab": 4,
+                "hits": 2,
+                "1b": 1,
+                "2b": 1,
+                "3b": 0,
+                "hr": 0,
+                "bb": 0,
+                "so": 0,
+                "r": 2,
+                "rbi": 3,
+                "tb": 3,
+                "sf": 0,
+                "fc": 0,
+                "dp": 0,
+                "outs": 1,
+                "raw_scorebook_file": None,
+            },
+        ]
+    )
+
+    monkeypatch.setattr(dashboard_data.pd, "read_sql_query", lambda *args, **kwargs: raw.copy())
+
+    normalized = fetch_single_game_stats(object(), seasons=["Maple Tree Spring 2026"], min_pa=0)
+
+    assert normalized["game_date"].tolist() == ["2026-04-22", "2026-04-29"]
+    assert normalized["game_time"].tolist() == ["6:30 PM", ""]
+    assert normalized["team_name"].tolist() == ["Maple Tree", ""]
+    assert normalized["raw_scorebook_file"].tolist() == ["2026-04-22-bullseyes.png", ""]
 
 
 def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:
