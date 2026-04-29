@@ -1271,6 +1271,106 @@ def test_fetch_single_game_stats_normalizes_hosted_date_and_time_values(monkeypa
     assert normalized["raw_scorebook_file"].tolist() == ["2026-04-22-bullseyes.png", ""]
 
 
+def test_single_game_records_tolerate_pre_migration_boxscore_schema(tmp_path: Path, monkeypatch) -> None:
+    connection = connect_db(tmp_path / "legacy_single_game.sqlite")
+    try:
+        connection.executescript(
+            """
+            CREATE TABLE players (
+                player_id INTEGER PRIMARY KEY,
+                player_name TEXT NOT NULL,
+                canonical_name TEXT NOT NULL UNIQUE,
+                active_flag INTEGER NOT NULL DEFAULT 1
+            );
+
+            CREATE TABLE player_identity (
+                player_id INTEGER PRIMARY KEY,
+                player_name TEXT NOT NULL,
+                canonical_name TEXT NOT NULL UNIQUE,
+                active_flag INTEGER NOT NULL DEFAULT 1
+            );
+
+            CREATE TABLE player_metadata (
+                player_id INTEGER PRIMARY KEY,
+                preferred_display_name TEXT NOT NULL,
+                is_fixed_dhh INTEGER NOT NULL DEFAULT 0,
+                baserunning_grade TEXT NOT NULL DEFAULT 'C',
+                consistency_grade TEXT NOT NULL DEFAULT 'C',
+                speed_flag INTEGER NOT NULL DEFAULT 0,
+                active_flag INTEGER NOT NULL DEFAULT 1,
+                notes TEXT
+            );
+
+            CREATE TABLE games (
+                game_id INTEGER PRIMARY KEY,
+                game_date TEXT NOT NULL,
+                opponent_name TEXT NOT NULL,
+                source_file TEXT NOT NULL UNIQUE,
+                season TEXT NOT NULL,
+                notes TEXT
+            );
+
+            CREATE TABLE player_game_batting (
+                game_id INTEGER NOT NULL,
+                player_id INTEGER NOT NULL,
+                lineup_spot INTEGER NOT NULL,
+                plate_appearances INTEGER NOT NULL,
+                at_bats INTEGER NOT NULL,
+                singles INTEGER NOT NULL,
+                doubles INTEGER NOT NULL,
+                triples INTEGER NOT NULL,
+                home_runs INTEGER NOT NULL,
+                walks INTEGER NOT NULL,
+                strikeouts INTEGER NOT NULL,
+                sacrifice_flies INTEGER NOT NULL,
+                fielder_choice INTEGER NOT NULL,
+                double_plays INTEGER NOT NULL,
+                outs INTEGER NOT NULL,
+                raw_scorebook_file TEXT NOT NULL,
+                PRIMARY KEY (game_id, player_id)
+            );
+            """
+        )
+        _insert_player(connection, 1, "Tristan", "tristan")
+        connection.execute(
+            """
+            INSERT INTO games (game_id, game_date, opponent_name, source_file, season, notes)
+            VALUES (1, '2026-04-22', 'Bullseyes', '2026-04-22-bullseyes.png', 'Maple Tree Spring 2026', '')
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO player_game_batting (
+                game_id, player_id, lineup_spot, plate_appearances, at_bats, singles, doubles,
+                triples, home_runs, walks, strikeouts, sacrifice_flies, fielder_choice,
+                double_plays, outs, raw_scorebook_file
+            ) VALUES (1, 1, 3, 5, 5, 2, 1, 0, 2, 0, 0, 0, 0, 0, 0, '2026-04-22-bullseyes.png')
+            """
+        )
+        connection.commit()
+
+        monkeypatch.setattr(dashboard_data, "_fetch_active_roster_names", lambda *args, **kwargs: ["Tristan"])
+
+        single_game_stats = fetch_single_game_stats(connection, seasons=["Maple Tree Spring 2026"], min_pa=0)
+        headliners = fetch_record_headliners(
+            connection,
+            scope="single_game",
+            seasons=["Maple Tree Spring 2026"],
+            min_pa=0,
+            active_only=False,
+        )
+    finally:
+        connection.close()
+
+    assert len(single_game_stats) == 1
+    assert single_game_stats.iloc[0]["game_time"] == ""
+    assert single_game_stats.iloc[0]["team_name"] == ""
+    assert int(single_game_stats.iloc[0]["r"]) == 0
+    assert int(single_game_stats.iloc[0]["rbi"]) == 0
+    assert headliners["Single-Game Hits"]["formatted_value"] == "5"
+    assert headliners["Single-Game Hits"]["context"] == "2026-04-22 | vs Bullseyes | Maple Tree Spring 2026"
+
+
 def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:
     connection = connect_db(tmp_path / "passed_milestone_clubs.sqlite")
     try:

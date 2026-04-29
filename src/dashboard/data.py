@@ -125,6 +125,36 @@ def get_connection(db_path: Path | str = DEFAULT_DB_PATH) -> sqlite3.Connection:
     return connect_app_db(Path(db_path))
 
 
+def _fetch_table_columns(connection: sqlite3.Connection, table_name: str) -> set[str]:
+    try:
+        rows = connection.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_schema = CURRENT_SCHEMA()
+              AND table_name = ?
+            """,
+            (table_name,),
+        ).fetchall()
+        if rows:
+            return {str(row["column_name"]) for row in rows}
+    except Exception:
+        pass
+
+    try:
+        rows = connection.execute(f"PRAGMA table_info({table_name})").fetchall()
+    except Exception:
+        return set()
+
+    columns: set[str] = set()
+    for row in rows:
+        if hasattr(row, "keys") and "name" in row.keys():
+            columns.add(str(row["name"]))
+        elif len(row) > 1:
+            columns.add(str(row[1]))
+    return columns
+
+
 def sort_seasons(seasons: list[str]) -> list[str]:
     season_rank = {"spring": 1, "summer": 2, "fall": 3, "winter": 4}
 
@@ -687,6 +717,13 @@ def fetch_single_game_stats(
     seasons: list[str] | None = None,
     min_pa: int = 0,
 ) -> pd.DataFrame:
+    game_columns = _fetch_table_columns(connection, "games")
+    player_game_columns = _fetch_table_columns(connection, "player_game_batting")
+    game_time_select = "g.game_time" if "game_time" in game_columns else "NULL"
+    team_name_select = "g.team_name" if "team_name" in game_columns else "NULL"
+    runs_select = "pg.runs" if "runs" in player_game_columns else "0"
+    rbi_select = "pg.rbi" if "rbi" in player_game_columns else "0"
+
     params: list[object] = []
     where_clause = ""
     if seasons:
@@ -698,8 +735,8 @@ def fetch_single_game_stats(
         f"""
         SELECT
             g.game_date,
-            g.game_time,
-            g.team_name,
+            {game_time_select} AS game_time,
+            {team_name_select} AS team_name,
             g.opponent_name AS opponent,
             g.season,
             pm.preferred_display_name AS player,
@@ -714,8 +751,8 @@ def fetch_single_game_stats(
             pg.home_runs AS hr,
             pg.walks AS bb,
             pg.strikeouts AS so,
-            pg.runs AS r,
-            pg.rbi,
+            {runs_select} AS r,
+            {rbi_select} AS rbi,
             (pg.singles + (2 * pg.doubles) + (3 * pg.triples) + (4 * pg.home_runs)) AS tb,
             pg.sacrifice_flies AS sf,
             pg.fielder_choice AS fc,
@@ -727,7 +764,7 @@ def fetch_single_game_stats(
         JOIN player_identity pi ON pi.player_id = pg.player_id
         JOIN player_metadata pm ON pm.player_id = pg.player_id
         {where_clause}
-        ORDER BY g.game_date DESC, COALESCE(g.game_time, '') DESC, LOWER(g.opponent_name), pg.lineup_spot, LOWER(pm.preferred_display_name)
+        ORDER BY g.game_date DESC, COALESCE({game_time_select}, '') DESC, LOWER(g.opponent_name), pg.lineup_spot, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=params,
