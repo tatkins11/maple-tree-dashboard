@@ -254,10 +254,12 @@ def render_static_table(
     formatters: dict[str, object] | None = None,
     link_columns: list[str] | None = None,
     css_class: str = "dashboard-static-table",
+    container=None,
 ) -> None:
     if dataframe.empty:
         return
 
+    target = container or st
     display = dataframe.copy().astype(object)
     formatters = formatters or {}
     for column, formatter in formatters.items():
@@ -278,7 +280,7 @@ def render_static_table(
             if column in display.columns:
                 display.loc[:, column] = display[column].map(_format_link_cell)
 
-    st.markdown(
+    target.markdown(
         f"""
         <style>
         .{css_class}-wrap {{
@@ -321,7 +323,7 @@ def render_static_table(
         """,
         unsafe_allow_html=True,
     )
-    st.markdown(
+    target.markdown(
         f'<div class="{css_class}-wrap">{display.to_html(index=False, escape=False, classes=css_class, border=0)}</div>',
         unsafe_allow_html=True,
     )

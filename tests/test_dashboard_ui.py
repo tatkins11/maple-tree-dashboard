@@ -138,3 +138,31 @@ def test_render_static_table_keeps_html_table_layout_when_links_are_present(monk
     assert 'href="./player-card?player=tristan#Tristan"' in table_markup
     assert ">Tristan</a>" in table_markup
     assert ">1.355<" in table_markup
+
+
+def test_render_static_table_can_render_into_explicit_container(monkeypatch) -> None:
+    global_calls: list[str] = []
+    container_calls: list[tuple[str, bool]] = []
+
+    class FakeContainer:
+        def markdown(self, body: str, unsafe_allow_html: bool = False) -> None:
+            container_calls.append((body, unsafe_allow_html))
+
+    def fake_markdown(body: str, unsafe_allow_html: bool = False) -> None:
+        global_calls.append(body)
+
+    monkeypatch.setattr(dashboard_ui.st, "markdown", fake_markdown)
+
+    render_static_table(
+        pd.DataFrame([{"player": "./player-card?player=tristan#Tristan", "ops": 1.355}]),
+        column_labels={"player": "Player", "ops": "OPS"},
+        formatters={"ops": "{:.3f}"},
+        link_columns=["player"],
+        css_class="test-static-table-container",
+        container=FakeContainer(),
+    )
+
+    assert global_calls == []
+    assert len(container_calls) == 2
+    assert "table.test-static-table-container" in container_calls[0][0]
+    assert 'href="./player-card?player=tristan#Tristan"' in container_calls[1][0]
