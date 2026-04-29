@@ -61,8 +61,26 @@ RATE_RECORD_COLUMNS = {
     "OPS": "ops",
 }
 
+SINGLE_GAME_RECORD_COLUMNS = {
+    "PA": "pa",
+    "AB": "ab",
+    "Hits": "hits",
+    "Singles": "1b",
+    "Doubles": "2b",
+    "Triples": "3b",
+    "HR": "hr",
+    "RBI": "rbi",
+    "Runs": "r",
+    "Walks": "bb",
+    "Total Bases": "tb",
+}
+
 DISPLAY_COLUMN_LABELS = {
     "season": "Season",
+    "game_date": "Date",
+    "game_time": "Time",
+    "team_name": "Team",
+    "opponent": "Opponent",
     "player": "Player",
     "pa": "PA",
     "games": "Games",
@@ -75,7 +93,12 @@ DISPLAY_COLUMN_LABELS = {
     "rbi": "RBI",
     "r": "Runs",
     "bb": "Walks",
+    "so": "SO",
     "tb": "Total Bases",
+    "lineup_spot": "Spot",
+    "fc": "FC",
+    "dp": "DP",
+    "outs": "Outs",
     "avg": "AVG",
     "obp": "OBP",
     "slg": "SLG",
@@ -659,6 +682,77 @@ def fetch_single_season_stats(
     return dataframe[dataframe["pa"] >= min_pa].copy()
 
 
+def fetch_single_game_stats(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+    min_pa: int = 0,
+) -> pd.DataFrame:
+    params: list[object] = []
+    where_clause = ""
+    if seasons:
+        placeholders = ",".join("?" for _ in seasons)
+        where_clause = f"WHERE g.season IN ({placeholders})"
+        params.extend(seasons)
+
+    dataframe = pd.read_sql_query(
+        f"""
+        SELECT
+            g.game_date,
+            g.game_time,
+            g.team_name,
+            g.opponent_name AS opponent,
+            g.season,
+            pm.preferred_display_name AS player,
+            pi.canonical_name,
+            pg.lineup_spot,
+            pg.plate_appearances AS pa,
+            pg.at_bats AS ab,
+            (pg.singles + pg.doubles + pg.triples + pg.home_runs) AS hits,
+            pg.singles AS "1b",
+            pg.doubles AS "2b",
+            pg.triples AS "3b",
+            pg.home_runs AS hr,
+            pg.walks AS bb,
+            pg.strikeouts AS so,
+            pg.runs AS r,
+            pg.rbi,
+            (pg.singles + (2 * pg.doubles) + (3 * pg.triples) + (4 * pg.home_runs)) AS tb,
+            pg.sacrifice_flies AS sf,
+            pg.fielder_choice AS fc,
+            pg.double_plays AS dp,
+            pg.outs,
+            pg.raw_scorebook_file
+        FROM player_game_batting pg
+        JOIN games g ON g.game_id = pg.game_id
+        JOIN player_identity pi ON pi.player_id = pg.player_id
+        JOIN player_metadata pm ON pm.player_id = pg.player_id
+        {where_clause}
+        ORDER BY g.game_date DESC, COALESCE(g.game_time, '') DESC, LOWER(g.opponent_name), pg.lineup_spot, LOWER(pm.preferred_display_name)
+        """,
+        connection,
+        params=params,
+    )
+    if dataframe.empty:
+        return dataframe
+
+    dataframe = dataframe.assign(
+        avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
+        obp=dataframe.apply(
+            lambda row: _safe_divide(
+                row["hits"] + row["bb"],
+                row["ab"] + row["bb"] + row["sf"],
+            ),
+            axis=1,
+        ),
+        slg=dataframe.apply(lambda row: _safe_divide(row["tb"], row["ab"]), axis=1),
+    )
+    dataframe = dataframe.assign(
+        ops=dataframe["obp"] + dataframe["slg"],
+        season_label=dataframe["season"].map(lambda value: format_player_season_label(str(value))),
+    )
+    return dataframe[dataframe["pa"] >= min_pa].copy()
+
+
 def fetch_advanced_analytics_view(
     connection: sqlite3.Connection,
     *,
@@ -760,6 +854,20 @@ def _sort_player_history_rows(dataframe: pd.DataFrame) -> pd.DataFrame:
         ["_season_sort", "pa", "ops"],
         ascending=[True, False, False],
     ).drop(columns=["_season_sort"]).reset_index(drop=True)
+
+
+def _sort_player_game_log_rows(dataframe: pd.DataFrame) -> pd.DataFrame:
+    if dataframe.empty or "game_date" not in dataframe.columns:
+        return dataframe
+
+    ordered = dataframe.assign(_game_date_sort=pd.to_datetime(dataframe["game_date"], errors="coerce"))
+    sort_columns = ["_game_date_sort"]
+    ascending = [False]
+    for column_name, is_ascending in (("game_time", False), ("season", False), ("opponent", True), ("lineup_spot", True)):
+        if column_name in ordered.columns:
+            sort_columns.append(column_name)
+            ascending.append(is_ascending)
+    return ordered.sort_values(sort_columns, ascending=ascending).drop(columns=["_game_date_sort"]).reset_index(drop=True)
 
 
 def fetch_player_profile_summary(
@@ -905,6 +1013,19 @@ def fetch_player_advanced_history(
     return _sort_player_history_rows(pd.DataFrame(rows))
 
 
+def fetch_player_game_log(
+    connection: sqlite3.Connection,
+    canonical_name: str,
+) -> pd.DataFrame:
+    game_log = fetch_single_game_stats(connection, min_pa=0)
+    if game_log.empty:
+        return game_log
+    filtered = game_log[game_log["canonical_name"] == canonical_name].copy()
+    if filtered.empty:
+        return filtered
+    return _sort_player_game_log_rows(filtered)
+
+
 def fetch_player_milestone_context(
     connection: sqlite3.Connection,
     canonical_name: str,
@@ -945,7 +1066,11 @@ def fetch_player_record_context(
 ) -> dict[str, pd.DataFrame]:
     placement_rows: list[dict[str, object]] = []
     owned_rows: list[dict[str, object]] = []
-    for scope_label, scope_key in (("Career", "career"), ("Single Season", "single_season")):
+    for scope_label, scope_key in (
+        ("Career", "career"),
+        ("Single Season", "single_season"),
+        ("Single Game", "single_game"),
+    ):
         leaderboards = fetch_record_leaderboards(
             connection,
             scope=scope_key,
@@ -961,6 +1086,9 @@ def fetch_player_record_context(
                 continue
             row = matches.iloc[0]
             value = row.get(stat_label)
+            game_date = str(row.get("Date") or "")
+            game_time = str(row.get("Time") or "")
+            opponent = str(row.get("Opponent") or "")
             result_row = {
                 "scope": scope_label,
                 "stat": stat_label,
@@ -968,6 +1096,10 @@ def fetch_player_record_context(
                 "value": value,
                 "value_display": _format_record_value(stat_label, value),
                 "season": str(row.get("Season") or ""),
+                "game_date": game_date,
+                "game_time": game_time,
+                "opponent": opponent,
+                "game": _format_game_context(game_date, game_time, opponent),
             }
             placement_rows.append(result_row)
             if int(row["#"]) == 1:
@@ -976,11 +1108,11 @@ def fetch_player_record_context(
     placements = pd.DataFrame(placement_rows)
     if not placements.empty:
         placements.loc[:, "season_label"] = placements["season"].map(lambda value: format_player_season_label(str(value)) if str(value).strip() else "")
-        placements = placements.sort_values(["rank", "scope", "stat"], ascending=[True, True, True]).reset_index(drop=True)
+        placements = placements.sort_values(["rank", "scope", "stat", "game_date", "season"], ascending=[True, True, True, False, False]).reset_index(drop=True)
     owned = pd.DataFrame(owned_rows)
     if not owned.empty:
         owned.loc[:, "season_label"] = owned["season"].map(lambda value: format_player_season_label(str(value)) if str(value).strip() else "")
-        owned = owned.sort_values(["scope", "stat"], ascending=[True, True]).reset_index(drop=True)
+        owned = owned.sort_values(["scope", "stat", "game_date", "season"], ascending=[True, True, False, False]).reset_index(drop=True)
     return {
         "owned": owned,
         "placements": placements.head(12),
@@ -1501,7 +1633,7 @@ def fetch_writeup_record_context(
     for line in milestone_lines:
         lines.append(f"Current milestone watch: {line}")
 
-    headliners = fetch_record_headliners(connection, active_only=False)
+    headliners = fetch_record_headliners(connection, scope="career", active_only=False)
     for label in ("Career HR Leader", "Career OPS Leader"):
         payload = headliners.get(label, {})
         player = str(payload.get("player", "")).strip()
@@ -2456,9 +2588,15 @@ def fetch_record_leaderboards(
     if scope == "career":
         source = fetch_career_stats(connection, seasons=seasons, min_pa=0)
         group_columns = ["player", "canonical_name"]
+        counting_columns = COUNTING_RECORD_COLUMNS
     elif scope == "single_season":
         source = fetch_single_season_stats(connection, seasons=seasons, min_pa=0)
         group_columns = ["season", "player", "canonical_name"]
+        counting_columns = COUNTING_RECORD_COLUMNS
+    elif scope == "single_game":
+        source = fetch_single_game_stats(connection, seasons=seasons, min_pa=0)
+        group_columns = ["game_date", "game_time", "opponent", "season", "player", "canonical_name"]
+        counting_columns = SINGLE_GAME_RECORD_COLUMNS
     else:
         raise ValueError(f"Unsupported record scope: {scope}")
 
@@ -2471,7 +2609,7 @@ def fetch_record_leaderboards(
             return {}
 
     leaderboards: dict[str, pd.DataFrame] = {}
-    for label, column_name in COUNTING_RECORD_COLUMNS.items():
+    for label, column_name in counting_columns.items():
         leaderboard = source.sort_values([column_name, *group_columns], ascending=[False, *([True] * len(group_columns))]).head(limit)
         columns = _unique_columns(group_columns + [column_name])
         leaderboards[label] = _finalize_record_leaderboard(
@@ -2502,33 +2640,42 @@ def fetch_record_leaderboards(
 
 def fetch_record_headliners(
     connection: sqlite3.Connection,
+    scope: str,
     seasons: list[str] | None = None,
     min_pa: int = 0,
     active_only: bool = False,
 ) -> dict[str, dict[str, object]]:
     active_names = set(_fetch_active_roster_names(connection))
-    career = fetch_record_leaderboards(
+    leaderboards = fetch_record_leaderboards(
         connection,
-        scope="career",
+        scope=scope,
         seasons=seasons,
         min_pa=min_pa,
         limit=1,
         active_only=active_only,
     )
-    single_season = fetch_record_leaderboards(
-        connection,
-        scope="single_season",
-        seasons=seasons,
-        min_pa=min_pa,
-        limit=1,
-        active_only=active_only,
-    )
-    return {
-        "Career OPS Leader": _headliner_from_board(career.get("OPS"), active_names),
-        "Career HR Leader": _headliner_from_board(career.get("HR"), active_names),
-        "Single-Season OPS": _headliner_from_board(single_season.get("OPS"), active_names),
-        "Single-Season HR": _headliner_from_board(single_season.get("HR"), active_names),
-    }
+    if scope == "career":
+        return {
+            "Career OPS Leader": _headliner_from_board(leaderboards.get("OPS"), active_names),
+            "Career HR Leader": _headliner_from_board(leaderboards.get("HR"), active_names),
+            "Career RBI Leader": _headliner_from_board(leaderboards.get("RBI"), active_names),
+            "Career Hits Leader": _headliner_from_board(leaderboards.get("Hits"), active_names),
+        }
+    if scope == "single_season":
+        return {
+            "Single-Season OPS": _headliner_from_board(leaderboards.get("OPS"), active_names),
+            "Single-Season HR": _headliner_from_board(leaderboards.get("HR"), active_names),
+            "Single-Season RBI": _headliner_from_board(leaderboards.get("RBI"), active_names),
+            "Single-Season Hits": _headliner_from_board(leaderboards.get("Hits"), active_names),
+        }
+    if scope == "single_game":
+        return {
+            "Single-Game Hits": _headliner_from_board(leaderboards.get("Hits"), active_names),
+            "Single-Game HR": _headliner_from_board(leaderboards.get("HR"), active_names),
+            "Single-Game RBI": _headliner_from_board(leaderboards.get("RBI"), active_names),
+            "Single-Game TB": _headliner_from_board(leaderboards.get("Total Bases"), active_names),
+        }
+    raise ValueError(f"Unsupported record headliner scope: {scope}")
 
 
 def calculate_next_milestone_state(total: int | float, ladder: tuple[int, ...] | list[int]) -> dict[str, object]:
@@ -3019,9 +3166,19 @@ def _headliner_from_board(dataframe: pd.DataFrame | None, active_names: set[str]
     if dataframe is None or dataframe.empty:
         return {"label": "", "player": "No data", "canonical_name": "", "value": "", "context": "", "is_active": False}
     row = dataframe.iloc[0].to_dict()
-    value_columns = [column for column in dataframe.columns if column not in {"#", "Season", "Player", "PA", "canonical_name"}]
+    value_columns = [
+        column
+        for column in dataframe.columns
+        if column not in {"#", "Date", "Time", "Team", "Opponent", "Season", "Player", "PA", "canonical_name"}
+    ]
     value_column = value_columns[0] if value_columns else ""
     context_parts: list[str] = []
+    if "Date" in row and str(row["Date"]).strip():
+        context_parts.append(str(row["Date"]))
+    if "Time" in row and str(row["Time"]).strip():
+        context_parts.append(str(row["Time"]))
+    if "Opponent" in row and str(row["Opponent"]).strip():
+        context_parts.append(f"vs {row['Opponent']}")
     if "Season" in row:
         context_parts.append(_compact_season_label(str(row["Season"])))
     if "PA" in row and value_column in RATE_RECORD_COLUMNS:
@@ -3046,6 +3203,17 @@ def _format_record_value(value_label: str, value: object) -> str:
     if value_label in COUNTING_RECORD_COLUMNS or value_label == "PA":
         return f"{int(round(float(value)))}"
     return str(value)
+
+
+def _format_game_context(game_date: str, game_time: str, opponent: str) -> str:
+    parts: list[str] = []
+    if game_date:
+        parts.append(game_date)
+    if game_time:
+        parts.append(game_time)
+    if opponent:
+        parts.append(f"vs {opponent}")
+    return " ".join(parts).strip()
 
 
 def _milestone_urgency_label(remaining: object) -> str:

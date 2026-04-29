@@ -17,10 +17,14 @@ from src.dashboard.data import (
     fetch_advanced_methodology_summary,
     fetch_passed_milestones_summary,
     fetch_player_advanced_history,
+    fetch_player_game_log,
     fetch_player_milestone_context,
     fetch_player_profile_summary,
     fetch_player_record_context,
+    fetch_record_headliners,
     fetch_player_season_history,
+    fetch_record_leaderboards,
+    fetch_single_game_stats,
     fetch_team_summary,
     fetch_top_hitters,
     format_player_season_label,
@@ -104,6 +108,77 @@ def _insert_season_row(
             slg,
             ops,
             raw_source_file,
+        ),
+    )
+
+
+def _insert_game(
+    connection,
+    *,
+    game_id: int,
+    game_date: str,
+    opponent_name: str,
+    season: str,
+    source_file: str,
+) -> None:
+    connection.execute(
+        """
+        INSERT INTO games (game_id, game_date, opponent_name, source_file, season, notes)
+        VALUES (?, ?, ?, ?, ?, '')
+        """,
+        (game_id, game_date, opponent_name, source_file, season),
+    )
+
+
+def _insert_player_game_row(
+    connection,
+    *,
+    game_id: int,
+    player_id: int,
+    lineup_spot: int,
+    pa: int,
+    ab: int,
+    singles: int,
+    doubles: int,
+    triples: int,
+    hr: int,
+    walks: int,
+    strikeouts: int,
+    runs: int,
+    rbi: int,
+    sf: int = 0,
+    fc: int = 0,
+    double_plays: int = 0,
+    outs: int = 0,
+    raw_scorebook_file: str = "boxscore.png",
+) -> None:
+    connection.execute(
+        """
+        INSERT INTO player_game_batting (
+            game_id, player_id, lineup_spot, plate_appearances, at_bats, singles, doubles, triples,
+            home_runs, walks, strikeouts, sacrifice_flies, fielder_choice, double_plays, outs,
+            runs, rbi, raw_scorebook_file
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            game_id,
+            player_id,
+            lineup_spot,
+            pa,
+            ab,
+            singles,
+            doubles,
+            triples,
+            hr,
+            walks,
+            strikeouts,
+            sf,
+            fc,
+            double_plays,
+            outs,
+            runs,
+            rbi,
+            raw_scorebook_file,
         ),
     )
 
@@ -998,6 +1073,126 @@ def test_player_card_helpers_filter_milestones_and_records_to_one_player(tmp_pat
     assert not record_context["placements"].empty
     assert set(record_context["placements"]["scope"]).issubset({"Career", "Single Season"})
     assert any(label in {"2025 F", "2026 Sp", ""} for label in record_context["placements"]["season_label"].tolist())
+
+
+def test_single_game_helpers_support_player_cards_and_records(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "single_game_helpers.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Jj", "jj")
+
+        _insert_game(
+            connection,
+            game_id=1,
+            game_date="2026-04-22",
+            opponent_name="Bullseyes",
+            season="Maple Tree Spring 2026",
+            source_file="2026-04-22-bullseyes.png",
+        )
+        _insert_game(
+            connection,
+            game_id=2,
+            game_date="2026-04-29",
+            opponent_name="Riptide",
+            season="Maple Tree Spring 2026",
+            source_file="2026-04-29-riptide.png",
+        )
+
+        _insert_player_game_row(
+            connection,
+            game_id=1,
+            player_id=1,
+            lineup_spot=3,
+            pa=5,
+            ab=5,
+            singles=2,
+            doubles=1,
+            triples=0,
+            hr=2,
+            walks=0,
+            strikeouts=0,
+            runs=4,
+            rbi=6,
+            raw_scorebook_file="2026-04-22-bullseyes.png",
+        )
+        _insert_player_game_row(
+            connection,
+            game_id=1,
+            player_id=2,
+            lineup_spot=4,
+            pa=4,
+            ab=4,
+            singles=2,
+            doubles=1,
+            triples=0,
+            hr=0,
+            walks=0,
+            strikeouts=0,
+            runs=1,
+            rbi=1,
+            outs=1,
+            raw_scorebook_file="2026-04-22-bullseyes.png",
+        )
+        _insert_player_game_row(
+            connection,
+            game_id=2,
+            player_id=1,
+            lineup_spot=2,
+            pa=4,
+            ab=4,
+            singles=1,
+            doubles=1,
+            triples=0,
+            hr=1,
+            walks=0,
+            strikeouts=0,
+            runs=2,
+            rbi=3,
+            outs=1,
+            raw_scorebook_file="2026-04-29-riptide.png",
+        )
+        connection.commit()
+
+        single_game_stats = fetch_single_game_stats(connection, seasons=["Maple Tree Spring 2026"], min_pa=0)
+        player_game_log = fetch_player_game_log(connection, "tristan")
+        leaderboards = fetch_record_leaderboards(
+            connection,
+            scope="single_game",
+            seasons=["Maple Tree Spring 2026"],
+            min_pa=3,
+            limit=5,
+            active_only=False,
+        )
+        headliners = fetch_record_headliners(
+            connection,
+            scope="single_game",
+            seasons=["Maple Tree Spring 2026"],
+            min_pa=3,
+            active_only=False,
+        )
+        record_context = fetch_player_record_context(connection, "tristan")
+    finally:
+        connection.close()
+
+    assert len(single_game_stats) == 3
+    assert {"game_date", "opponent", "season_label", "lineup_spot", "hits", "r", "rbi", "ops"}.issubset(single_game_stats.columns)
+    assert player_game_log["game_date"].tolist() == ["2026-04-29", "2026-04-22"]
+    assert player_game_log.iloc[0]["opponent"] == "Riptide"
+    assert int(player_game_log.iloc[1]["hits"]) == 5
+    assert int(player_game_log.iloc[1]["rbi"]) == 6
+    hits_board = leaderboards["Hits"]
+    assert hits_board.iloc[0]["Player"] == "Tristan"
+    assert hits_board.iloc[0]["Hits"] == 5
+    assert hits_board.iloc[0]["Opponent"] == "Bullseyes"
+    assert headliners["Single-Game Hits"]["formatted_value"] == "5"
+    assert headliners["Single-Game Hits"]["value_label"] == "Hits"
+    assert "2026-04-22" in headliners["Single-Game Hits"]["context"]
+    assert "vs Bullseyes" in headliners["Single-Game Hits"]["context"]
+    assert headliners["Single-Game TB"]["formatted_value"] == "12"
+    assert headliners["Single-Game TB"]["value_label"] == "Total Bases"
+    assert "Single Game" in set(record_context["placements"]["scope"])
+    assert "2026-04-22 vs Bullseyes" in set(record_context["placements"]["game"])
 
 
 def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:

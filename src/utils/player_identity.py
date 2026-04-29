@@ -226,6 +226,21 @@ def _create_identity(
         """,
         (player_id, player_name, canonical_name),
     )
+    connection.execute(
+        """
+        INSERT OR IGNORE INTO player_metadata (
+            player_id,
+            preferred_display_name,
+            is_fixed_dhh,
+            baserunning_grade,
+            consistency_grade,
+            speed_flag,
+            active_flag,
+            notes
+        ) VALUES (?, ?, 0, 'C', 'C', 0, 1, NULL)
+        """,
+        (player_id, player_name),
+    )
     return player_id
 
 

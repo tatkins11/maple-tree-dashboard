@@ -54,13 +54,19 @@ class PlayerGameBattingRecord(BaseModel):
     fielder_choice: int = 0
     double_plays: int = 0
     outs: int = 0
+    runs: int = 0
+    rbi: int = 0
     raw_scorebook_file: str
     unclassified_symbols: List[str] = Field(default_factory=list)
 
 
 class ParsedGame(BaseModel):
+    team_name: str | None = None
     game_date: str
+    game_time: str | None = None
     opponent_name: str
+    team_score: int | None = None
+    opponent_score: int | None = None
     source_file: str
     season: str
     notes: Optional[str] = None

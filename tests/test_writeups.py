@@ -11,6 +11,7 @@ from src.dashboard.data import (
     fetch_saved_writeup,
     fetch_saved_writeups,
     fetch_maple_tree_week_bundle,
+    fetch_writeup_record_context,
     fetch_writeup_milestone_watch,
     fetch_writeup_opponent_scouting,
     save_weekly_writeup,
@@ -286,6 +287,39 @@ def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_pat
     assert all(line.strip() for line in lines)
     assert all(line.endswith(".") for line in lines)
     assert not any("Bench" in line for line in lines)
+
+
+def test_fetch_writeup_record_context_uses_career_headliners(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "writeup_record_context.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_season_row(
+            connection,
+            season="Maple Tree Spring 2026",
+            player_id=1,
+            games=2,
+            pa=8,
+            ab=5,
+            hits=4,
+            singles=1,
+            doubles=0,
+            triples=0,
+            hr=3,
+            walks=2,
+            runs=5,
+            rbi=6,
+            tb=13,
+            raw_source_file="tristan.csv",
+        )
+        connection.commit()
+
+        lines = fetch_writeup_record_context(connection)
+    finally:
+        connection.close()
+
+    assert any("Current Career HR Leader: Tristan" in line for line in lines)
+    assert any("Current Career OPS Leader: Tristan" in line for line in lines)
 
 
 def test_postgame_helpers_build_one_combined_doubleheader_recap(tmp_path: Path) -> None:

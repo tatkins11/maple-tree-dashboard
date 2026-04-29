@@ -210,6 +210,10 @@ def _display_columns_for_board(scope: str, stat_view: str, label: str, dataframe
         preferred = ["#", label, "Player", "Season"]
     elif scope == "Single-Season Records" and stat_view == "Rate Stats":
         preferred = ["#", label, "Player", "PA", "Season"]
+    elif scope == "Single-Game Records" and stat_view == "Counting Stats":
+        preferred = ["#", label, "Player", "Date", "Time", "Opponent", "Season"]
+    elif scope == "Single-Game Records" and stat_view == "Rate Stats":
+        preferred = ["#", label, "Player", "PA", "Date", "Time", "Opponent", "Season"]
     elif scope == "Career Records" and stat_view == "Counting Stats":
         preferred = ["#", label, "Player"]
     else:
@@ -227,7 +231,7 @@ def _column_config_for_board(scope: str, stat_view: str, label: str) -> dict[str
 def _grid_size(scope: str, stat_view: str, *, is_mobile_layout: bool) -> int:
     if is_mobile_layout:
         return 1
-    if scope == "Single-Season Records":
+    if scope in {"Single-Season Records", "Single-Game Records"}:
         return 2
     if stat_view == "Rate Stats":
         return 2
@@ -248,7 +252,7 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
     st.markdown(f"### {section_title}")
     if stat_view == "Rate Stats":
         st.markdown(
-            f'<div class="records-tight-caption">Minimum PA: {rate_min_pa}</div>',
+            f'<div class="records-tight-caption">Minimum PA: {rate_min_pa}{" (lower this for single-game rate boards)" if scope == "Single-Game Records" else ""}</div>',
             unsafe_allow_html=True,
         )
     else:
@@ -290,7 +294,7 @@ ensure_authenticated()
 layout = get_responsive_layout_context(key="records")
 
 st.title("Records")
-st.caption("Team hitter records across career totals and single seasons.")
+st.caption("Team hitter records across career totals, single seasons, and single-game box score lines.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="records_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
@@ -304,7 +308,7 @@ if layout.is_mobile_layout:
     top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=1)
     scope = st.segmented_control(
         "Record scope",
-        options=["Career Records", "Single-Season Records"],
+        options=["Career Records", "Single-Season Records", "Single-Game Records"],
         default="Career Records",
     )
     active_only = st.toggle("Show active roster only", value=False)
@@ -317,7 +321,7 @@ else:
     with control_columns[2]:
         scope = st.segmented_control(
             "Record scope",
-            options=["Career Records", "Single-Season Records"],
+            options=["Career Records", "Single-Season Records", "Single-Game Records"],
             default="Career Records",
         )
     with control_columns[3]:
@@ -331,8 +335,15 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 _render_context_bar(scope, stat_view, selected_seasons, seasons, rate_min_pa, top_n, active_only)
 
+scope_key = {
+    "Career Records": "career",
+    "Single-Season Records": "single_season",
+    "Single-Game Records": "single_game",
+}[scope]
+
 headliners = fetch_record_headliners(
     connection,
+    scope=scope_key,
     seasons=selected_seasons,
     min_pa=rate_min_pa,
     active_only=active_only,
@@ -341,7 +352,7 @@ _render_headliners(headliners, is_mobile_layout=layout.is_mobile_layout)
 
 leaderboards = fetch_record_leaderboards(
     connection,
-    scope="career" if scope == "Career Records" else "single_season",
+    scope=scope_key,
     seasons=selected_seasons,
     min_pa=rate_min_pa,
     limit=top_n,

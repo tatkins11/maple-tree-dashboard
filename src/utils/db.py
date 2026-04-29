@@ -179,8 +179,12 @@ def initialize_database(connection: sqlite3.Connection) -> None:
 
         CREATE TABLE IF NOT EXISTS games (
             game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            team_name TEXT,
             game_date TEXT NOT NULL,
+            game_time TEXT,
             opponent_name TEXT NOT NULL,
+            team_score INTEGER,
+            opponent_score INTEGER,
             source_file TEXT NOT NULL UNIQUE,
             season TEXT NOT NULL,
             notes TEXT
@@ -236,6 +240,8 @@ def initialize_database(connection: sqlite3.Connection) -> None:
             fielder_choice INTEGER NOT NULL,
             double_plays INTEGER NOT NULL,
             outs INTEGER NOT NULL,
+            runs INTEGER NOT NULL DEFAULT 0,
+            rbi INTEGER NOT NULL DEFAULT 0,
             raw_scorebook_file TEXT NOT NULL,
             PRIMARY KEY (game_id, player_id),
             FOREIGN KEY (game_id) REFERENCES games(game_id),
@@ -368,6 +374,12 @@ def initialize_database(connection: sqlite3.Connection) -> None:
     _ensure_column(connection, "hitter_projections", "volatility_score", "REAL NOT NULL DEFAULT 0")
     _ensure_column(connection, "hitter_projections", "trend_score", "REAL NOT NULL DEFAULT 0")
     _ensure_column(connection, "schedule_games", "completed_flag", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "games", "team_name", "TEXT")
+    _ensure_column(connection, "games", "game_time", "TEXT")
+    _ensure_column(connection, "games", "team_score", "INTEGER")
+    _ensure_column(connection, "games", "opponent_score", "INTEGER")
+    _ensure_column(connection, "player_game_batting", "runs", "INTEGER NOT NULL DEFAULT 0")
+    _ensure_column(connection, "player_game_batting", "rbi", "INTEGER NOT NULL DEFAULT 0")
     _backfill_player_identity(connection)
     _backfill_player_metadata(connection)
     connection.commit()
@@ -432,14 +444,18 @@ def initialize_postgres_database(connection) -> None:
                 PRIMARY KEY (player_id, season)
             );
 
-            CREATE TABLE IF NOT EXISTS games (
-                game_id SERIAL PRIMARY KEY,
-                game_date TEXT NOT NULL,
-                opponent_name TEXT NOT NULL,
-                source_file TEXT NOT NULL UNIQUE,
-                season TEXT NOT NULL,
-                notes TEXT
-            );
+        CREATE TABLE IF NOT EXISTS games (
+            game_id SERIAL PRIMARY KEY,
+            team_name TEXT,
+            game_date TEXT NOT NULL,
+            game_time TEXT,
+            opponent_name TEXT NOT NULL,
+            team_score INTEGER,
+            opponent_score INTEGER,
+            source_file TEXT NOT NULL UNIQUE,
+            season TEXT NOT NULL,
+            notes TEXT
+        );
 
             CREATE TABLE IF NOT EXISTS season_batting_stats (
                 season TEXT NOT NULL,
@@ -490,6 +506,8 @@ def initialize_postgres_database(connection) -> None:
                 fielder_choice INTEGER NOT NULL,
                 double_plays INTEGER NOT NULL,
                 outs INTEGER NOT NULL,
+                runs INTEGER NOT NULL DEFAULT 0,
+                rbi INTEGER NOT NULL DEFAULT 0,
                 raw_scorebook_file TEXT NOT NULL,
                 PRIMARY KEY (game_id, player_id)
             );
@@ -603,6 +621,12 @@ def initialize_postgres_database(connection) -> None:
             );
             """
         )
+        cursor.execute("ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS runs INTEGER NOT NULL DEFAULT 0;")
+        cursor.execute("ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS rbi INTEGER NOT NULL DEFAULT 0;")
+        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS team_name TEXT;")
+        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS game_time TEXT;")
+        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS team_score INTEGER;")
+        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS opponent_score INTEGER;")
     connection.commit()
 
 
@@ -659,12 +683,16 @@ def upsert_game(connection: sqlite3.Connection, game: ParsedGame) -> int:
         connection.execute(
             """
             UPDATE games
-            SET game_date = ?, opponent_name = ?, season = ?, notes = ?
+            SET team_name = ?, game_date = ?, game_time = ?, opponent_name = ?, team_score = ?, opponent_score = ?, season = ?, notes = ?
             WHERE game_id = ?
             """,
             (
+                game.team_name,
                 game.game_date,
+                game.game_time,
                 game.opponent_name,
+                game.team_score,
+                game.opponent_score,
                 game.season,
                 game.notes,
                 existing["game_id"],
@@ -674,10 +702,20 @@ def upsert_game(connection: sqlite3.Connection, game: ParsedGame) -> int:
 
     cursor = connection.execute(
         """
-        INSERT INTO games (game_date, opponent_name, source_file, season, notes)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO games (team_name, game_date, game_time, opponent_name, team_score, opponent_score, source_file, season, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
-        (game.game_date, game.opponent_name, game.source_file, game.season, game.notes),
+        (
+            game.team_name,
+            game.game_date,
+            game.game_time,
+            game.opponent_name,
+            game.team_score,
+            game.opponent_score,
+            game.source_file,
+            game.season,
+            game.notes,
+        ),
     )
     return int(cursor.lastrowid)
 
@@ -785,8 +823,10 @@ def replace_player_game_batting(
                 fielder_choice,
                 double_plays,
                 outs,
+                runs,
+                rbi,
                 raw_scorebook_file
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 game_id,
@@ -804,6 +844,8 @@ def replace_player_game_batting(
                 row.fielder_choice,
                 row.double_plays,
                 row.outs,
+                row.runs,
+                row.rbi,
                 row.raw_scorebook_file,
             ),
         )
