@@ -11,6 +11,7 @@ from src.dashboard.data import (
     COUNTING_RECORD_COLUMNS,
     DEFAULT_DB_PATH,
     RATE_RECORD_COLUMNS,
+    SINGLE_GAME_RECORD_COLUMNS,
     fetch_record_headliners,
     fetch_record_leaderboards,
     fetch_seasons,
@@ -238,17 +239,26 @@ def _grid_size(scope: str, stat_view: str, *, is_mobile_layout: bool) -> int:
     return 3
 
 
+def _leaderboard_labels(scope: str, stat_view: str, leaderboards: dict[str, object]) -> list[str]:
+    if stat_view == "Rate Stats":
+        base_labels = list(RATE_RECORD_COLUMNS.keys())
+    elif scope == "Single-Game Records":
+        base_labels = list(SINGLE_GAME_RECORD_COLUMNS.keys())
+    else:
+        base_labels = list(COUNTING_RECORD_COLUMNS.keys())
+    return [label for label in base_labels if label in leaderboards]
+
+
 def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view: str, rate_min_pa: int, *, is_mobile_layout: bool) -> None:
     if not leaderboards:
         st.info("No record rows match the current filters.")
         return
 
-    label_groups = (
-        ("Counting Stat Leaderboards", list(COUNTING_RECORD_COLUMNS.keys()))
-        if stat_view == "Counting Stats"
-        else ("Rate Stat Leaderboards", list(RATE_RECORD_COLUMNS.keys()))
-    )
-    section_title, labels = label_groups
+    section_title = "Counting Stat Leaderboards" if stat_view == "Counting Stats" else "Rate Stat Leaderboards"
+    labels = _leaderboard_labels(scope, stat_view, leaderboards)
+    if not labels:
+        st.info("No record rows match the current filters.")
+        return
     st.markdown(f"### {section_title}")
     if stat_view == "Rate Stats":
         st.markdown(
@@ -267,7 +277,10 @@ def _render_leaderboards(leaderboards: dict[str, object], scope: str, stat_view:
         columns = st.columns(per_row, gap="small")
         for column, label in zip(columns, labels[start:start + per_row]):
             column.markdown(f'<div class="records-section-title"><strong>{label}</strong></div>', unsafe_allow_html=True)
-            board = leaderboards[label]
+            board = leaderboards.get(label)
+            if board is None:
+                column.info("No data")
+                continue
             board = with_player_link_column(
                 board,
                 player_column="Player",
