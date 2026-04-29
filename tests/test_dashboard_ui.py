@@ -1,4 +1,5 @@
 import pandas as pd
+import src.dashboard.ui as dashboard_ui
 
 from src.dashboard.ui import (
     RESPONSIVE_AUTO,
@@ -9,6 +10,7 @@ from src.dashboard.ui import (
     build_player_page_href,
     build_mobile_standings_cards,
     resolve_responsive_layout_mode,
+    render_static_table,
     with_player_link_column,
 )
 
@@ -96,3 +98,43 @@ def test_format_link_cell_renders_same_tab_anchor_with_player_name() -> None:
     assert 'href="./player-card?player=tristan#Tristan"' in html
     assert 'target="_self"' in html
     assert ">Tristan</a>" in html
+
+
+def test_render_static_table_keeps_html_table_layout_when_links_are_present(monkeypatch) -> None:
+    calls: list[tuple[str, bool]] = []
+
+    def fake_markdown(body: str, unsafe_allow_html: bool = False) -> None:
+        calls.append((body, unsafe_allow_html))
+
+    def fail_columns(*args, **kwargs):
+        raise AssertionError("render_static_table should not fall back to st.columns for link tables")
+
+    monkeypatch.setattr(dashboard_ui.st, "markdown", fake_markdown)
+    monkeypatch.setattr(dashboard_ui.st, "columns", fail_columns)
+
+    dataframe = pd.DataFrame(
+        [
+            {"player": "./player-card?player=tristan#Tristan", "ops": 1.355},
+            {"player": "./player-card?player=jj#Jj", "ops": 2.250},
+        ]
+    )
+
+    render_static_table(
+        dataframe,
+        column_labels={"player": "Player", "ops": "OPS"},
+        formatters={"ops": "{:.3f}"},
+        link_columns=["player"],
+        css_class="test-static-table",
+    )
+
+    assert len(calls) == 2
+    style_markup, style_unsafe = calls[0]
+    table_markup, table_unsafe = calls[1]
+
+    assert style_unsafe is True
+    assert table_unsafe is True
+    assert "table.test-static-table" in style_markup
+    assert '<table class="dataframe test-static-table">' in table_markup
+    assert 'href="./player-card?player=tristan#Tristan"' in table_markup
+    assert ">Tristan</a>" in table_markup
+    assert ">1.355<" in table_markup
