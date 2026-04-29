@@ -29,6 +29,7 @@ from src.models.roster import (
 from src.models.schedule import DEFAULT_SCHEDULE_TEAM_NAME
 from src.models.season_roster import fetch_active_roster_rows
 from src.models.simulator import SimulationSummary, simulate_lineup
+from src.utils.names import normalize_player_name
 from src.utils.db import connect_app_db
 
 
@@ -153,6 +154,187 @@ def _fetch_table_columns(connection: sqlite3.Connection, table_name: str) -> set
         elif len(row) > 1:
             columns.add(str(row[1]))
     return columns
+
+
+def _fetch_boxscore_identity_maps(
+    connection: sqlite3.Connection,
+) -> tuple[dict[str, tuple[str, str]], dict[str, list[tuple[str, str]]], dict[str, str]]:
+    exact_alias_map: dict[str, tuple[str, str]] = {}
+    normalized_alias_map: dict[str, list[tuple[str, str]]] = {}
+    canonical_display_map: dict[str, str] = {}
+
+    identity_rows = connection.execute(
+        """
+        SELECT
+            pi.canonical_name,
+            pm.preferred_display_name
+        FROM player_identity pi
+        JOIN player_metadata pm ON pm.player_id = pi.player_id
+        """
+    ).fetchall()
+    for row in identity_rows:
+        canonical_display_map[str(row["canonical_name"])] = str(row["preferred_display_name"])
+
+    alias_rows = connection.execute(
+        """
+        SELECT
+            pa.source_name,
+            pa.normalized_source_name,
+            pi.canonical_name,
+            pm.preferred_display_name,
+            pa.alias_id
+        FROM player_aliases pa
+        JOIN player_identity pi ON pi.player_id = pa.player_id
+        JOIN player_metadata pm ON pm.player_id = pa.player_id
+        ORDER BY pa.approved_flag DESC, pa.alias_id ASC
+        """
+    ).fetchall()
+    for row in alias_rows:
+        resolved = (
+            str(row["preferred_display_name"]),
+            str(row["canonical_name"]),
+        )
+        source_name = str(row["source_name"])
+        normalized_source_name = str(row["normalized_source_name"])
+        exact_alias_map.setdefault(source_name, resolved)
+        normalized_alias_map.setdefault(normalized_source_name, [])
+        if resolved not in normalized_alias_map[normalized_source_name]:
+            normalized_alias_map[normalized_source_name].append(resolved)
+
+    return exact_alias_map, normalized_alias_map, canonical_display_map
+
+
+def _resolve_boxscore_player_identity(
+    source_name: str,
+    *,
+    exact_alias_map: dict[str, tuple[str, str]],
+    normalized_alias_map: dict[str, list[tuple[str, str]]],
+    canonical_display_map: dict[str, str],
+) -> tuple[str, str]:
+    if source_name in exact_alias_map:
+        return exact_alias_map[source_name]
+
+    normalized_source_name = normalize_player_name(source_name)
+    if normalized_source_name in canonical_display_map:
+        return canonical_display_map[normalized_source_name], normalized_source_name
+
+    normalized_matches = normalized_alias_map.get(normalized_source_name, [])
+    if len(normalized_matches) == 1:
+        return normalized_matches[0]
+
+    fallback_name = str(source_name).strip()
+    fallback_canonical = normalized_source_name or fallback_name.lower()
+    return fallback_name, fallback_canonical
+
+
+def _load_single_game_stats_from_boxscore_csv(
+    connection: sqlite3.Connection,
+    seasons: list[str] | None = None,
+) -> pd.DataFrame:
+    from src.ingest import manual_boxscore as boxscore_ingest
+
+    games_csv_path = boxscore_ingest.DEFAULT_GAME_BOXSCORE_GAMES_PATH
+    batting_csv_path = boxscore_ingest.DEFAULT_GAME_BOXSCORE_BATTING_PATH
+    if not games_csv_path.exists() or not batting_csv_path.exists():
+        return pd.DataFrame()
+
+    uncertainties: list[str] = []
+    games_by_key = boxscore_ingest._read_games_csv(games_csv_path, uncertainties)
+    batting_rows_by_key = boxscore_ingest._read_batting_csv(batting_csv_path, uncertainties)
+    if not games_by_key or not batting_rows_by_key:
+        return pd.DataFrame()
+
+    exact_alias_map, normalized_alias_map, canonical_display_map = _fetch_boxscore_identity_maps(connection)
+    rows: list[dict[str, object]] = []
+    for game_key, game_row in games_by_key.items():
+        season = str(game_row["season"])
+        if seasons and season not in seasons:
+            continue
+        for batting_row in batting_rows_by_key.get(game_key, []):
+            record = boxscore_ingest._build_player_game_record(
+                game_key=game_key,
+                batting_row=batting_row,
+                uncertainties=uncertainties,
+            )
+            display_name, canonical_name = _resolve_boxscore_player_identity(
+                record.player_name,
+                exact_alias_map=exact_alias_map,
+                normalized_alias_map=normalized_alias_map,
+                canonical_display_map=canonical_display_map,
+            )
+            hits = record.singles + record.doubles + record.triples + record.home_runs
+            total_bases = record.singles + (2 * record.doubles) + (3 * record.triples) + (4 * record.home_runs)
+            rows.append(
+                {
+                    "game_date": str(game_row["game_date"]),
+                    "game_time": str(game_row["game_time"] or ""),
+                    "team_name": str(game_row["team_name"] or ""),
+                    "opponent": str(game_row["opponent_name"]),
+                    "season": season,
+                    "player": display_name,
+                    "canonical_name": canonical_name,
+                    "lineup_spot": record.lineup_spot,
+                    "pa": record.plate_appearances,
+                    "ab": record.at_bats,
+                    "hits": hits,
+                    "1b": record.singles,
+                    "2b": record.doubles,
+                    "3b": record.triples,
+                    "hr": record.home_runs,
+                    "bb": record.walks,
+                    "so": record.strikeouts,
+                    "r": record.runs,
+                    "rbi": record.rbi,
+                    "tb": total_bases,
+                    "sf": record.sacrifice_flies,
+                    "fc": record.fielder_choice,
+                    "dp": record.double_plays,
+                    "outs": record.outs,
+                    "raw_scorebook_file": game_key,
+                }
+            )
+
+    if not rows:
+        return pd.DataFrame()
+
+    dataframe = pd.DataFrame(rows)
+    return dataframe.assign(
+        _game_date_sort=pd.to_datetime(dataframe["game_date"], errors="coerce"),
+        _game_time_sort=dataframe["game_time"].astype(str),
+        _opponent_sort=dataframe["opponent"].astype(str).str.lower(),
+        _player_sort=dataframe["player"].astype(str).str.lower(),
+    ).sort_values(
+        ["_game_date_sort", "_game_time_sort", "_opponent_sort", "lineup_spot", "_player_sort"],
+        ascending=[False, False, True, True, True],
+    ).drop(columns=["_game_date_sort", "_game_time_sort", "_opponent_sort", "_player_sort"]).reset_index(drop=True)
+
+
+def _finalize_single_game_stats_dataframe(dataframe: pd.DataFrame, min_pa: int) -> pd.DataFrame:
+    if dataframe.empty:
+        return dataframe
+
+    for column_name in ["game_date", "game_time", "team_name", "opponent", "season", "player", "canonical_name", "raw_scorebook_file"]:
+        if column_name in dataframe.columns:
+            dataframe.loc[:, column_name] = dataframe[column_name].map(
+                lambda value: "" if value is None or pd.isna(value) else str(value)
+            )
+
+    dataframe = dataframe.assign(
+        avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
+        obp=dataframe.apply(
+            lambda row: _safe_divide(
+                row["hits"] + row["bb"],
+                row["ab"] + row["bb"] + row["sf"],
+            ),
+            axis=1,
+        ),
+        slg=dataframe.apply(lambda row: _safe_divide(row["tb"], row["ab"]), axis=1),
+    )
+    dataframe = dataframe.assign(
+        ops=dataframe["obp"] + dataframe["slg"],
+        season_label=dataframe["season"].map(lambda value: format_player_season_label(str(value))),
+    )
+    return dataframe[dataframe["pa"] >= min_pa].copy()
 
 
 def sort_seasons(seasons: list[str]) -> list[str]:
@@ -770,30 +952,8 @@ def fetch_single_game_stats(
         params=params,
     )
     if dataframe.empty:
-        return dataframe
-
-    for column_name in ["game_date", "game_time", "team_name", "opponent", "season", "player", "canonical_name", "raw_scorebook_file"]:
-        if column_name in dataframe.columns:
-            dataframe.loc[:, column_name] = dataframe[column_name].map(
-                lambda value: "" if value is None or pd.isna(value) else str(value)
-            )
-
-    dataframe = dataframe.assign(
-        avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
-        obp=dataframe.apply(
-            lambda row: _safe_divide(
-                row["hits"] + row["bb"],
-                row["ab"] + row["bb"] + row["sf"],
-            ),
-            axis=1,
-        ),
-        slg=dataframe.apply(lambda row: _safe_divide(row["tb"], row["ab"]), axis=1),
-    )
-    dataframe = dataframe.assign(
-        ops=dataframe["obp"] + dataframe["slg"],
-        season_label=dataframe["season"].map(lambda value: format_player_season_label(str(value))),
-    )
-    return dataframe[dataframe["pa"] >= min_pa].copy()
+        dataframe = _load_single_game_stats_from_boxscore_csv(connection, seasons=seasons)
+    return _finalize_single_game_stats_dataframe(dataframe, min_pa)
 
 
 def fetch_advanced_analytics_view(

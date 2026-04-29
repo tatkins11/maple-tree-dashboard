@@ -4,6 +4,7 @@ from pathlib import Path
 import pandas as pd
 
 import src.dashboard.data as dashboard_data
+import src.ingest.manual_boxscore as manual_boxscore
 from src.dashboard.data import (
     build_player_rank_highlights,
     build_player_trend_history,
@@ -1369,6 +1370,61 @@ def test_single_game_records_tolerate_pre_migration_boxscore_schema(tmp_path: Pa
     assert int(single_game_stats.iloc[0]["rbi"]) == 0
     assert headliners["Single-Game Hits"]["formatted_value"] == "5"
     assert headliners["Single-Game Hits"]["context"] == "2026-04-22 | vs Bullseyes | Maple Tree Spring 2026"
+
+
+def test_single_game_stats_fall_back_to_boxscore_csv_when_database_rows_are_missing(tmp_path: Path, monkeypatch) -> None:
+    connection = connect_db(tmp_path / "boxscore_csv_fallback.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Tristan", "tristan")
+        connection.commit()
+
+        games_csv_path = tmp_path / "game_boxscore_games.csv"
+        games_csv_path.write_text(
+            "\n".join(
+                [
+                    "game_key,season,team_name,game_date,game_time,opponent_name,team_score,opponent_score,notes,source",
+                    "2026-04-22-bullseyes.png,Maple Tree Spring 2026,Maple Tree,2026-04-22,6:30 PM,Bullseyes,22,17,,manual",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        batting_csv_path = tmp_path / "game_boxscore_batting.csv"
+        batting_csv_path.write_text(
+            "\n".join(
+                [
+                    "game_key,lineup_spot,player_name,pa,ab,h,1b,2b,3b,hr,rbi,r,bb,so,sf,fc,gidp,outs,notes",
+                    "2026-04-22-bullseyes.png,3,Tristan,5,5,5,2,1,0,2,6,4,0,0,0,0,0,0,",
+                ]
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+        monkeypatch.setattr(manual_boxscore, "DEFAULT_GAME_BOXSCORE_GAMES_PATH", games_csv_path)
+        monkeypatch.setattr(manual_boxscore, "DEFAULT_GAME_BOXSCORE_BATTING_PATH", batting_csv_path)
+
+        single_game_stats = fetch_single_game_stats(connection, seasons=["Maple Tree Spring 2026"], min_pa=0)
+        headliners = fetch_record_headliners(
+            connection,
+            scope="single_game",
+            seasons=["Maple Tree Spring 2026"],
+            min_pa=0,
+            active_only=False,
+        )
+    finally:
+        connection.close()
+
+    assert len(single_game_stats) == 1
+    assert single_game_stats.iloc[0]["player"] == "Tristan"
+    assert single_game_stats.iloc[0]["canonical_name"] == "tristan"
+    assert single_game_stats.iloc[0]["team_name"] == "Maple Tree"
+    assert single_game_stats.iloc[0]["game_time"] == "6:30 PM"
+    assert int(single_game_stats.iloc[0]["hits"]) == 5
+    assert int(single_game_stats.iloc[0]["rbi"]) == 6
+    assert headliners["Single-Game Hits"]["formatted_value"] == "5"
+    assert "2026-04-22" in headliners["Single-Game Hits"]["context"]
 
 
 def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:
