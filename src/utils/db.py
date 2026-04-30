@@ -1170,6 +1170,7 @@ def _iter_repo_source_sync_paths() -> list[Path]:
         repo_root / "data" / "processed" / "player_metadata.csv",
         repo_root / "data" / "processed" / "player_season_metadata.csv",
         repo_root / "data" / "processed" / "current_spring_roster.csv",
+        repo_root / "data" / "processed" / "writeups_manifest.csv",
         repo_root / "data" / "processed" / "team_schedule.csv",
         repo_root / "data" / "processed" / "standings_snapshot.csv",
         repo_root / "data" / "processed" / "league_schedule_games.csv",
@@ -1179,6 +1180,10 @@ def _iter_repo_source_sync_paths() -> list[Path]:
 
     if season_csv_dir.exists():
         paths.extend(sorted(season_csv_dir.glob("*.csv")))
+
+    writeups_dir = repo_root / "data" / "writeups"
+    if writeups_dir.exists():
+        paths.extend(sorted(writeups_dir.rglob("*.md")))
 
     return sorted({path.resolve() for path in paths}, key=lambda path: path.as_posix().lower())
 
@@ -1251,6 +1256,10 @@ def _apply_repo_source_updates(*, sqlite_path: Path, audit_dir: Path) -> None:
         DEFAULT_SEASON_ROSTER_PATH,
         import_season_roster,
     )
+    from src.models.writeups_archive import (
+        DEFAULT_WRITEUPS_MANIFEST_PATH,
+        import_writeups_manifest,
+    )
     from src.utils.player_identity import DEFAULT_ALIAS_OVERRIDE_PATH
 
     repo_root = _repo_root_path()
@@ -1296,6 +1305,14 @@ def _apply_repo_source_updates(*, sqlite_path: Path, audit_dir: Path) -> None:
             batting_csv_path=repo_root / DEFAULT_GAME_BOXSCORE_BATTING_PATH,
             alias_override_path=repo_root / DEFAULT_ALIAS_OVERRIDE_PATH,
         )
+
+        writeups_manifest_path = repo_root / DEFAULT_WRITEUPS_MANIFEST_PATH
+        if writeups_manifest_path.exists():
+            import_writeups_manifest(
+                connection,
+                writeups_manifest_path,
+                root_path=repo_root,
+            )
 
         projection_seasons = [
             str(row["projection_season"])

@@ -79,3 +79,10 @@ def test_connect_app_db_triggers_hosted_source_sync_before_connect(monkeypatch, 
         ("sync", "postgresql://example", None),
         ("connect", "postgresql://example", True),
     ]
+
+
+def test_repo_source_sync_paths_include_writeup_sources() -> None:
+    paths = [path.as_posix() for path in db_utils._iter_repo_source_sync_paths()]
+
+    assert any(path.endswith("/data/processed/writeups_manifest.csv") for path in paths)
+    assert any(path.endswith("/data/writeups/maple-tree-spring-2026/week-2-postgame-recap.md") for path in paths)

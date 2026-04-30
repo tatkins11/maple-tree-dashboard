@@ -26,6 +26,7 @@ from src.dashboard.writeups import (
 )
 from src.models.roster import DEFAULT_ACTIVE_ROSTER_SEASON
 from src.models.schedule import import_schedule_bundle
+from src.models.writeups_archive import import_writeups_manifest
 from src.utils.db import connect_db, initialize_database
 
 
@@ -74,6 +75,22 @@ def _build_standings_csv(tmp_path: Path) -> Path:
             [
                 "season,league_name,division_name,snapshot_date,team_name,wins,losses,ties,win_pct,games_back,notes,source",
                 "Spring 2026,Wednesday Men's,Blue Division,2026-04-23,Soft Ballz,2,0,0,1.000,0.0,Week 1,standings.csv",
+            ]
+        ),
+    )
+
+
+def _build_writeups_manifest(tmp_path: Path) -> Path:
+    _write_text(
+        tmp_path / "writeups" / "week-2-postgame.md",
+        "# Week 2 Postgame Recap\n\nMaple Tree split the week.\n",
+    )
+    return _write_text(
+        tmp_path / "writeups_manifest.csv",
+        "\n".join(
+            [
+                "season,week_label,phase,title,markdown_path,source",
+                "Maple Tree Spring 2026,Week 2,postgame,Week 2 Postgame Recap,writeups/week-2-postgame.md,repo_manifest",
             ]
         ),
     )
@@ -424,6 +441,33 @@ def test_saved_postgame_writeups_upsert_and_list_from_database(tmp_path: Path) -
     assert "Updated recap." in str(saved["markdown"])
     assert len(archive) == 1
     assert archive.iloc[0]["source"] == "test-update"
+
+
+def test_import_writeups_manifest_upserts_markdown_into_archive(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "writeups.sqlite")
+    manifest_path = _build_writeups_manifest(tmp_path)
+    try:
+        initialize_database(connection)
+
+        rows_imported = import_writeups_manifest(
+            connection,
+            manifest_path,
+            root_path=tmp_path,
+        )
+        saved = fetch_saved_writeup(
+            connection,
+            season="Maple Tree Spring 2026",
+            week_label="Week 2",
+            phase="postgame",
+        )
+    finally:
+        connection.close()
+
+    assert rows_imported == 1
+    assert saved is not None
+    assert saved["title"] == "Week 2 Postgame Recap"
+    assert saved["source"] == "repo_manifest"
+    assert "Maple Tree split the week." in str(saved["markdown"])
 
 
 def test_build_pregame_markdown_uses_cleaner_lineup_stats_and_manager_tone() -> None:
