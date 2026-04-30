@@ -1,7 +1,7 @@
 game_id,season,league_name,division_name,week_label,game_date,game_time,team_name,opponent_name,home_away,location_or_field,status,completed_flag,is_bye,result,runs_for,runs_against,notes,source
 spring-2026-week-1-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,6:30 PM,Maple Tree,Soft Ballz,home,Boncosky Blue,completed,1,0,L,7,17,Week 1 Game 1 vs Soft Ballz,team_schedule.csv
 spring-2026-week-1-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,7:30 PM,Maple Tree,Soft Ballz,away,Boncosky Blue,completed,1,0,L,17,18,Week 1 Game 2 vs Soft Ballz,team_schedule.csv
-spring-2026-week-2-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 2,2026-04-29,6:30 PM,Maple Tree,Bullseyes,home,Boncosky Blue,completed,1,0,L,3,16,Official league results image corrected final score from original manual box score import,team_schedule.csv
+spring-2026-week-2-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 2,2026-04-29,6:30 PM,Maple Tree,Bullseyes,home,Boncosky Blue,completed,1,0,L,5,15,Official week 2 league results corrected the final score from the original manual box score import,team_schedule.csv
 spring-2026-week-2-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 2,2026-04-29,7:30 PM,Maple Tree,Bullseyes,away,Boncosky Blue,completed,1,0,W,25,24,,team_schedule.csv
 spring-2026-week-3-bye,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 3,2026-05-06,,Maple Tree,,bye,,scheduled,0,1,,,,Doubleheader bye week,team_schedule.csv
 spring-2026-week-4-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 4,2026-05-13,8:30 PM,Maple Tree,Wasted Talent,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
