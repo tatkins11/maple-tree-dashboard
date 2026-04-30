@@ -42,7 +42,7 @@ def sync_sqlite_to_postgres(
     replace: bool = True,
 ) -> dict[str, int]:
     sqlite_connection = connect_db(sqlite_path)
-    postgres_connection = connect_postgres_db(database_url)
+    postgres_connection = connect_postgres_db(database_url, autocommit=False)
     counts: dict[str, int] = {}
     try:
         initialize_database(sqlite_connection)

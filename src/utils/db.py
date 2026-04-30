@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import sqlite3
+import tempfile
+import threading
 from pathlib import Path
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from typing import Iterable, Optional
@@ -24,13 +27,18 @@ def connect_db(db_path: Path) -> sqlite3.Connection:
 
 def connect_app_db(db_path: Path):
     if should_use_hosted_database():
-        return connect_postgres_db(get_database_url())
+        database_url = get_database_url()
+        try:
+            _sync_hosted_database_from_repo_sources(database_url)
+        except Exception as exc:
+            print(f"Hosted source sync skipped: {exc}")
+        return connect_postgres_db(database_url)
     connection = connect_db(db_path)
     initialize_database(connection)
     return connection
 
 
-def connect_postgres_db(database_url: str):
+def connect_postgres_db(database_url: str, *, autocommit: bool = True):
     try:
         import psycopg
         from psycopg.rows import dict_row
@@ -39,8 +47,10 @@ def connect_postgres_db(database_url: str):
             "Hosted database mode requires psycopg. Install dependencies with `pip install -r requirements.txt`."
         ) from exc
 
-    connection = psycopg.connect(_normalize_postgres_url(database_url), autocommit=True)
+    connection = psycopg.connect(_normalize_postgres_url(database_url), autocommit=autocommit)
     initialize_postgres_database(connection)
+    if not autocommit:
+        connection.commit()
     return PostgresConnectionAdapter(connection, dict_row)
 
 
@@ -1059,3 +1069,242 @@ def _backfill_player_metadata(connection: sqlite3.Connection) -> None:
         )
         """
     )
+
+
+_HOSTED_SOURCE_SYNC_LOCK = threading.Lock()
+_HOSTED_SOURCE_SYNC_CACHE: dict[str, str] = {}
+_HOSTED_SOURCE_SYNC_KEY = "repo-source-sync-v1"
+
+
+def _sync_hosted_database_from_repo_sources(database_url: str) -> None:
+    if not database_url:
+        return
+
+    signature = _build_repo_source_signature()
+    if _HOSTED_SOURCE_SYNC_CACHE.get(database_url) == signature:
+        return
+
+    with _HOSTED_SOURCE_SYNC_LOCK:
+        if _HOSTED_SOURCE_SYNC_CACHE.get(database_url) == signature:
+            return
+
+        postgres_connection = connect_postgres_db(database_url)
+        try:
+            _ensure_source_sync_state_table(postgres_connection)
+            current_signature = _read_source_sync_signature(postgres_connection, _HOSTED_SOURCE_SYNC_KEY)
+        finally:
+            postgres_connection.close()
+
+        if current_signature == signature:
+            _HOSTED_SOURCE_SYNC_CACHE[database_url] = signature
+            return
+
+        with tempfile.TemporaryDirectory(prefix="hosted-source-sync-") as temp_dir:
+            temp_root = Path(temp_dir)
+            sqlite_path = temp_root / "dashboard.sqlite"
+            _copy_postgres_snapshot_to_sqlite(sqlite_path=sqlite_path, database_url=database_url)
+            _apply_repo_source_updates(sqlite_path=sqlite_path, audit_dir=temp_root / "audits")
+
+            from sync_to_supabase import sync_sqlite_to_postgres
+
+            sync_sqlite_to_postgres(
+                sqlite_path=sqlite_path,
+                database_url=database_url,
+                replace=True,
+            )
+
+        postgres_connection = connect_postgres_db(database_url)
+        try:
+            _ensure_source_sync_state_table(postgres_connection)
+            postgres_connection.execute(
+                """
+                INSERT INTO source_sync_state (sync_key, signature)
+                VALUES (?, ?)
+                ON CONFLICT(sync_key) DO UPDATE SET
+                    signature = excluded.signature,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                (_HOSTED_SOURCE_SYNC_KEY, signature),
+            )
+            postgres_connection.commit()
+        finally:
+            postgres_connection.close()
+
+        _HOSTED_SOURCE_SYNC_CACHE[database_url] = signature
+
+
+def _repo_root_path() -> Path:
+    return Path(__file__).resolve().parents[2]
+
+
+def _build_repo_source_signature() -> str:
+    hasher = hashlib.sha256()
+    for path in _iter_repo_source_sync_paths():
+        relative = path.relative_to(_repo_root_path()).as_posix()
+        hasher.update(relative.encode("utf-8"))
+        hasher.update(b"\0")
+        if path.exists():
+            hasher.update(path.read_bytes())
+        else:
+            hasher.update(b"<missing>")
+        hasher.update(b"\0")
+    return hasher.hexdigest()
+
+
+def _iter_repo_source_sync_paths() -> list[Path]:
+    repo_root = _repo_root_path()
+    season_csv_dir = repo_root / "data" / "raw" / "season_csv"
+
+    paths = [
+        repo_root / "src" / "utils" / "db.py",
+        repo_root / "src" / "ingest" / "pipeline.py",
+        repo_root / "src" / "ingest" / "manual_boxscore.py",
+        repo_root / "src" / "ingest" / "season_csv.py",
+        repo_root / "src" / "models" / "schedule.py",
+        repo_root / "src" / "models" / "season_metadata.py",
+        repo_root / "src" / "models" / "season_roster.py",
+        repo_root / "src" / "models" / "projections.py",
+        repo_root / "build_hitter_projections.py",
+        repo_root / "manage_player_metadata.py",
+        repo_root / "data" / "processed" / "player_alias_overrides.csv",
+        repo_root / "data" / "processed" / "player_metadata.csv",
+        repo_root / "data" / "processed" / "player_season_metadata.csv",
+        repo_root / "data" / "processed" / "current_spring_roster.csv",
+        repo_root / "data" / "processed" / "team_schedule.csv",
+        repo_root / "data" / "processed" / "standings_snapshot.csv",
+        repo_root / "data" / "processed" / "league_schedule_games.csv",
+        repo_root / "data" / "processed" / "game_boxscore_games.csv",
+        repo_root / "data" / "processed" / "game_boxscore_batting.csv",
+    ]
+
+    if season_csv_dir.exists():
+        paths.extend(sorted(season_csv_dir.glob("*.csv")))
+
+    return sorted({path.resolve() for path in paths}, key=lambda path: path.as_posix().lower())
+
+
+def _ensure_source_sync_state_table(connection) -> None:
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS source_sync_state (
+            sync_key TEXT PRIMARY KEY,
+            signature TEXT NOT NULL,
+            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+        """
+    )
+    connection.commit()
+
+
+def _read_source_sync_signature(connection, sync_key: str) -> str | None:
+    row = connection.execute(
+        "SELECT signature FROM source_sync_state WHERE sync_key = ?",
+        (sync_key,),
+    ).fetchone()
+    if not row:
+        return None
+    return str(row["signature"])
+
+
+def _copy_postgres_snapshot_to_sqlite(*, sqlite_path: Path, database_url: str) -> None:
+    from sync_to_supabase import SYNC_TABLES, build_insert_sql
+
+    sqlite_connection = connect_db(sqlite_path)
+    postgres_connection = connect_postgres_db(database_url)
+    try:
+        initialize_database(sqlite_connection)
+        for table in SYNC_TABLES:
+            columns = [str(row["name"]) for row in sqlite_connection.execute(f"PRAGMA table_info({table})").fetchall()]
+            if not columns:
+                continue
+            rows = postgres_connection.execute(f"SELECT {', '.join(columns)} FROM {table}").fetchall()
+            if not rows:
+                continue
+            sqlite_connection.executemany(
+                build_insert_sql(table, columns),
+                [tuple(row[column] for column in columns) for row in rows],
+            )
+        sqlite_connection.commit()
+    finally:
+        sqlite_connection.close()
+        postgres_connection.close()
+
+
+def _apply_repo_source_updates(*, sqlite_path: Path, audit_dir: Path) -> None:
+    from manage_player_metadata import DEFAULT_METADATA_CSV, import_player_metadata
+    from src.ingest.manual_boxscore import (
+        DEFAULT_GAME_BOXSCORE_BATTING_PATH,
+        DEFAULT_GAME_BOXSCORE_GAMES_PATH,
+        import_manual_boxscore_bundle,
+    )
+    from src.ingest.pipeline import sync_sources
+    from src.models.projections import build_hitter_projections
+    from src.models.schedule import (
+        DEFAULT_LEAGUE_SCHEDULE_PATH,
+        DEFAULT_SCHEDULE_PATH,
+        DEFAULT_STANDINGS_PATH,
+        import_schedule_bundle,
+    )
+    from src.models.season_metadata import DEFAULT_SEASON_METADATA_PATH, sync_player_season_metadata
+    from src.models.season_roster import (
+        DEFAULT_ACTIVE_ROSTER_SEASON,
+        DEFAULT_SEASON_ROSTER_PATH,
+        import_season_roster,
+    )
+    from src.utils.player_identity import DEFAULT_ALIAS_OVERRIDE_PATH
+
+    repo_root = _repo_root_path()
+    season_csv_paths = sorted((repo_root / "data" / "raw" / "season_csv").glob("*.csv"))
+    if season_csv_paths:
+        sync_sources(
+            db_path=sqlite_path,
+            audit_dir=audit_dir,
+            season_csv_paths=season_csv_paths,
+            alias_override_path=repo_root / DEFAULT_ALIAS_OVERRIDE_PATH,
+        )
+
+    connection = connect_db(sqlite_path)
+    try:
+        initialize_database(connection)
+
+        metadata_csv = repo_root / DEFAULT_METADATA_CSV
+        if metadata_csv.exists():
+            import_player_metadata(connection, metadata_csv)
+
+        roster_csv = repo_root / DEFAULT_SEASON_ROSTER_PATH
+        if roster_csv.exists():
+            import_season_roster(
+                connection=connection,
+                csv_path=roster_csv,
+                season_name=DEFAULT_ACTIVE_ROSTER_SEASON,
+            )
+
+        season_metadata_path = repo_root / DEFAULT_SEASON_METADATA_PATH
+        if season_metadata_path.exists():
+            sync_player_season_metadata(connection, season_metadata_path)
+
+        import_schedule_bundle(
+            connection=connection,
+            schedule_csv_path=repo_root / DEFAULT_SCHEDULE_PATH,
+            standings_csv_path=repo_root / DEFAULT_STANDINGS_PATH,
+            league_schedule_csv_path=repo_root / DEFAULT_LEAGUE_SCHEDULE_PATH,
+        )
+
+        import_manual_boxscore_bundle(
+            connection,
+            games_csv_path=repo_root / DEFAULT_GAME_BOXSCORE_GAMES_PATH,
+            batting_csv_path=repo_root / DEFAULT_GAME_BOXSCORE_BATTING_PATH,
+            alias_override_path=repo_root / DEFAULT_ALIAS_OVERRIDE_PATH,
+        )
+
+        projection_seasons = [
+            str(row["projection_season"])
+            for row in connection.execute(
+                "SELECT DISTINCT projection_season FROM hitter_projections WHERE projection_season <> ''"
+            ).fetchall()
+        ]
+        for projection_season in projection_seasons:
+            projections = build_hitter_projections(connection=connection, projection_season=projection_season)
+            replace_hitter_projections(connection, projection_season, projections)
+    finally:
+        connection.close()
