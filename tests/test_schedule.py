@@ -156,7 +156,7 @@ def test_schedule_filter_summary_and_nan_cleanup_inputs_are_supported() -> None:
     assert summary == "Season: Spring 2026 | Team: Maple Tree | Opponent: All opponents"
 
 
-def test_current_week_helpers_default_to_next_relevant_week(tmp_path: Path) -> None:
+def test_current_week_helpers_include_bye_weeks_for_team_schedule(tmp_path: Path) -> None:
     connection = connect_db(tmp_path / "schedule.sqlite")
     try:
         initialize_database(connection)
@@ -168,7 +168,7 @@ def test_current_week_helpers_default_to_next_relevant_week(tmp_path: Path) -> N
             team_name="Maple Tree",
             as_of=date(2026, 4, 23),
         )
-        assert team_week == "Week 3"
+        assert team_week == "Week 2"
 
         league_week = fetch_current_league_week(
             connection,

@@ -1374,9 +1374,17 @@ def fetch_current_schedule_week(
     team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
     as_of: date | datetime | str | None = None,
 ) -> str | None:
-    next_game = fetch_next_game(connection, season=season, team_name=team_name, as_of=as_of)
-    if next_game and next_game.get("week_label"):
-        return str(next_game["week_label"])
+    upcoming = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="Upcoming only",
+        as_of=as_of,
+    )
+    if not upcoming.empty:
+        first_row = upcoming.iloc[0]
+        if first_row.get("week_label"):
+            return str(first_row["week_label"])
 
     weeks = fetch_schedule_weeks(connection, season, team_name)
     return weeks[0] if weeks else None

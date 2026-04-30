@@ -89,3 +89,98 @@ def test_import_manual_boxscore_bundle_loads_game_batting_and_schedule(tmp_path:
     assert tristan_row["opponent"] == "Balls Deep"
     assert tristan_row["rbi"] == 4
     assert tristan_row["hr"] == 1
+
+
+def test_import_manual_boxscore_updates_existing_official_schedule_row(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "manual_boxscore_schedule_match.sqlite")
+    games_csv = tmp_path / "game_boxscore_games.csv"
+    batting_csv = tmp_path / "game_boxscore_batting.csv"
+    alias_csv = tmp_path / "player_alias_overrides.csv"
+
+    games_csv.write_text(
+        "\n".join(
+            [
+                "game_key,season,team_name,game_date,game_time,opponent_name,team_score,opponent_score,notes,source",
+                "maple-tree-spring-2026-04-29-1830-bullseyes,Maple Tree Spring 2026,Maple Tree,2026-04-29,6:30 PM,Bullseyes,5,16,Imported from screenshot,gamechanger_screenshot",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    batting_csv.write_text(
+        "\n".join(
+            [
+                "game_key,lineup_spot,player_name,pa,ab,h,1b,2b,3b,hr,rbi,r,bb,so,sf,fc,gidp,outs,notes",
+                "maple-tree-spring-2026-04-29-1830-bullseyes,1,Tristan,3,3,2,1,0,0,1,2,2,0,0,0,1,0,,",
+            ]
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    alias_csv.write_text("source_name,player_name,canonical_name,notes\n", encoding="utf-8")
+
+    try:
+        initialize_database(connection)
+        connection.execute(
+            """
+            INSERT INTO players (player_id, player_name, canonical_name, active_flag)
+            VALUES (1, 'Tristan', 'tristan', 1)
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO player_identity (player_id, player_name, canonical_name, active_flag)
+            VALUES (1, 'Tristan', 'tristan', 1)
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO player_metadata (
+                player_id, preferred_display_name, is_fixed_dhh, baserunning_grade,
+                consistency_grade, speed_flag, active_flag, notes
+            ) VALUES (1, 'Tristan', 0, 'C', 'C', 0, 1, '')
+            """
+        )
+        connection.execute(
+            """
+            INSERT INTO schedule_games (
+                game_id, season, league_name, division_name, week_label, game_date, game_time,
+                team_name, opponent_name, home_away, location_or_field, status, completed_flag,
+                is_bye, result, runs_for, runs_against, notes, source
+            ) VALUES (
+                'spring-2026-week-2-g1', 'Maple Tree Spring 2026', 'Wednesday Men''s', 'Blue Division',
+                'Week 2', '2026-04-29', '6:30 PM', 'Maple Tree', 'Bullseyes', 'home', 'Boncosky Blue',
+                'scheduled', 0, 0, NULL, NULL, NULL, 'Week 2 Game 1 vs Bullseyes', 'team_schedule.csv'
+            )
+            """
+        )
+        connection.commit()
+
+        result = import_manual_boxscore_bundle(
+            connection,
+            games_csv_path=games_csv,
+            batting_csv_path=batting_csv,
+            alias_override_path=alias_csv,
+        )
+
+        schedule_rows = connection.execute(
+            """
+            SELECT game_id, week_label, status, completed_flag, result, runs_for, runs_against, source
+            FROM schedule_games
+            ORDER BY game_id
+            """
+        ).fetchall()
+    finally:
+        connection.close()
+
+    assert result.games_imported == 1
+    assert result.schedule_rows_imported == 1
+    assert len(schedule_rows) == 1
+    assert schedule_rows[0]["game_id"] == "spring-2026-week-2-g1"
+    assert schedule_rows[0]["week_label"] == "Week 2"
+    assert schedule_rows[0]["status"] == "final"
+    assert schedule_rows[0]["completed_flag"] == 1
+    assert schedule_rows[0]["result"] == "L"
+    assert schedule_rows[0]["runs_for"] == 5
+    assert schedule_rows[0]["runs_against"] == 16
+    assert schedule_rows[0]["source"] == "team_schedule.csv"

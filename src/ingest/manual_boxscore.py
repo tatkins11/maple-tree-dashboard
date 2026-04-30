@@ -336,6 +336,94 @@ def _upsert_schedule_game(
 ) -> None:
     team_score = game_row["team_score"]
     opponent_score = game_row["opponent_score"]
+    existing = connection.execute(
+        """
+        SELECT
+            game_id,
+            notes,
+            source,
+            CASE WHEN COALESCE(week_label, '') <> '' THEN 0 ELSE 1 END AS sort_priority
+        FROM schedule_games
+        WHERE season = ?
+          AND team_name = ?
+          AND game_date = ?
+          AND COALESCE(game_time, '') = COALESCE(?, '')
+          AND COALESCE(opponent_name, '') = COALESCE(?, '')
+          AND is_bye = 0
+        ORDER BY sort_priority, game_id
+        LIMIT 1
+        """,
+        (
+            game_row["season"],
+            game_row["team_name"],
+            game_row["game_date"],
+            game_row["game_time"],
+            game_row["opponent_name"],
+        ),
+    ).fetchone()
+
+    status = "final" if team_score is not None and opponent_score is not None else "scheduled"
+    completed_flag = 1 if team_score is not None and opponent_score is not None else 0
+    result = _derive_result(team_score, opponent_score)
+
+    if existing is not None:
+        target_game_id = str(existing["game_id"])
+        connection.execute(
+            """
+            UPDATE schedule_games
+            SET
+                season = ?,
+                game_date = ?,
+                game_time = ?,
+                team_name = ?,
+                opponent_name = ?,
+                status = ?,
+                completed_flag = ?,
+                result = ?,
+                runs_for = ?,
+                runs_against = ?,
+                notes = ?,
+                source = ?
+            WHERE game_id = ?
+            """,
+            (
+                game_row["season"],
+                game_row["game_date"],
+                game_row["game_time"],
+                game_row["team_name"],
+                game_row["opponent_name"],
+                status,
+                completed_flag,
+                result,
+                team_score,
+                opponent_score,
+                existing["notes"] or game_row["notes"],
+                existing["source"] or game_row["source"],
+                target_game_id,
+            ),
+        )
+        connection.execute(
+            """
+            DELETE FROM schedule_games
+            WHERE season = ?
+              AND team_name = ?
+              AND game_date = ?
+              AND COALESCE(game_time, '') = COALESCE(?, '')
+              AND COALESCE(opponent_name, '') = COALESCE(?, '')
+              AND is_bye = 0
+              AND game_id <> ?
+            """,
+            (
+                game_row["season"],
+                game_row["team_name"],
+                game_row["game_date"],
+                game_row["game_time"],
+                game_row["opponent_name"],
+                target_game_id,
+            ),
+        )
+        return
+
     connection.execute(
         """
         INSERT OR REPLACE INTO schedule_games (
@@ -372,10 +460,10 @@ def _upsert_schedule_game(
             game_row["opponent_name"],
             None,
             None,
-            "final" if team_score is not None and opponent_score is not None else "scheduled",
-            1 if team_score is not None and opponent_score is not None else 0,
+            status,
+            completed_flag,
             0,
-            _derive_result(team_score, opponent_score),
+            result,
             team_score,
             opponent_score,
             game_row["notes"],
