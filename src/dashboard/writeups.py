@@ -103,6 +103,7 @@ def build_pregame_key_lines(
     games_completed = int(summary.get("games_completed", 0) or 0)
     runs_for = int(summary.get("runs_for", 0) or 0)
     runs_against = int(summary.get("runs_against", 0) or 0)
+    scouting_opponent_name = str(scouting.get("opponent_name") or "").strip()
 
     keys: list[str] = []
     if games_completed == 0:
@@ -111,7 +112,7 @@ def build_pregame_key_lines(
         )
     elif runs_against > runs_for:
         keys.append(
-            f"{week_label} needs a cleaner defensive tone than the opener showed: after allowing {runs_against} runs in {games_completed} games, the priority is cutting off free extra bases and forcing Bullseyes to string hits together honestly."
+            f"{week_label} needs a cleaner defensive tone than the opener showed: after allowing {runs_against} runs in {games_completed} games, the priority is cutting off free extra bases and forcing {scouting_opponent_name or 'the opponent'} to string hits together honestly."
         )
     else:
         keys.append(

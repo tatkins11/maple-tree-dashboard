@@ -557,13 +557,19 @@ def main() -> None:
                 )
                 lineup_df = _attach_lineup_current_season_context(lineup_df, lineup_season_context)
                 annotated_lineup_rows = annotate_pregame_lineup(lineup_df.to_dict("records"))
-                milestone_lines = fetch_writeup_milestone_watch(connection)
+                milestone_lines = fetch_writeup_milestone_watch(
+                    connection,
+                    distance_threshold=5,
+                    limit=4,
+                    player_names=ordered_names,
+                )
                 opponent_lines = fetch_writeup_opponent_scouting(
                     connection,
                     season=selected_season,
                     opponent_names=list(week_bundle.get("opponent_names", [])),
                     division_name=str(week_bundle.get("division_name") or "") or None,
                     as_of=date.today(),
+                    focus_player_names=ordered_names,
                 )
                 season_summary = fetch_schedule_season_summary(
                     connection,

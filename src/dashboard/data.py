@@ -1679,6 +1679,7 @@ def fetch_writeup_milestone_watch(
     *,
     distance_threshold: int = 10,
     limit: int = 5,
+    player_names: list[str] | None = None,
 ) -> list[str]:
     active_milestones = fetch_career_milestones(
         connection,
@@ -1686,6 +1687,15 @@ def fetch_writeup_milestone_watch(
         max_remaining=distance_threshold,
         sort_by="nearest milestone",
     )
+    allowed_players = {
+        str(name).strip().lower()
+        for name in (player_names or [])
+        if str(name).strip()
+    }
+    if allowed_players and not active_milestones.empty:
+        active_milestones = active_milestones.loc[
+            active_milestones["player"].astype(str).str.lower().isin(allowed_players)
+        ].copy()
     in_play = select_in_play_milestones(
         active_milestones,
         distance_threshold=distance_threshold,
@@ -1738,6 +1748,7 @@ def fetch_writeup_opponent_scouting(
     opponent_names: list[str],
     division_name: str | None = None,
     as_of: date | datetime | str | None = None,
+    focus_player_names: list[str] | None = None,
 ) -> list[str]:
     unique_opponents = [name for name in sorted(set(opponent_names)) if str(name).strip()]
     if not unique_opponents:
@@ -1824,6 +1835,80 @@ def fetch_writeup_opponent_scouting(
         if recent_lines:
             parts.append("recent: " + "; ".join(recent_lines))
         lines.append(" | ".join(parts) + ".")
+
+        history_row = connection.execute(
+            """
+            SELECT
+                COUNT(*) AS games,
+                SUM(CASE WHEN team_score > opponent_score THEN 1 ELSE 0 END) AS wins,
+                SUM(CASE WHEN team_score < opponent_score THEN 1 ELSE 0 END) AS losses,
+                SUM(team_score) AS runs_for,
+                SUM(opponent_score) AS runs_against
+            FROM games
+            WHERE LOWER(opponent_name) = LOWER(?)
+              AND team_score IS NOT NULL
+              AND opponent_score IS NOT NULL
+            """,
+            (opponent_name,),
+        ).fetchone()
+        if history_row is not None and int(history_row["games"] or 0) > 0:
+            history_games = int(history_row["games"] or 0)
+            history_runs_for = int(history_row["runs_for"] or 0)
+            history_runs_against = int(history_row["runs_against"] or 0)
+            run_margin = history_runs_for - history_runs_against
+            margin_phrase = (
+                f"+{run_margin}"
+                if run_margin > 0
+                else str(run_margin)
+            )
+            lines.append(
+                f"Historical vs {opponent_name}: Maple Tree is "
+                f"{int(history_row['wins'] or 0)}-{int(history_row['losses'] or 0)} "
+                f"with a {history_runs_for}-{history_runs_against} run margin ({margin_phrase}) "
+                f"and has scored {history_runs_for / history_games:.1f} runs per game in the loaded history."
+            )
+
+        focus_names = [
+            str(name).strip()
+            for name in (focus_player_names or [])
+            if str(name).strip()
+        ]
+        if focus_names:
+            placeholders = ", ".join("?" for _ in focus_names)
+            matchup_rows = connection.execute(
+                f"""
+                SELECT
+                    p.player_name,
+                    SUM(pg.at_bats) AS ab,
+                    SUM(pg.singles + pg.doubles + pg.triples + pg.home_runs) AS hits,
+                    SUM(pg.home_runs) AS hr,
+                    SUM(pg.rbi) AS rbi
+                FROM player_game_batting pg
+                JOIN games g ON g.game_id = pg.game_id
+                JOIN player_identity p ON p.player_id = pg.player_id
+                WHERE LOWER(g.opponent_name) = LOWER(?)
+                  AND LOWER(p.player_name) IN ({placeholders})
+                GROUP BY p.player_name
+                HAVING SUM(pg.plate_appearances) > 0
+                ORDER BY
+                    SUM(pg.singles + 2 * pg.doubles + 3 * pg.triples + 4 * pg.home_runs) DESC,
+                    SUM(pg.rbi) DESC,
+                    SUM(pg.singles + pg.doubles + pg.triples + pg.home_runs) DESC,
+                    LOWER(p.player_name)
+                LIMIT 3
+                """,
+                [opponent_name, *(name.lower() for name in focus_names)],
+            ).fetchall()
+            if matchup_rows:
+                matchup_bits = []
+                for row in matchup_rows:
+                    matchup_bits.append(
+                        f"{row['player_name']} ({int(row['hits'] or 0)}-for-{int(row['ab'] or 0)}, "
+                        f"{int(row['hr'] or 0)} HR, {int(row['rbi'] or 0)} RBI)"
+                    )
+                lines.append(
+                    f"Best current-lineup history vs {opponent_name}: " + ", ".join(matchup_bits) + "."
+                )
 
     if not any_completed_data:
         return [WRITEUP_EMPTY_OPPONENT_SCOUTING]

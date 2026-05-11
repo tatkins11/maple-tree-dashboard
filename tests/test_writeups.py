@@ -240,11 +240,66 @@ def test_fetch_writeup_opponent_scouting_uses_two_part_standings_record(tmp_path
     finally:
         connection.close()
 
-    assert len(scouting_lines) == 1
+    assert len(scouting_lines) >= 1
     assert "standings 2-0" in scouting_lines[0]
     assert "standings 2-0-0" not in scouting_lines[0]
     assert "scores 17.0/game and allows 21.0/game" in scouting_lines[0]
     assert "Maple Tree scores 22.0/game and allows 18.0/game" in scouting_lines[0]
+
+
+def test_fetch_writeup_opponent_scouting_adds_history_and_lineup_matchups(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "writeups.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(
+            connection,
+            _build_schedule_csv(tmp_path),
+            _build_standings_csv(tmp_path),
+            _build_league_schedule_csv(tmp_path, completed_soft_ballz=True),
+        )
+        _insert_player(connection, 1, "Tristan", "tristan")
+        _insert_player(connection, 2, "Glove", "glove")
+        connection.execute(
+            """
+            INSERT INTO games (
+                game_id, team_name, game_date, game_time, opponent_name, team_score, opponent_score, source_file, season, notes
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (1, "Maple Tree", "2025-09-10", "7:30 PM", "Soft Ballz", 22, 19, "soft-ballz-game", "Maple Tree Fall 2025", ""),
+        )
+        connection.execute(
+            """
+            INSERT INTO player_game_batting (
+                game_id, player_id, lineup_spot, plate_appearances, at_bats, singles, doubles, triples, home_runs,
+                walks, strikeouts, sacrifice_flies, fielder_choice, double_plays, outs, runs, rbi, raw_scorebook_file
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 0, 0, ?, ?, ?)
+            """,
+            (1, 1, 1, 4, 4, 1, 1, 0, 1, 0, 2, 4, "soft-ballz-game"),
+        )
+        connection.execute(
+            """
+            INSERT INTO player_game_batting (
+                game_id, player_id, lineup_spot, plate_appearances, at_bats, singles, doubles, triples, home_runs,
+                walks, strikeouts, sacrifice_flies, fielder_choice, double_plays, outs, runs, rbi, raw_scorebook_file
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 0, 0, ?, ?, ?)
+            """,
+            (1, 2, 2, 4, 4, 2, 0, 0, 0, 0, 1, 2, "soft-ballz-game"),
+        )
+        connection.commit()
+
+        scouting_lines = fetch_writeup_opponent_scouting(
+            connection,
+            season="Spring 2026",
+            opponent_names=["Soft Ballz"],
+            division_name="Blue Division",
+            focus_player_names=["Tristan", "Glove"],
+        )
+    finally:
+        connection.close()
+
+    assert any("Historical vs Soft Ballz: Maple Tree is 1-0" in line for line in scouting_lines)
+    assert any("Best current-lineup history vs Soft Ballz:" in line for line in scouting_lines)
+    assert any("Tristan (3-for-4, 1 HR, 4 RBI)" in line for line in scouting_lines)
 
 
 def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_path: Path) -> None:
@@ -304,6 +359,68 @@ def test_fetch_writeup_milestone_watch_returns_clean_active_roster_lines(tmp_pat
     assert all(line.strip() for line in lines)
     assert all(line.endswith(".") for line in lines)
     assert not any("Bench" in line for line in lines)
+
+
+def test_fetch_writeup_milestone_watch_can_filter_to_selected_lineup(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "writeups.sqlite")
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Jj", "jj")
+        _insert_player(connection, 2, "Glove", "glove")
+        for player_id, player_name in ((1, "Jj"), (2, "Glove")):
+            connection.execute(
+                "INSERT INTO season_rosters (season_name, player_id, source_name, active_flag, notes) VALUES (?, ?, ?, 1, '')",
+                (DEFAULT_ACTIVE_ROSTER_SEASON, player_id, player_name),
+            )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=1,
+            games=12,
+            pa=50,
+            ab=46,
+            hits=23,
+            singles=17,
+            doubles=4,
+            triples=1,
+            hr=3,
+            walks=4,
+            runs=18,
+            rbi=16,
+            tb=40,
+            raw_source_file="jj.csv",
+        )
+        _insert_season_row(
+            connection,
+            season="Maple Tree Fall 2025",
+            player_id=2,
+            games=12,
+            pa=99,
+            ab=92,
+            hits=54,
+            singles=42,
+            doubles=8,
+            triples=0,
+            hr=4,
+            walks=7,
+            runs=31,
+            rbi=29,
+            tb=74,
+            raw_source_file="glove.csv",
+        )
+        connection.commit()
+
+        lines = fetch_writeup_milestone_watch(
+            connection,
+            distance_threshold=5,
+            limit=5,
+            player_names=["Jj"],
+        )
+    finally:
+        connection.close()
+
+    assert any("Jj" in line for line in lines)
+    assert not any("Glove" in line for line in lines)
 
 
 def test_fetch_writeup_record_context_uses_career_headliners(tmp_path: Path) -> None:
@@ -687,6 +804,28 @@ def test_build_pregame_key_lines_avoids_milestone_language_and_uses_context() ->
     assert "milestone" not in " ".join(lines).lower()
     assert any("Bullseyes is averaging 20.0 runs a game" in line for line in lines)
     assert any("Week 2 needs a cleaner defensive tone" in line for line in lines)
+
+
+def test_build_pregame_key_lines_uses_scouted_opponent_name_in_defensive_note() -> None:
+    lines = build_pregame_key_lines(
+        lineup_rows=[
+            {"player": "Jj"},
+            {"player": "Glove"},
+            {"player": "Tristan"},
+            {"player": "Tim"},
+            {"player": "Kives"},
+            {"player": "Porter"},
+        ],
+        milestone_lines=[],
+        opponent_lines=[
+            "Wasted Talent: record 3-3 | standings 3-3 | runs 97-107 | scores 16.2/game and allows 17.8/game | Maple Tree scores 13.5/game and allows 18.5/game."
+        ],
+        week_bundle={"week_label": "Week 4"},
+        season_summary={"wins": 1, "losses": 3, "games_completed": 4, "runs_for": 54, "runs_against": 74},
+    )
+
+    assert any("forcing Wasted Talent to string hits together honestly" in line for line in lines)
+    assert all("Bullseyes" not in line for line in lines)
 
 
 def test_annotate_pregame_lineup_assigns_unique_archetypes_across_full_order() -> None:
