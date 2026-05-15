@@ -13,6 +13,7 @@ from src.dashboard.data import (
     fetch_current_season_leader_snapshot,
     fetch_current_season_stats,
     fetch_seasons,
+    fetch_team_data_freshness,
     fetch_team_summary,
     get_connection,
     with_dashboard_default_season,
@@ -21,6 +22,8 @@ from src.dashboard.ui import (
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
+    persistent_selectbox,
+    render_data_freshness_caption,
     render_static_table,
     with_player_link_column,
 )
@@ -165,7 +168,14 @@ seasons = with_dashboard_default_season(fetch_seasons(connection))
 if not seasons:
     st.info("No current season data found.")
 else:
-    selected_season = st.selectbox("Season", options=seasons, index=dashboard_default_season_index(seasons))
+    default_season = seasons[dashboard_default_season_index(seasons)] if seasons else None
+    selected_season = persistent_selectbox(
+        "Season",
+        options=seasons,
+        query_key="cs_season",
+        default=default_season,
+    )
+    render_data_freshness_caption(fetch_team_data_freshness(connection, season=selected_season))
 
     team_summary = fetch_team_summary(connection, selected_season)
     leader_snapshot = fetch_current_season_leader_snapshot(connection, selected_season)

@@ -510,3 +510,321 @@ def _derive_completed_flag(
     if _derive_game_result(runs_for=runs_for, runs_against=runs_against, explicit_result=result):
         return 1
     return 0
+
+
+SCHEDULE_CSV_FIELDNAMES = [
+    "game_id",
+    "season",
+    "league_name",
+    "division_name",
+    "week_label",
+    "game_date",
+    "game_time",
+    "team_name",
+    "opponent_name",
+    "home_away",
+    "location_or_field",
+    "status",
+    "completed_flag",
+    "is_bye",
+    "result",
+    "runs_for",
+    "runs_against",
+    "notes",
+    "source",
+]
+
+_SCHEDULE_EDITABLE_FIELDS = (
+    "season",
+    "league_name",
+    "division_name",
+    "week_label",
+    "game_date",
+    "game_time",
+    "team_name",
+    "opponent_name",
+    "home_away",
+    "location_or_field",
+    "is_bye",
+    "notes",
+)
+
+
+def fetch_schedule_game_row(
+    connection: sqlite3.Connection,
+    game_id: str,
+) -> dict[str, object] | None:
+    row = connection.execute(
+        f"SELECT {', '.join(SCHEDULE_CSV_FIELDNAMES)} FROM schedule_games WHERE game_id = ?",
+        (game_id,),
+    ).fetchone()
+    if row is None:
+        return None
+    return {field: row[field] for field in SCHEDULE_CSV_FIELDNAMES}
+
+
+def write_schedule_csv_from_db(
+    connection: sqlite3.Connection,
+    csv_path: Path,
+) -> int:
+    ensure_schedule_csv(csv_path)
+    rows = connection.execute(
+        f"""
+        SELECT {', '.join(SCHEDULE_CSV_FIELDNAMES)}
+        FROM schedule_games
+        ORDER BY season, game_date, COALESCE(game_time, ''), week_label, game_id
+        """
+    ).fetchall()
+    with csv_path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=SCHEDULE_CSV_FIELDNAMES)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(
+                {
+                    field: "" if row[field] is None else str(row[field])
+                    for field in SCHEDULE_CSV_FIELDNAMES
+                }
+            )
+    return len(rows)
+
+
+def record_game_result(
+    connection: sqlite3.Connection,
+    *,
+    game_id: str,
+    runs_for: int,
+    runs_against: int,
+    result: str | None = None,
+    notes: str | None = None,
+    status: str = "completed",
+    csv_path: Path | None = None,
+    actor: str = "admin",
+) -> int:
+    from src.models.audit import (
+        ACTION_GAME_RESULT_UPDATE,
+        ENTITY_SCHEDULE_GAME,
+        log_audit_entry,
+    )
+
+    before_state = fetch_schedule_game_row(connection, game_id)
+    if before_state is None:
+        raise ValueError(f"Schedule game '{game_id}' not found.")
+
+    updated = update_game_result(
+        connection,
+        game_id=game_id,
+        runs_for=runs_for,
+        runs_against=runs_against,
+        result=result,
+        notes=notes,
+        status=status,
+    )
+
+    after_state = fetch_schedule_game_row(connection, game_id)
+    if csv_path is not None:
+        write_schedule_csv_from_db(connection, csv_path)
+
+    opponent = str(before_state.get("opponent_name") or "").strip() or "BYE"
+    derived_result = (after_state or {}).get("result") or ""
+    summary = (
+        f"Recorded {derived_result} {runs_for}-{runs_against} vs {opponent} "
+        f"({before_state.get('game_date')})"
+    ).strip()
+    log_audit_entry(
+        connection,
+        action_type=ACTION_GAME_RESULT_UPDATE,
+        entity_type=ENTITY_SCHEDULE_GAME,
+        entity_id=str(game_id),
+        summary=summary,
+        before_state=before_state,
+        after_state=after_state,
+        actor=actor,
+    )
+    return updated
+
+
+def update_schedule_game_fields(
+    connection: sqlite3.Connection,
+    *,
+    game_id: str,
+    updates: dict[str, object],
+    csv_path: Path | None = None,
+    actor: str = "admin",
+) -> int:
+    from src.models.audit import (
+        ACTION_SCHEDULE_GAME_UPDATE,
+        ENTITY_SCHEDULE_GAME,
+        log_audit_entry,
+    )
+
+    before_state = fetch_schedule_game_row(connection, game_id)
+    if before_state is None:
+        raise ValueError(f"Schedule game '{game_id}' not found.")
+
+    sanitized: dict[str, object] = {}
+    for field in _SCHEDULE_EDITABLE_FIELDS:
+        if field not in updates:
+            continue
+        value = updates[field]
+        if field == "is_bye":
+            sanitized[field] = _to_bool_int(value, default=int(before_state.get("is_bye") or 0))
+        elif isinstance(value, str):
+            stripped = value.strip()
+            sanitized[field] = stripped if stripped else None
+        else:
+            sanitized[field] = value
+
+    if not sanitized:
+        return 0
+
+    set_clause = ", ".join(f"{field} = ?" for field in sanitized)
+    params = [*sanitized.values(), game_id]
+    cursor = connection.execute(
+        f"UPDATE schedule_games SET {set_clause} WHERE game_id = ?",
+        params,
+    )
+    connection.commit()
+
+    after_state = fetch_schedule_game_row(connection, game_id)
+    if csv_path is not None:
+        write_schedule_csv_from_db(connection, csv_path)
+
+    field_summary = ", ".join(f"{field}={sanitized[field]}" for field in sanitized)
+    summary = f"Edited schedule game {game_id}: {field_summary}"
+    log_audit_entry(
+        connection,
+        action_type=ACTION_SCHEDULE_GAME_UPDATE,
+        entity_type=ENTITY_SCHEDULE_GAME,
+        entity_id=str(game_id),
+        summary=summary,
+        before_state=before_state,
+        after_state=after_state,
+        actor=actor,
+    )
+    return int(cursor.rowcount)
+
+
+def create_schedule_game(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    game_date: str,
+    team_name: str,
+    opponent_name: str | None = None,
+    game_time: str | None = None,
+    home_away: str | None = None,
+    location_or_field: str | None = None,
+    week_label: str | None = None,
+    league_name: str | None = None,
+    division_name: str | None = None,
+    is_bye: bool = False,
+    notes: str | None = None,
+    csv_path: Path | None = None,
+    actor: str = "admin",
+) -> str:
+    from src.models.audit import (
+        ACTION_SCHEDULE_GAME_CREATE,
+        ENTITY_SCHEDULE_GAME,
+        log_audit_entry,
+    )
+
+    if not season.strip() or not game_date.strip() or not team_name.strip():
+        raise ValueError("season, game_date, and team_name are required.")
+
+    next_index = int(
+        connection.execute("SELECT COUNT(*) AS c FROM schedule_games").fetchone()["c"]
+    ) + 1
+    builder_row = {
+        "season": season.strip(),
+        "game_date": game_date.strip(),
+        "game_time": (game_time or "").strip(),
+        "team_name": team_name.strip(),
+        "opponent_name": (opponent_name or "").strip() or ("BYE" if is_bye else ""),
+        "week_label": (week_label or "").strip(),
+    }
+    game_id = _build_game_id(builder_row, next_index)
+
+    if connection.execute(
+        "SELECT 1 FROM schedule_games WHERE game_id = ?", (game_id,)
+    ).fetchone() is not None:
+        raise ValueError(f"Schedule game '{game_id}' already exists.")
+
+    is_bye_int = 1 if is_bye else 0
+    status = "scheduled"
+    completed_flag = 0
+    connection.execute(
+        """
+        INSERT INTO schedule_games (
+            game_id,
+            season,
+            league_name,
+            division_name,
+            week_label,
+            game_date,
+            game_time,
+            team_name,
+            opponent_name,
+            home_away,
+            location_or_field,
+            status,
+            completed_flag,
+            is_bye,
+            result,
+            runs_for,
+            runs_against,
+            notes,
+            source
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL, NULL, ?, ?)
+        """,
+        (
+            game_id,
+            season.strip(),
+            (league_name or "").strip() or None,
+            (division_name or "").strip() or None,
+            (week_label or "").strip() or None,
+            game_date.strip(),
+            (game_time or "").strip() or None,
+            team_name.strip(),
+            None if is_bye else ((opponent_name or "").strip() or None),
+            (home_away or "").strip() or None,
+            (location_or_field or "").strip() or None,
+            status,
+            completed_flag,
+            is_bye_int,
+            (notes or "").strip() or None,
+            "admin_form",
+        ),
+    )
+    connection.commit()
+
+    after_state = fetch_schedule_game_row(connection, game_id)
+    if csv_path is not None:
+        write_schedule_csv_from_db(connection, csv_path)
+
+    opponent_label = "BYE" if is_bye else (opponent_name or "").strip() or "TBD"
+    summary = f"Added game {game_id}: {team_name.strip()} vs {opponent_label} on {game_date.strip()}"
+    log_audit_entry(
+        connection,
+        action_type=ACTION_SCHEDULE_GAME_CREATE,
+        entity_type=ENTITY_SCHEDULE_GAME,
+        entity_id=str(game_id),
+        summary=summary,
+        before_state=None,
+        after_state=after_state,
+        actor=actor,
+    )
+    return game_id
+
+
+def _restore_schedule_game_row(
+    connection: sqlite3.Connection,
+    row: dict[str, object],
+) -> None:
+    columns = [field for field in SCHEDULE_CSV_FIELDNAMES if field != "game_id"]
+    set_clause = ", ".join(f"{field} = ?" for field in columns)
+    params = [row.get(field) for field in columns] + [row.get("game_id")]
+    connection.execute(
+        f"UPDATE schedule_games SET {set_clause} WHERE game_id = ?",
+        params,
+    )
+    connection.commit()

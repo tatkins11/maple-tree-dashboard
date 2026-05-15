@@ -176,6 +176,94 @@ def resolve_player(
     )
 
 
+def reassign_alias(
+    connection: sqlite3.Connection,
+    *,
+    alias_id: int,
+    new_player_id: int,
+    approve: bool = True,
+    actor: str = "admin",
+) -> dict[str, object]:
+    from src.models.audit import (
+        ACTION_ALIAS_REASSIGN,
+        ENTITY_PLAYER_ALIAS,
+        log_audit_entry,
+    )
+
+    alias_row = connection.execute(
+        """
+        SELECT alias_id, player_id, source_name, source_type, approved_flag
+        FROM player_aliases
+        WHERE alias_id = ?
+        """,
+        (int(alias_id),),
+    ).fetchone()
+    if alias_row is None:
+        raise ValueError(f"Alias {alias_id} not found.")
+
+    target_row = connection.execute(
+        "SELECT player_id, player_name FROM player_identity WHERE player_id = ?",
+        (int(new_player_id),),
+    ).fetchone()
+    if target_row is None:
+        raise ValueError(f"Target player_id {new_player_id} not found.")
+
+    before_state = {
+        "player_id": int(alias_row["player_id"]),
+        "approved_flag": int(alias_row["approved_flag"]),
+    }
+    if before_state["player_id"] == int(new_player_id) and (
+        not approve or before_state["approved_flag"] == 1
+    ):
+        return {
+            "alias_id": int(alias_id),
+            "changed": False,
+            "before": before_state,
+            "after": before_state,
+        }
+
+    approved_flag = 1 if approve else int(alias_row["approved_flag"])
+    connection.execute(
+        """
+        UPDATE player_aliases
+        SET player_id = ?,
+            approved_flag = ?,
+            match_method = CASE
+                WHEN match_method = 'manual_override' THEN match_method
+                ELSE 'admin_reassign'
+            END
+        WHERE alias_id = ?
+        """,
+        (int(new_player_id), approved_flag, int(alias_id)),
+    )
+    connection.commit()
+
+    after_state = {
+        "player_id": int(new_player_id),
+        "approved_flag": approved_flag,
+    }
+    summary = (
+        f"Reassigned alias '{alias_row['source_name']}' "
+        f"({alias_row['source_type']}) to {target_row['player_name']}."
+    )
+    log_audit_entry(
+        connection,
+        action_type=ACTION_ALIAS_REASSIGN,
+        entity_type=ENTITY_PLAYER_ALIAS,
+        entity_id=str(alias_id),
+        summary=summary,
+        before_state=before_state,
+        after_state=after_state,
+        actor=actor,
+    )
+    return {
+        "alias_id": int(alias_id),
+        "changed": True,
+        "before": before_state,
+        "after": after_state,
+    }
+
+
 def fetch_identity_review_rows(connection: sqlite3.Connection) -> list[sqlite3.Row]:
     return connection.execute(
         """

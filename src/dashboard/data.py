@@ -1322,6 +1322,377 @@ def fetch_player_record_context(
     }
 
 
+def _rates_from_totals(totals: dict[str, int]) -> dict[str, float]:
+    pa = int(totals.get("pa", 0) or 0)
+    ab = int(totals.get("ab", 0) or 0)
+    hits = int(totals.get("hits", 0) or 0)
+    walks = int(totals.get("bb", 0) or 0)
+    total_bases = int(totals.get("tb", 0) or 0)
+    sacrifice_flies = int(totals.get("sf", 0) or 0)
+    avg = (hits / ab) if ab else 0.0
+    obp_denominator = ab + walks + sacrifice_flies
+    obp = ((hits + walks) / obp_denominator) if obp_denominator else 0.0
+    slg = (total_bases / ab) if ab else 0.0
+    iso = slg - avg if ab else 0.0
+    ops = obp + slg
+    return {
+        "pa": pa,
+        "ab": ab,
+        "hits": hits,
+        "bb": walks,
+        "tb": total_bases,
+        "sf": sacrifice_flies,
+        "avg": avg,
+        "obp": obp,
+        "slg": slg,
+        "ops": ops,
+        "iso": iso,
+    }
+
+
+def _aggregate_game_log_rows(game_log: pd.DataFrame) -> dict[str, int | float]:
+    if game_log.empty:
+        return {
+            **_rates_from_totals({"pa": 0, "ab": 0, "hits": 0, "bb": 0, "tb": 0, "sf": 0}),
+            "games": 0,
+            "1b": 0,
+            "2b": 0,
+            "3b": 0,
+            "hr": 0,
+            "so": 0,
+            "r": 0,
+            "rbi": 0,
+        }
+    counting_fields = ["pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "so", "r", "rbi", "tb", "sf"]
+    totals = {
+        field: int(pd.to_numeric(game_log[field], errors="coerce").fillna(0).sum())
+        if field in game_log.columns
+        else 0
+        for field in counting_fields
+    }
+    rates = _rates_from_totals(totals)
+    return {
+        **rates,
+        "games": int(len(game_log)),
+        "1b": totals["1b"],
+        "2b": totals["2b"],
+        "3b": totals["3b"],
+        "hr": totals["hr"],
+        "so": totals["so"],
+        "r": totals["r"],
+        "rbi": totals["rbi"],
+    }
+
+
+def _classify_form_trend(ops_delta: float, *, hot_threshold: float = 0.080, cold_threshold: float = -0.080) -> str:
+    if ops_delta >= hot_threshold:
+        return "hot"
+    if ops_delta <= cold_threshold:
+        return "cold"
+    return "steady"
+
+
+def fetch_player_recent_form(
+    connection: sqlite3.Connection,
+    canonical_name: str,
+    *,
+    window: int | None = None,
+    season: str | None = None,
+) -> dict[str, object]:
+    full_log = fetch_player_game_log(connection, canonical_name)
+    season_log = full_log
+    if season is not None and not full_log.empty and "season" in full_log.columns:
+        season_log = full_log[full_log["season"].astype(str) == str(season)].copy()
+    sorted_log = season_log.copy()
+    if not sorted_log.empty:
+        sorted_log.loc[:, "_game_date_sort"] = pd.to_datetime(sorted_log["game_date"], errors="coerce")
+        sorted_log.loc[:, "_game_time_sort"] = sorted_log["game_time"].astype(str)
+        sorted_log = sorted_log.sort_values(
+            ["_game_date_sort", "_game_time_sort", "lineup_spot"],
+            ascending=[False, False, True],
+        ).drop(columns=["_game_date_sort", "_game_time_sort"]).reset_index(drop=True)
+
+    games_available = int(len(sorted_log))
+    if window is None or window <= 0:
+        recent_log = sorted_log
+    else:
+        recent_log = sorted_log.head(int(window))
+
+    recent_aggregate = _aggregate_game_log_rows(recent_log)
+    if season is not None:
+        baseline_log = season_log
+        baseline_label = season
+    else:
+        baseline_log = full_log
+        baseline_label = "career"
+    baseline_aggregate = _aggregate_game_log_rows(baseline_log)
+
+    deltas = {
+        f"{field}_delta": float(recent_aggregate.get(field, 0.0)) - float(baseline_aggregate.get(field, 0.0))
+        for field in ("avg", "obp", "slg", "ops", "iso")
+    }
+    trend = _classify_form_trend(deltas["ops_delta"]) if recent_aggregate["pa"] else "steady"
+
+    return {
+        "window": int(len(recent_log)),
+        "requested_window": int(window) if window else 0,
+        "games_available": games_available,
+        "season": season,
+        "baseline_label": baseline_label,
+        "recent": recent_aggregate,
+        "baseline": baseline_aggregate,
+        "deltas": deltas,
+        "trend": trend,
+        "recent_games": recent_log.reset_index(drop=True),
+    }
+
+
+def fetch_player_vs_opponent(
+    connection: sqlite3.Connection,
+    canonical_name: str,
+    *,
+    opponent: str,
+    season: str | None = None,
+) -> dict[str, object]:
+    full_log = fetch_player_game_log(connection, canonical_name)
+    if full_log.empty or "opponent" not in full_log.columns:
+        empty_aggregate = _aggregate_game_log_rows(pd.DataFrame())
+        return {
+            "opponent": opponent,
+            "season": season,
+            "games_played": 0,
+            "totals": empty_aggregate,
+            "recent_games": pd.DataFrame(),
+        }
+
+    filtered = full_log[full_log["opponent"].astype(str).str.casefold() == str(opponent).casefold()].copy()
+    if season is not None:
+        filtered = filtered[filtered["season"].astype(str) == str(season)].copy()
+    if not filtered.empty:
+        filtered.loc[:, "_game_date_sort"] = pd.to_datetime(filtered["game_date"], errors="coerce")
+        filtered = filtered.sort_values(["_game_date_sort", "game_time"], ascending=[False, False]).drop(columns="_game_date_sort").reset_index(drop=True)
+
+    totals = _aggregate_game_log_rows(filtered)
+    return {
+        "opponent": opponent,
+        "season": season,
+        "games_played": int(len(filtered)),
+        "totals": totals,
+        "recent_games": filtered.head(10).reset_index(drop=True),
+    }
+
+
+def fetch_team_vs_opponent(
+    connection: sqlite3.Connection,
+    *,
+    opponent: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+) -> dict[str, object]:
+    rows = connection.execute(
+        """
+        SELECT
+            season,
+            week_label,
+            game_date,
+            game_time,
+            home_away,
+            location_or_field,
+            completed_flag,
+            result,
+            runs_for,
+            runs_against
+        FROM schedule_games
+        WHERE team_name = ?
+          AND COALESCE(opponent_name, '') = ?
+          AND is_bye = 0
+        ORDER BY game_date DESC, COALESCE(game_time, '') DESC
+        """,
+        (team_name, opponent),
+    ).fetchall()
+    if not rows:
+        return {
+            "opponent": opponent,
+            "games_played": 0,
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "runs_for_total": 0,
+            "runs_against_total": 0,
+            "avg_runs_for": 0.0,
+            "avg_runs_against": 0.0,
+            "recent_meetings": pd.DataFrame(),
+        }
+
+    completed = [row for row in rows if int(row["completed_flag"] or 0) == 1]
+    wins = sum(1 for row in completed if str(row["result"] or "").strip().upper() == "W")
+    losses = sum(1 for row in completed if str(row["result"] or "").strip().upper() == "L")
+    ties = sum(1 for row in completed if str(row["result"] or "").strip().upper() == "T")
+    runs_for_total = sum(int(row["runs_for"] or 0) for row in completed)
+    runs_against_total = sum(int(row["runs_against"] or 0) for row in completed)
+    completed_count = len(completed) or 1
+    recent_meetings = pd.DataFrame(
+        [
+            {
+                "season": str(row["season"] or ""),
+                "week_label": str(row["week_label"] or ""),
+                "game_date": str(row["game_date"] or ""),
+                "game_time": str(row["game_time"] or ""),
+                "home_away": str(row["home_away"] or "").title(),
+                "location_or_field": str(row["location_or_field"] or ""),
+                "completed_flag": int(row["completed_flag"] or 0),
+                "result": str(row["result"] or "").strip().upper(),
+                "runs_for": row["runs_for"],
+                "runs_against": row["runs_against"],
+            }
+            for row in rows
+        ]
+    )
+    return {
+        "opponent": opponent,
+        "games_played": len(completed),
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "runs_for_total": runs_for_total,
+        "runs_against_total": runs_against_total,
+        "avg_runs_for": runs_for_total / completed_count,
+        "avg_runs_against": runs_against_total / completed_count,
+        "recent_meetings": recent_meetings,
+    }
+
+
+def fetch_team_recent_form(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    window: int = 5,
+) -> dict[str, object]:
+    rows = connection.execute(
+        """
+        SELECT
+            season,
+            game_date,
+            game_time,
+            opponent_name,
+            completed_flag,
+            result,
+            runs_for,
+            runs_against
+        FROM schedule_games
+        WHERE team_name = ?
+          AND season = ?
+          AND is_bye = 0
+          AND completed_flag = 1
+        ORDER BY game_date DESC, COALESCE(game_time, '') DESC
+        LIMIT ?
+        """,
+        (team_name, season, int(window)),
+    ).fetchall()
+    if not rows:
+        return {
+            "season": season,
+            "team_name": team_name,
+            "window": int(window),
+            "games_played": 0,
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "runs_for_total": 0,
+            "runs_against_total": 0,
+            "avg_runs_for": 0.0,
+            "avg_runs_against": 0.0,
+            "recent": pd.DataFrame(),
+        }
+    wins = sum(1 for row in rows if str(row["result"] or "").strip().upper() == "W")
+    losses = sum(1 for row in rows if str(row["result"] or "").strip().upper() == "L")
+    ties = sum(1 for row in rows if str(row["result"] or "").strip().upper() == "T")
+    runs_for_total = sum(int(row["runs_for"] or 0) for row in rows)
+    runs_against_total = sum(int(row["runs_against"] or 0) for row in rows)
+    games = len(rows)
+    recent = pd.DataFrame(
+        [
+            {
+                "game_date": str(row["game_date"] or ""),
+                "game_time": str(row["game_time"] or ""),
+                "opponent": str(row["opponent_name"] or ""),
+                "result": str(row["result"] or "").strip().upper(),
+                "runs_for": int(row["runs_for"] or 0),
+                "runs_against": int(row["runs_against"] or 0),
+            }
+            for row in rows
+        ]
+    )
+    return {
+        "season": season,
+        "team_name": team_name,
+        "window": int(window),
+        "games_played": games,
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "runs_for_total": runs_for_total,
+        "runs_against_total": runs_against_total,
+        "avg_runs_for": runs_for_total / games,
+        "avg_runs_against": runs_against_total / games,
+        "recent": recent,
+    }
+
+
+def fetch_pregame_hot_bats(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    window: int = 5,
+    min_recent_pa: int = 4,
+    limit: int = 5,
+) -> pd.DataFrame:
+    season_stats = fetch_current_season_stats(connection, season)
+    if season_stats.empty:
+        return pd.DataFrame(
+            columns=["player", "canonical_name", "recent_pa", "recent_ops", "season_ops", "ops_delta", "trend"]
+        )
+    active_roster = fetch_active_roster(connection)
+    active_names = set(active_roster["canonical_name"].astype(str).tolist()) if not active_roster.empty else set()
+    rows: list[dict[str, object]] = []
+    for _, season_row in season_stats.iterrows():
+        canonical_name = str(season_row.get("canonical_name") or "")
+        if not canonical_name:
+            continue
+        if active_names and canonical_name not in active_names:
+            continue
+        form = fetch_player_recent_form(
+            connection,
+            canonical_name,
+            window=int(window),
+            season=season,
+        )
+        recent = form["recent"]
+        if int(recent.get("pa", 0) or 0) < int(min_recent_pa):
+            continue
+        rows.append(
+            {
+                "player": str(season_row.get("player") or ""),
+                "canonical_name": canonical_name,
+                "recent_pa": int(recent["pa"]),
+                "recent_ops": float(recent["ops"]),
+                "season_ops": float(season_row.get("ops") or 0.0),
+                "ops_delta": float(form["deltas"]["ops_delta"]),
+                "trend": str(form["trend"]),
+            }
+        )
+    if not rows:
+        return pd.DataFrame(
+            columns=["player", "canonical_name", "recent_pa", "recent_ops", "season_ops", "ops_delta", "trend"]
+        )
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["ops_delta", "recent_ops", "recent_pa"], ascending=[False, False, False])
+        .head(int(limit))
+        .reset_index(drop=True)
+    )
+
+
 def fetch_schedule_seasons(connection: sqlite3.Connection) -> list[str]:
     rows = connection.execute(
         "SELECT DISTINCT season FROM schedule_games WHERE COALESCE(season, '') <> ''"
@@ -1568,6 +1939,66 @@ def fetch_next_game(
         return None
     upcoming_games = upcoming_games.sort_values(["game_datetime", "week_label", "game_id"]).reset_index(drop=True)
     return upcoming_games.iloc[0].to_dict()
+
+
+def fetch_team_data_freshness(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, object] | None:
+    games = fetch_schedule_games(
+        connection,
+        season=season,
+        team_name=team_name,
+        view_filter="Completed only",
+        as_of=as_of,
+    )
+    if games.empty:
+        return None
+    completed = games.loc[~games["is_bye"].astype(bool)].copy()
+    if completed.empty:
+        return None
+    completed = completed.sort_values(["game_datetime", "game_id"], ascending=[False, False]).reset_index(drop=True)
+    latest = completed.iloc[0]
+
+    runs_for = latest.get("runs_for")
+    runs_against = latest.get("runs_against")
+    result = str(latest.get("result_display") or latest.get("result") or "").strip().upper()
+    opponent = str(latest.get("opponent_display") or latest.get("opponent_name") or "").strip()
+    date_display = str(latest.get("date_display") or latest.get("game_date") or "").strip()
+
+    score_text = ""
+    if pd.notna(runs_for) and pd.notna(runs_against):
+        score_text = f"{int(runs_for)}-{int(runs_against)}"
+    if result and score_text:
+        result_summary = f"{result} {score_text}"
+    elif result:
+        result_summary = result
+    elif score_text:
+        result_summary = score_text
+    else:
+        result_summary = ""
+
+    if opponent and result_summary:
+        summary = f"{date_display} vs {opponent} ({result_summary})"
+    elif opponent:
+        summary = f"{date_display} vs {opponent}"
+    else:
+        summary = date_display
+
+    return {
+        "season": season,
+        "game_date": str(latest.get("game_date") or ""),
+        "date_display": date_display,
+        "opponent": opponent,
+        "result": result,
+        "runs_for": int(runs_for) if pd.notna(runs_for) else None,
+        "runs_against": int(runs_against) if pd.notna(runs_against) else None,
+        "result_summary": result_summary,
+        "summary": summary,
+    }
 
 
 def fetch_upcoming_schedule(

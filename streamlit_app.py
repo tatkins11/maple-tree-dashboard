@@ -13,11 +13,15 @@ from src.dashboard.data import (
     DEFAULT_DASHBOARD_SEASON,
     fetch_enriched_standings_snapshot,
     fetch_next_game,
+    fetch_pregame_hot_bats,
     fetch_saved_writeups,
     fetch_seasons,
     fetch_schedule_season_summary,
     fetch_schedule_seasons,
+    fetch_team_data_freshness,
+    fetch_team_recent_form,
     fetch_team_summary,
+    fetch_team_vs_opponent,
     fetch_top_hitters,
     fetch_writeup_milestone_watch,
     get_connection,
@@ -27,6 +31,7 @@ from src.dashboard.ui import (
     PLAYER_CARD_URL_PATH,
     database_path_control,
     get_responsive_layout_context,
+    render_data_freshness_caption,
     render_static_table,
     render_mobile_install_help,
     render_mobile_standings_cards,
@@ -191,6 +196,106 @@ def _render_next_game_card(next_game: dict[str, object] | None) -> None:
     )
 
 
+def _format_pregame_meeting(row) -> str:
+    runs_for = row.get("runs_for")
+    runs_against = row.get("runs_against")
+    result = str(row.get("result") or "").strip().upper()
+    score = ""
+    if runs_for is not None and runs_against is not None and str(runs_for) != "" and str(runs_against) != "":
+        score = f" {int(runs_for)}-{int(runs_against)}"
+    return f"{row.get('game_date', '')} — {result}{score}".strip(" —")
+
+
+def _render_pregame_snapshot(
+    connection,
+    *,
+    next_game: dict[str, object] | None,
+    schedule_season: str,
+    is_mobile_layout: bool,
+) -> None:
+    st.markdown("### Pregame Snapshot")
+
+    if next_game is None:
+        st.caption("Pregame snapshot will appear once the next Maple Tree game is loaded.")
+        return
+
+    opponent = str(next_game.get("opponent_display") or next_game.get("opponent_name") or "").strip()
+    if not opponent or opponent.upper() == "BYE":
+        st.caption("Bye week — no opponent for the pregame snapshot.")
+        return
+
+    head_to_head = fetch_team_vs_opponent(connection, opponent=opponent)
+    team_form = fetch_team_recent_form(connection, season=schedule_season, window=5)
+    hot_bats = fetch_pregame_hot_bats(connection, season=schedule_season, window=5, min_recent_pa=3, limit=5)
+
+    columns = st.columns(1 if is_mobile_layout else 2, gap="small")
+
+    with columns[0]:
+        st.markdown(f"**Series vs {escape(opponent)}**")
+        if head_to_head["games_played"] == 0:
+            st.caption("First time facing this opponent on record.")
+        else:
+            line = (
+                f"All-time: {head_to_head['wins']}-{head_to_head['losses']}"
+                + (f"-{head_to_head['ties']}" if head_to_head["ties"] else "")
+                + f" · {head_to_head['avg_runs_for']:.1f} RF / {head_to_head['avg_runs_against']:.1f} RA per game"
+            )
+            st.markdown(
+                f"<div class='home-section-note'>{escape(line)}</div>",
+                unsafe_allow_html=True,
+            )
+            recent_meetings = head_to_head["recent_meetings"]
+            completed_meetings = recent_meetings[recent_meetings["completed_flag"] == 1].head(3)
+            if not completed_meetings.empty:
+                meeting_items = "".join(
+                    f"<li>{escape(_format_pregame_meeting(row))}</li>"
+                    for _, row in completed_meetings.iterrows()
+                )
+                st.markdown(
+                    f"<ul class='home-card-list'>{meeting_items}</ul>",
+                    unsafe_allow_html=True,
+                )
+
+        st.markdown(f"**Recent form ({schedule_season})**")
+        if team_form["games_played"] == 0:
+            st.caption("No completed games on record for the current season yet.")
+        else:
+            record = (
+                f"{team_form['wins']}-{team_form['losses']}"
+                + (f"-{team_form['ties']}" if team_form["ties"] else "")
+            )
+            line = (
+                f"Last {team_form['games_played']} game{'s' if team_form['games_played'] != 1 else ''}: "
+                f"{record} · {team_form['avg_runs_for']:.1f} RF / {team_form['avg_runs_against']:.1f} RA"
+            )
+            st.markdown(
+                f"<div class='home-section-note'>{escape(line)}</div>",
+                unsafe_allow_html=True,
+            )
+
+    with columns[-1]:
+        st.markdown("**Hot bats heading in**")
+        if hot_bats.empty:
+            st.caption("Not enough recent game-log data to flag hot streaks yet.")
+        else:
+            for _, row in hot_bats.iterrows():
+                delta_text = _format_pregame_delta(float(row["ops_delta"]))
+                line = (
+                    f"{row['player']} — last {int(row['recent_pa'])} PA: "
+                    f"OPS {row['recent_ops']:.3f} ({delta_text} vs season)"
+                )
+                st.markdown(
+                    f"<div class='home-section-note'>{escape(line)}</div>",
+                    unsafe_allow_html=True,
+                )
+
+
+def _format_pregame_delta(value: float) -> str:
+    if value > 0:
+        return f"+{value:.3f}"
+    return f"{value:.3f}"
+
+
 def _render_milestone_card(lines: list[str]) -> None:
     st.markdown("### Milestone Watch")
     if not lines:
@@ -337,6 +442,12 @@ def render_home_page() -> None:
     saved_postgames = fetch_saved_writeups(connection, season=selected_season, phase="postgame")
     milestone_lines = fetch_writeup_milestone_watch(connection, limit=4)
     standings = fetch_enriched_standings_snapshot(connection, season=schedule_season)
+    data_freshness = fetch_team_data_freshness(
+        connection,
+        season=schedule_season,
+        team_name=DEFAULT_SCHEDULE_TEAM_NAME,
+    )
+    render_data_freshness_caption(data_freshness)
 
     st.markdown("### Team Snapshot")
     _render_metric_grid(
@@ -364,6 +475,13 @@ def render_home_page() -> None:
     else:
         with detail_cols[1]:
             _render_milestone_card(milestone_lines)
+
+    _render_pregame_snapshot(
+        connection,
+        next_game=next_game,
+        schedule_season=schedule_season,
+        is_mobile_layout=layout.is_mobile_layout,
+    )
 
     _render_postgame_card(saved_postgames)
 

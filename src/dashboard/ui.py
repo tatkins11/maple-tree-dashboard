@@ -328,6 +328,189 @@ def render_static_table(
         unsafe_allow_html=True,
     )
 
+_PERSISTENT_STATE_PREFIX = "_persistent_"
+_PERSISTENT_MULTI_SEPARATOR = "|"
+
+
+def _persistent_state_key(query_key: str) -> str:
+    return f"{_PERSISTENT_STATE_PREFIX}{query_key}"
+
+
+def _read_query_param(query_key: str) -> str | None:
+    try:
+        raw = st.query_params.get(query_key)
+    except Exception:
+        return None
+    return None if raw is None else str(raw)
+
+
+def _write_query_param(query_key: str, encoded: str) -> None:
+    try:
+        current = st.query_params.get(query_key)
+    except Exception:
+        current = None
+    if encoded == "":
+        if current is not None:
+            try:
+                del st.query_params[query_key]
+            except Exception:
+                pass
+        return
+    if str(current) != encoded:
+        try:
+            st.query_params[query_key] = encoded
+        except Exception:
+            pass
+
+
+def persistent_selectbox(
+    label: str,
+    options: list,
+    *,
+    query_key: str,
+    default=None,
+    **kwargs,
+):
+    state_key = _persistent_state_key(query_key)
+    if state_key not in st.session_state:
+        raw = _read_query_param(query_key)
+        resolved = None
+        if raw is not None:
+            for option in options:
+                if str(option) == raw:
+                    resolved = option
+                    break
+        if resolved is None:
+            resolved = default if default is not None else (options[0] if options else None)
+        st.session_state[state_key] = resolved
+    elif options and st.session_state[state_key] not in options:
+        st.session_state[state_key] = default if default in options else options[0]
+    value = st.selectbox(label, options=options, key=state_key, **kwargs)
+    _write_query_param(query_key, "" if value is None else str(value))
+    return value
+
+
+def persistent_multiselect(
+    label: str,
+    options: list,
+    *,
+    query_key: str,
+    default: list | None = None,
+    separator: str = _PERSISTENT_MULTI_SEPARATOR,
+    **kwargs,
+) -> list:
+    state_key = _persistent_state_key(query_key)
+    if state_key not in st.session_state:
+        raw = _read_query_param(query_key)
+        if raw is not None:
+            option_lookup = {str(option): option for option in options}
+            resolved = [option_lookup[item] for item in raw.split(separator) if item in option_lookup]
+        else:
+            resolved = list(default) if default is not None else list(options)
+        st.session_state[state_key] = resolved
+    else:
+        st.session_state[state_key] = [item for item in st.session_state[state_key] if item in options]
+    value = st.multiselect(label, options=options, key=state_key, **kwargs)
+    _write_query_param(query_key, separator.join(str(item) for item in value))
+    return value
+
+
+def persistent_slider(
+    label: str,
+    *,
+    query_key: str,
+    min_value: int,
+    max_value: int,
+    default: int,
+    step: int = 1,
+    **kwargs,
+) -> int:
+    state_key = _persistent_state_key(query_key)
+    if state_key not in st.session_state:
+        raw = _read_query_param(query_key)
+        resolved = default
+        if raw is not None:
+            try:
+                candidate = int(raw)
+                if min_value <= candidate <= max_value:
+                    resolved = candidate
+            except (TypeError, ValueError):
+                pass
+        st.session_state[state_key] = resolved
+    value = st.slider(
+        label,
+        min_value=min_value,
+        max_value=max_value,
+        step=step,
+        key=state_key,
+        **kwargs,
+    )
+    _write_query_param(query_key, str(value))
+    return value
+
+
+def persistent_segmented_control(
+    label: str,
+    options: list,
+    *,
+    query_key: str,
+    default,
+    **kwargs,
+):
+    state_key = _persistent_state_key(query_key)
+    if state_key not in st.session_state:
+        raw = _read_query_param(query_key)
+        resolved = default
+        if raw is not None:
+            for option in options:
+                if str(option) == raw:
+                    resolved = option
+                    break
+        st.session_state[state_key] = resolved
+    elif options and st.session_state[state_key] not in options:
+        st.session_state[state_key] = default
+    value = st.segmented_control(label, options=options, key=state_key, **kwargs)
+    _write_query_param(query_key, "" if value is None else str(value))
+    return value
+
+
+def persistent_toggle(
+    label: str,
+    *,
+    query_key: str,
+    default: bool = False,
+    **kwargs,
+) -> bool:
+    state_key = _persistent_state_key(query_key)
+    if state_key not in st.session_state:
+        raw = _read_query_param(query_key)
+        if raw in ("1", "true", "True"):
+            st.session_state[state_key] = True
+        elif raw in ("0", "false", "False"):
+            st.session_state[state_key] = False
+        else:
+            st.session_state[state_key] = default
+    value = st.toggle(label, key=state_key, **kwargs)
+    _write_query_param(query_key, "1" if value else "0")
+    return value
+
+
+def render_data_freshness_caption(
+    freshness: dict[str, object] | None,
+    *,
+    label: str = "Stats current through",
+    empty_message: str = "No completed games loaded yet for this season.",
+) -> None:
+    if not freshness:
+        st.caption(empty_message)
+        return
+    summary = str(freshness.get("summary") or "").strip()
+    if not summary:
+        st.caption(empty_message)
+        return
+    st.caption(f"{label} {summary}")
+
+
 def database_path_control(default_path: Path, *, key: str) -> str:
     if should_use_hosted_database():
         st.sidebar.caption("Database: hosted Supabase/Postgres")

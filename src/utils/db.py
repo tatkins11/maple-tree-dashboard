@@ -124,250 +124,280 @@ def _normalize_postgres_url(database_url: str) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
+_SCHEMA_TEMPLATE = """
+CREATE TABLE IF NOT EXISTS players (
+    player_id {AUTOINC_PK},
+    player_name TEXT NOT NULL,
+    canonical_name TEXT NOT NULL UNIQUE,
+    active_flag INTEGER NOT NULL DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS player_identity (
+    player_id INTEGER PRIMARY KEY,
+    player_name TEXT NOT NULL,
+    canonical_name TEXT NOT NULL UNIQUE,
+    active_flag INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (player_id) REFERENCES players(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS player_aliases (
+    alias_id {AUTOINC_PK},
+    player_id INTEGER NOT NULL,
+    source_name TEXT NOT NULL,
+    normalized_source_name TEXT NOT NULL,
+    source_type TEXT NOT NULL,
+    source_file TEXT,
+    match_method TEXT NOT NULL,
+    approved_flag INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (player_id) REFERENCES player_identity(player_id),
+    UNIQUE (source_name, source_type)
+);
+
+CREATE TABLE IF NOT EXISTS player_metadata (
+    player_id INTEGER PRIMARY KEY,
+    preferred_display_name TEXT NOT NULL,
+    is_fixed_dhh INTEGER NOT NULL DEFAULT 0,
+    baserunning_grade TEXT NOT NULL DEFAULT 'C',
+    consistency_grade TEXT NOT NULL DEFAULT 'C',
+    speed_flag INTEGER NOT NULL DEFAULT 0,
+    active_flag INTEGER NOT NULL DEFAULT 1,
+    notes TEXT,
+    FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS season_rosters (
+    season_name TEXT NOT NULL,
+    player_id INTEGER NOT NULL,
+    source_name TEXT NOT NULL,
+    active_flag INTEGER NOT NULL DEFAULT 1,
+    notes TEXT,
+    PRIMARY KEY (season_name, player_id),
+    FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS player_season_metadata (
+    player_id INTEGER NOT NULL,
+    season TEXT NOT NULL,
+    injury_flag INTEGER NOT NULL DEFAULT 0,
+    manual_weight_multiplier REAL,
+    notes TEXT,
+    PRIMARY KEY (player_id, season),
+    FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS games (
+    game_id {AUTOINC_PK},
+    team_name TEXT,
+    game_date TEXT NOT NULL,
+    game_time TEXT,
+    opponent_name TEXT NOT NULL,
+    team_score INTEGER,
+    opponent_score INTEGER,
+    source_file TEXT NOT NULL UNIQUE,
+    season TEXT NOT NULL,
+    notes TEXT
+);
+
+CREATE TABLE IF NOT EXISTS season_batting_stats (
+    season TEXT NOT NULL,
+    player_id INTEGER NOT NULL,
+    games INTEGER NOT NULL,
+    plate_appearances INTEGER NOT NULL,
+    at_bats INTEGER NOT NULL,
+    hits INTEGER NOT NULL,
+    singles INTEGER NOT NULL,
+    doubles INTEGER NOT NULL,
+    triples INTEGER NOT NULL,
+    home_runs INTEGER NOT NULL,
+    walks INTEGER NOT NULL,
+    strikeouts INTEGER NOT NULL,
+    hit_by_pitch INTEGER NOT NULL DEFAULT 0,
+    sacrifice_hits INTEGER NOT NULL DEFAULT 0,
+    sacrifice_flies INTEGER NOT NULL,
+    reached_on_error INTEGER NOT NULL DEFAULT 0,
+    fielder_choice INTEGER NOT NULL DEFAULT 0,
+    grounded_into_double_play INTEGER NOT NULL DEFAULT 0,
+    runs INTEGER NOT NULL,
+    rbi INTEGER NOT NULL,
+    total_bases INTEGER NOT NULL,
+    batting_average REAL NOT NULL,
+    on_base_percentage REAL NOT NULL,
+    slugging_percentage REAL NOT NULL,
+    ops REAL NOT NULL,
+    batting_average_risp REAL NOT NULL DEFAULT 0,
+    two_out_rbi INTEGER NOT NULL DEFAULT 0,
+    left_on_base INTEGER NOT NULL DEFAULT 0,
+    raw_source_file TEXT NOT NULL,
+    PRIMARY KEY (season, player_id, raw_source_file),
+    FOREIGN KEY (player_id) REFERENCES players(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS player_game_batting (
+    game_id INTEGER NOT NULL,
+    player_id INTEGER NOT NULL,
+    lineup_spot INTEGER NOT NULL,
+    plate_appearances INTEGER NOT NULL,
+    at_bats INTEGER NOT NULL,
+    singles INTEGER NOT NULL,
+    doubles INTEGER NOT NULL,
+    triples INTEGER NOT NULL,
+    home_runs INTEGER NOT NULL,
+    walks INTEGER NOT NULL,
+    strikeouts INTEGER NOT NULL,
+    sacrifice_flies INTEGER NOT NULL,
+    fielder_choice INTEGER NOT NULL,
+    double_plays INTEGER NOT NULL,
+    outs INTEGER NOT NULL,
+    runs INTEGER NOT NULL DEFAULT 0,
+    rbi INTEGER NOT NULL DEFAULT 0,
+    raw_scorebook_file TEXT NOT NULL,
+    PRIMARY KEY (game_id, player_id),
+    FOREIGN KEY (game_id) REFERENCES games(game_id),
+    FOREIGN KEY (player_id) REFERENCES players(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS hitter_projections (
+    projection_season TEXT NOT NULL,
+    player_id INTEGER NOT NULL,
+    projection_source TEXT NOT NULL DEFAULT 'season_blended',
+    current_plate_appearances INTEGER NOT NULL,
+    career_plate_appearances INTEGER NOT NULL,
+    baseline_plate_appearances INTEGER NOT NULL,
+    weighted_prior_plate_appearances REAL NOT NULL DEFAULT 0,
+    season_count_used INTEGER NOT NULL DEFAULT 0,
+    current_season_weight REAL NOT NULL,
+    consistency_score REAL NOT NULL DEFAULT 0,
+    volatility_score REAL NOT NULL DEFAULT 0,
+    trend_score REAL NOT NULL DEFAULT 0,
+    p_single REAL NOT NULL,
+    p_double REAL NOT NULL,
+    p_triple REAL NOT NULL,
+    p_home_run REAL NOT NULL,
+    p_walk REAL NOT NULL,
+    projected_strikeout_rate REAL NOT NULL DEFAULT 0,
+    p_hit_by_pitch REAL NOT NULL,
+    p_reached_on_error REAL NOT NULL,
+    p_fielder_choice REAL NOT NULL,
+    p_grounded_into_double_play REAL NOT NULL,
+    p_out REAL NOT NULL,
+    projected_on_base_rate REAL NOT NULL,
+    projected_total_base_rate REAL NOT NULL,
+    projected_run_rate REAL NOT NULL,
+    projected_rbi_rate REAL NOT NULL,
+    projected_extra_base_hit_rate REAL NOT NULL,
+    fixed_dhh_flag INTEGER NOT NULL DEFAULT 0,
+    baserunning_adjustment REAL NOT NULL DEFAULT 0,
+    secondary_batting_average_risp REAL NOT NULL DEFAULT 0,
+    secondary_two_out_rbi_rate REAL NOT NULL DEFAULT 0,
+    secondary_left_on_base_rate REAL NOT NULL DEFAULT 0,
+    PRIMARY KEY (projection_season, player_id),
+    FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
+);
+
+CREATE TABLE IF NOT EXISTS schedule_games (
+    game_id TEXT PRIMARY KEY,
+    season TEXT NOT NULL,
+    league_name TEXT,
+    division_name TEXT,
+    week_label TEXT,
+    game_date TEXT NOT NULL,
+    game_time TEXT,
+    team_name TEXT NOT NULL,
+    opponent_name TEXT,
+    home_away TEXT,
+    location_or_field TEXT,
+    status TEXT NOT NULL DEFAULT 'scheduled',
+    completed_flag INTEGER NOT NULL DEFAULT 0,
+    is_bye INTEGER NOT NULL DEFAULT 0,
+    result TEXT,
+    runs_for INTEGER,
+    runs_against INTEGER,
+    notes TEXT,
+    source TEXT
+);
+
+CREATE TABLE IF NOT EXISTS standings_snapshot (
+    snapshot_row_id {AUTOINC_PK},
+    season TEXT NOT NULL,
+    league_name TEXT,
+    division_name TEXT,
+    snapshot_date TEXT NOT NULL,
+    team_name TEXT NOT NULL,
+    wins INTEGER NOT NULL DEFAULT 0,
+    losses INTEGER NOT NULL DEFAULT 0,
+    ties INTEGER NOT NULL DEFAULT 0,
+    win_pct REAL NOT NULL DEFAULT 0,
+    games_back REAL,
+    notes TEXT,
+    source TEXT
+);
+
+CREATE TABLE IF NOT EXISTS league_schedule_games (
+    league_game_id TEXT PRIMARY KEY,
+    season TEXT NOT NULL,
+    league_name TEXT,
+    division_name TEXT,
+    week_label TEXT,
+    game_date TEXT NOT NULL,
+    game_time TEXT,
+    location_or_field TEXT,
+    home_team TEXT NOT NULL,
+    away_team TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'scheduled',
+    completed_flag INTEGER NOT NULL DEFAULT 0,
+    home_runs INTEGER,
+    away_runs INTEGER,
+    result_summary TEXT,
+    notes TEXT,
+    source TEXT
+);
+
+CREATE TABLE IF NOT EXISTS writeups (
+    writeup_id {AUTOINC_PK},
+    season TEXT NOT NULL,
+    week_label TEXT NOT NULL,
+    phase TEXT NOT NULL,
+    title TEXT NOT NULL,
+    markdown TEXT NOT NULL,
+    source TEXT,
+    created_at {TIMESTAMP} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at {TIMESTAMP} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (season, week_label, phase)
+);
+
+CREATE TABLE IF NOT EXISTS admin_audit_log (
+    audit_id {AUTOINC_PK},
+    created_at {TIMESTAMP} NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    action_type TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    summary TEXT NOT NULL,
+    before_state TEXT,
+    after_state TEXT,
+    actor TEXT,
+    undone_flag INTEGER NOT NULL DEFAULT 0,
+    undone_at {TIMESTAMP}
+);
+"""
+
+_SQLITE_DIALECT = {
+    "AUTOINC_PK": "INTEGER PRIMARY KEY AUTOINCREMENT",
+    "TIMESTAMP": "TEXT",
+}
+
+_POSTGRES_DIALECT = {
+    "AUTOINC_PK": "SERIAL PRIMARY KEY",
+    "TIMESTAMP": "TIMESTAMPTZ",
+}
+
+
+def _render_schema(dialect: dict[str, str]) -> str:
+    return _SCHEMA_TEMPLATE.format(**dialect)
+
+
 def initialize_database(connection: sqlite3.Connection) -> None:
-    connection.executescript(
-        """
-        CREATE TABLE IF NOT EXISTS players (
-            player_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            player_name TEXT NOT NULL,
-            canonical_name TEXT NOT NULL UNIQUE,
-            active_flag INTEGER NOT NULL DEFAULT 1
-        );
-
-        CREATE TABLE IF NOT EXISTS player_identity (
-            player_id INTEGER PRIMARY KEY,
-            player_name TEXT NOT NULL,
-            canonical_name TEXT NOT NULL UNIQUE,
-            active_flag INTEGER NOT NULL DEFAULT 1,
-            FOREIGN KEY (player_id) REFERENCES players(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS player_aliases (
-            alias_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            player_id INTEGER NOT NULL,
-            source_name TEXT NOT NULL,
-            normalized_source_name TEXT NOT NULL,
-            source_type TEXT NOT NULL,
-            source_file TEXT,
-            match_method TEXT NOT NULL,
-            approved_flag INTEGER NOT NULL DEFAULT 0,
-            FOREIGN KEY (player_id) REFERENCES player_identity(player_id),
-            UNIQUE (source_name, source_type)
-        );
-
-        CREATE TABLE IF NOT EXISTS player_metadata (
-            player_id INTEGER PRIMARY KEY,
-            preferred_display_name TEXT NOT NULL,
-            is_fixed_dhh INTEGER NOT NULL DEFAULT 0,
-            baserunning_grade TEXT NOT NULL DEFAULT 'C',
-            consistency_grade TEXT NOT NULL DEFAULT 'C',
-            speed_flag INTEGER NOT NULL DEFAULT 0,
-            active_flag INTEGER NOT NULL DEFAULT 1,
-            notes TEXT,
-            FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS season_rosters (
-            season_name TEXT NOT NULL,
-            player_id INTEGER NOT NULL,
-            source_name TEXT NOT NULL,
-            active_flag INTEGER NOT NULL DEFAULT 1,
-            notes TEXT,
-            PRIMARY KEY (season_name, player_id),
-            FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS player_season_metadata (
-            player_id INTEGER NOT NULL,
-            season TEXT NOT NULL,
-            injury_flag INTEGER NOT NULL DEFAULT 0,
-            manual_weight_multiplier REAL,
-            notes TEXT,
-            PRIMARY KEY (player_id, season),
-            FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS games (
-            game_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            team_name TEXT,
-            game_date TEXT NOT NULL,
-            game_time TEXT,
-            opponent_name TEXT NOT NULL,
-            team_score INTEGER,
-            opponent_score INTEGER,
-            source_file TEXT NOT NULL UNIQUE,
-            season TEXT NOT NULL,
-            notes TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS season_batting_stats (
-            season TEXT NOT NULL,
-            player_id INTEGER NOT NULL,
-            games INTEGER NOT NULL,
-            plate_appearances INTEGER NOT NULL,
-            at_bats INTEGER NOT NULL,
-            hits INTEGER NOT NULL,
-            singles INTEGER NOT NULL,
-            doubles INTEGER NOT NULL,
-            triples INTEGER NOT NULL,
-            home_runs INTEGER NOT NULL,
-            walks INTEGER NOT NULL,
-            strikeouts INTEGER NOT NULL,
-            hit_by_pitch INTEGER NOT NULL DEFAULT 0,
-            sacrifice_hits INTEGER NOT NULL DEFAULT 0,
-            sacrifice_flies INTEGER NOT NULL,
-            reached_on_error INTEGER NOT NULL DEFAULT 0,
-            fielder_choice INTEGER NOT NULL DEFAULT 0,
-            grounded_into_double_play INTEGER NOT NULL DEFAULT 0,
-            runs INTEGER NOT NULL,
-            rbi INTEGER NOT NULL,
-            total_bases INTEGER NOT NULL,
-            batting_average REAL NOT NULL,
-            on_base_percentage REAL NOT NULL,
-            slugging_percentage REAL NOT NULL,
-            ops REAL NOT NULL,
-            batting_average_risp REAL NOT NULL DEFAULT 0,
-            two_out_rbi INTEGER NOT NULL DEFAULT 0,
-            left_on_base INTEGER NOT NULL DEFAULT 0,
-            raw_source_file TEXT NOT NULL,
-            PRIMARY KEY (season, player_id, raw_source_file),
-            FOREIGN KEY (player_id) REFERENCES players(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS player_game_batting (
-            game_id INTEGER NOT NULL,
-            player_id INTEGER NOT NULL,
-            lineup_spot INTEGER NOT NULL,
-            plate_appearances INTEGER NOT NULL,
-            at_bats INTEGER NOT NULL,
-            singles INTEGER NOT NULL,
-            doubles INTEGER NOT NULL,
-            triples INTEGER NOT NULL,
-            home_runs INTEGER NOT NULL,
-            walks INTEGER NOT NULL,
-            strikeouts INTEGER NOT NULL,
-            sacrifice_flies INTEGER NOT NULL,
-            fielder_choice INTEGER NOT NULL,
-            double_plays INTEGER NOT NULL,
-            outs INTEGER NOT NULL,
-            runs INTEGER NOT NULL DEFAULT 0,
-            rbi INTEGER NOT NULL DEFAULT 0,
-            raw_scorebook_file TEXT NOT NULL,
-            PRIMARY KEY (game_id, player_id),
-            FOREIGN KEY (game_id) REFERENCES games(game_id),
-            FOREIGN KEY (player_id) REFERENCES players(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS hitter_projections (
-            projection_season TEXT NOT NULL,
-            player_id INTEGER NOT NULL,
-            projection_source TEXT NOT NULL DEFAULT 'season_blended',
-            current_plate_appearances INTEGER NOT NULL,
-            career_plate_appearances INTEGER NOT NULL,
-            baseline_plate_appearances INTEGER NOT NULL,
-            weighted_prior_plate_appearances REAL NOT NULL DEFAULT 0,
-            season_count_used INTEGER NOT NULL DEFAULT 0,
-            current_season_weight REAL NOT NULL,
-            consistency_score REAL NOT NULL DEFAULT 0,
-            volatility_score REAL NOT NULL DEFAULT 0,
-            trend_score REAL NOT NULL DEFAULT 0,
-            p_single REAL NOT NULL,
-            p_double REAL NOT NULL,
-            p_triple REAL NOT NULL,
-            p_home_run REAL NOT NULL,
-            p_walk REAL NOT NULL,
-            projected_strikeout_rate REAL NOT NULL DEFAULT 0,
-            p_hit_by_pitch REAL NOT NULL,
-            p_reached_on_error REAL NOT NULL,
-            p_fielder_choice REAL NOT NULL,
-            p_grounded_into_double_play REAL NOT NULL,
-            p_out REAL NOT NULL,
-            projected_on_base_rate REAL NOT NULL,
-            projected_total_base_rate REAL NOT NULL,
-            projected_run_rate REAL NOT NULL,
-            projected_rbi_rate REAL NOT NULL,
-            projected_extra_base_hit_rate REAL NOT NULL,
-            fixed_dhh_flag INTEGER NOT NULL DEFAULT 0,
-            baserunning_adjustment REAL NOT NULL DEFAULT 0,
-            secondary_batting_average_risp REAL NOT NULL DEFAULT 0,
-            secondary_two_out_rbi_rate REAL NOT NULL DEFAULT 0,
-            secondary_left_on_base_rate REAL NOT NULL DEFAULT 0,
-            PRIMARY KEY (projection_season, player_id),
-            FOREIGN KEY (player_id) REFERENCES player_identity(player_id)
-        );
-
-        CREATE TABLE IF NOT EXISTS schedule_games (
-            game_id TEXT PRIMARY KEY,
-            season TEXT NOT NULL,
-            league_name TEXT,
-            division_name TEXT,
-            week_label TEXT,
-            game_date TEXT NOT NULL,
-            game_time TEXT,
-            team_name TEXT NOT NULL,
-            opponent_name TEXT,
-            home_away TEXT,
-            location_or_field TEXT,
-            status TEXT NOT NULL DEFAULT 'scheduled',
-            completed_flag INTEGER NOT NULL DEFAULT 0,
-            is_bye INTEGER NOT NULL DEFAULT 0,
-            result TEXT,
-            runs_for INTEGER,
-            runs_against INTEGER,
-            notes TEXT,
-            source TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS standings_snapshot (
-            snapshot_row_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            season TEXT NOT NULL,
-            league_name TEXT,
-            division_name TEXT,
-            snapshot_date TEXT NOT NULL,
-            team_name TEXT NOT NULL,
-            wins INTEGER NOT NULL DEFAULT 0,
-            losses INTEGER NOT NULL DEFAULT 0,
-            ties INTEGER NOT NULL DEFAULT 0,
-            win_pct REAL NOT NULL DEFAULT 0,
-            games_back REAL,
-            notes TEXT,
-            source TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS league_schedule_games (
-            league_game_id TEXT PRIMARY KEY,
-            season TEXT NOT NULL,
-            league_name TEXT,
-            division_name TEXT,
-            week_label TEXT,
-            game_date TEXT NOT NULL,
-            game_time TEXT,
-            location_or_field TEXT,
-            home_team TEXT NOT NULL,
-            away_team TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'scheduled',
-            completed_flag INTEGER NOT NULL DEFAULT 0,
-            home_runs INTEGER,
-            away_runs INTEGER,
-            result_summary TEXT,
-            notes TEXT,
-            source TEXT
-        );
-
-        CREATE TABLE IF NOT EXISTS writeups (
-            writeup_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            season TEXT NOT NULL,
-            week_label TEXT NOT NULL,
-            phase TEXT NOT NULL,
-            title TEXT NOT NULL,
-            markdown TEXT NOT NULL,
-            source TEXT,
-            created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE (season, week_label, phase)
-        );
-        """
-    )
+    connection.executescript(_render_schema(_SQLITE_DIALECT))
+    _create_app_indexes(connection)
     _ensure_column(connection, "season_batting_stats", "hit_by_pitch", "INTEGER NOT NULL DEFAULT 0")
     _ensure_column(connection, "season_batting_stats", "sacrifice_hits", "INTEGER NOT NULL DEFAULT 0")
     _ensure_column(connection, "season_batting_stats", "reached_on_error", "INTEGER NOT NULL DEFAULT 0")
@@ -395,248 +425,23 @@ def initialize_database(connection: sqlite3.Connection) -> None:
     connection.commit()
 
 
+_POSTGRES_LIVE_MIGRATIONS: tuple[str, ...] = (
+    "ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS runs INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS rbi INTEGER NOT NULL DEFAULT 0",
+    "ALTER TABLE games ADD COLUMN IF NOT EXISTS team_name TEXT",
+    "ALTER TABLE games ADD COLUMN IF NOT EXISTS game_time TEXT",
+    "ALTER TABLE games ADD COLUMN IF NOT EXISTS team_score INTEGER",
+    "ALTER TABLE games ADD COLUMN IF NOT EXISTS opponent_score INTEGER",
+)
+
+
 def initialize_postgres_database(connection) -> None:
     with connection.cursor() as cursor:
-        cursor.execute(
-            """
-            CREATE TABLE IF NOT EXISTS players (
-                player_id SERIAL PRIMARY KEY,
-                player_name TEXT NOT NULL,
-                canonical_name TEXT NOT NULL UNIQUE,
-                active_flag INTEGER NOT NULL DEFAULT 1
-            );
-
-            CREATE TABLE IF NOT EXISTS player_identity (
-                player_id INTEGER PRIMARY KEY REFERENCES players(player_id),
-                player_name TEXT NOT NULL,
-                canonical_name TEXT NOT NULL UNIQUE,
-                active_flag INTEGER NOT NULL DEFAULT 1
-            );
-
-            CREATE TABLE IF NOT EXISTS player_aliases (
-                alias_id SERIAL PRIMARY KEY,
-                player_id INTEGER NOT NULL REFERENCES player_identity(player_id),
-                source_name TEXT NOT NULL,
-                normalized_source_name TEXT NOT NULL,
-                source_type TEXT NOT NULL,
-                source_file TEXT,
-                match_method TEXT NOT NULL,
-                approved_flag INTEGER NOT NULL DEFAULT 0,
-                UNIQUE (source_name, source_type)
-            );
-
-            CREATE TABLE IF NOT EXISTS player_metadata (
-                player_id INTEGER PRIMARY KEY REFERENCES player_identity(player_id),
-                preferred_display_name TEXT NOT NULL,
-                is_fixed_dhh INTEGER NOT NULL DEFAULT 0,
-                baserunning_grade TEXT NOT NULL DEFAULT 'C',
-                consistency_grade TEXT NOT NULL DEFAULT 'C',
-                speed_flag INTEGER NOT NULL DEFAULT 0,
-                active_flag INTEGER NOT NULL DEFAULT 1,
-                notes TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS season_rosters (
-                season_name TEXT NOT NULL,
-                player_id INTEGER NOT NULL REFERENCES player_identity(player_id),
-                source_name TEXT NOT NULL,
-                active_flag INTEGER NOT NULL DEFAULT 1,
-                notes TEXT,
-                PRIMARY KEY (season_name, player_id)
-            );
-
-            CREATE TABLE IF NOT EXISTS player_season_metadata (
-                player_id INTEGER NOT NULL REFERENCES player_identity(player_id),
-                season TEXT NOT NULL,
-                injury_flag INTEGER NOT NULL DEFAULT 0,
-                manual_weight_multiplier REAL,
-                notes TEXT,
-                PRIMARY KEY (player_id, season)
-            );
-
-        CREATE TABLE IF NOT EXISTS games (
-            game_id SERIAL PRIMARY KEY,
-            team_name TEXT,
-            game_date TEXT NOT NULL,
-            game_time TEXT,
-            opponent_name TEXT NOT NULL,
-            team_score INTEGER,
-            opponent_score INTEGER,
-            source_file TEXT NOT NULL UNIQUE,
-            season TEXT NOT NULL,
-            notes TEXT
-        );
-
-            CREATE TABLE IF NOT EXISTS season_batting_stats (
-                season TEXT NOT NULL,
-                player_id INTEGER NOT NULL REFERENCES players(player_id),
-                games INTEGER NOT NULL,
-                plate_appearances INTEGER NOT NULL,
-                at_bats INTEGER NOT NULL,
-                hits INTEGER NOT NULL,
-                singles INTEGER NOT NULL,
-                doubles INTEGER NOT NULL,
-                triples INTEGER NOT NULL,
-                home_runs INTEGER NOT NULL,
-                walks INTEGER NOT NULL,
-                strikeouts INTEGER NOT NULL,
-                hit_by_pitch INTEGER NOT NULL DEFAULT 0,
-                sacrifice_hits INTEGER NOT NULL DEFAULT 0,
-                sacrifice_flies INTEGER NOT NULL,
-                reached_on_error INTEGER NOT NULL DEFAULT 0,
-                fielder_choice INTEGER NOT NULL DEFAULT 0,
-                grounded_into_double_play INTEGER NOT NULL DEFAULT 0,
-                runs INTEGER NOT NULL,
-                rbi INTEGER NOT NULL,
-                total_bases INTEGER NOT NULL,
-                batting_average REAL NOT NULL,
-                on_base_percentage REAL NOT NULL,
-                slugging_percentage REAL NOT NULL,
-                ops REAL NOT NULL,
-                batting_average_risp REAL NOT NULL DEFAULT 0,
-                two_out_rbi INTEGER NOT NULL DEFAULT 0,
-                left_on_base INTEGER NOT NULL DEFAULT 0,
-                raw_source_file TEXT NOT NULL,
-                PRIMARY KEY (season, player_id, raw_source_file)
-            );
-
-            CREATE TABLE IF NOT EXISTS player_game_batting (
-                game_id INTEGER NOT NULL REFERENCES games(game_id),
-                player_id INTEGER NOT NULL REFERENCES players(player_id),
-                lineup_spot INTEGER NOT NULL,
-                plate_appearances INTEGER NOT NULL,
-                at_bats INTEGER NOT NULL,
-                singles INTEGER NOT NULL,
-                doubles INTEGER NOT NULL,
-                triples INTEGER NOT NULL,
-                home_runs INTEGER NOT NULL,
-                walks INTEGER NOT NULL,
-                strikeouts INTEGER NOT NULL,
-                sacrifice_flies INTEGER NOT NULL,
-                fielder_choice INTEGER NOT NULL,
-                double_plays INTEGER NOT NULL,
-                outs INTEGER NOT NULL,
-                runs INTEGER NOT NULL DEFAULT 0,
-                rbi INTEGER NOT NULL DEFAULT 0,
-                raw_scorebook_file TEXT NOT NULL,
-                PRIMARY KEY (game_id, player_id)
-            );
-
-            CREATE TABLE IF NOT EXISTS hitter_projections (
-                projection_season TEXT NOT NULL,
-                player_id INTEGER NOT NULL REFERENCES player_identity(player_id),
-                projection_source TEXT NOT NULL DEFAULT 'season_blended',
-                current_plate_appearances INTEGER NOT NULL,
-                career_plate_appearances INTEGER NOT NULL,
-                baseline_plate_appearances INTEGER NOT NULL,
-                weighted_prior_plate_appearances REAL NOT NULL DEFAULT 0,
-                season_count_used INTEGER NOT NULL DEFAULT 0,
-                current_season_weight REAL NOT NULL,
-                consistency_score REAL NOT NULL DEFAULT 0,
-                volatility_score REAL NOT NULL DEFAULT 0,
-                trend_score REAL NOT NULL DEFAULT 0,
-                p_single REAL NOT NULL,
-                p_double REAL NOT NULL,
-                p_triple REAL NOT NULL,
-                p_home_run REAL NOT NULL,
-                p_walk REAL NOT NULL,
-                projected_strikeout_rate REAL NOT NULL DEFAULT 0,
-                p_hit_by_pitch REAL NOT NULL,
-                p_reached_on_error REAL NOT NULL,
-                p_fielder_choice REAL NOT NULL,
-                p_grounded_into_double_play REAL NOT NULL,
-                p_out REAL NOT NULL,
-                projected_on_base_rate REAL NOT NULL,
-                projected_total_base_rate REAL NOT NULL,
-                projected_run_rate REAL NOT NULL,
-                projected_rbi_rate REAL NOT NULL,
-                projected_extra_base_hit_rate REAL NOT NULL,
-                fixed_dhh_flag INTEGER NOT NULL DEFAULT 0,
-                baserunning_adjustment REAL NOT NULL DEFAULT 0,
-                secondary_batting_average_risp REAL NOT NULL DEFAULT 0,
-                secondary_two_out_rbi_rate REAL NOT NULL DEFAULT 0,
-                secondary_left_on_base_rate REAL NOT NULL DEFAULT 0,
-                PRIMARY KEY (projection_season, player_id)
-            );
-
-            CREATE TABLE IF NOT EXISTS schedule_games (
-                game_id TEXT PRIMARY KEY,
-                season TEXT NOT NULL,
-                league_name TEXT,
-                division_name TEXT,
-                week_label TEXT,
-                game_date TEXT NOT NULL,
-                game_time TEXT,
-                team_name TEXT NOT NULL,
-                opponent_name TEXT,
-                home_away TEXT,
-                location_or_field TEXT,
-                status TEXT NOT NULL DEFAULT 'scheduled',
-                completed_flag INTEGER NOT NULL DEFAULT 0,
-                is_bye INTEGER NOT NULL DEFAULT 0,
-                result TEXT,
-                runs_for INTEGER,
-                runs_against INTEGER,
-                notes TEXT,
-                source TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS standings_snapshot (
-                snapshot_row_id SERIAL PRIMARY KEY,
-                season TEXT NOT NULL,
-                league_name TEXT,
-                division_name TEXT,
-                snapshot_date TEXT NOT NULL,
-                team_name TEXT NOT NULL,
-                wins INTEGER NOT NULL DEFAULT 0,
-                losses INTEGER NOT NULL DEFAULT 0,
-                ties INTEGER NOT NULL DEFAULT 0,
-                win_pct REAL NOT NULL DEFAULT 0,
-                games_back REAL,
-                notes TEXT,
-                source TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS league_schedule_games (
-                league_game_id TEXT PRIMARY KEY,
-                season TEXT NOT NULL,
-                league_name TEXT,
-                division_name TEXT,
-                week_label TEXT,
-                game_date TEXT NOT NULL,
-                game_time TEXT,
-                location_or_field TEXT,
-                home_team TEXT NOT NULL,
-                away_team TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'scheduled',
-                completed_flag INTEGER NOT NULL DEFAULT 0,
-                home_runs INTEGER,
-                away_runs INTEGER,
-                result_summary TEXT,
-                notes TEXT,
-                source TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS writeups (
-                writeup_id SERIAL PRIMARY KEY,
-                season TEXT NOT NULL,
-                week_label TEXT NOT NULL,
-                phase TEXT NOT NULL,
-                title TEXT NOT NULL,
-                markdown TEXT NOT NULL,
-                source TEXT,
-                created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                UNIQUE (season, week_label, phase)
-            );
-            """
-        )
-        cursor.execute("ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS runs INTEGER NOT NULL DEFAULT 0;")
-        cursor.execute("ALTER TABLE player_game_batting ADD COLUMN IF NOT EXISTS rbi INTEGER NOT NULL DEFAULT 0;")
-        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS team_name TEXT;")
-        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS game_time TEXT;")
-        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS team_score INTEGER;")
-        cursor.execute("ALTER TABLE games ADD COLUMN IF NOT EXISTS opponent_score INTEGER;")
+        cursor.execute(_render_schema(_POSTGRES_DIALECT))
+        for statement in _POSTGRES_LIVE_MIGRATIONS:
+            cursor.execute(statement)
+        for statement in _APP_INDEX_STATEMENTS:
+            cursor.execute(statement)
     connection.commit()
 
 
@@ -985,6 +790,30 @@ def replace_hitter_projections(
         count += 1
     connection.commit()
     return count
+
+
+_APP_INDEX_STATEMENTS: tuple[str, ...] = (
+    "CREATE INDEX IF NOT EXISTS idx_season_batting_stats_player_id ON season_batting_stats(player_id)",
+    "CREATE INDEX IF NOT EXISTS idx_player_game_batting_player_id ON player_game_batting(player_id)",
+    "CREATE INDEX IF NOT EXISTS idx_games_season ON games(season)",
+    "CREATE INDEX IF NOT EXISTS idx_games_game_date ON games(game_date)",
+    "CREATE INDEX IF NOT EXISTS idx_hitter_projections_player_id ON hitter_projections(player_id)",
+    "CREATE INDEX IF NOT EXISTS idx_schedule_games_season ON schedule_games(season)",
+    "CREATE INDEX IF NOT EXISTS idx_schedule_games_game_date ON schedule_games(game_date)",
+    "CREATE INDEX IF NOT EXISTS idx_schedule_games_team_name ON schedule_games(team_name)",
+    "CREATE INDEX IF NOT EXISTS idx_league_schedule_games_season ON league_schedule_games(season)",
+    "CREATE INDEX IF NOT EXISTS idx_league_schedule_games_game_date ON league_schedule_games(game_date)",
+    "CREATE INDEX IF NOT EXISTS idx_standings_snapshot_season_date ON standings_snapshot(season, snapshot_date)",
+    "CREATE INDEX IF NOT EXISTS idx_player_aliases_player_id ON player_aliases(player_id)",
+    "CREATE INDEX IF NOT EXISTS idx_season_rosters_player_id ON season_rosters(player_id)",
+    "CREATE INDEX IF NOT EXISTS idx_admin_audit_log_created_at ON admin_audit_log(created_at)",
+    "CREATE INDEX IF NOT EXISTS idx_admin_audit_log_entity ON admin_audit_log(entity_type, entity_id)",
+)
+
+
+def _create_app_indexes(connection: sqlite3.Connection) -> None:
+    for statement in _APP_INDEX_STATEMENTS:
+        connection.execute(statement)
 
 
 def _ensure_column(

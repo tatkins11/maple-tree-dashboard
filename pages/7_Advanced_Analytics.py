@@ -22,10 +22,21 @@ from src.dashboard.data import (
     fetch_advanced_player_comparison,
     fetch_current_season_stats,
     fetch_seasons,
+    fetch_team_data_freshness,
     get_connection,
     with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, render_static_table, with_player_link_column
+from src.dashboard.ui import (
+    database_path_control,
+    persistent_multiselect,
+    persistent_segmented_control,
+    persistent_selectbox,
+    persistent_slider,
+    persistent_toggle,
+    render_data_freshness_caption,
+    render_static_table,
+    with_player_link_column,
+)
 
 
 st.set_page_config(page_title="Advanced Analytics", page_icon="🥎", layout="wide")
@@ -171,14 +182,14 @@ def _render_methodology_box(summary: dict[str, str]) -> None:
 
 def _default_min_pa_for_season(connection, selected_season: str | None) -> tuple[int, int]:
     if not selected_season:
-        return 20, 0
+        return 5, 0
     season_stats = fetch_current_season_stats(connection, selected_season)
     if season_stats.empty or "pa" not in season_stats.columns:
-        return 20, 0
+        return 5, 0
     max_pa = int(season_stats["pa"].max())
-    if max_pa < 20:
+    if max_pa < 5:
         return 0, max_pa
-    return 20, max_pa
+    return 5, max_pa
 
 
 def _build_scatter_label_positions(
@@ -262,40 +273,70 @@ if not seasons:
     st.info("No season batting data found.")
     st.stop()
 
-scope = st.segmented_control("Analytics scope", options=["Season", "Career"], default="Season")
+scope = persistent_segmented_control(
+    "Analytics scope",
+    options=["Season", "Career"],
+    query_key="adv_scope",
+    default="Season",
+)
 
 toolbar_top = st.columns([1.35, 1.0], gap="small")
 with toolbar_top[0]:
     if scope == "Season":
-        selected_season = st.selectbox("Season", options=seasons, index=dashboard_default_season_index(seasons))
+        default_season = seasons[dashboard_default_season_index(seasons)] if seasons else None
+        selected_season = persistent_selectbox(
+            "Season",
+            options=seasons,
+            query_key="adv_season",
+            default=default_season,
+        )
         selected_seasons: list[str] = [selected_season]
     else:
         selected_season = None
-        selected_seasons = st.multiselect("Season filter", options=seasons, default=[DEFAULT_DASHBOARD_SEASON])
+        default_career_seasons = (
+            [DEFAULT_DASHBOARD_SEASON] if DEFAULT_DASHBOARD_SEASON in seasons else seasons[:1]
+        )
+        selected_seasons = persistent_multiselect(
+            "Season filter",
+            options=seasons,
+            query_key="adv_seasons",
+            default=default_career_seasons,
+        )
+
+if scope == "Season" and selected_season:
+    render_data_freshness_caption(fetch_team_data_freshness(connection, season=selected_season))
 with toolbar_top[1]:
     default_min_pa, selected_season_max_pa = (
         _default_min_pa_for_season(connection, selected_season)
         if scope == "Season"
-        else (20, 0)
+        else (5, 0)
     )
-    min_pa = st.slider(
+    min_pa = persistent_slider(
         "Minimum PA",
+        query_key=f"adv_min_pa_{scope.lower()}",
         min_value=0,
         max_value=120,
-        value=default_min_pa,
+        default=default_min_pa,
         step=5,
-        key=f"advanced_min_pa_{scope}_{selected_season or 'career'}",
     )
-    if scope == "Season" and selected_season_max_pa and selected_season_max_pa < 20:
+    if scope == "Season" and selected_season_max_pa and selected_season_max_pa < 5:
         st.caption(
-            f"Early-season sample: max PA is {selected_season_max_pa}, so the default is 0 until hitters clear 20 PA."
+            f"Early-season sample: max PA is {selected_season_max_pa}, so the default is 0 until hitters clear 5 PA."
         )
 
 toolbar_bottom = st.columns([0.8, 0.8, 1.4], gap="small")
 with toolbar_bottom[0]:
-    active_only = st.toggle("Active roster only", value=False)
+    active_only = persistent_toggle(
+        "Active roster only",
+        query_key="adv_active_only",
+        default=False,
+    )
 with toolbar_bottom[1]:
-    show_context = st.toggle("Show context columns", value=False)
+    show_context = persistent_toggle(
+        "Show context columns",
+        query_key="adv_show_context",
+        default=False,
+    )
 with toolbar_bottom[2]:
     st.caption("Use the main filters to define the comparison group, then narrow to specific hitters below.")
 

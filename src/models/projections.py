@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import sqlite3
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Iterable
 
 import pandas as pd
@@ -10,10 +10,35 @@ import pandas as pd
 from src.models.records import HitterProjectionRecord
 
 
-CURRENT_SEASON_PRIOR_PA = 120.0
-DEFAULT_INJURY_MULTIPLIER = 0.35
-RECENCY_WEIGHTS = [1.0, 0.7, 0.5]
-RECENCY_FLOOR = 0.35
+@dataclass(frozen=True)
+class ProjectionConfig:
+    """Tunable knobs for the hitter projection blend.
+
+    Defaults match the values originally hard-coded at the top of this module.
+    Pass a custom instance to ``build_hitter_projections`` to experiment without
+    editing source.
+    """
+
+    current_season_prior_pa: float = 120.0
+    default_injury_multiplier: float = 0.35
+    recency_weights: tuple[float, ...] = (1.0, 0.7, 0.5)
+    recency_floor: float = 0.35
+    volatility_scale_factor: float = 4.0
+    trend_score_clamp: float = 0.15
+    consistency_weight_adjustment: float = 0.08
+    trend_weight_adjustment: float = 0.50
+    weight_floor: float = 0.05
+    weight_ceiling: float = 0.95
+
+
+DEFAULT_PROJECTION_CONFIG = ProjectionConfig()
+
+# Backward-compatible module-level constants. Prefer ProjectionConfig fields for
+# new code; these remain for callers that already import the names.
+CURRENT_SEASON_PRIOR_PA = DEFAULT_PROJECTION_CONFIG.current_season_prior_pa
+DEFAULT_INJURY_MULTIPLIER = DEFAULT_PROJECTION_CONFIG.default_injury_multiplier
+RECENCY_WEIGHTS = list(DEFAULT_PROJECTION_CONFIG.recency_weights)
+RECENCY_FLOOR = DEFAULT_PROJECTION_CONFIG.recency_floor
 
 
 @dataclass
@@ -100,8 +125,16 @@ SECONDARY_PROJECTION_FIELDS = [
 def build_hitter_projections(
     connection: sqlite3.Connection,
     projection_season: str,
-    current_season_prior_pa: float = CURRENT_SEASON_PRIOR_PA,
+    current_season_prior_pa: float | None = None,
+    config: ProjectionConfig | None = None,
 ) -> list[HitterProjectionRecord]:
+    active_config = config or DEFAULT_PROJECTION_CONFIG
+    effective_prior_pa = (
+        active_config.current_season_prior_pa
+        if current_season_prior_pa is None
+        else float(current_season_prior_pa)
+    )
+
     current_rows = _fetch_aggregated_rows(connection, season_filter=projection_season)
     season_rows = _fetch_season_rows(connection)
     metadata_by_player_season = _fetch_player_season_metadata(connection)
@@ -117,6 +150,7 @@ def build_hitter_projections(
                 player_seasons=player_seasons,
                 current_season=None,
                 metadata_by_player_season=metadata_by_player_season,
+                config=active_config,
             )
             baseline = weighted_summary.weighted if weighted_summary.weighted.plate_appearances > 0 else career
             current_weight = 0.0
@@ -127,13 +161,15 @@ def build_hitter_projections(
                 player_seasons=player_seasons,
                 current_season=projection_season,
                 metadata_by_player_season=metadata_by_player_season,
+                config=active_config,
             )
             baseline = weighted_summary.weighted if weighted_summary.weighted.plate_appearances > 0 else career
-            base_weight = _safe_divide(current.plate_appearances, current.plate_appearances + current_season_prior_pa)
+            base_weight = _safe_divide(current.plate_appearances, current.plate_appearances + effective_prior_pa)
             current_weight = _apply_consistency_and_trend_adjustments(
                 base_weight=base_weight,
                 consistency_score=weighted_summary.consistency_score,
                 trend_score=weighted_summary.trend_score,
+                config=active_config,
             )
             projection_source = "season_blended"
 
@@ -363,6 +399,7 @@ def _build_weighted_prior_summary(
     player_seasons: list[_RateInputs],
     current_season: str | None,
     metadata_by_player_season: dict[tuple[int, str], _SeasonMetadata],
+    config: ProjectionConfig = DEFAULT_PROJECTION_CONFIG,
 ) -> _WeightedSummary:
     prior_rows = [row for row in player_seasons if current_season is None or row.season != current_season]
     if not prior_rows:
@@ -375,10 +412,11 @@ def _build_weighted_prior_summary(
     tb_rates: list[float] = []
     hr_rates: list[float] = []
 
+    recency_weights = config.recency_weights
     for index, row in enumerate(prior_rows):
-        recency_weight = RECENCY_WEIGHTS[index] if index < len(RECENCY_WEIGHTS) else RECENCY_FLOOR
+        recency_weight = recency_weights[index] if index < len(recency_weights) else config.recency_floor
         metadata = metadata_by_player_season.get((player_id, row.season), _SeasonMetadata())
-        season_weight = recency_weight * _season_weight_multiplier(metadata)
+        season_weight = recency_weight * _season_weight_multiplier(metadata, config=config)
         weighted_pa_total += row.plate_appearances * season_weight
         weighted_row.plate_appearances += int(round(row.plate_appearances * season_weight))
         weighted_row.singles += int(round(row.singles * season_weight))
@@ -405,8 +443,10 @@ def _build_weighted_prior_summary(
 
     weighted_row.player_name = prior_rows[0].player_name
     weighted_row.canonical_name = prior_rows[0].canonical_name
-    consistency_score, volatility_score = _calculate_consistency_and_volatility(obp_rates, tb_rates, hr_rates)
-    trend_score = _compute_trend_score(obp_rates, tb_rates, hr_rates)
+    consistency_score, volatility_score = _calculate_consistency_and_volatility(
+        obp_rates, tb_rates, hr_rates, config=config
+    )
+    trend_score = _compute_trend_score(obp_rates, tb_rates, hr_rates, config=config)
     return _WeightedSummary(
         weighted=weighted_row,
         weighted_prior_plate_appearances=weighted_pa_total,
@@ -465,19 +505,29 @@ def _empty_inputs(template: _RateInputs) -> _RateInputs:
     )
 
 
-def _season_weight_multiplier(metadata: _SeasonMetadata) -> float:
+def _season_weight_multiplier(
+    metadata: _SeasonMetadata,
+    *,
+    config: ProjectionConfig = DEFAULT_PROJECTION_CONFIG,
+) -> float:
     if metadata.manual_weight_multiplier is not None:
         return metadata.manual_weight_multiplier
     if metadata.injury_flag:
-        return DEFAULT_INJURY_MULTIPLIER
+        return config.default_injury_multiplier
     return 1.0
 
 
-def _calculate_consistency_and_volatility(obp_rates: list[float], tb_rates: list[float], hr_rates: list[float]) -> tuple[float, float]:
+def _calculate_consistency_and_volatility(
+    obp_rates: list[float],
+    tb_rates: list[float],
+    hr_rates: list[float],
+    *,
+    config: ProjectionConfig = DEFAULT_PROJECTION_CONFIG,
+) -> tuple[float, float]:
     stddevs = [_stddev(values) for values in (obp_rates, tb_rates, hr_rates) if len(values) >= 2]
     if not stddevs:
         return 0.5, 0.0
-    volatility = min(1.0, (sum(stddevs) / len(stddevs)) * 4.0)
+    volatility = min(1.0, (sum(stddevs) / len(stddevs)) * config.volatility_scale_factor)
     consistency = max(0.0, 1.0 - volatility)
     return consistency, volatility
 
@@ -490,18 +540,35 @@ def _stddev(values: list[float]) -> float:
     return math.sqrt(variance)
 
 
-def _compute_trend_score(obp_rates: list[float], tb_rates: list[float], hr_rates: list[float]) -> float:
+def _compute_trend_score(
+    obp_rates: list[float],
+    tb_rates: list[float],
+    hr_rates: list[float],
+    *,
+    config: ProjectionConfig = DEFAULT_PROJECTION_CONFIG,
+) -> float:
     if len(obp_rates) < 2:
         return 0.0
     components = []
     for values in (obp_rates, tb_rates, hr_rates):
         components.append(values[0] - values[-1])
-    return max(-0.15, min(0.15, sum(components) / len(components)))
+    clamp = config.trend_score_clamp
+    return max(-clamp, min(clamp, sum(components) / len(components)))
 
 
-def _apply_consistency_and_trend_adjustments(base_weight: float, consistency_score: float, trend_score: float) -> float:
-    adjusted = base_weight + (0.08 * consistency_score) + (0.50 * trend_score)
-    return max(0.05, min(0.95, adjusted))
+def _apply_consistency_and_trend_adjustments(
+    base_weight: float,
+    consistency_score: float,
+    trend_score: float,
+    *,
+    config: ProjectionConfig = DEFAULT_PROJECTION_CONFIG,
+) -> float:
+    adjusted = (
+        base_weight
+        + (config.consistency_weight_adjustment * consistency_score)
+        + (config.trend_weight_adjustment * trend_score)
+    )
+    return max(config.weight_floor, min(config.weight_ceiling, adjusted))
 
 
 def _blend_rate(current_count: int, current_pa: int, baseline_count: int, baseline_pa: int, current_weight: float) -> float:

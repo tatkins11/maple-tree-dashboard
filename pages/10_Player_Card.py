@@ -13,15 +13,23 @@ from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_advanced_analytics_view,
     fetch_player_advanced_history,
+    fetch_player_game_log,
     fetch_player_identities,
     fetch_player_milestone_context,
     fetch_player_profile_summary,
+    fetch_player_recent_form,
     fetch_player_record_context,
     fetch_player_season_history,
+    fetch_player_vs_opponent,
     sort_seasons,
     get_connection,
+    with_dashboard_default_season,
 )
-from src.dashboard.ui import database_path_control, get_responsive_layout_context
+from src.dashboard.ui import (
+    database_path_control,
+    get_responsive_layout_context,
+    persistent_selectbox,
+)
 
 
 st.set_page_config(page_title="Player Card", page_icon="👤", layout="wide")
@@ -577,6 +585,31 @@ def _advanced_history_column_config() -> dict[str, st.column_config.Column]:
     }
 
 
+def _game_log_column_config() -> dict[str, st.column_config.Column]:
+    return {
+        "game_date": st.column_config.TextColumn("Date", width="small"),
+        "game_time": st.column_config.TextColumn("Time", width="small"),
+        "opponent": st.column_config.TextColumn("Opponent", width="medium"),
+        "season_label": st.column_config.TextColumn("Season", width="small"),
+        "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
+        "ab": st.column_config.NumberColumn("AB", format="%d", width="small"),
+        "hits": st.column_config.NumberColumn("H", format="%d", width="small"),
+        "1b": st.column_config.NumberColumn("1B", format="%d", width="small"),
+        "2b": st.column_config.NumberColumn("2B", format="%d", width="small"),
+        "3b": st.column_config.NumberColumn("3B", format="%d", width="small"),
+        "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
+        "bb": st.column_config.NumberColumn("BB", format="%d", width="small"),
+        "so": st.column_config.NumberColumn("SO", format="%d", width="small"),
+        "r": st.column_config.NumberColumn("R", format="%d", width="small"),
+        "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
+        "tb": st.column_config.NumberColumn("TB", format="%d", width="small"),
+        "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
+        "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
+        "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
+        "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
+    }
+
+
 def _milestone_table(dataframe: pd.DataFrame, *, include_next: bool) -> pd.DataFrame:
     if dataframe.empty:
         return dataframe
@@ -611,7 +644,272 @@ def _record_table(dataframe: pd.DataFrame) -> pd.DataFrame:
     display["Stat"] = display["stat"]
     display["Rank"] = display["rank"]
     display["Value"] = display["value_display"]
-    return display[[column for column in ["Scope", "Stat", "Rank", "Value", "Season"] if column in display.columns]]
+    if "game" in display.columns and display["game"].fillna("").astype(str).str.strip().any():
+        display["Game"] = display["game"]
+    return display[[column for column in ["Scope", "Stat", "Rank", "Value", "Game", "Season"] if column in display.columns]]
+
+
+def _render_game_log_mobile_cards(dataframe: pd.DataFrame) -> None:
+    for _, row in dataframe.iterrows():
+        opponent = escape(str(row.get("opponent") or "Opponent"))
+        season_label = escape(str(row.get("season_label") or ""))
+        game_date = escape(str(row.get("game_date") or "Game"))
+        game_time = escape(str(row.get("game_time") or ""))
+        title = f"{game_date}{(' ' + game_time) if game_time else ''} vs {opponent}"
+        st.markdown(
+            f"""
+            <div class="player-compact-card">
+              <div class="player-compact-title">{title}</div>
+              <div class="player-compact-row"><strong>Season:</strong> {season_label}</div>
+              <div class="player-compact-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+              <div class="player-compact-row"><strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
+              <div class="player-compact-row"><strong>R:</strong> {int(row['r'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>SO:</strong> {int(row['so'])}</div>
+              <div class="player-compact-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
+TREND_TONE = {
+    "hot": ("Hot streak", "#16a34a"),
+    "cold": ("Cold streak", "#dc2626"),
+    "steady": ("Steady", "#475569"),
+}
+
+
+def _trend_badge_html(trend: str) -> str:
+    label, color = TREND_TONE.get(trend, ("", "#475569"))
+    if not label:
+        return ""
+    return (
+        f'<span class="player-pill" style="background:{color}; color:white; border-color:{color};">'
+        f"{escape(label)}</span>"
+    )
+
+
+def _format_delta(value: float, *, fmt: str = "{:+.3f}") -> str:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return ""
+    if abs(numeric) < 5e-4 and fmt.startswith("{:+.3f}"):
+        return "0.000"
+    return fmt.format(numeric)
+
+
+def _render_recent_form_section(
+    connection,
+    canonical_name: str,
+    *,
+    seasons: list[str],
+    is_mobile_layout: bool,
+) -> None:
+    if not seasons:
+        return
+    st.markdown("### Recent Form")
+    window_options = [3, 5, 10, 15, 20]
+    season_options = ["Career"] + list(seasons)
+    controls = st.columns([1.0, 1.0], gap="small")
+    with controls[0]:
+        window_choice = persistent_selectbox(
+            "Window",
+            options=window_options,
+            query_key="player_card_form_window",
+            default=5,
+        )
+    with controls[1]:
+        season_choice = persistent_selectbox(
+            "Baseline",
+            options=season_options,
+            query_key="player_card_form_baseline",
+            default="Career",
+        )
+
+    season_filter = None if season_choice == "Career" else str(season_choice)
+    form = fetch_player_recent_form(
+        connection,
+        canonical_name,
+        window=int(window_choice),
+        season=season_filter,
+    )
+
+    if form["games_available"] == 0:
+        st.info("No game-log data is available for this player yet.")
+        return
+
+    actual_window = form["window"]
+    requested_window = int(window_choice)
+    baseline_label_text = (
+        f"{season_filter} season" if season_filter else "career"
+    )
+    summary_line = (
+        f"Last {actual_window} game{'s' if actual_window != 1 else ''} "
+        f"vs {baseline_label_text} baseline"
+    )
+    if actual_window < requested_window:
+        summary_line += f" (only {actual_window} of the requested {requested_window} games loaded)"
+    st.markdown(
+        f"<div class='player-section-note'>{escape(summary_line)}</div>",
+        unsafe_allow_html=True,
+    )
+
+    recent = form["recent"]
+    baseline = form["baseline"]
+    deltas = form["deltas"]
+    trend_badge = _trend_badge_html(form["trend"])
+
+    if trend_badge:
+        st.markdown(f"<div class='player-pill-row'>{trend_badge}</div>", unsafe_allow_html=True)
+
+    metrics = [
+        ("PA", str(int(recent["pa"])), ""),
+        ("AVG", f"{recent['avg']:.3f}", _format_delta(deltas["avg_delta"])),
+        ("OBP", f"{recent['obp']:.3f}", _format_delta(deltas["obp_delta"])),
+        ("SLG", f"{recent['slg']:.3f}", _format_delta(deltas["slg_delta"])),
+        ("OPS", f"{recent['ops']:.3f}", _format_delta(deltas["ops_delta"])),
+        ("ISO", f"{recent['iso']:.3f}", _format_delta(deltas["iso_delta"])),
+    ]
+    per_row = 2 if is_mobile_layout else 6
+    for start in range(0, len(metrics), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, value, delta) in zip(columns, metrics[start:start + per_row]):
+            column.metric(label, value, delta if delta else None)
+
+    counting_line = (
+        f"Recent counts — Hits: {int(recent['hits'])} · "
+        f"HR: {int(recent['hr'])} · RBI: {int(recent['rbi'])} · "
+        f"Runs: {int(recent['r'])} · BB: {int(recent['bb'])} · SO: {int(recent['so'])}"
+    )
+    baseline_line = (
+        f"Baseline ({baseline_label_text}) — "
+        f"AVG {baseline['avg']:.3f} / OBP {baseline['obp']:.3f} / "
+        f"SLG {baseline['slg']:.3f} / OPS {baseline['ops']:.3f} "
+        f"over {int(baseline['pa'])} PA"
+    )
+    st.markdown(
+        f"<div class='player-section-note'>{escape(counting_line)}</div>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        f"<div class='player-section-note'>{escape(baseline_line)}</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def _render_head_to_head_section(
+    connection,
+    canonical_name: str,
+    game_log: pd.DataFrame,
+    *,
+    is_mobile_layout: bool,
+) -> None:
+    if game_log.empty or "opponent" not in game_log.columns:
+        st.info("Head-to-head data needs game-log entries before it can be shown.")
+        return
+
+    opponents = sorted(
+        {
+            str(value).strip()
+            for value in game_log["opponent"].astype(str).tolist()
+            if str(value).strip()
+        }
+    )
+    if not opponents:
+        st.info("No opponents are recorded in this player's game log yet.")
+        return
+
+    chosen_opponent = persistent_selectbox(
+        "Opponent",
+        options=opponents,
+        query_key="player_card_h2h_opponent",
+        default=opponents[0],
+    )
+
+    h2h = fetch_player_vs_opponent(connection, canonical_name, opponent=chosen_opponent)
+    games_played = h2h["games_played"]
+    totals = h2h["totals"]
+    if games_played == 0:
+        st.info(f"No games on file vs {chosen_opponent}.")
+        return
+
+    summary = (
+        f"{games_played} game{'s' if games_played != 1 else ''} vs {chosen_opponent} — "
+        f"{int(totals['hits'])} H · {int(totals['hr'])} HR · "
+        f"{int(totals['rbi'])} RBI · OPS {totals['ops']:.3f}"
+    )
+    st.markdown(
+        f"<div class='player-section-note'>{escape(summary)}</div>",
+        unsafe_allow_html=True,
+    )
+    metrics = [
+        ("PA", str(int(totals["pa"]))),
+        ("Hits", str(int(totals["hits"]))),
+        ("HR", str(int(totals["hr"]))),
+        ("RBI", str(int(totals["rbi"]))),
+        ("AVG", f"{totals['avg']:.3f}"),
+        ("OPS", f"{totals['ops']:.3f}"),
+    ]
+    per_row = 2 if is_mobile_layout else 6
+    for start in range(0, len(metrics), per_row):
+        columns = st.columns(per_row, gap="small")
+        for column, (label, value) in zip(columns, metrics[start:start + per_row]):
+            column.metric(label, value)
+
+    recent_games = h2h["recent_games"]
+    if recent_games.empty:
+        return
+    st.markdown("#### Recent meetings")
+    display_columns = [
+        "game_date",
+        "season_label",
+        "pa",
+        "ab",
+        "hits",
+        "hr",
+        "rbi",
+        "bb",
+        "tb",
+        "avg",
+        "obp",
+        "slg",
+        "ops",
+    ]
+    display = recent_games[[col for col in display_columns if col in recent_games.columns]].copy()
+    if is_mobile_layout:
+        for _, row in display.iterrows():
+            st.markdown(
+                f"""
+                <div class="player-compact-card">
+                  <div class="player-compact-title">{escape(str(row['game_date']))}{' · ' + escape(str(row['season_label'])) if 'season_label' in row else ''}</div>
+                  <div class="player-compact-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
+                  <div class="player-compact-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+                  <div class="player-compact-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+    else:
+        st.dataframe(
+            display,
+            hide_index=True,
+            use_container_width=True,
+            column_config={
+                "game_date": st.column_config.TextColumn("Date", width="small"),
+                "season_label": st.column_config.TextColumn("Season", width="small"),
+                "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
+                "ab": st.column_config.NumberColumn("AB", format="%d", width="small"),
+                "hits": st.column_config.NumberColumn("H", format="%d", width="small"),
+                "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
+                "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
+                "bb": st.column_config.NumberColumn("BB", format="%d", width="small"),
+                "tb": st.column_config.NumberColumn("TB", format="%d", width="small"),
+                "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
+                "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
+                "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
+                "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
+            },
+        )
 
 
 def _render_player_picker(identities: pd.DataFrame, selected_canonical: str | None) -> str:
@@ -646,17 +944,12 @@ if identities.empty:
 player_query = str(st.query_params.get("player", "")).strip()
 available_players = set(identities["canonical_name"].astype(str).tolist())
 
-utility_cols = st.columns([1.1, 1.1, 1.1, 1.1, 1.8], gap="small")
-with utility_cols[0]:
-    st.page_link("pages/1_Current_Season_Stats.py", label="Season Stats")
-with utility_cols[1]:
-    st.page_link("pages/2_All_Time_Career_Stats.py", label="Career Stats")
-with utility_cols[2]:
-    st.page_link("pages/7_Advanced_Analytics.py", label="Advanced Analytics")
-with utility_cols[3]:
-    st.page_link("pages/6_Milestones.py", label="Milestones")
-with utility_cols[4]:
+if layout.is_mobile_layout:
     picked_player = _render_player_picker(identities, player_query if player_query in available_players else None)
+else:
+    _, picker_col = st.columns([3, 1.25], gap="small")
+    with picker_col:
+        picked_player = _render_player_picker(identities, player_query if player_query in available_players else None)
 
 if player_query in available_players and picked_player and picked_player != player_query:
     _set_player_query_param(picked_player)
@@ -679,6 +972,7 @@ if player_query not in available_players:
 summary = fetch_player_profile_summary(connection, player_query)
 season_history = fetch_player_season_history(connection, player_query)
 advanced_history = fetch_player_advanced_history(connection, player_query)
+game_log = fetch_player_game_log(connection, player_query)
 milestone_context = fetch_player_milestone_context(connection, player_query)
 record_context = fetch_player_record_context(connection, player_query)
 
@@ -687,15 +981,34 @@ if summary is None:
     st.stop()
 
 st.title(str(summary.get("player") or "Player Card"))
-st.caption("Full player hub with career snapshot, season-by-season stats, milestones, records, and trend context.")
+st.caption("Full player hub with career snapshot, season history, game logs, milestones, records, and trend context.")
 
 _render_header(summary)
 _render_rank_highlights(summary, is_mobile_layout=layout.is_mobile_layout)
 _render_grouped_metrics(summary, is_mobile_layout=layout.is_mobile_layout)
+
+player_seasons = (
+    season_history["season"].astype(str).tolist() if "season" in season_history.columns else []
+)
+ordered_seasons = with_dashboard_default_season(player_seasons) if player_seasons else []
+_render_recent_form_section(
+    connection,
+    player_query,
+    seasons=ordered_seasons,
+    is_mobile_layout=layout.is_mobile_layout,
+)
+
 _render_analytics_trend_chart(connection, season_history, advanced_history)
 
-overview_tab, standard_tab, advanced_tab, context_tab = st.tabs(
-    ["Overview", "Season-by-Season Stats", "Advanced History", "Milestones & Records"]
+overview_tab, standard_tab, game_log_tab, h2h_tab, advanced_tab, context_tab = st.tabs(
+    [
+        "Overview",
+        "Season-by-Season Stats",
+        "Game Log",
+        "Head-to-Head",
+        "Advanced History",
+        "Milestones & Records",
+    ]
 )
 
 with overview_tab:
@@ -771,6 +1084,59 @@ with standard_tab:
                 use_container_width=True,
                 column_config=_standard_history_column_config(),
             )
+
+with game_log_tab:
+    st.markdown(
+        "<div class='player-section-note'>Per-game batting lines pulled from uploaded box scores. This lives alongside season and career stats without changing either.</div>",
+        unsafe_allow_html=True,
+    )
+    if game_log.empty:
+        st.info("No game log rows are loaded for this player yet.")
+    else:
+        game_log_columns = [
+            "game_date",
+            "game_time",
+            "opponent",
+            "season_label",
+            "pa",
+            "ab",
+            "hits",
+            "1b",
+            "2b",
+            "3b",
+            "hr",
+            "bb",
+            "so",
+            "r",
+            "rbi",
+            "tb",
+            "avg",
+            "obp",
+            "slg",
+            "ops",
+        ]
+        game_log_display = game_log[[column for column in game_log_columns if column in game_log.columns]].copy()
+        if layout.is_mobile_layout:
+            _render_game_log_mobile_cards(game_log_display)
+        else:
+            st.dataframe(
+                game_log_display,
+                hide_index=True,
+                use_container_width=True,
+                column_config=_game_log_column_config(),
+            )
+
+with h2h_tab:
+    st.markdown(
+        "<div class='player-section-note'>How this hitter has performed in past meetings against each opponent on file.</div>",
+        unsafe_allow_html=True,
+    )
+    _render_head_to_head_section(
+        connection,
+        player_query,
+        game_log,
+        is_mobile_layout=layout.is_mobile_layout,
+    )
 
 with advanced_tab:
     st.markdown(

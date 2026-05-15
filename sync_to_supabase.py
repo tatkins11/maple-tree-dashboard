@@ -22,6 +22,7 @@ SYNC_TABLES = [
     "standings_snapshot",
     "league_schedule_games",
     "writeups",
+    "admin_audit_log",
 ]
 
 

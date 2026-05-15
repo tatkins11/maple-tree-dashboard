@@ -22,6 +22,11 @@ from src.dashboard.ui import (
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
+    persistent_multiselect,
+    persistent_segmented_control,
+    persistent_selectbox,
+    persistent_slider,
+    persistent_toggle,
     render_static_table,
     with_player_link_column,
 )
@@ -314,36 +319,83 @@ connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))
 
 st.markdown('<div class="records-controls">', unsafe_allow_html=True)
-selected_seasons = st.multiselect("Season filter", options=seasons, default=seasons)
+selected_seasons = persistent_multiselect(
+    "Season filter",
+    options=seasons,
+    query_key="rec_seasons",
+    default=seasons,
+)
+
+SCOPE_OPTIONS = ["Career Records", "Single-Season Records", "Single-Game Records"]
+TOP_N_OPTIONS = [5, 10, 15]
 
 if layout.is_mobile_layout:
-    rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
-    top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=0)
-    scope = st.segmented_control(
+    rate_min_pa = persistent_slider(
+        "Minimum PA for rate stats",
+        query_key="rec_min_pa",
+        min_value=0,
+        max_value=100,
+        default=20,
+        step=5,
+    )
+    top_n = persistent_selectbox(
+        "Leaderboard size",
+        options=TOP_N_OPTIONS,
+        query_key="rec_top_n",
+        default=5,
+    )
+    scope = persistent_segmented_control(
         "Record scope",
-        options=["Career Records", "Single-Season Records", "Single-Game Records"],
+        options=SCOPE_OPTIONS,
+        query_key="rec_scope",
         default="Career Records",
     )
-    active_only = st.toggle("Show active roster only", value=False)
+    active_only = persistent_toggle(
+        "Show active roster only",
+        query_key="rec_active_only",
+        default=False,
+    )
 else:
     control_columns = st.columns([1.2, 1, 1.3, 0.9], gap="small")
     with control_columns[0]:
-        rate_min_pa = st.slider("Minimum PA for rate stats", min_value=0, max_value=100, value=20, step=5)
+        rate_min_pa = persistent_slider(
+            "Minimum PA for rate stats",
+            query_key="rec_min_pa",
+            min_value=0,
+            max_value=100,
+            default=20,
+            step=5,
+        )
     with control_columns[1]:
-        top_n = st.selectbox("Leaderboard size", options=[5, 10, 15], index=0)
+        top_n = persistent_selectbox(
+            "Leaderboard size",
+            options=TOP_N_OPTIONS,
+            query_key="rec_top_n",
+            default=5,
+        )
     with control_columns[2]:
-        scope = st.segmented_control(
+        scope = persistent_segmented_control(
             "Record scope",
-            options=["Career Records", "Single-Season Records", "Single-Game Records"],
+            options=SCOPE_OPTIONS,
+            query_key="rec_scope",
             default="Career Records",
         )
     with control_columns[3]:
-        active_only = st.toggle("Show active roster only", value=False)
+        active_only = persistent_toggle(
+            "Show active roster only",
+            query_key="rec_active_only",
+            default=False,
+        )
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="records-subnav">', unsafe_allow_html=True)
-stat_view = st.segmented_control("Leaderboard view", options=["Counting Stats", "Rate Stats"], default="Counting Stats")
+stat_view = persistent_segmented_control(
+    "Leaderboard view",
+    options=["Counting Stats", "Rate Stats"],
+    query_key="rec_stat_view",
+    default="Counting Stats",
+)
 st.markdown('</div>', unsafe_allow_html=True)
 
 _render_context_bar(scope, stat_view, selected_seasons, seasons, rate_min_pa, top_n, active_only)

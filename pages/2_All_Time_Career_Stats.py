@@ -21,6 +21,8 @@ from src.dashboard.ui import (
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
+    persistent_multiselect,
+    persistent_slider,
     render_static_table,
     with_player_link_column,
 )
@@ -201,8 +203,20 @@ seasons = with_dashboard_default_season(fetch_seasons(connection))
 if not seasons:
     st.info("No career stats found.")
 else:
-    selected_seasons = st.multiselect("Season filter", options=seasons, default=seasons)
-    min_pa = st.slider("Minimum PA", min_value=0, max_value=100, value=20, step=5)
+    selected_seasons = persistent_multiselect(
+        "Season filter",
+        options=seasons,
+        query_key="car_seasons",
+        default=seasons,
+    )
+    min_pa = persistent_slider(
+        "Minimum PA",
+        query_key="car_min_pa",
+        min_value=0,
+        max_value=100,
+        default=20,
+        step=5,
+    )
 
     career_summary = fetch_career_summary(connection, seasons=selected_seasons, min_pa=min_pa)
     leader_snapshot = fetch_career_leader_snapshot(connection, seasons=selected_seasons, min_pa=min_pa)
@@ -322,12 +336,31 @@ else:
 
     if leaders:
         st.subheader("All-Time Leaders")
+        leader_column_config = {
+            "player": st.column_config.TextColumn("Player", width="medium"),
+            "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
+            "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
+            "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
+            "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
+            "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
+            "ops": st.column_config.NumberColumn("OPS", format="%.3f", width="small"),
+        }
         if layout.is_mobile_layout:
             for label, dataframe in leaders.items():
                 st.markdown(f"**{label}**")
-                st.dataframe(dataframe, hide_index=True, use_container_width=True)
+                st.dataframe(
+                    dataframe,
+                    hide_index=True,
+                    use_container_width=True,
+                    column_config=leader_column_config,
+                )
         else:
             leader_cols = st.columns(len(leaders))
             for column, (label, dataframe) in zip(leader_cols, leaders.items()):
                 column.markdown(f"**{label}**")
-                column.dataframe(dataframe, hide_index=True, use_container_width=True)
+                column.dataframe(
+                    dataframe,
+                    hide_index=True,
+                    use_container_width=True,
+                    column_config=leader_column_config,
+                )
