@@ -1,10 +1,19 @@
 from __future__ import annotations
 
+import warnings
 from html import escape
 from pathlib import Path
 from typing import Any
 
 import streamlit as st
+
+# Pandas warns when read_sql_query is handed our custom Postgres adapter instead
+# of a SQLAlchemy engine. The adapter works fine; the warning just clutters logs.
+warnings.filterwarnings(
+    "ignore",
+    message="pandas only supports SQLAlchemy connectable.*",
+    category=UserWarning,
+)
 
 from src.dashboard.auth import ROLE_ADMIN, ensure_authenticated
 from src.dashboard.config import get_connection_cache_key

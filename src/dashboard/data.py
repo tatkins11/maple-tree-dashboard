@@ -1647,44 +1647,72 @@ def fetch_pregame_hot_bats(
     min_recent_pa: int = 4,
     limit: int = 5,
 ) -> pd.DataFrame:
+    empty_columns = [
+        "player",
+        "canonical_name",
+        "recent_pa",
+        "recent_ops",
+        "season_ops",
+        "ops_delta",
+        "trend",
+    ]
     season_stats = fetch_current_season_stats(connection, season)
     if season_stats.empty:
-        return pd.DataFrame(
-            columns=["player", "canonical_name", "recent_pa", "recent_ops", "season_ops", "ops_delta", "trend"]
-        )
+        return pd.DataFrame(columns=empty_columns)
+
     active_roster = fetch_active_roster(connection)
-    active_names = set(active_roster["canonical_name"].astype(str).tolist()) if not active_roster.empty else set()
+    active_names = (
+        set(active_roster["canonical_name"].astype(str).tolist())
+        if not active_roster.empty
+        else set()
+    )
+
+    # One bulk query for the entire season's game log instead of one per player.
+    season_game_log = fetch_single_game_stats(connection, seasons=[season], min_pa=0)
+    if season_game_log.empty:
+        return pd.DataFrame(columns=empty_columns)
+
+    if active_names:
+        season_game_log = season_game_log[
+            season_game_log["canonical_name"].astype(str).isin(active_names)
+        ].copy()
+    if season_game_log.empty:
+        return pd.DataFrame(columns=empty_columns)
+
+    sorted_log = season_game_log.copy()
+    sorted_log.loc[:, "_game_date_sort"] = pd.to_datetime(sorted_log["game_date"], errors="coerce")
+    sorted_log.loc[:, "_game_time_sort"] = sorted_log["game_time"].astype(str)
+    sorted_log = sorted_log.sort_values(
+        ["canonical_name", "_game_date_sort", "_game_time_sort"],
+        ascending=[True, False, False],
+    )
+    recent_per_player = sorted_log.groupby("canonical_name", sort=False).head(int(window))
+
+    season_lookup = season_stats.set_index("canonical_name")
     rows: list[dict[str, object]] = []
-    for _, season_row in season_stats.iterrows():
-        canonical_name = str(season_row.get("canonical_name") or "")
-        if not canonical_name:
+    for canonical_name, group in recent_per_player.groupby("canonical_name", sort=False):
+        canonical_name = str(canonical_name)
+        if canonical_name not in season_lookup.index:
             continue
-        if active_names and canonical_name not in active_names:
-            continue
-        form = fetch_player_recent_form(
-            connection,
-            canonical_name,
-            window=int(window),
-            season=season,
-        )
-        recent = form["recent"]
+        recent = _aggregate_game_log_rows(group)
         if int(recent.get("pa", 0) or 0) < int(min_recent_pa):
             continue
+        season_row = season_lookup.loc[canonical_name]
+        season_ops = float(season_row.get("ops") or 0.0)
+        ops_delta = float(recent["ops"]) - season_ops
         rows.append(
             {
                 "player": str(season_row.get("player") or ""),
                 "canonical_name": canonical_name,
                 "recent_pa": int(recent["pa"]),
                 "recent_ops": float(recent["ops"]),
-                "season_ops": float(season_row.get("ops") or 0.0),
-                "ops_delta": float(form["deltas"]["ops_delta"]),
-                "trend": str(form["trend"]),
+                "season_ops": season_ops,
+                "ops_delta": ops_delta,
+                "trend": _classify_form_trend(ops_delta),
             }
         )
     if not rows:
-        return pd.DataFrame(
-            columns=["player", "canonical_name", "recent_pa", "recent_ops", "season_ops", "ops_delta", "trend"]
-        )
+        return pd.DataFrame(columns=empty_columns)
     return (
         pd.DataFrame(rows)
         .sort_values(["ops_delta", "recent_ops", "recent_pa"], ascending=[False, False, False])
