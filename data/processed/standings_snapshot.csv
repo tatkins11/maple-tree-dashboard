@@ -1,4 +1,4 @@
-﻿season,league_name,division_name,snapshot_date,team_name,wins,losses,ties,win_pct,games_back,notes,source
+season,league_name,division_name,snapshot_date,team_name,wins,losses,ties,win_pct,games_back,notes,source
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-04-17,Bullseyes,0,0,0,0.000,0.0,Preseason snapshot,standings_snapshot.csv
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-04-17,cacheouts,0,0,0,0.000,0.0,Preseason snapshot,standings_snapshot.csv
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-04-17,Maple Tree,0,0,0,0.000,0.0,Preseason snapshot,standings_snapshot.csv
@@ -34,3 +34,10 @@ Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-14,Wasted Talent,5,
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-14,Soft Ballz,3,3,0,0.500,2.0,Week 4 snapshot from user-provided official score list and GameChanger screenshots for Maple Tree; GB estimated from current records because the league page does not publish games back,standings_snapshot.csv
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-14,Maple Tree,1,5,0,0.167,4.0,Week 4 snapshot from user-provided official score list and GameChanger screenshots for Maple Tree; GB estimated from current records because the league page does not publish games back,standings_snapshot.csv
 Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-14,Wasted Potential,1,7,0,0.125,5.0,Week 4 snapshot from user-provided official score list and GameChanger screenshots for Maple Tree; GB estimated from current records because the league page does not publish games back,standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,No Dice,5,1,0,0.833,0.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,cacheouts,4,2,0,0.667,1.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,Bullseyes,5,3,0,0.625,1.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,Wasted Talent,5,3,0,0.625,1.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,Soft Ballz,3,3,0,0.500,2.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,Maple Tree,2,6,0,0.250,4.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
+Maple Tree Spring 2026,Wednesday Men's,Blue Division,2026-05-21,Wasted Potential,1,9,0,0.100,6.0,Week 5 snapshot updated after Maple Tree vs Wasted Potential doubleheader (5/20),standings_snapshot.csv
