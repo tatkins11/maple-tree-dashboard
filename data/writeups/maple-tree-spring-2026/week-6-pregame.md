@@ -11,22 +11,22 @@ Week 6 is the doubleheader that puts the standings math to the test. Cacheouts w
 
 ## Tonight's Lineup
 
-A 12-deep order tonight, with Slomka not on the card and the heart of the lineup unchanged from last week:
+A 12-deep order tonight, with Slomka not on the card and the heart of the lineup unchanged from last week. 🔥 / ❄️ indicate last-5-game form vs season baseline.
 
-1. **JJ** — 1.480 OPS, .600 OBP, 13 runs already this spring. Career leadoff numbers in their normal place.
-2. **Glove** — 1.755 OPS, team-leading 19 RBI. Just crossed 100 career RBI last week. Two walks away from his 10th career walk if cacheouts decides not to throw him strikes.
-3. **Tristan** — 2.490 OPS, .680 AVG, 9 home runs in 29 PA. Three total bases from 300 career. The most absurd statistical season on file is still happening.
-4. **Tim** — 1.693 OPS, three home runs, hot recent form. One plate appearance from 100 career PA and two RBI from 50.
-5. **Kives** — 1.500 OPS after a three-HR Week 5. The five-hole has been earning its spot.
-6. **Joel** — 1.704 OPS in 19 PA. Two home runs from 5 career.
-7. **Porter** — 1.135 OPS, still hunting his first home run of the spring. One HR from his 10th career HR, one triple from his 10th career triple. He is sitting on a milestone Wednesday.
-8. **Walsh** — .913 OPS, also still searching for the first long ball. One RBI from 25 career, two HRs from 5 career — he and Porter are on identical milestone runways.
-9. **Corey** — 1.136 OPS, one walk away from his 10th career walk.
-10. **Duff** — .982 OPS, one at bat from 200 career. Pad your career page.
-11. **Jason** — .933 OPS, four RBI from 25 career and four runs from 50.
+1. **JJ** ❄️ — 1.480 OPS, .600 OBP, 13 runs already this spring. Career leadoff numbers in their normal place; last-5 has dipped to 1.329, but that is "cold" only relative to himself.
+2. **Glove** 🔥 — 1.755 OPS, team-leading 19 RBI. Just crossed 100 career RBI last week. Two walks away from his 10th career walk if cacheouts decides not to throw him strikes.
+3. **Tristan** ❄️ — 2.490 OPS, .680 AVG, 9 home runs in 29 PA. The "cold" stretch is a 2.255 OPS over the last five — still better than every other hitter in the league.
+4. **Tim** 🔥 — 1.693 OPS, three home runs, riding a recent hot stretch. One PA from 100 career and two RBI from 50.
+5. **Kives** 🔥 — 1.500 OPS after a three-HR Week 5. The five-hole has been earning its spot.
+6. **Joel** 🔥 — 1.704 OPS in 19 PA. Two home runs from 5 career.
+7. **Porter** 🔥 — 1.135 OPS, still hunting his first home run of the spring. One HR from his 10th career HR, one triple from his 10th career triple. He is sitting on a milestone Wednesday.
+8. **Walsh** 🔥 — .913 OPS, also still searching for the first long ball. One RBI from 25 career, two HRs from 5 career — he and Porter are on identical milestone runways.
+9. **Corey** 🔥 — 1.136 OPS, one walk away from his 10th career walk.
+10. **Duff** — .982 OPS, steady form, one at bat from 200 career.
+11. **Jason** — .933 OPS, steady, four RBI from 25 career and four runs from 50.
 12. **Joey** — .686 OPS, in line for the 12-hole until the bat decides it would like to be somewhere else.
 
-The lineup is the same shape as last week with one fewer card to flip through. Eight of the twelve hitters are sitting on a 1.000+ OPS through eight games. The data from the analytics dive is unambiguous: a long inning at the bottom of the order matters more than a home run at the top of the order. The team that gets the 12-hole back to the leadoff spot one extra time wins.
+Seven of the twelve hitters are flagged hot heading in, the heart of the order is producing, and even the two "cold" labels are JJ and Tristan playing slightly below absurd. Eight of the twelve carry a 1.000+ OPS through eight games. The data from the analytics dive is unambiguous: a long inning at the bottom of the order matters more than a home run at the top. The team that gets the 12-hole back to the leadoff spot one extra time wins.
 
 ## Opponent Snapshot: cacheouts (5-3)
 
