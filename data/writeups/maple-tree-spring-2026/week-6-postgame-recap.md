@@ -20,7 +20,7 @@ The frustrating part of the loss is that the box score is loud in all the wrong 
 
 Then Game 2 happened, and the offense filed for early withdrawal. Cacheouts scored seven in the top of the first, six in the second, two in the third, and two in the fourth. Maple Tree answered with one, one, three, zero. The slaughter rule rang at 17-5 after four innings and the team played a total of 23 plate appearances on the night. That is roughly one full normal-length inning fewer than the team's losing-game average across five seasons. The lineup did not even get most of the order back to the top.
 
-The bright spots are mostly milestone bright spots. Tim went 2-for-2 with a home run and two RBI and crossed his 100th career plate appearance. Duff went 2-for-2 with a double in his only two trips and crossed 200 career at bats. Tristan went 1-for-2 with his tenth home run of the season. After that the box score is a wall of zeros. **Joey** went 0-for-2, Joel went 0-for-1 with two walks, Walsh went 0-for-2, Jason went 1-for-2 with a single, Tristan went 1-for-2 with the solo homer, Glove went 1-for-2 with an RBI. **The line you cannot ignore is Joey — 0-for-5 on the night.**
+The bright spots are mostly milestone bright spots. Tim went 2-for-2 with a home run and two RBI and crossed his 100th career plate appearance. Duff went 2-for-2 with a double in his only two trips and crossed 200 career at bats. Tristan went 1-for-2 with his tenth home run of the season. After that the box score is a wall of zeros. Joey went 0-for-2, Joel went 0-for-1 with two walks, Walsh went 0-for-2, Jason went 1-for-2 with a single, Tristan went 1-for-2 with the solo homer, Glove went 1-for-2 with an RBI.
 
 The honest read of Game 2 is that the team never got the lineup card past the second turn through the order. Cacheouts kept the offense from compounding by ending it mechanically. Twenty-three PAs in the box score. Five runs. Nothing to write longform about.
 
@@ -32,7 +32,7 @@ The honest read of Game 2 is that the team never got the lineup card past the se
 
 **Tristan and Walsh both produced**: Tristan went 3-for-5 with his tenth HR of the season, three RBI, three runs, and seven total bases. Walsh went 3-for-5 with a double and four RBI — but, in classic 2-8 fashion, did not cross home plate himself. Glove went 3-for-5 with a double and three runs scored, drove in a run, and got to three runs scored despite not driving in much.
 
-**Quieter contributors:** JJ went 2-for-6 across the doubleheader with a double and two runs scored — by-his-standards a cold night that still produced two runs at the top of the order. Corey went 2-for-5 with a walk. Duff went 2-for-5 with a double and finally got his career walk total over 10. Jason went 1-for-5. Joel went 0-for-3 with two walks, which is the OBP-friendly version of a no-hit night. Joey went 0-for-5 with two strikeouts — the only Maple Tree hitter who got at least four plate appearances and finished the night without reaching base.
+**Quieter contributors:** JJ went 2-for-6 across the doubleheader with a double and two runs scored — by-his-standards a cold night that still produced two runs at the top of the order. Corey went 2-for-5 with a walk. Duff went 2-for-5 with a double and finally got his career walk total over 10. Jason went 1-for-5. Joel went 0-for-3 with two walks, which is the OBP-friendly version of a no-hit night. Joey went 0-for-5.
 
 ## Milestones and Record Notes
 
