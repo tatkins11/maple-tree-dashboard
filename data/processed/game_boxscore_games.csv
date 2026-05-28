@@ -1,4 +1,4 @@
-game_key,season,team_name,game_date,game_time,opponent_name,team_score,opponent_score,notes,source
+﻿game_key,season,team_name,game_date,game_time,opponent_name,team_score,opponent_score,notes,source
 soviet-sluggers-2021-05-26-1830-balls-deep,Soviet Sluggers Summer 2021,Soviet Sluggers,2021-05-26,6:30 PM,Balls Deep,6,12,Imported from GameChanger screenshot shared in Codex.,gamechanger_screenshot
 soviet-sluggers-2021-05-26-1930-balls-deep,Soviet Sluggers Summer 2021,Soviet Sluggers,2021-05-26,7:30 PM,Balls Deep,10,6,Imported from GameChanger screenshot shared in Codex.,gamechanger_screenshot
 soviet-sluggers-2021-06-02-2030-long-ballers,Soviet Sluggers Summer 2021,Soviet Sluggers,2021-06-02,8:30 PM,Long Ballers,17,7,Imported from GameChanger screenshot shared in Codex.,gamechanger_screenshot
@@ -68,3 +68,5 @@ maple-tree-spring-2026-05-13-2030-wasted-talent,Maple Tree Spring 2026,Maple Tre
 maple-tree-spring-2026-05-13-2130-wasted-talent,Maple Tree Spring 2026,Maple Tree,2026-05-13,9:30 PM,Wasted Talent,4,16,Imported from GameChanger game stats screenshot shared in Codex; user later confirmed the 4-16 final score in Codex.,gamechanger_screenshot
 maple-tree-spring-2026-05-20-1830-wasted-potential,Maple Tree Spring 2026,Maple Tree,2026-05-20,6:30 PM,Wasted Potential,23,9,Imported from GameChanger game stats screenshot shared in chat.,gamechanger_screenshot
 maple-tree-spring-2026-05-20-1930-wasted-potential,Maple Tree Spring 2026,Maple Tree,2026-05-20,7:30 PM,Wasted Potential,14,23,Imported from GameChanger game stats screenshot shared in chat.,gamechanger_screenshot
+maple-tree-spring-2026-05-27-2030-cacheouts,Maple Tree Spring 2026,Maple Tree,2026-05-27,8:30 PM,cacheouts,10,20,Imported from GameChanger game stats screenshot shared in chat.,gamechanger_screenshot
+maple-tree-spring-2026-05-27-2130-cacheouts,Maple Tree Spring 2026,Maple Tree,2026-05-27,9:30 PM,cacheouts,5,17,Imported from GameChanger game stats screenshot shared in chat. Game ended after 4 innings (slaughter rule).,gamechanger_screenshot
