@@ -809,6 +809,7 @@ def fetch_career_leader_snapshot(
     if career.empty:
         return {
             "ops_leader": "",
+            "wrc_plus_leader": "",
             "hr_leader": "",
             "rbi_leader": "",
             "avg_leader": "",
@@ -819,8 +820,21 @@ def fetch_career_leader_snapshot(
     most_seasons_df = ordered.sort_values(["seasons_played", "pa", "ops", "player"], ascending=[False, False, False, True]).reset_index(drop=True)
     most_seasons_row = most_seasons_df.iloc[0]
 
+    wrc_plus_leader = ""
+    advanced, _ = fetch_advanced_analytics_view(
+        connection,
+        view_mode="Career",
+        selected_seasons=seasons,
+        min_pa=min_pa,
+        active_only=False,
+    )
+    if not advanced.empty and "wrc_plus" in advanced.columns:
+        top = advanced.sort_values(["wrc_plus", "pa"], ascending=[False, False]).iloc[0]
+        wrc_plus_leader = f"{top['player']} (wRC+ {float(top['wrc_plus']):.0f})"
+
     return {
         "ops_leader": _format_leader_label(ordered, sort_columns=["ops", "obp", "slg"], value_column="ops", label="OPS", value_format=".3f"),
+        "wrc_plus_leader": wrc_plus_leader,
         "hr_leader": _format_leader_label(ordered, sort_columns=["hr", "rbi", "ops"], value_column="hr", label="HR", value_format=".0f"),
         "rbi_leader": _format_leader_label(ordered, sort_columns=["rbi", "hr", "ops"], value_column="rbi", label="RBI", value_format=".0f"),
         "avg_leader": _format_leader_label(ordered, sort_columns=["avg", "ops", "obp"], value_column="avg", label="AVG", value_format=".3f"),
@@ -836,13 +850,27 @@ def fetch_all_time_leaders(
     career = fetch_career_stats(connection, seasons=seasons, min_pa=min_pa)
     if career.empty:
         return {}
-    return {
+    leaders = {
         "OPS": career.sort_values(["ops", "pa"], ascending=[False, False]).head(10)[["player", "pa", "ops"]],
         "AVG": career.sort_values(["avg", "pa"], ascending=[False, False]).head(10)[["player", "pa", "avg"]],
         "OBP": career.sort_values(["obp", "pa"], ascending=[False, False]).head(10)[["player", "pa", "obp"]],
         "HR": career.sort_values(["hr", "pa"], ascending=[False, False]).head(10)[["player", "hr", "pa"]],
         "RBI": career.sort_values(["rbi", "pa"], ascending=[False, False]).head(10)[["player", "rbi", "pa"]],
     }
+    advanced, _ = fetch_advanced_analytics_view(
+        connection,
+        view_mode="Career",
+        selected_seasons=seasons,
+        min_pa=min_pa,
+        active_only=False,
+    )
+    if not advanced.empty and "wrc_plus" in advanced.columns:
+        # wRC+ is the flagship rate stat, so it leads the leaderboard set.
+        leaders = {
+            "wRC+": advanced.sort_values(["wrc_plus", "pa"], ascending=[False, False]).head(10)[["player", "pa", "wrc_plus"]],
+            **leaders,
+        }
+    return leaders
 
 
 def fetch_single_season_stats(
@@ -1590,6 +1618,107 @@ def fetch_consistency_scores(
     return (
         pd.DataFrame(rows)
         .sort_values(["consistency_score", "mean_production"], ascending=[False, False])
+        .reset_index(drop=True)
+    )
+
+
+CAREER_CONSISTENCY_MIN_SEASONS = 2
+CAREER_CONSISTENCY_MIN_PA_PER_SEASON = 10
+
+
+def _classify_career_consistency(cv: float | None) -> str:
+    if cv is None:
+        return "Insufficient data"
+    if cv <= 0.15:
+        return "Rock-Steady"
+    if cv <= 0.30:
+        return "Consistent"
+    if cv <= 0.50:
+        return "Variable"
+    return "Volatile"
+
+
+def fetch_career_consistency(
+    connection: sqlite3.Connection,
+    *,
+    seasons: list[str] | None = None,
+    min_seasons: int = CAREER_CONSISTENCY_MIN_SEASONS,
+    min_pa_per_season: int = CAREER_CONSISTENCY_MIN_PA_PER_SEASON,
+) -> pd.DataFrame:
+    """Season-to-season reliability of each hitter's run production.
+
+    For every player, collects their per-season wRC+ across the selected seasons
+    (only seasons where they cleared a small PA floor count) and measures how much
+    it swings year to year. Separates steady multi-season performers from
+    one-year wonders. wRC+ is used because it is already era/team-adjusted, so a
+    rising raw OPS from a hotter league does not masquerade as real change.
+    """
+    columns = [
+        "player",
+        "canonical_name",
+        "seasons",
+        "mean_wrc_plus",
+        "best_wrc_plus",
+        "worst_wrc_plus",
+        "consistency_score",
+        "classification",
+    ]
+    season_list = seasons if seasons else fetch_seasons(connection)
+    if not season_list:
+        return pd.DataFrame(columns=columns)
+
+    by_player: dict[str, dict[str, object]] = {}
+    for season in season_list:
+        view, _ = fetch_advanced_analytics_view(
+            connection,
+            view_mode="Season",
+            selected_season=season,
+            min_pa=0,
+            active_only=False,
+        )
+        if view.empty or "wrc_plus" not in view.columns:
+            continue
+        for _, row in view.iterrows():
+            if float(row.get("pa", 0) or 0) < int(min_pa_per_season):
+                continue
+            canonical_name = str(row.get("canonical_name") or "")
+            if not canonical_name:
+                continue
+            entry = by_player.setdefault(
+                canonical_name,
+                {"player": str(row.get("player") or ""), "values": []},
+            )
+            entry["values"].append(float(row.get("wrc_plus") or 0))
+
+    rows: list[dict[str, object]] = []
+    for canonical_name, entry in by_player.items():
+        values = entry["values"]
+        if len(values) < int(min_seasons):
+            continue
+        n = len(values)
+        mean_val = sum(values) / n
+        variance = sum((v - mean_val) ** 2 for v in values) / n
+        stdev = variance ** 0.5
+        cv = (stdev / mean_val) if mean_val > 0 else None
+        consistency_score = round(100.0 / (1.0 + cv), 1) if cv is not None else None
+        rows.append(
+            {
+                "player": str(entry["player"]),
+                "canonical_name": canonical_name,
+                "seasons": n,
+                "mean_wrc_plus": round(mean_val, 0),
+                "best_wrc_plus": round(max(values), 0),
+                "worst_wrc_plus": round(min(values), 0),
+                "consistency_score": consistency_score,
+                "classification": _classify_career_consistency(cv),
+            }
+        )
+    if not rows:
+        return pd.DataFrame(columns=columns)
+    # Quality order (best hitters first); consistency shown as a descriptive column.
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["mean_wrc_plus", "consistency_score"], ascending=[False, False])
         .reset_index(drop=True)
     )
 

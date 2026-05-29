@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from src.dashboard.data import (
+    fetch_career_consistency,
     fetch_consistency_scores,
     fetch_player_consistency,
     fetch_player_recent_form,
@@ -456,3 +457,39 @@ def test_consistency_scores_table_sorts_and_filters_min_games(tmp_path: Path) ->
     names = table["player"].tolist()
     assert "Cup" not in names  # filtered for too few games
     assert names[0] == "Steady"  # sorted by consistency score, steady on top
+
+
+def test_career_consistency_separates_steady_from_one_year_wonder(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "career_consistency.sqlite")
+    seasons = ["2021", "2022", "2023"]
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Steady", "steady")
+        _insert_player(connection, 2, "Wonder", "wonder")
+        _insert_player(connection, 3, "Rookie", "rookie")  # one season -> excluded
+
+        # Steady: similar production every season. Wonder: one huge year, otherwise quiet.
+        # Use enough PA per season to clear the per-season floor.
+        steady_lines = {"2021": (10, 30), "2022": (11, 30), "2023": (9, 30)}   # hits, pa
+        wonder_lines = {"2021": (3, 30), "2022": (20, 30), "2023": (3, 30)}
+        for season, (h, pa) in steady_lines.items():
+            _insert_season_total(connection, season=season, player_id=1, pa=pa, ab=pa, hits=h, tb=h)
+        for season, (h, pa) in wonder_lines.items():
+            _insert_season_total(connection, season=season, player_id=2, pa=pa, ab=pa, hits=h, tb=h)
+        _insert_season_total(connection, season="2021", player_id=3, pa=30, ab=30, hits=10, tb=10)
+        connection.commit()
+
+        table = fetch_career_consistency(connection, seasons=seasons)
+    finally:
+        connection.close()
+
+    names = table["player"].tolist()
+    assert "Rookie" not in names  # only one qualifying season
+    steady = table[table["player"] == "Steady"].iloc[0]
+    wonder = table[table["player"] == "Wonder"].iloc[0]
+    assert int(steady["seasons"]) == 3
+    assert int(wonder["seasons"]) == 3
+    # Steady's wRC+ barely moves; Wonder swings wildly -> steady is more consistent.
+    assert steady["consistency_score"] > wonder["consistency_score"]
+    # Wonder's best-to-worst gap is much larger.
+    assert (wonder["best_wrc_plus"] - wonder["worst_wrc_plus"]) > (steady["best_wrc_plus"] - steady["worst_wrc_plus"])

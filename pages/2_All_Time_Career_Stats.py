@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import altair as alt
+import pandas as pd
 import streamlit as st
 
 from src.dashboard.auth import ensure_authenticated
@@ -10,6 +12,7 @@ from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_advanced_analytics_view,
     fetch_all_time_leaders,
+    fetch_career_consistency,
     fetch_career_leader_snapshot,
     fetch_career_stats,
     fetch_career_summary,
@@ -128,6 +131,7 @@ def _inject_career_stats_css() -> None:
 
 def _render_leader_snapshot(leaders: dict[str, str]) -> None:
     rows = [
+        ("wRC+ leader", leaders.get("wrc_plus_leader", "")),
         ("OPS leader", leaders.get("ops_leader", "")),
         ("HR leader", leaders.get("hr_leader", "")),
         ("RBI leader", leaders.get("rbi_leader", "")),
@@ -346,6 +350,7 @@ else:
         leader_column_config = {
             "player": st.column_config.TextColumn("Player", width="medium"),
             "pa": st.column_config.NumberColumn("PA", format="%d", width="small"),
+            "wrc_plus": st.column_config.NumberColumn("wRC+", format="%d", width="small"),
             "hr": st.column_config.NumberColumn("HR", format="%d", width="small"),
             "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
             "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
@@ -371,3 +376,89 @@ else:
                     use_container_width=True,
                     column_config=leader_column_config,
                 )
+
+    # Career wRC+ visual (linear-weights run value, indexed to 100 = team average).
+    st.subheader("Career wRC+ Leaders")
+    st.markdown(
+        "<div class='career-stats-note'>Career run value per plate appearance, indexed so 100 is the team "
+        "average for the selected seasons. The dashed line marks that average; bars above it are above-average bats.</div>",
+        unsafe_allow_html=True,
+    )
+    if advanced_stats.empty or "wrc_plus" not in advanced_stats.columns:
+        st.info("No advanced career metrics are available for the current filter.")
+    else:
+        chart_source = advanced_stats[["player", "wrc_plus", "pa"]].copy()
+        chart_source = chart_source.sort_values("wrc_plus", ascending=False).reset_index(drop=True)
+        bars = (
+            alt.Chart(chart_source)
+            .mark_bar()
+            .encode(
+                x=alt.X("wrc_plus:Q", title="wRC+"),
+                y=alt.Y("player:N", sort="-x", title=None),
+                color=alt.condition(
+                    alt.datum.wrc_plus >= 100,
+                    alt.value("#16a34a"),
+                    alt.value("#cbd5e1"),
+                ),
+                tooltip=[
+                    alt.Tooltip("player:N", title="Player"),
+                    alt.Tooltip("wrc_plus:Q", title="wRC+", format=".0f"),
+                    alt.Tooltip("pa:Q", title="PA", format=".0f"),
+                ],
+            )
+        )
+        rule = (
+            alt.Chart(pd.DataFrame({"v": [100.0]}))
+            .mark_rule(strokeDash=[4, 4], color="#64748b")
+            .encode(x="v:Q")
+        )
+        chart_height = max(220, len(chart_source) * 26)
+        st.altair_chart((bars + rule).properties(height=chart_height), use_container_width=True)
+
+    # Season-to-season reliability: steady performers vs one-year wonders.
+    st.subheader("Career Consistency")
+    st.markdown(
+        "<div class='career-stats-note'>How steady each hitter's <strong>wRC+</strong> has been from season to season "
+        "(wRC+ is era/team-adjusted, so it isolates real change). Sorted by career average; the <strong>Profile</strong> "
+        "column flags Rock-Steady, Consistent, Variable, or Volatile. Needs at least two qualifying seasons.</div>",
+        unsafe_allow_html=True,
+    )
+    consistency = fetch_career_consistency(connection, seasons=selected_seasons)
+    if consistency.empty:
+        st.info("No hitters have at least two qualifying seasons in the current filter.")
+    else:
+        consistency_table = with_player_link_column(consistency, output_column="player")
+        render_static_table(
+            consistency_table[
+                [
+                    column
+                    for column in [
+                        "player",
+                        "seasons",
+                        "mean_wrc_plus",
+                        "best_wrc_plus",
+                        "worst_wrc_plus",
+                        "consistency_score",
+                        "classification",
+                    ]
+                    if column in consistency_table.columns
+                ]
+            ],
+            column_labels={
+                "player": "Player",
+                "seasons": "Seasons",
+                "mean_wrc_plus": "Avg wRC+",
+                "best_wrc_plus": "Best",
+                "worst_wrc_plus": "Worst",
+                "consistency_score": "Consistency",
+                "classification": "Profile",
+            },
+            formatters={
+                "mean_wrc_plus": "{:.0f}",
+                "best_wrc_plus": "{:.0f}",
+                "worst_wrc_plus": "{:.0f}",
+                "consistency_score": "{:.1f}",
+            },
+            link_columns=["player"],
+            css_class="career-stats-consistency-table",
+        )
