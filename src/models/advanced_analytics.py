@@ -41,33 +41,36 @@ LINEAR_WEIGHTS = {
     "hr": 1.40,
 }
 
-ARCHETYPE_THRESHOLDS = {
-    "table_setter_obp_plus": 106.0,
-    "table_setter_non_out_multiplier": 1.00,
-    "balanced_obp_floor": 96.0,
-    "balanced_slg_floor": 96.0,
-    "balanced_obp_ceiling": 118.0,
-    "balanced_slg_ceiling": 118.0,
-    "gap_power_slg_plus": 112.0,
-    "gap_power_xbh_rate": 0.10,
-    "hr_threat_hr_plus": 140.0,
-    "hr_threat_hr_rate": 0.08,
-    "run_producer_index": 118.0,
-    "low_damage_obp_plus": 110.0,
-    "low_damage_slg_plus": 92.0,
-    "bottom_order_obp_floor": 90.0,
-    "bottom_order_slg_floor": 88.0,
-}
+# Archetype system: a self-calibrating power x on-base style grid plus orthogonal
+# descriptor tags (tier, approach). Cutoffs are percentiles of the comparison
+# group, so the labels re-tune as the roster changes rather than relying on
+# hand-set magic numbers. Style = HOW a hitter produces; tier = HOW MUCH (wRC+);
+# approach = patience (walk rate). Reliability (Steady/Streaky) is a fourth axis
+# computed from per-game data in the dashboard layer (it needs game logs), not here.
+ARCHETYPE_POWER_METRIC = "iso"
+ARCHETYPE_ONBASE_METRIC = "obp"
+ARCHETYPE_TIER_METRIC = "offensive_run_rate"  # monotonic with wRC+
+ARCHETYPE_APPROACH_METRIC = "walk_rate"
+ARCHETYPE_TERCILE_LOW = 1.0 / 3.0
+ARCHETYPE_TERCILE_HIGH = 2.0 / 3.0
+ARCHETYPE_TIER_ELITE_QUANTILE = 0.75
+ARCHETYPE_TIER_ROLE_QUANTILE = 1.0 / 3.0
+ARCHETYPE_MIN_POOL = 5  # below this, fall back to the full comparison group
 
+# Eight style labels (the core archetype). Ordered best-to-bottom for display.
 ARCHETYPE_DISPLAY_ORDER = [
-    "HR Threat",
-    "Gap Power",
-    "Run Producer",
-    "Balanced Bat",
+    "Cornerstone",
+    "Complete Hitter",
+    "Slugger",
+    "Gap Hitter",
     "Table Setter",
-    "Low-Damage OBP Bat",
-    "Bottom-Order Bat",
+    "Balanced Bat",
+    "Contact Bat",
+    "Depth Bat",
 ]
+
+ARCHETYPE_TIERS = ["Elite", "Solid", "Role"]
+ARCHETYPE_APPROACHES = ["Patient", "Balanced", "Aggressive"]
 
 
 @dataclass(frozen=True)
@@ -142,8 +145,14 @@ def calculate_advanced_analytics(
         owar=_safe_ratio_series(metrics["runs_above_replacement"], runs_per_win),
     )
 
+    cutoffs = _calculate_archetype_cutoffs(comparison_metrics, replacement_min_pa=replacement_min_pa)
     metrics = metrics.assign(
-        archetype=metrics.apply(lambda row: _classify_archetype(row, baselines), axis=1)
+        archetype=metrics.apply(lambda row: _classify_archetype(row, cutoffs), axis=1),
+        archetype_tier=metrics.apply(lambda row: _classify_tier(row, cutoffs), axis=1),
+        archetype_approach=metrics.apply(lambda row: _classify_approach(row, cutoffs), axis=1),
+    )
+    metrics = metrics.assign(
+        archetype_label=metrics.apply(_compose_archetype_label, axis=1)
     )
 
     metadata = AdvancedAnalyticsMetadata(
@@ -233,6 +242,9 @@ def build_player_comparison(dataframe: pd.DataFrame, players: list[str]) -> pd.D
         "rar",
         "owar",
         "archetype",
+        "archetype_tier",
+        "archetype_approach",
+        "archetype_label",
     ]
     selected = dataframe[dataframe["player"].isin(players)][comparison_columns].copy()
     if selected.empty:
@@ -423,40 +435,105 @@ def _plus_metric(series: pd.Series, baseline: float) -> pd.Series:
     return _safe_ratio_series(series, baseline) * TEAM_RELATIVE_SCALE
 
 
-def _classify_archetype(row: pd.Series, baselines: dict[str, float]) -> str:
-    hr_plus = float(row.get("team_relative_hr_rate", 0.0))
-    slg_plus = float(row.get("team_relative_slg", 0.0))
-    obp_plus = float(row.get("team_relative_obp", 0.0))
-    ops_plus = float(row.get("team_relative_ops", 0.0))
-    hr_rate = float(row.get("hr_rate", 0.0))
-    xbh_rate = float(row.get("xbh_rate", 0.0))
-    non_out_rate = float(row.get("non_out_rate", 0.0))
-    run_production_index = float(row.get("run_production_index", 0.0))
+def _calculate_archetype_cutoffs(
+    comparison_metrics: pd.DataFrame | None,
+    *,
+    replacement_min_pa: int,
+) -> dict[str, float] | None:
+    """Percentile cutoffs for the self-calibrating archetype grid.
 
-    if hr_plus >= ARCHETYPE_THRESHOLDS["hr_threat_hr_plus"] or hr_rate >= ARCHETYPE_THRESHOLDS["hr_threat_hr_rate"]:
-        return "HR Threat"
-    if slg_plus >= ARCHETYPE_THRESHOLDS["gap_power_slg_plus"] and xbh_rate >= max(
-        ARCHETYPE_THRESHOLDS["gap_power_xbh_rate"], baselines["xbh_rate"] * 1.10
-    ):
-        return "Gap Power"
-    if run_production_index >= ARCHETYPE_THRESHOLDS["run_producer_index"] and slg_plus >= TEAM_RELATIVE_SCALE:
-        return "Run Producer"
-    if obp_plus >= ARCHETYPE_THRESHOLDS["low_damage_obp_plus"] and slg_plus < ARCHETYPE_THRESHOLDS["low_damage_slg_plus"]:
-        return "Low-Damage OBP Bat"
-    if obp_plus >= ARCHETYPE_THRESHOLDS["table_setter_obp_plus"] and non_out_rate >= baselines["non_out_rate"] * ARCHETYPE_THRESHOLDS["table_setter_non_out_multiplier"]:
+    Computed over the qualified comparison pool so the labels re-tune as the
+    roster changes. Returns None when there are too few hitters to form a stable
+    distribution (callers then fall back to a neutral label).
+    """
+    if comparison_metrics is None or comparison_metrics.empty:
+        return None
+    qualified = comparison_metrics[comparison_metrics["pa"] >= replacement_min_pa]
+    pool = qualified if len(qualified) >= ARCHETYPE_MIN_POOL else comparison_metrics
+    if len(pool) < 3:
+        return None
+
+    def q(column: str, quantile: float) -> float:
+        return float(pool[column].astype(float).quantile(quantile))
+
+    return {
+        "power_low": q(ARCHETYPE_POWER_METRIC, ARCHETYPE_TERCILE_LOW),
+        "power_high": q(ARCHETYPE_POWER_METRIC, ARCHETYPE_TERCILE_HIGH),
+        "onbase_low": q(ARCHETYPE_ONBASE_METRIC, ARCHETYPE_TERCILE_LOW),
+        "onbase_high": q(ARCHETYPE_ONBASE_METRIC, ARCHETYPE_TERCILE_HIGH),
+        "tier_elite": q(ARCHETYPE_TIER_METRIC, ARCHETYPE_TIER_ELITE_QUANTILE),
+        "tier_role": q(ARCHETYPE_TIER_METRIC, ARCHETYPE_TIER_ROLE_QUANTILE),
+        "approach_low": q(ARCHETYPE_APPROACH_METRIC, ARCHETYPE_TERCILE_LOW),
+        "approach_high": q(ARCHETYPE_APPROACH_METRIC, ARCHETYPE_TERCILE_HIGH),
+        "hr_median": q("hr_rate", 0.5),
+    }
+
+
+def _tercile(value: float, low: float, high: float) -> str:
+    if value >= high:
+        return "high"
+    if value <= low:
+        return "low"
+    return "mid"
+
+
+def _classify_archetype(row: pd.Series, cutoffs: dict[str, float] | None) -> str:
+    """Core playing-style label from the power x on-base grid."""
+    if cutoffs is None:
+        return "Balanced Bat"
+    power = _tercile(float(row.get(ARCHETYPE_POWER_METRIC, 0.0)), cutoffs["power_low"], cutoffs["power_high"])
+    onbase = _tercile(float(row.get(ARCHETYPE_ONBASE_METRIC, 0.0)), cutoffs["onbase_low"], cutoffs["onbase_high"])
+    elite = float(row.get(ARCHETYPE_TIER_METRIC, 0.0)) >= cutoffs["tier_elite"]
+    hr_driven = float(row.get("hr_rate", 0.0)) >= cutoffs["hr_median"]
+
+    if power == "high" and onbase == "high":
+        return "Cornerstone" if elite else "Complete Hitter"
+    if power == "high":
+        return "Slugger" if hr_driven else "Gap Hitter"
+    if onbase == "high":
         return "Table Setter"
-    if (
-        ARCHETYPE_THRESHOLDS["balanced_obp_floor"] <= obp_plus <= ARCHETYPE_THRESHOLDS["balanced_obp_ceiling"]
-        and ARCHETYPE_THRESHOLDS["balanced_slg_floor"] <= slg_plus <= ARCHETYPE_THRESHOLDS["balanced_slg_ceiling"]
-    ):
+    if power == "mid" and onbase == "mid":
         return "Balanced Bat"
-    if ops_plus >= TEAM_RELATIVE_SCALE:
-        return "Balanced Bat"
-    if obp_plus < ARCHETYPE_THRESHOLDS["bottom_order_obp_floor"] and slg_plus < ARCHETYPE_THRESHOLDS["bottom_order_slg_floor"]:
-        return "Bottom-Order Bat"
-    if obp_plus >= TEAM_RELATIVE_SCALE or slg_plus >= TEAM_RELATIVE_SCALE:
-        return "Balanced Bat"
-    return "Low-Damage OBP Bat"
+    if power == "low" and onbase == "low":
+        return "Depth Bat"
+    return "Contact Bat"
+
+
+def _classify_tier(row: pd.Series, cutoffs: dict[str, float] | None) -> str:
+    if cutoffs is None:
+        return "Solid"
+    run_rate = float(row.get(ARCHETYPE_TIER_METRIC, 0.0))
+    if run_rate >= cutoffs["tier_elite"]:
+        return "Elite"
+    if run_rate <= cutoffs["tier_role"]:
+        return "Role"
+    return "Solid"
+
+
+def _classify_approach(row: pd.Series, cutoffs: dict[str, float] | None) -> str:
+    if cutoffs is None:
+        return "Balanced"
+    walk_rate = float(row.get(ARCHETYPE_APPROACH_METRIC, 0.0))
+    if walk_rate >= cutoffs["approach_high"]:
+        return "Patient"
+    if walk_rate <= cutoffs["approach_low"]:
+        return "Aggressive"
+    return "Balanced"
+
+
+def _compose_archetype_label(row: pd.Series) -> str:
+    """Human-readable identity packing tier + approach into the style label."""
+    style = str(row.get("archetype", "Balanced Bat"))
+    tier = str(row.get("archetype_tier", "Solid"))
+    approach = str(row.get("archetype_approach", "Balanced"))
+    parts: list[str] = []
+    # "Elite" is the only tier worth prefixing; "Role"/"Solid" stay implicit.
+    if tier == "Elite" and style not in {"Cornerstone"}:
+        parts.append("Elite")
+    if approach in {"Patient", "Aggressive"}:
+        parts.append(approach)
+    parts.append(style)
+    return " ".join(parts)
 
 
 def _safe_ratio(numerator: float, denominator: float) -> float:

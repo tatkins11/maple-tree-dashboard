@@ -66,7 +66,7 @@ ADVANCED_CAREER_COLUMNS = [
     "wrc_plus",
     "rar",
     "owar",
-    "archetype",
+    "archetype_label",
 ]
 
 
@@ -190,7 +190,7 @@ def _render_mobile_advanced_cards(dataframe) -> None:
               <div class="career-stats-card-row"><strong>wOBA:</strong> {row['woba']:.3f} &nbsp; <strong>wRC+:</strong> {row['wrc_plus']:.0f}</div>
               <div class="career-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
               <div class="career-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
-              <div class="career-stats-card-row"><strong>Archetype:</strong> {row['archetype']}</div>
+              <div class="career-stats-card-row"><strong>Profile:</strong> {row['archetype_label']}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -326,7 +326,7 @@ else:
                             "wrc_plus": "wRC+",
                             "rar": "RAR",
                             "owar": "oWAR",
-                            "archetype": "Archetype",
+                            "archetype_label": "Profile",
                         },
                         formatters={
                             "iso": "{:.3f}",

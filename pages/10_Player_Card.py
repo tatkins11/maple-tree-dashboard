@@ -13,6 +13,7 @@ from src.dashboard.data import (
     DEFAULT_DB_PATH,
     fetch_advanced_analytics_view,
     fetch_player_advanced_history,
+    fetch_player_consistency,
     fetch_player_game_log,
     fetch_player_identities,
     fetch_player_milestone_context,
@@ -459,7 +460,7 @@ def _render_advanced_mobile_cards(dataframe: pd.DataFrame) -> None:
               <div class="player-compact-row"><strong>wOBA:</strong> {row['woba']:.3f} &nbsp; <strong>wRC+:</strong> {row['wrc_plus']:.0f}</div>
               <div class="player-compact-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
               <div class="player-compact-row"><strong>RAA:</strong> {row['raa']:.2f} &nbsp; <strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
-              <div class="player-compact-row"><strong>Archetype:</strong> {escape(str(row['archetype']))}</div>
+              <div class="player-compact-row"><strong>Profile:</strong> {escape(str(row['archetype_label']))}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -585,7 +586,7 @@ def _advanced_history_column_config() -> dict[str, st.column_config.Column]:
         "raa": st.column_config.NumberColumn("RAA", format="%.2f", width="small"),
         "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
         "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
-        "archetype": st.column_config.TextColumn("Archetype", width="medium"),
+        "archetype_label": st.column_config.TextColumn("Profile", width="medium"),
     }
 
 
@@ -916,6 +917,42 @@ def _render_head_to_head_section(
         )
 
 
+def _render_hitter_profile(connection, canonical_name: str, advanced_history: pd.DataFrame) -> None:
+    """One-line modular identity: most-recent-season style/tier/approach + reliability."""
+    if advanced_history.empty or "archetype_label" not in advanced_history.columns:
+        return
+    history = advanced_history.copy()
+    latest_season = ""
+    if "season" in history.columns:
+        chronological = sort_seasons(history["season"].astype(str).dropna().tolist())
+        if chronological:
+            latest_season = chronological[0]
+            latest = history[history["season"].astype(str) == latest_season]
+        else:
+            latest = history.tail(1)
+    else:
+        latest = history.tail(1)
+    if latest.empty:
+        return
+    latest_row = latest.iloc[0]
+    label = str(latest_row.get("archetype_label") or "").strip()
+    if not label:
+        return
+
+    reliability = ""
+    consistency = fetch_player_consistency(connection, canonical_name, season=latest_season or None)
+    if consistency.get("classification") and consistency["classification"] != "Insufficient data":
+        reliability = str(consistency["classification"])
+
+    season_label = str(latest_row.get("season_label") or "").strip()
+    pieces = " · ".join(part for part in [label, reliability] if part)
+    prefix = f"{season_label} profile" if season_label else "Latest profile"
+    st.markdown(
+        f"<div class='player-card-meta'><strong>{escape(prefix)}:</strong> {escape(pieces)}</div>",
+        unsafe_allow_html=True,
+    )
+
+
 def _render_player_picker(identities: pd.DataFrame, selected_canonical: str | None) -> str:
     options = identities["canonical_name"].astype(str).tolist()
     labels = {
@@ -988,6 +1025,7 @@ st.title(str(summary.get("player") or "Player Card"))
 st.caption("Full player hub with career snapshot, season history, game logs, milestones, records, and trend context.")
 
 _render_header(summary)
+_render_hitter_profile(connection, player_query, advanced_history)
 _render_rank_highlights(summary, is_mobile_layout=layout.is_mobile_layout)
 _render_grouped_metrics(summary, is_mobile_layout=layout.is_mobile_layout)
 
@@ -1163,7 +1201,7 @@ with advanced_tab:
             "raa",
             "rar",
             "owar",
-            "archetype",
+            "archetype_label",
         ]
         advanced_display = _ascending_history(advanced_history[[column for column in advanced_columns if column in advanced_history.columns]])
         advanced_display = _append_advanced_career_row(connection, player_query, advanced_display)

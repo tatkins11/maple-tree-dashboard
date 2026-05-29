@@ -346,118 +346,48 @@ def test_walks_are_credited_in_run_rate() -> None:
     assert patient["wrc_plus"] > hacker["wrc_plus"]
 
 
-def test_calculate_advanced_analytics_assigns_expected_archetypes() -> None:
-    dataframe = pd.DataFrame(
-        [
-            {
-                "player": "Slugger",
-                "pa": 40,
-                "ab": 38,
-                "hits": 20,
-                "1b": 5,
-                "2b": 5,
-                "3b": 1,
-                "hr": 9,
-                "bb": 2,
-                "so": 1,
-                "hbp": 0,
-                "sac": 0,
-                "sf": 0,
-                "roe": 0,
-                "fc": 0,
-                "gidp": 0,
-                "r": 18,
-                "rbi": 20,
-                "tb": 48,
-                "two_out_rbi": 4,
-                "lob": 3,
-                "ba_risp": 0.0,
-            },
-            {
-                "player": "Setter",
-                "pa": 50,
-                "ab": 42,
-                "hits": 18,
-                "1b": 16,
-                "2b": 2,
-                "3b": 0,
-                "hr": 0,
-                "bb": 6,
-                "so": 2,
-                "hbp": 0,
-                "sac": 0,
-                "sf": 0,
-                "roe": 2,
-                "fc": 0,
-                "gidp": 0,
-                "r": 14,
-                "rbi": 7,
-                "tb": 20,
-                "two_out_rbi": 1,
-                "lob": 4,
-                "ba_risp": 0.0,
-            },
-            {
-                "player": "Weak",
-                "pa": 40,
-                "ab": 38,
-                "hits": 10,
-                "1b": 9,
-                "2b": 1,
-                "3b": 0,
-                "hr": 0,
-                "bb": 1,
-                "so": 6,
-                "hbp": 0,
-                "sac": 0,
-                "sf": 0,
-                "roe": 0,
-                "fc": 1,
-                "gidp": 1,
-                "r": 5,
-                "rbi": 4,
-                "tb": 11,
-                "two_out_rbi": 0,
-                "lob": 6,
-                "ba_risp": 0.0,
-            },
-                {
-                    "player": "Balanced",
-                    "pa": 44,
-                    "ab": 40,
-                    "hits": 18,
-                    "1b": 12,
-                    "2b": 3,
-                    "3b": 1,
-                    "hr": 2,
-                    "bb": 4,
-                    "so": 2,
-                    "hbp": 0,
-                    "sac": 0,
-                    "sf": 0,
-                    "roe": 0,
-                    "fc": 0,
-                    "gidp": 0,
-                    "r": 10,
-                    "rbi": 8,
-                    "tb": 29,
-                    "two_out_rbi": 2,
-                    "lob": 4,
-                    "ba_risp": 0.0,
-                },
-        ]
+def test_archetype_grid_and_descriptors_self_calibrate() -> None:
+    from src.models.advanced_analytics import (
+        ARCHETYPE_APPROACHES,
+        ARCHETYPE_DISPLAY_ORDER,
+        ARCHETYPE_TIERS,
     )
 
-    analytics, _ = calculate_advanced_analytics(
-        dataframe,
-        mode="Season",
-        comparison_group_label="Archetypes",
-    )
-    archetypes = dict(zip(analytics["player"], analytics["archetype"]))
-    assert archetypes["Slugger"] == "HR Threat"
-    assert archetypes["Setter"] in {"Table Setter", "Low-Damage OBP Bat", "Balanced Bat"}
-    assert archetypes["Balanced"] in {"Balanced Bat", "Table Setter"}
-    assert archetypes["Weak"] == "Bottom-Order Bat"
+    # Eight hitters spanning the power x on-base grid so terciles are well-defined.
+    df = pd.DataFrame([
+        _make_hitter("Star",   pa=40, b1=3, b2=4, b3=1, hr=10, bb=6),  # elite power + on-base + walks
+        _make_hitter("Masher", pa=40, b1=2, b2=2, b3=0, hr=9,  bb=0),  # HR-driven power, no walks, low OBP
+        _make_hitter("Gapper", pa=40, b1=2, b2=10, b3=2, hr=0, bb=0),  # gap power, no HR, low OBP
+        _make_hitter("Setter", pa=40, b1=15, b2=1, b3=0, hr=0, bb=8),  # high OBP, little power, walks
+        _make_hitter("Avg",    pa=40, b1=9, b2=3, b3=0, hr=2,  bb=3),  # middle of everything
+        _make_hitter("Slap",   pa=40, b1=11, b2=1, b3=0, hr=0, bb=2),  # low power, contact
+        _make_hitter("Weak",   pa=40, b1=4, b2=0, b3=0, hr=0,  bb=0),  # low everything, no walks
+        _make_hitter("Weak2",  pa=40, b1=3, b2=0, b3=0, hr=0,  bb=1),  # low everything
+    ])
+    analytics, _ = calculate_advanced_analytics(df, mode="Season", comparison_group_label="Grid")
+    by_player = analytics.set_index("player")
+
+    # Every label is from the defined vocabularies.
+    assert set(analytics["archetype"]).issubset(set(ARCHETYPE_DISPLAY_ORDER))
+    assert set(analytics["archetype_tier"]).issubset(set(ARCHETYPE_TIERS))
+    assert set(analytics["archetype_approach"]).issubset(set(ARCHETYPE_APPROACHES))
+
+    # The standout bat is a Cornerstone, Elite tier, and its label reflects it.
+    assert by_player.loc["Star", "archetype"] == "Cornerstone"
+    assert by_player.loc["Star", "archetype_tier"] == "Elite"
+    assert "Cornerstone" in by_player.loc["Star", "archetype_label"]
+
+    # Pure power with no walks reads as a power style and an aggressive approach.
+    assert by_player.loc["Masher", "archetype"] in {"Slugger", "Gap Hitter"}
+    assert by_player.loc["Masher", "archetype_approach"] == "Aggressive"
+
+    # On-base, low-power, walk-heavy profile = Table Setter, Patient.
+    assert by_player.loc["Setter", "archetype"] == "Table Setter"
+    assert by_player.loc["Setter", "archetype_approach"] == "Patient"
+
+    # The weakest bats fall to the bottom style and Role tier.
+    assert by_player.loc["Weak", "archetype"] in {"Depth Bat", "Contact Bat"}
+    assert by_player.loc["Weak", "archetype_tier"] == "Role"
 
 
 def test_advanced_helpers_return_methodology_and_sorted_archetypes() -> None:
@@ -525,7 +455,7 @@ def test_advanced_helpers_return_methodology_and_sorted_archetypes() -> None:
     assert summary["Comparison group"] == "Helper Test"
     assert summary["Runs per win"] == "18.3"
     assert "linear weights" in summary["Run model"].lower()
-    assert fetch_advanced_archetype_order()[0] == "HR Threat"
+    assert fetch_advanced_archetype_order()[0] == "Cornerstone"
     assert list(archetype_summary["archetype"]) == sorted(
         archetype_summary["archetype"],
         key=lambda value: fetch_advanced_archetype_order().index(value),

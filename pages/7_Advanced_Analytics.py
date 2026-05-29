@@ -105,7 +105,12 @@ def _format_metric_name(metric: str) -> str:
         "raa": "RAA",
         "rar": "RAR",
         "owar": "oWAR",
+        "woba": "wOBA",
+        "wrc_plus": "wRC+",
         "archetype": "Archetype",
+        "archetype_tier": "Tier",
+        "archetype_approach": "Approach",
+        "archetype_label": "Profile",
     }
     return labels.get(metric, metric.replace("_", " ").title())
 
@@ -383,7 +388,7 @@ default_columns = [
     "rbi_per_pa",
     "woba",
     "wrc_plus",
-    "archetype",
+    "archetype_label",
     "rar",
     "owar",
 ]
@@ -424,6 +429,7 @@ render_static_table(
         "woba": "wOBA",
         "wrc_plus": "wRC+",
         "team_relative_ops": "Team OPS+",
+        "archetype_label": "Profile",
         "archetype": "Archetype",
         "rar": "RAR",
         "owar": "oWAR",

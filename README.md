@@ -349,11 +349,15 @@ Important value-metric caveat:
 
 Archetype logic summary:
 
-- archetypes are rule-based and transparent, not model-generated
-- current v1 archetypes:
-  `Table Setter`, `Balanced Bat`, `Gap Power`, `HR Threat`, `Run Producer`, `Low-Damage OBP Bat`, `Bottom-Order Bat`
-- classifications are driven by combinations of:
-  `team_relative_OBP`, `team_relative_SLG`, `team_relative_HR_rate`, `XBH_rate`, `non_out_rate`, and `run_production_index`
+- archetypes are rule-based and transparent, not model-generated, and **self-calibrating**: cutoffs are percentiles of the comparison group (terciles for the grid, quartile for the elite tier), so labels re-tune as the roster changes instead of relying on hand-set magic numbers
+- the system is **modular** — a core style label plus orthogonal descriptor tags — so distinction comes from combinations (e.g. "Patient Cornerstone", "Aggressive Slugger") rather than a long flat list
+- **core style (v2)** comes from a power (`ISO`) x on-base (`OBP`) grid, with home-run rate splitting the high-power cells:
+  `Cornerstone`, `Complete Hitter`, `Slugger`, `Gap Hitter`, `Table Setter`, `Balanced Bat`, `Contact Bat`, `Depth Bat`
+- **tier** (`archetype_tier`) from `offensive_run_rate` percentile (monotonic with wRC+): `Elite` (top quartile), `Solid`, `Role` (bottom third)
+- **approach** (`archetype_approach`) from walk-rate percentile: `Patient` (top third), `Balanced`, `Aggressive` (bottom third)
+- `archetype_label` composes these into the displayed "Profile" (e.g. an Elite top-quartile patient slugger reads "Elite Patient Slugger"; Cornerstone already implies elite so the prefix is omitted there)
+- **reliability** is the fourth, separate axis — the game-to-game consistency classification below (Steady / Streaky / Boom-or-Bust) — surfaced in its own section and in the Player Card profile line, because it needs per-game data the season-aggregate classifier does not have
+- replaced the v1 set (`HR Threat`, `Gap Power`, `Run Producer`, `Low-Damage OBP Bat`, `Bottom-Order Bat`, ...), which collapsed the best hitters into one label, leaned on lineup-context-dependent RBI/runs, and used unflattering names
 
 Game-to-game consistency:
 
