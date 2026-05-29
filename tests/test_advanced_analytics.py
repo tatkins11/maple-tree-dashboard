@@ -32,7 +32,7 @@ from src.dashboard.data import (
     fetch_top_hitters,
     format_player_season_label,
 )
-from src.models.advanced_analytics import calculate_advanced_analytics
+from src.models.advanced_analytics import LINEAR_WEIGHTS, calculate_advanced_analytics
 from src.utils.db import connect_db, initialize_database
 
 
@@ -234,9 +234,25 @@ def test_calculate_advanced_analytics_core_metrics() -> None:
     assert row["team_relative_obp"] == 100.0
     assert row["team_relative_slg"] == 100.0
     assert row["team_relative_ops"] == 100.0
+    # Run rate now uses linear weights: 3*1B + 1*2B + 1*3B + 1*HR + 2*BB + 1*ROE + 1*FC
+    expected_lw_runs = (
+        3 * LINEAR_WEIGHTS["1b"]
+        + 1 * LINEAR_WEIGHTS["2b"]
+        + 1 * LINEAR_WEIGHTS["3b"]
+        + 1 * LINEAR_WEIGHTS["hr"]
+        + 2 * LINEAR_WEIGHTS["bb"]
+        + 1 * LINEAR_WEIGHTS["roe"]
+        + 1 * LINEAR_WEIGHTS["fc"]
+    )
+    expected_run_rate = expected_lw_runs / 12
+    # Single player below replacement_min_pa -> replacement = run_rate * fallback factor
+    expected_replacement = expected_run_rate * 0.80
+    assert round(row["offensive_run_rate"], 6) == round(expected_run_rate, 6)
     assert round(row["raa"], 6) == 0.0
-    assert round(row["rar"], 6) == round((0.75 - 0.6) * 12, 6)
+    assert round(row["rar"], 6) == round((expected_run_rate - expected_replacement) * 12, 6)
     assert round(row["owar"], 6) == round(row["rar"] / metadata.runs_per_win, 6)
+    # Single-player baseline -> wRC+ equals 100 (player IS the league)
+    assert round(row["wrc_plus"], 6) == 100.0
 
 
 def test_calculate_advanced_analytics_handles_zero_denominators() -> None:
@@ -281,6 +297,53 @@ def test_calculate_advanced_analytics_handles_zero_denominators() -> None:
     assert row["tb_per_pa"] == 0.0
     assert row["walk_rate"] == 0.0
     assert row["owar"] == 0.0
+
+
+def _make_hitter(player: str, *, pa: int, b1: int, b2: int, b3: int, hr: int, bb: int) -> dict:
+    ab = pa - bb
+    hits = b1 + b2 + b3 + hr
+    tb = b1 + 2 * b2 + 3 * b3 + 4 * hr
+    return {
+        "player": player, "pa": pa, "ab": ab, "hits": hits,
+        "1b": b1, "2b": b2, "3b": b3, "hr": hr, "bb": bb, "so": 0,
+        "hbp": 0, "sac": 0, "sf": 0, "roe": 0, "fc": 0, "gidp": 0,
+        "r": 0, "rbi": 0, "tb": tb, "two_out_rbi": 0, "lob": 0, "ba_risp": 0.0,
+    }
+
+
+def test_wrc_plus_and_woba_track_run_value() -> None:
+    # A power bat and a slap-singles bat with identical PA; the power bat creates
+    # more linear-weight runs, so it should carry a higher wRC+ and wOBA.
+    df = pd.DataFrame([
+        _make_hitter("Power", pa=20, b1=2, b2=2, b3=1, hr=4, bb=2),
+        _make_hitter("Slap", pa=20, b1=8, b2=0, b3=0, hr=0, bb=2),
+    ])
+    analytics, _ = calculate_advanced_analytics(df, mode="Season", comparison_group_label="Test")
+    power = analytics[analytics["player"] == "Power"].iloc[0]
+    slap = analytics[analytics["player"] == "Slap"].iloc[0]
+
+    assert power["wrc_plus"] > slap["wrc_plus"]
+    assert power["woba"] > slap["woba"]
+    # League-average wRC+ is 100 by construction; the two-hitter mean is weighted
+    # by PA but both have equal PA, so wRC+ should straddle 100.
+    assert slap["wrc_plus"] < 100.0 < power["wrc_plus"]
+    # wOBA is rescaled so the PA-weighted league wOBA equals league OBP.
+    assert power["woba"] > 0 and slap["woba"] > 0
+
+
+def test_walks_are_credited_in_run_rate() -> None:
+    # Two identical hitters except one drew extra walks in the same PA count.
+    # Under the old total-bases model a walk added nothing; under linear weights
+    # the walk-heavy hitter must have a higher run rate.
+    df = pd.DataFrame([
+        _make_hitter("Patient", pa=20, b1=5, b2=0, b3=0, hr=0, bb=6),
+        _make_hitter("Hacker", pa=20, b1=5, b2=0, b3=0, hr=0, bb=0),
+    ])
+    analytics, _ = calculate_advanced_analytics(df, mode="Season", comparison_group_label="Test")
+    patient = analytics[analytics["player"] == "Patient"].iloc[0]
+    hacker = analytics[analytics["player"] == "Hacker"].iloc[0]
+    assert patient["offensive_run_rate"] > hacker["offensive_run_rate"]
+    assert patient["wrc_plus"] > hacker["wrc_plus"]
 
 
 def test_calculate_advanced_analytics_assigns_expected_archetypes() -> None:

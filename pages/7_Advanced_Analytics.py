@@ -18,6 +18,7 @@ from src.dashboard.data import (
     fetch_advanced_analytics_view,
     fetch_advanced_archetype_order,
     fetch_active_roster,
+    fetch_consistency_scores,
     fetch_advanced_methodology_summary,
     fetch_advanced_player_comparison,
     fetch_current_season_stats,
@@ -378,6 +379,8 @@ default_columns = [
     "tb_per_pa",
     "non_out_rate",
     "rbi_per_pa",
+    "woba",
+    "wrc_plus",
     "team_relative_ops",
     "archetype",
     "rar",
@@ -416,6 +419,8 @@ render_static_table(
         "tb_per_pa": "TB / PA",
         "non_out_rate": "Non-Out Rate",
         "rbi_per_pa": "RBI / PA",
+        "woba": "wOBA",
+        "wrc_plus": "wRC+",
         "team_relative_ops": "Team OPS+",
         "archetype": "Archetype",
         "rar": "RAR",
@@ -443,6 +448,8 @@ render_static_table(
         "tb_per_pa": "{:.3f}",
         "non_out_rate": "{:.3f}",
         "rbi_per_pa": "{:.3f}",
+        "woba": "{:.3f}",
+        "wrc_plus": "{:.0f}",
         "team_relative_ops": "{:.0f}",
         "xbh_rate": "{:.3f}",
         "walk_rate": "{:.3f}",
@@ -708,3 +715,42 @@ else:
         _format_player_comparison(_rename_comparison_index(comparison_df)),
         use_container_width=True,
     )
+
+if scope == "Season" and selected_season:
+    st.subheader("Game-to-Game Consistency")
+    st.markdown(
+        "<div class='analytics-note'>Measures how steady each hitter is from game to game, using "
+        "per-game linear-weight runs per plate appearance. <strong>Consistency Score</strong> runs 0-100 "
+        "(higher = steadier); <strong>Boom%</strong> is the share of games well above the player's own "
+        "average and <strong>Quiet%</strong> the share of near-silent games. Requires per-game box-score "
+        "data, so it only appears in Season view.</div>",
+        unsafe_allow_html=True,
+    )
+    consistency_df = fetch_consistency_scores(connection, season=selected_season)
+    if consistency_df.empty:
+        st.info("Not enough per-game box-score data to compute consistency for this season yet.")
+    else:
+        consistency_display = with_player_link_column(
+            consistency_df[["player", "canonical_name", "games", "consistency_score", "mean_production", "boom_rate", "quiet_rate", "classification"]],
+            output_column="player",
+        )
+        render_static_table(
+            consistency_display[["player", "games", "consistency_score", "mean_production", "boom_rate", "quiet_rate", "classification"]],
+            column_labels={
+                "player": "Player",
+                "games": "G",
+                "consistency_score": "Consistency",
+                "mean_production": "Avg Runs/PA",
+                "boom_rate": "Boom %",
+                "quiet_rate": "Quiet %",
+                "classification": "Profile",
+            },
+            formatters={
+                "consistency_score": "{:.1f}",
+                "mean_production": "{:.3f}",
+                "boom_rate": "{:.0%}",
+                "quiet_rate": "{:.0%}",
+            },
+            link_columns=["player"],
+            css_class="advanced-consistency-table",
+        )

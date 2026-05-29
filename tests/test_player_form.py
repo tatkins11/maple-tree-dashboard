@@ -6,6 +6,8 @@ from pathlib import Path
 import pandas as pd
 
 from src.dashboard.data import (
+    fetch_consistency_scores,
+    fetch_player_consistency,
     fetch_player_recent_form,
     fetch_player_vs_opponent,
     fetch_pregame_hot_bats,
@@ -370,3 +372,87 @@ def test_pregame_hot_bats_flags_recent_riser(tmp_path: Path) -> None:
     assert top["canonical_name"] == "jane smith"
     assert top["recent_pa"] >= 2
     assert top["ops_delta"] > 0
+
+
+def _insert_season_total(connection, *, season, player_id, pa, ab, hits, hr=0, bb=0, tb=0):
+    avg = hits / ab if ab else 0
+    obp = (hits + bb) / (ab + bb) if (ab + bb) else 0
+    slg = tb / ab if ab else 0
+    connection.execute(
+        """
+        INSERT INTO season_batting_stats (
+            season, player_id, games, plate_appearances, at_bats, hits, singles, doubles, triples,
+            home_runs, walks, strikeouts, hit_by_pitch, sacrifice_hits, sacrifice_flies,
+            reached_on_error, fielder_choice, grounded_into_double_play, runs, rbi, total_bases,
+            batting_average, on_base_percentage, slugging_percentage, ops,
+            batting_average_risp, two_out_rbi, left_on_base, raw_source_file
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, 0, ?, ?, 0, 0, 0, 0, 0, 0, 0, 0, 0, ?, ?, ?, ?, ?, 0, 0, 0, ?)
+        """,
+        (season, player_id, 5, pa, ab, hits, hits - hr, hr, bb, tb, avg, obp, slg, obp + slg, "season.csv"),
+    )
+
+
+def test_consistency_score_rewards_steady_over_boom_bust(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "consistency.sqlite")
+    season = "Maple Tree Spring 2026"
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Steady", "steady")
+        _insert_player(connection, 2, "Boom", "boom")
+
+        # Both play 4 games, both total 8 hits over 16 PA (same season line),
+        # but Steady spreads them 2-2-2-2 and Boom lumps them 0-0-0-8.
+        steady_games = [2, 2, 2, 2]
+        boom_games = [0, 0, 0, 8]
+        for gi, (s_h, b_h) in enumerate(zip(steady_games, boom_games), start=1):
+            _insert_game(connection, game_id=gi, game_date=f"2026-04-0{gi}", opponent="Foe", season=season)
+            _insert_player_game(connection, game_id=gi, player_id=1, pa=4, ab=4, singles=s_h)
+            _insert_player_game(connection, game_id=gi, player_id=2, pa=4, ab=4, singles=b_h)
+
+        _insert_season_total(connection, season=season, player_id=1, pa=16, ab=16, hits=8, tb=8)
+        _insert_season_total(connection, season=season, player_id=2, pa=16, ab=16, hits=8, tb=8)
+        connection.commit()
+
+        steady = fetch_player_consistency(connection, "steady", season=season)
+        boom = fetch_player_consistency(connection, "boom", season=season)
+    finally:
+        connection.close()
+
+    assert steady["games"] == 4
+    assert boom["games"] == 4
+    # Identical season totals, but Steady is far more consistent game to game.
+    assert steady["consistency_score"] > boom["consistency_score"]
+    assert steady["classification"] == "Steady"
+    assert boom["classification"] == "Boom-or-Bust"
+    # Boom had 3 of 4 silent games.
+    assert boom["quiet_rate"] == 0.75
+
+
+def test_consistency_scores_table_sorts_and_filters_min_games(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "consistency_table.sqlite")
+    season = "Maple Tree Spring 2026"
+    try:
+        initialize_database(connection)
+        _insert_player(connection, 1, "Steady", "steady")
+        _insert_player(connection, 2, "Boom", "boom")
+        _insert_player(connection, 3, "Cup", "cup")  # too few games -> filtered out
+        for gi in range(1, 5):
+            _insert_game(connection, game_id=gi, game_date=f"2026-04-0{gi}", opponent="Foe", season=season)
+            _insert_player_game(connection, game_id=gi, player_id=1, pa=4, ab=4, singles=2)
+            _insert_player_game(connection, game_id=gi, player_id=2, pa=4, ab=4, singles=(8 if gi == 4 else 0))
+        # Cup plays only 1 game (below CONSISTENCY_MIN_GAMES)
+        _insert_game(connection, game_id=9, game_date="2026-04-09", opponent="Foe", season=season)
+        _insert_player_game(connection, game_id=9, player_id=3, pa=4, ab=4, singles=2)
+
+        _insert_season_total(connection, season=season, player_id=1, pa=16, ab=16, hits=8, tb=8)
+        _insert_season_total(connection, season=season, player_id=2, pa=16, ab=16, hits=8, tb=8)
+        _insert_season_total(connection, season=season, player_id=3, pa=4, ab=4, hits=2, tb=2)
+        connection.commit()
+
+        table = fetch_consistency_scores(connection, season=season)
+    finally:
+        connection.close()
+
+    names = table["player"].tolist()
+    assert "Cup" not in names  # filtered for too few games
+    assert names[0] == "Steady"  # sorted by consistency score, steady on top

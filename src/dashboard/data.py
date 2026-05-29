@@ -1447,6 +1447,152 @@ def fetch_player_recent_form(
     }
 
 
+CONSISTENCY_MIN_GAMES = 4
+
+
+def _game_linear_weight_runs(row: pd.Series) -> float:
+    from src.models.advanced_analytics import LINEAR_WEIGHTS
+
+    return (
+        LINEAR_WEIGHTS["1b"] * float(row.get("1b", 0) or 0)
+        + LINEAR_WEIGHTS["2b"] * float(row.get("2b", 0) or 0)
+        + LINEAR_WEIGHTS["3b"] * float(row.get("3b", 0) or 0)
+        + LINEAR_WEIGHTS["hr"] * float(row.get("hr", 0) or 0)
+        + LINEAR_WEIGHTS["bb"] * float(row.get("bb", 0) or 0)
+    )
+
+
+def _classify_consistency(cv: float | None) -> str:
+    if cv is None:
+        return "Insufficient data"
+    if cv <= 0.55:
+        return "Steady"
+    if cv <= 0.90:
+        return "Streaky"
+    return "Boom-or-Bust"
+
+
+def fetch_player_consistency(
+    connection: sqlite3.Connection,
+    canonical_name: str,
+    *,
+    season: str | None = None,
+    min_games: int = CONSISTENCY_MIN_GAMES,
+) -> dict[str, object]:
+    """Game-to-game reliability of a hitter's production.
+
+    Uses per-game linear-weight runs per plate appearance as the production unit,
+    then derives a 0-100 consistency score from the coefficient of variation
+    (lower game-to-game swing = higher score). Requires per-game box-score data.
+    """
+    full_log = fetch_player_game_log(connection, canonical_name)
+    empty = {
+        "season": season,
+        "games": 0,
+        "consistency_score": None,
+        "coefficient_of_variation": None,
+        "mean_production": 0.0,
+        "stdev_production": 0.0,
+        "boom_rate": 0.0,
+        "quiet_rate": 0.0,
+        "classification": "Insufficient data",
+        "game_values": [],
+    }
+    if full_log.empty:
+        return empty
+
+    log = full_log
+    if season is not None and "season" in log.columns:
+        log = log[log["season"].astype(str) == str(season)].copy()
+    if log.empty or len(log) < int(min_games):
+        return {**empty, "games": int(len(log))}
+
+    # Per-game production rate: linear-weight runs per plate appearance.
+    per_game: list[float] = []
+    for _, row in log.iterrows():
+        pa = float(row.get("pa", 0) or 0)
+        if pa <= 0:
+            continue
+        per_game.append(_game_linear_weight_runs(row) / pa)
+    if len(per_game) < int(min_games):
+        return {**empty, "games": int(len(per_game))}
+
+    n = len(per_game)
+    mean_val = sum(per_game) / n
+    variance = sum((v - mean_val) ** 2 for v in per_game) / n
+    stdev = variance ** 0.5
+    cv = (stdev / mean_val) if mean_val > 0 else None
+    consistency_score = round(100.0 / (1.0 + cv), 1) if cv is not None else None
+
+    # "Boom" = a game at least 50% above the player's own mean; "quiet" = a game
+    # at or below 25% of the mean (effectively a no-show offensively).
+    boom = sum(1 for v in per_game if v >= mean_val * 1.5)
+    quiet = sum(1 for v in per_game if v <= mean_val * 0.25)
+
+    return {
+        "season": season,
+        "games": n,
+        "consistency_score": consistency_score,
+        "coefficient_of_variation": round(cv, 3) if cv is not None else None,
+        "mean_production": round(mean_val, 3),
+        "stdev_production": round(stdev, 3),
+        "boom_rate": round(boom / n, 3),
+        "quiet_rate": round(quiet / n, 3),
+        "classification": _classify_consistency(cv),
+        "game_values": [round(v, 3) for v in per_game],
+    }
+
+
+def fetch_consistency_scores(
+    connection: sqlite3.Connection,
+    *,
+    season: str,
+    min_games: int = CONSISTENCY_MIN_GAMES,
+) -> pd.DataFrame:
+    """Consistency scores for every hitter with enough per-game data in a season."""
+    columns = [
+        "player",
+        "canonical_name",
+        "games",
+        "consistency_score",
+        "mean_production",
+        "boom_rate",
+        "quiet_rate",
+        "classification",
+    ]
+    season_stats = fetch_current_season_stats(connection, season)
+    if season_stats.empty:
+        return pd.DataFrame(columns=columns)
+
+    rows: list[dict[str, object]] = []
+    for _, season_row in season_stats.iterrows():
+        canonical_name = str(season_row.get("canonical_name") or "")
+        if not canonical_name:
+            continue
+        result = fetch_player_consistency(connection, canonical_name, season=season, min_games=min_games)
+        if result["consistency_score"] is None:
+            continue
+        rows.append(
+            {
+                "player": str(season_row.get("player") or ""),
+                "canonical_name": canonical_name,
+                "games": int(result["games"]),
+                "consistency_score": float(result["consistency_score"]),
+                "mean_production": float(result["mean_production"]),
+                "boom_rate": float(result["boom_rate"]),
+                "quiet_rate": float(result["quiet_rate"]),
+                "classification": str(result["classification"]),
+            }
+        )
+    if not rows:
+        return pd.DataFrame(columns=columns)
+    return (
+        pd.DataFrame(rows)
+        .sort_values(["consistency_score", "mean_production"], ascending=[False, False])
+        .reset_index(drop=True)
+    )
+
+
 def fetch_player_vs_opponent(
     connection: sqlite3.Connection,
     canonical_name: str,

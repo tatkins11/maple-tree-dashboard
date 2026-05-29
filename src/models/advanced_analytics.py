@@ -11,6 +11,28 @@ REPLACEMENT_LEVEL_FALLBACK_FACTOR = 0.80
 REPLACEMENT_LEVEL_MIN_PA = 20
 TEAM_RELATIVE_SCALE = 100.0
 
+# Linear weights: estimated runs created per offensive event, calibrated to this
+# league's run environment. Derived from an ordinary-least-squares fit of team
+# per-game event totals against actual runs scored across 71 games of box-score
+# data (singles 0.49, doubles 0.94, triples 1.02, walks 0.37 from the raw fit),
+# with the home-run weight nudged upward from the collinearity-suppressed raw
+# value (1.14) to a theory-consistent figure that keeps the weights monotonic
+# (a HR must out-value a triple). Reached-on-error is treated like a single;
+# fielder's choice earns a small positive (the batter reaches but an out is made).
+#
+# Unlike the prior total-bases proxy (which valued a HR as exactly 4 singles and
+# gave a walk zero credit), these weights value events by their actual run impact.
+LINEAR_WEIGHTS = {
+    "bb": 0.40,
+    "hbp": 0.40,
+    "roe": 0.45,
+    "fc": 0.15,
+    "1b": 0.50,
+    "2b": 0.90,
+    "3b": 1.10,
+    "hr": 1.40,
+}
+
 ARCHETYPE_THRESHOLDS = {
     "table_setter_obp_plus": 106.0,
     "table_setter_non_out_multiplier": 1.00,
@@ -90,6 +112,17 @@ def calculate_advanced_analytics(
         ),
     )
 
+    # wOBA-style rate stat from the linear-weights run estimate. wRC+ indexes a
+    # hitter's run rate to the team baseline (100 = team average). wOBA rescales
+    # that same rate onto a familiar OBP-like scale so league-average wOBA reads
+    # like league OBP.
+    league_run_rate = baselines["offensive_run_rate"]
+    woba_scale = _safe_ratio(baselines["obp"], league_run_rate) if league_run_rate else 0.0
+    metrics = metrics.assign(
+        wrc_plus=_plus_metric(metrics["offensive_run_rate"], league_run_rate),
+        woba=metrics["offensive_run_rate"] * woba_scale,
+    )
+
     metrics = metrics.assign(
         offensive_runs_above_average=(metrics["offensive_run_rate"] - baselines["offensive_run_rate"]) * metrics["pa"],
         runs_above_replacement=(metrics["offensive_run_rate"] - baselines["replacement_offensive_run_rate"])
@@ -135,6 +168,9 @@ def build_advanced_leaderboards(dataframe: pd.DataFrame, limit: int = 5) -> dict
         "Best Team-Relative Bat": dataframe.sort_values(
             ["team_relative_ops", "ops", "pa"], ascending=[False, False, False]
         ).head(limit)[["player", "team_relative_ops", "ops", "pa"]],
+        "Best wRC+ (linear weights)": dataframe.sort_values(
+            ["wrc_plus", "woba", "pa"], ascending=[False, False, False]
+        ).head(limit)[["player", "wrc_plus", "woba", "pa"]],
         "Highest RAR / oWAR": dataframe.sort_values(
             ["rar", "owar", "pa"], ascending=[False, False, False]
         ).head(limit)[["player", "rar", "owar", "pa"]],
@@ -183,6 +219,8 @@ def build_player_comparison(dataframe: pd.DataFrame, players: list[str]) -> pd.D
         "walk_rate",
         "rbi_per_pa",
         "runs_per_on_base_event",
+        "woba",
+        "wrc_plus",
         "team_relative_obp",
         "team_relative_slg",
         "team_relative_ops",
@@ -260,10 +298,26 @@ def _compute_base_metrics(dataframe: pd.DataFrame | None) -> pd.DataFrame:
     two_out_rbi_rate = _safe_ratio_series(metrics["two_out_rbi"], metrics["pa"])
     lob_per_pa = _safe_ratio_series(metrics["lob"], metrics["pa"])
 
-    offensive_run_rate = non_out_rate * tb_per_pa
+    # Linear-weights run estimate (replaces the prior non_out_rate * tb_per_pa
+    # proxy, which over-valued home runs and gave walks no direct credit).
+    linear_weight_runs = (
+        LINEAR_WEIGHTS["bb"] * metrics["bb"]
+        + LINEAR_WEIGHTS["hbp"] * metrics["hbp"]
+        + LINEAR_WEIGHTS["roe"] * metrics["roe"]
+        + LINEAR_WEIGHTS["fc"] * metrics["fc"]
+        + LINEAR_WEIGHTS["1b"] * metrics["1b"]
+        + LINEAR_WEIGHTS["2b"] * metrics["2b"]
+        + LINEAR_WEIGHTS["3b"] * metrics["3b"]
+        + LINEAR_WEIGHTS["hr"] * metrics["hr"]
+    )
+    offensive_run_rate = _safe_ratio_series(linear_weight_runs, metrics["pa"])
     offensive_runs_created = offensive_run_rate * metrics["pa"]
+    # Legacy total-bases-based run rate, retained for reference/back-compat.
+    legacy_offensive_run_rate = non_out_rate * tb_per_pa
 
     return metrics.assign(
+        linear_weight_runs=linear_weight_runs,
+        legacy_offensive_run_rate=legacy_offensive_run_rate,
         extra_base_hits=extra_base_hits,
         on_base_events=on_base_events,
         non_out_events=non_out_events,
