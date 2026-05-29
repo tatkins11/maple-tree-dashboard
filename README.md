@@ -329,9 +329,11 @@ Replacement level:
 
 Runs-to-wins conversion:
 
-- `runs_per_win = 10.0`
-- this is a configurable internal constant, not a league-calibrated universal value
-- known limitation: this league's run environment (~26 combined runs/game) is far higher than MLB's ~9, so a properly calibrated `runs_per_win` is likely closer to `16-18`; the current `10.0` makes `oWAR` read high in absolute terms. Because it is a constant divisor it does not change player rankings, only the absolute oWAR scale.
+- `runs_per_win = 18.3`
+- calibrated to this league's high-run environment (~25.8 combined runs/game vs MLB's ~9), where it takes far more runs to flip a win
+- derived by empirically fitting the constant against the team's actual season win-loss records two independent ways (a linear run-differential model and a direct win-prediction grid search), both converging on ~18.3; the standard Pythagenpat formula `4 * runs_per_team_per_game / exponent` gives ~20.3 as an upper-bound sanity check
+- the earlier value of `10.0` was the MLB rule of thumb and roughly doubled every `oWAR`; because this is a constant divisor it only sets the oWAR scale and never changes player rankings
+- recalibrate from data as more games accrue
 
 Value formulas:
 

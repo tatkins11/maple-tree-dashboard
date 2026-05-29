@@ -5,7 +5,15 @@ from dataclasses import dataclass
 import pandas as pd
 
 
-ADVANCED_RUNS_PER_WIN = 10.0
+# Runs needed to buy one win, calibrated to THIS league's high-run environment
+# (~25.8 combined runs/game vs MLB's ~9). Empirically fit against the team's
+# actual season win-loss records two independent ways — a linear run-differential
+# model (wins = G/2 + RD/RPW) and a direct win-prediction grid search — both of
+# which converge on ~18.3 (the standard Pythagenpat formula 4*r/x gives ~20.3 as
+# an upper-bound sanity check). The old MLB rule-of-thumb value of 10.0 roughly
+# doubled every oWAR. Recalibrate from data as more games accrue; this is a
+# constant divisor, so it only sets the oWAR scale and never changes rankings.
+ADVANCED_RUNS_PER_WIN = 18.3
 REPLACEMENT_LEVEL_PERCENTILE = 0.20
 REPLACEMENT_LEVEL_FALLBACK_FACTOR = 0.80
 REPLACEMENT_LEVEL_MIN_PA = 20

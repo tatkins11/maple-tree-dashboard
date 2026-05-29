@@ -523,7 +523,8 @@ def test_advanced_helpers_return_methodology_and_sorted_archetypes() -> None:
     archetype_summary = fetch_advanced_analytics_archetype_summary(analytics)
 
     assert summary["Comparison group"] == "Helper Test"
-    assert summary["Runs per win"] == "10.0"
+    assert summary["Runs per win"] == "18.3"
+    assert "linear weights" in summary["Run model"].lower()
     assert fetch_advanced_archetype_order()[0] == "HR Threat"
     assert list(archetype_summary["archetype"]) == sorted(
         archetype_summary["archetype"],
