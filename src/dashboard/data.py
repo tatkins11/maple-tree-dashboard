@@ -1039,9 +1039,10 @@ def fetch_advanced_methodology_summary(metadata: AdvancedAnalyticsMetadata) -> d
     return {
         "Comparison group": metadata.comparison_group_label,
         "Baseline hitters": str(metadata.baseline_player_count),
+        "Run model": "League-calibrated linear weights (wOBA / wRC+) feeding RAA / RAR / oWAR",
         "Replacement level": f"{int(metadata.replacement_percentile * 100)}th percentile offense rate (min {metadata.replacement_min_pa} PA)",
         "Runs per win": f"{metadata.runs_per_win:.1f}",
-        "Model scope": "Offense-only, team-specific RAA / RAR / oWAR",
+        "Model scope": "Offense-only, team-specific",
     }
 
 

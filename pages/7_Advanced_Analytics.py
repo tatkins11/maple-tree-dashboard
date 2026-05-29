@@ -259,8 +259,10 @@ st.markdown(
     <div class="analytics-note">
       <strong>Offense-only, team-specific analytics.</strong><br/>
       This page uses only trusted batting outcomes and derived batting-event rates from the verified stats database.
-      Custom <strong>RAA</strong>, <strong>RAR</strong>, and <strong>oWAR</strong> are internal offense-only value metrics for this team,
-      not full baseball WAR.
+      <strong>wOBA</strong> and <strong>wRC+</strong> weight each event by its real run value (league-calibrated linear weights),
+      and the value stats <strong>RAA</strong>, <strong>RAR</strong>, and <strong>oWAR</strong> build on that same run model — all
+      internal, offense-only, and not full baseball WAR. The <strong>Game-to-Game Consistency</strong> section (Season view) shows
+      how steady each hitter is start to start.
     </div>
     """,
     unsafe_allow_html=True,

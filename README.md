@@ -251,8 +251,12 @@ Included advanced metrics:
   `BA/RISP`, `2OUTRBI`, `2OUTRBI_rate`, `LOB`, `LOB_per_PA`
 - Team-relative:
   `team_relative_OBP`, `team_relative_SLG`, `team_relative_OPS`, `team_relative_TB_per_PA`, `team_relative_HR_rate`
+- Linear-weights run value:
+  `wOBA`, `wRC+`
 - Value:
   `RAA`, `RAR`, `oWAR`
+- Reliability:
+  `consistency_score`, `classification` (Steady / Streaky / Boom-or-Bust), `boom_rate`, `quiet_rate`
 
 Excluded metrics and why:
 
@@ -296,11 +300,22 @@ Comparison-group definition:
 
 Custom value metrics:
 
-- this project uses a simplified internal offense-only run-value model
+- this project uses an internal offense-only run-value model built on league-calibrated linear weights
+- each offensive event is assigned an estimated run value (`src/models/advanced_analytics.py::LINEAR_WEIGHTS`):
+  `1B = 0.50`, `2B = 0.90`, `3B = 1.10`, `HR = 1.40`, `BB = 0.40`, `HBP = 0.40`, `ROE = 0.45`, `FC = 0.15`
+- these weights were derived from an ordinary-least-squares fit of team per-game event totals against actual runs scored across the full box-score history (HR nudged upward from the collinearity-suppressed raw fit so the weights stay monotonic)
 - internal offensive run rate is:
-  `offensive_run_rate = non_out_rate * TB_per_PA`
+  `offensive_run_rate = (sum of LINEAR_WEIGHTS * event counts) / PA`
 - estimated offensive runs created are:
   `offensive_runs_created = offensive_run_rate * PA`
+- this replaced an earlier total-bases proxy (`non_out_rate * TB_per_PA`) that valued a home run as exactly four singles and gave walks no credit; the linear-weights model correlates `r = 0.96` with actual runs scored versus `0.95` for the old proxy
+
+wOBA and wRC+:
+
+- `wOBA` rescales the linear-weights run rate onto an OBP-like scale, so league-average `wOBA` equals league `OBP` for the comparison group
+- `wRC+` indexes the run rate to the comparison group: `wRC+ = 100 * player_offensive_run_rate / comparison_group_offensive_run_rate`
+- `100` is team-average; above `100` is better, below is worse — the same convention as the other team-relative "plus" stats
+- `wRC+` is the recommended single "how good is this bat" rate stat because it values events by real run impact and adjusts for the offensive environment
 
 Average baseline:
 
@@ -316,6 +331,7 @@ Runs-to-wins conversion:
 
 - `runs_per_win = 10.0`
 - this is a configurable internal constant, not a league-calibrated universal value
+- known limitation: this league's run environment (~26 combined runs/game) is far higher than MLB's ~9, so a properly calibrated `runs_per_win` is likely closer to `16-18`; the current `10.0` makes `oWAR` read high in absolute terms. Because it is a constant divisor it does not change player rankings, only the absolute oWAR scale.
 
 Value formulas:
 
@@ -336,6 +352,16 @@ Archetype logic summary:
   `Table Setter`, `Balanced Bat`, `Gap Power`, `HR Threat`, `Run Producer`, `Low-Damage OBP Bat`, `Bottom-Order Bat`
 - classifications are driven by combinations of:
   `team_relative_OBP`, `team_relative_SLG`, `team_relative_HR_rate`, `XBH_rate`, `non_out_rate`, and `run_production_index`
+
+Game-to-game consistency:
+
+- requires per-game box-score data, so it is computed only in `Season` view (`src/dashboard/data.py::fetch_player_consistency` / `fetch_consistency_scores`)
+- per-game production unit is linear-weights runs per plate appearance for each game
+- `consistency_score = 100 / (1 + coefficient_of_variation)` of those per-game rates — `0-100`, higher means steadier start to start
+- `classification` buckets the coefficient of variation: `Steady` (<= 0.55), `Streaky` (<= 0.90), `Boom-or-Bust` (> 0.90)
+- `boom_rate` is the share of games at least 50% above the player's own average; `quiet_rate` is the share at or below 25% of it
+- minimum `4` games of data are required before a score is reported
+- this separates hitters with identical season lines but very different game-to-game reliability, which is useful for lineup construction
 
 HBP note:
 
