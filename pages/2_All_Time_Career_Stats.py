@@ -367,15 +367,21 @@ else:
                     column_config=leader_column_config,
                 )
         else:
-            leader_cols = st.columns(len(leaders))
-            for column, (label, dataframe) in zip(leader_cols, leaders.items()):
-                column.markdown(f"**{label}**")
-                column.dataframe(
-                    dataframe,
-                    hide_index=True,
-                    use_container_width=True,
-                    column_config=leader_column_config,
-                )
+            # Render at most 3 boards per row so each is wide enough to show the
+            # stat column, not just the player name.
+            leader_items = list(leaders.items())
+            per_row = 3
+            for start in range(0, len(leader_items), per_row):
+                chunk = leader_items[start:start + per_row]
+                leader_cols = st.columns(per_row)
+                for column, (label, dataframe) in zip(leader_cols, chunk):
+                    column.markdown(f"**{label}**")
+                    column.dataframe(
+                        dataframe,
+                        hide_index=True,
+                        use_container_width=True,
+                        column_config=leader_column_config,
+                    )
 
     # Career wRC+ visual (linear-weights run value, indexed to 100 = team average).
     st.subheader("Career wRC+ Leaders")
