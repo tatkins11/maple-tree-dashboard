@@ -383,17 +383,17 @@ default_columns = [
     "rbi_per_pa",
     "woba",
     "wrc_plus",
-    "team_relative_ops",
     "archetype",
     "rar",
     "owar",
 ]
 context_columns = [
+    "team_relative_ops",
+    "team_relative_obp",
+    "team_relative_slg",
     "xbh_rate",
     "walk_rate",
     "runs_per_on_base_event",
-    "team_relative_obp",
-    "team_relative_slg",
     "ba_risp",
     "two_out_rbi",
     "two_out_rbi_rate",
@@ -493,6 +493,8 @@ for index, (label, board) in enumerate(leaderboards.items()):
                 "rbi_per_pa": "RBI / PA",
                 "runs_per_on_base_event": "R / OBE",
                 "team_relative_ops": "Team OPS+",
+                "wrc_plus": "wRC+",
+                "woba": "wOBA",
                 "ops": "OPS",
                 "rar": "RAR",
                 "owar": "oWAR",
@@ -507,6 +509,8 @@ for index, (label, board) in enumerate(leaderboards.items()):
                 "rbi_per_pa": "{:.3f}",
                 "runs_per_on_base_event": "{:.3f}",
                 "team_relative_ops": "{:.0f}",
+                "wrc_plus": "{:.0f}",
+                "woba": "{:.3f}",
                 "ops": "{:.3f}",
                 "rar": "{:.2f}",
                 "owar": "{:.2f}",
@@ -678,7 +682,7 @@ with archetype_columns[0]:
     )
 with archetype_columns[1]:
     st.markdown("**Players by Archetype**")
-    player_archetypes = analytics_df[["player", "canonical_name", "pa", "archetype", "team_relative_ops", "rar", "owar"]].copy()
+    player_archetypes = analytics_df[["player", "canonical_name", "pa", "archetype", "wrc_plus", "rar", "owar"]].copy()
     player_archetypes["archetype_rank"] = player_archetypes["archetype"].apply(
         lambda value: archetype_order.index(value) if value in archetype_order else len(archetype_order)
     )
@@ -690,12 +694,12 @@ with archetype_columns[1]:
             "player": "Player",
             "pa": "PA",
             "archetype": "Archetype",
-            "team_relative_ops": "Team OPS+",
+            "wrc_plus": "wRC+",
             "rar": "RAR",
             "owar": "oWAR",
         },
         formatters={
-            "team_relative_ops": "{:.0f}",
+            "wrc_plus": "{:.0f}",
             "rar": "{:.2f}",
             "owar": "{:.2f}",
         },

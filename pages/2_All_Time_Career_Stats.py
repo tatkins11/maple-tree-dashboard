@@ -64,7 +64,6 @@ ADVANCED_CAREER_COLUMNS = [
     "tb_per_pa",
     "woba",
     "wrc_plus",
-    "team_relative_ops",
     "rar",
     "owar",
     "archetype",
@@ -188,7 +187,7 @@ def _render_mobile_advanced_cards(dataframe) -> None:
             <div class="career-stats-card">
               <div class="career-stats-card-title">{player_markup}</div>
               <div class="career-stats-card-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH:</strong> {row['xbh_rate']:.3f}</div>
-              <div class="career-stats-card-row"><strong>wOBA:</strong> {row['woba']:.3f} &nbsp; <strong>wRC+:</strong> {row['wrc_plus']:.0f} &nbsp; <strong>Team OPS+:</strong> {row['team_relative_ops']:.0f}</div>
+              <div class="career-stats-card-row"><strong>wOBA:</strong> {row['woba']:.3f} &nbsp; <strong>wRC+:</strong> {row['wrc_plus']:.0f}</div>
               <div class="career-stats-card-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
               <div class="career-stats-card-row"><strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
               <div class="career-stats-card-row"><strong>Archetype:</strong> {row['archetype']}</div>
@@ -325,7 +324,6 @@ else:
                             "tb_per_pa": "TB / PA",
                             "woba": "wOBA",
                             "wrc_plus": "wRC+",
-                            "team_relative_ops": "Team OPS+",
                             "rar": "RAR",
                             "owar": "oWAR",
                             "archetype": "Archetype",
@@ -337,7 +335,6 @@ else:
                             "tb_per_pa": "{:.3f}",
                             "woba": "{:.3f}",
                             "wrc_plus": "{:.0f}",
-                            "team_relative_ops": "{:.0f}",
                             "rar": "{:.2f}",
                             "owar": "{:.2f}",
                         },

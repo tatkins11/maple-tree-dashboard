@@ -173,10 +173,7 @@ def build_advanced_leaderboards(dataframe: pd.DataFrame, limit: int = 5) -> dict
         "Best Run Producer": dataframe.sort_values(
             ["run_production_index", "rbi_per_pa", "pa"], ascending=[False, False, False]
         ).head(limit)[["player", "rbi_per_pa", "runs_per_on_base_event", "pa"]],
-        "Best Team-Relative Bat": dataframe.sort_values(
-            ["team_relative_ops", "ops", "pa"], ascending=[False, False, False]
-        ).head(limit)[["player", "team_relative_ops", "ops", "pa"]],
-        "Best wRC+ (linear weights)": dataframe.sort_values(
+        "Best Overall Bat (wRC+)": dataframe.sort_values(
             ["wrc_plus", "woba", "pa"], ascending=[False, False, False]
         ).head(limit)[["player", "wrc_plus", "woba", "pa"]],
         "Highest RAR / oWAR": dataframe.sort_values(

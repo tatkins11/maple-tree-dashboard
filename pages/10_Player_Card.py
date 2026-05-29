@@ -297,7 +297,7 @@ def _build_trend_history(
         )
 
     standard_columns = ["season", "season_label", "pa", "hr", "ops"]
-    advanced_columns = ["season", "season_label", "team_relative_ops", "owar", "rar", "iso"]
+    advanced_columns = ["season", "season_label", "wrc_plus", "team_relative_ops", "owar", "rar", "iso"]
 
     standard_source = season_history[[column for column in standard_columns if column in season_history.columns]].copy()
     advanced_source = advanced_history[[column for column in advanced_columns if column in advanced_history.columns]].copy()
@@ -336,6 +336,7 @@ def _build_trend_history(
             {
                 "season": season,
                 "team_avg_ops": float(season_analytics["ops"].mean()) if "ops" in season_analytics.columns else None,
+                "team_avg_wrc_plus": float(season_analytics["wrc_plus"].mean()) if "wrc_plus" in season_analytics.columns else None,
                 "team_avg_team_relative_ops": float(season_analytics["team_relative_ops"].mean()) if "team_relative_ops" in season_analytics.columns else None,
                 "team_avg_owar": float(season_analytics["owar"].mean()) if "owar" in season_analytics.columns else None,
                 "team_avg_rar": float(season_analytics["rar"].mean()) if "rar" in season_analytics.columns else None,
@@ -455,7 +456,8 @@ def _render_advanced_mobile_cards(dataframe: pd.DataFrame) -> None:
             <div class="player-compact-card">
               <div class="player-compact-title">{escape(str(row['season_label']))}</div>
               <div class="player-compact-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>ISO:</strong> {row['iso']:.3f} &nbsp; <strong>XBH Rate:</strong> {row['xbh_rate']:.3f}</div>
-              <div class="player-compact-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f} &nbsp; <strong>Team OPS+:</strong> {row['team_relative_ops']:.0f}</div>
+              <div class="player-compact-row"><strong>wOBA:</strong> {row['woba']:.3f} &nbsp; <strong>wRC+:</strong> {row['wrc_plus']:.0f}</div>
+              <div class="player-compact-row"><strong>HR Rate:</strong> {row['hr_rate']:.3f} &nbsp; <strong>TB / PA:</strong> {row['tb_per_pa']:.3f}</div>
               <div class="player-compact-row"><strong>RAA:</strong> {row['raa']:.2f} &nbsp; <strong>RAR:</strong> {row['rar']:.2f} &nbsp; <strong>oWAR:</strong> {row['owar']:.2f}</div>
               <div class="player-compact-row"><strong>Archetype:</strong> {escape(str(row['archetype']))}</div>
             </div>
@@ -475,6 +477,7 @@ def _render_analytics_trend_chart(
         return
 
     metric_options = {
+        "wRC+": {"column": "wrc_plus", "title": "wRC+", "format": ".0f"},
         "OPS": {"column": "ops", "title": "OPS", "format": ".3f"},
         "Team OPS+": {"column": "team_relative_ops", "title": "Team OPS+", "format": ".0f"},
         "oWAR": {"column": "owar", "title": "oWAR", "format": ".2f"},
@@ -484,7 +487,7 @@ def _render_analytics_trend_chart(
     selected_metric = st.selectbox(
         "Analytics trend metric",
         options=list(metric_options.keys()),
-        index=1,
+        index=0,
         key="player_card_trend_metric",
     )
     metric_config = metric_options[selected_metric]
@@ -579,7 +582,6 @@ def _advanced_history_column_config() -> dict[str, st.column_config.Column]:
         "tb_per_pa": st.column_config.NumberColumn("TB / PA", format="%.3f", width="small"),
         "woba": st.column_config.NumberColumn("wOBA", format="%.3f", width="small"),
         "wrc_plus": st.column_config.NumberColumn("wRC+", format="%.0f", width="small"),
-        "team_relative_ops": st.column_config.NumberColumn("Team OPS+", format="%.0f", width="small"),
         "raa": st.column_config.NumberColumn("RAA", format="%.2f", width="small"),
         "rar": st.column_config.NumberColumn("RAR", format="%.2f", width="small"),
         "owar": st.column_config.NumberColumn("oWAR", format="%.2f", width="small"),
@@ -1158,7 +1160,6 @@ with advanced_tab:
             "tb_per_pa",
             "woba",
             "wrc_plus",
-            "team_relative_ops",
             "raa",
             "rar",
             "owar",
