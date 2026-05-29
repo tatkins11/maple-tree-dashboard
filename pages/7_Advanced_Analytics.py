@@ -200,15 +200,18 @@ def _default_min_pa_for_season(connection, selected_season: str | None) -> tuple
 
 def _build_scatter_label_positions(
     dataframe: pd.DataFrame,
-    obp_padding: float = 0.0045,
-    slg_step: float = 0.022,
+    *,
+    y_column: str = "iso",
+    x_padding: float = 0.0045,
+    y_step: float = 0.022,
+    y_gap: float = 0.06,
 ) -> pd.DataFrame:
     if dataframe.empty:
         return dataframe.copy()
 
-    labeled = dataframe.sort_values(["obp", "slg", "player"], ascending=[True, False, True]).copy()
-    slg_min = float(labeled["slg"].min())
-    slg_max = float(labeled["slg"].max())
+    labeled = dataframe.sort_values(["obp", y_column, "player"], ascending=[True, False, True]).copy()
+    y_min = float(labeled[y_column].min())
+    y_max = float(labeled[y_column].max())
 
     clusters: list[list[tuple[int, object]]] = []
     current_cluster: list[tuple[int, object]] = []
@@ -216,12 +219,12 @@ def _build_scatter_label_positions(
 
     for row in labeled.itertuples():
         row_x = float(row.obp)
-        row_y = float(row.slg)
+        row_y = float(getattr(row, y_column))
         if (
             not current_cluster
             or last_x is None
             or fabs(row_x - last_x) <= 0.02
-            or any(fabs(row_y - float(existing.slg)) <= 0.08 for _, existing in current_cluster)
+            or any(fabs(row_y - float(getattr(existing, y_column))) <= y_gap for _, existing in current_cluster)
         ):
             current_cluster.append((len(current_cluster), row))
         else:
@@ -232,8 +235,8 @@ def _build_scatter_label_positions(
     if current_cluster:
         clusters.append(current_cluster)
 
-    label_obp: list[float] = []
-    label_slg: list[float] = []
+    label_x: list[float] = []
+    label_y: list[float] = []
 
     for cluster_number, cluster in enumerate(clusters):
         cluster_size = len(cluster)
@@ -241,17 +244,14 @@ def _build_scatter_label_positions(
         direction = 1 if cluster_number % 2 == 0 else -1
         for position, ((_, row), vertical_slot) in enumerate(zip(cluster, offsets)):
             side = direction if position % 2 == 0 else -direction
-            x_offset = obp_padding + (0.0018 * (cluster_size - 1)) + (0.0012 * abs(vertical_slot))
-            y_offset = vertical_slot * slg_step
+            x_offset = x_padding + (0.0018 * (cluster_size - 1)) + (0.0012 * abs(vertical_slot))
+            y_offset = vertical_slot * y_step
 
-            label_obp.append(float(row.obp) + (x_offset * side))
-            label_slg.append(min(max(float(row.slg) + y_offset, slg_min - 0.02), slg_max + 0.02))
+            label_x.append(float(row.obp) + (x_offset * side))
+            label_y.append(min(max(float(getattr(row, y_column)) + y_offset, y_min - 0.02), y_max + 0.02))
 
-    labeled["label_obp"] = label_obp
-    labeled["label_slg"] = label_slg
-    labeled["label_distance"] = (
-        ((labeled["label_obp"] - labeled["obp"]) ** 2 + (labeled["label_slg"] - labeled["slg"]) ** 2) ** 0.5
-    )
+    labeled["label_x"] = label_x
+    labeled["label_y"] = label_y
     return labeled
 
 
@@ -525,11 +525,12 @@ for index, (label, board) in enumerate(leaderboards.items()):
             css_class="advanced-leaderboard-table",
         )
 
-st.subheader("OBP vs SLG")
+st.subheader("Hitter Map: On-Base vs Power")
 scatter_source = display_df.copy()
 scatter_source["rar_display"] = scatter_source["rar"].round(2)
+scatter_source["wrc_display"] = scatter_source["wrc_plus"].round(0)
 
-default_chart_labels = scatter_source.sort_values(["rar", "player"], ascending=[False, True]).head(5)["player"].tolist()
+default_chart_labels = scatter_source.sort_values(["wrc_plus", "player"], ascending=[False, True]).head(5)["player"].tolist()
 chart_label_options = scatter_source["player"].tolist()
 active_roster_names = set(fetch_active_roster(connection)["preferred_display_name"].tolist())
 active_chart_labels = [player for player in chart_label_options if player in active_roster_names]
@@ -540,7 +541,7 @@ if chart_label_state_key not in st.session_state:
 
 chart_preset_cols = st.columns([0.9, 0.9, 0.7, 1.2, 1.1], gap="small")
 with chart_preset_cols[0]:
-    if st.button("Top RAR labels", use_container_width=True):
+    if st.button("Top wRC+ labels", use_container_width=True):
         st.session_state[chart_label_state_key] = default_chart_labels
 with chart_preset_cols[1]:
     if st.button("Active roster labels", use_container_width=True):
@@ -572,24 +573,56 @@ chart_label_players = st.multiselect(
 )
 
 label_source_base = scatter_source[scatter_source["player"].isin(chart_label_players)].copy()
-label_source = _build_scatter_label_positions(label_source_base)
+label_source = _build_scatter_label_positions(label_source_base, y_column="iso")
 obp_min = max(0.0, float(scatter_source["obp"].min()) - 0.03)
-obp_label_max = float(label_source["label_obp"].max()) if not label_source.empty else float(scatter_source["obp"].max())
+obp_label_max = float(label_source["label_x"].max()) if not label_source.empty else float(scatter_source["obp"].max())
 obp_max = min(1.0, max(float(scatter_source["obp"].max()), obp_label_max) + 0.02)
-slg_min = max(0.0, float(scatter_source["slg"].min()) - 0.08)
-slg_label_max = float(label_source["label_slg"].max()) if not label_source.empty else float(scatter_source["slg"].max())
-slg_max = min(3.0, max(float(scatter_source["slg"].max()), slg_label_max) + 0.05)
+iso_min = max(0.0, float(scatter_source["iso"].min()) - 0.05)
+iso_label_max = float(label_source["label_y"].max()) if not label_source.empty else float(scatter_source["iso"].max())
+iso_max = max(float(scatter_source["iso"].max()), iso_label_max) + 0.05
+
+# Quadrant cross-hair at the comparison group's average OBP and ISO so the four
+# regions read as the archetype grid (right = patient, up = power).
+avg_obp = float(analytics_df["obp"].mean())
+avg_iso = float(analytics_df["iso"].mean())
+guide_source = pd.DataFrame({"avg_obp": [avg_obp], "avg_iso": [avg_iso]})
+hot_zone = pd.DataFrame({"x": [avg_obp], "x2": [obp_max], "y": [avg_iso], "y2": [iso_max]})
+
+obp_scale = alt.Scale(domain=[obp_min, obp_max])
+iso_scale = alt.Scale(domain=[iso_min, iso_max])
+
+zone = (
+    alt.Chart(hot_zone)
+    .mark_rect(color="#16a34a", opacity=0.06)
+    .encode(
+        x=alt.X("x:Q", scale=obp_scale),
+        x2="x2:Q",
+        y=alt.Y("y:Q", scale=iso_scale),
+        y2="y2:Q",
+    )
+)
+vline = (
+    alt.Chart(guide_source)
+    .mark_rule(strokeDash=[4, 4], color="#94a3b8")
+    .encode(x=alt.X("avg_obp:Q", scale=obp_scale))
+)
+hline = (
+    alt.Chart(guide_source)
+    .mark_rule(strokeDash=[4, 4], color="#94a3b8")
+    .encode(y=alt.Y("avg_iso:Q", scale=iso_scale))
+)
+
 base_scatter = alt.Chart(scatter_source).encode(
-    x=alt.X("obp:Q", title="OBP", scale=alt.Scale(domain=[obp_min, obp_max])),
-    y=alt.Y("slg:Q", title="SLG", scale=alt.Scale(domain=[slg_min, slg_max])),
+    x=alt.X("obp:Q", title="OBP  (on-base →)", scale=obp_scale),
+    y=alt.Y("iso:Q", title="ISO  (power ↑)", scale=iso_scale),
     tooltip=[
         alt.Tooltip("player:N", title="Player"),
-        alt.Tooltip("archetype:N", title="Archetype"),
+        alt.Tooltip("archetype_label:N", title="Profile"),
         alt.Tooltip("pa:Q", title="PA", format=".0f"),
         alt.Tooltip("obp:Q", title="OBP", format=".3f"),
-        alt.Tooltip("slg:Q", title="SLG", format=".3f"),
-        alt.Tooltip("team_relative_ops:Q", title="Team OPS+", format=".0f"),
-        alt.Tooltip("rar_display:Q", title="RAR", format=".2f"),
+        alt.Tooltip("iso:Q", title="ISO", format=".3f"),
+        alt.Tooltip("wrc_display:Q", title="wRC+", format=".0f"),
+        alt.Tooltip("owar:Q", title="oWAR", format=".2f"),
     ],
 )
 scatter = (
@@ -597,21 +630,21 @@ scatter = (
     .mark_circle(opacity=0.82)
     .encode(
         color=alt.Color("archetype:N", title="Archetype"),
-        size=alt.Size("rar:Q", title="RAR", scale=alt.Scale(range=[60, 240])),
+        size=alt.Size("pa:Q", title="PA", scale=alt.Scale(range=[60, 300])),
     )
 )
 label_rules = (
     alt.Chart(label_source)
     .mark_rule(color="#cbd5e1", opacity=0.38)
     .encode(
-        x=alt.X("obp:Q", scale=alt.Scale(domain=[obp_min, obp_max])),
-        y=alt.Y("slg:Q", scale=alt.Scale(domain=[slg_min, slg_max])),
-        x2="label_obp:Q",
-        y2="label_slg:Q",
+        x=alt.X("obp:Q", scale=obp_scale),
+        y=alt.Y("iso:Q", scale=iso_scale),
+        x2="label_x:Q",
+        y2="label_y:Q",
     )
 )
 label_halo = (
-    alt.Chart(label_source[label_source["label_obp"] >= label_source["obp"]])
+    alt.Chart(label_source[label_source["label_x"] >= label_source["obp"]])
     .mark_text(
         fontSize=10,
         color="#ffffff",
@@ -622,13 +655,13 @@ label_halo = (
         strokeWidth=3,
     )
     .encode(
-        x=alt.X("label_obp:Q", scale=alt.Scale(domain=[obp_min, obp_max])),
-        y=alt.Y("label_slg:Q", scale=alt.Scale(domain=[slg_min, slg_max])),
+        x=alt.X("label_x:Q", scale=obp_scale),
+        y=alt.Y("label_y:Q", scale=iso_scale),
         text="player:N",
     )
 )
 label_halo_left = (
-    alt.Chart(label_source[label_source["label_obp"] < label_source["obp"]])
+    alt.Chart(label_source[label_source["label_x"] < label_source["obp"]])
     .mark_text(
         fontSize=10,
         color="#ffffff",
@@ -639,34 +672,38 @@ label_halo_left = (
         strokeWidth=3,
     )
     .encode(
-        x=alt.X("label_obp:Q", scale=alt.Scale(domain=[obp_min, obp_max])),
-        y=alt.Y("label_slg:Q", scale=alt.Scale(domain=[slg_min, slg_max])),
+        x=alt.X("label_x:Q", scale=obp_scale),
+        y=alt.Y("label_y:Q", scale=iso_scale),
         text="player:N",
     )
 )
 labels = (
-    alt.Chart(label_source[label_source["label_obp"] >= label_source["obp"]])
+    alt.Chart(label_source[label_source["label_x"] >= label_source["obp"]])
     .mark_text(fontSize=10, color="#1f2937", align="left", dx=2, fontWeight="bold")
     .encode(
-        x=alt.X("label_obp:Q", scale=alt.Scale(domain=[obp_min, obp_max])),
-        y=alt.Y("label_slg:Q", scale=alt.Scale(domain=[slg_min, slg_max])),
+        x=alt.X("label_x:Q", scale=obp_scale),
+        y=alt.Y("label_y:Q", scale=iso_scale),
         text="player:N",
     )
 )
 labels_left = (
-    alt.Chart(label_source[label_source["label_obp"] < label_source["obp"]])
+    alt.Chart(label_source[label_source["label_x"] < label_source["obp"]])
     .mark_text(fontSize=10, color="#1f2937", align="right", dx=-2, fontWeight="bold")
     .encode(
-        x=alt.X("label_obp:Q", scale=alt.Scale(domain=[obp_min, obp_max])),
-        y=alt.Y("label_slg:Q", scale=alt.Scale(domain=[slg_min, slg_max])),
+        x=alt.X("label_x:Q", scale=obp_scale),
+        y=alt.Y("label_y:Q", scale=iso_scale),
         text="player:N",
     )
 )
 st.altair_chart(
-    (scatter + label_rules + label_halo + label_halo_left + labels + labels_left).properties(height=400),
+    (zone + vline + hline + scatter + label_rules + label_halo + label_halo_left + labels + labels_left).properties(height=400),
     use_container_width=True,
 )
-st.caption("Choose exactly which hitters are labeled. Hover any point to inspect the full hitter details.")
+st.caption(
+    "Power (ISO) up, on-base (OBP) right. Dashed lines mark the group average, so the four quadrants map to the "
+    "archetypes: top-right = power + patience, top-left = power but aggressive, bottom-right = on-base specialists, "
+    "bottom-left = depth bats. Dot size = plate appearances. Hover any point for the full profile."
+)
 
 st.subheader("Archetype View")
 archetype_summary = fetch_advanced_analytics_archetype_summary(analytics_df)
