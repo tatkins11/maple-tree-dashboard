@@ -22,22 +22,26 @@ The offense was spread and steady: Glove (3-for-4), JJ (3-for-3 with a double), 
 
 Then the nightcap reverted to form. No Dice scored four in the fourth, four in the fifth, four in the sixth, and four in the seventh — sixteen runs in the back half — and the final was 17-5. Maple Tree managed 11 hits and five runs and was outscored 16-2 over the last four innings.
 
-The bright spots were individual and brief. Kives went 2-for-3 with a home run and **five RBI** — a quietly enormous line in a game nobody will frame. Tim added two more doubles to cap a huge personal night. Tristan hit his 11th homer of the season. Glove tripled. After that, the box score thins out fast, and No Dice's late-inning avalanche did the rest. It was the season-long pattern in miniature: enough offense to be respectable, not enough run prevention to be competitive.
+The bright spots were individual and brief. Kives went 2-for-3 with a home run and **four RBI** — a quietly enormous line in a game nobody will frame. Tim added two more doubles to cap a huge personal night. Tristan hit his 11th homer of the season. Glove tripled. After that, the box score thins out fast, and No Dice's late-inning avalanche did the rest. It was the season-long pattern in miniature: enough offense to be respectable, not enough run prevention to be competitive.
 
 ## Week MVP
 
-**Tim is the Week 7 MVP, and it is not close.** Across the doubleheader he went **5-for-6 with three doubles, eight total bases, three runs, and three RBI** — the loudest two-game line on the team and a fitting cap to a strong second half. He also crossed **50 career runs** on the night. Kives earns runner-up for the five-RBI nightcap (2-for-3 with the homer), the single biggest run-driving game of anyone's Week 7.
+**Tim is the Week 7 MVP, and it is not close.** Across the doubleheader he went **5-for-6 with three doubles, eight total bases, three runs, and three RBI** — the loudest two-game line on the team and a fitting cap to a strong second half. He also crossed **50 career runs** on the night. Kives earns runner-up for the four-RBI nightcap (2-for-3 with the homer), the single biggest run-driving game of anyone's Week 7.
 
-## Milestones Cleared in Week 7
+## Records and Milestones
+
+**Tim broke the single-season doubles record.** His three doubles in Week 7 pushed him to **10 doubles on the season**, surpassing the previous franchise single-season mark of 8 (shared by Tristan in 2021 and 2022 and Porter in 2021). It is the only single-season counting record currently held by a 2026 hitter — and because the team counts playoff games toward records, **the mark is not final.** Tim can keep padding it in the bracket.
 
 The regular season's final milestone ledger:
 
-- **Tim** crossed **50 career runs**.
+- **Tim** crossed **50 career runs** (and set the new single-season doubles record).
 - **Kives** crossed **200 career plate appearances** (now 204).
 - **JJ** crossed **250 career plate appearances** (now 251).
 - **Corey** crossed **200 career at bats**.
 - **Jason** crossed **150 career at bats**.
 - **Joel** and **Joey** both crossed **100 career plate appearances**.
+
+A reminder on the record book: **playoff games count**, so none of the single-season leaderboards are locked yet. The closest remaining chases are Tristan, four home runs shy of his own 15-HR single-season record, and JJ, four walks shy of the single-season walk record — both long shots in a single elimination run, but live on paper.
 
 ## Final Regular-Season Standings (= Playoff Seeds)
 
@@ -89,22 +93,24 @@ Through 12 games, Maple Tree scored 140 runs and allowed 204 — **11.7 scored, 
 
 ## Final Spring 2026 Player Stats
 
-| # | Player | G | PA | AB | H | HR | R | RBI | BB | TB | AVG | OBP | SLG | OPS |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | Tristan | 12 | 41 | 37 | 24 | 11 | 23 | 26 | 3 | 59 | .649 | .675 | 1.595 | **2.270** |
-| 2 | Tim | 12 | 41 | 39 | 24 | 4 | 16 | 18 | 1 | 46 | .615 | .625 | 1.179 | 1.804 |
-| 3 | Glove | 12 | 40 | 39 | 23 | 3 | 18 | 21 | 1 | 41 | .590 | .600 | 1.051 | 1.651 |
-| 4 | Kives | 12 | 40 | 40 | 21 | 5 | 16 | 22 | 0 | 43 | .525 | .525 | 1.075 | 1.600 |
-| 5 | JJ | 12 | 42 | 37 | 18 | 2 | 16 | 6 | 5 | 29 | .486 | .548 | .784 | 1.331 |
-| 6 | Joel | 10 | 30 | 25 | 11 | 3 | 11 | 12 | 4 | 20 | .440 | .517 | .800 | 1.317 |
-| 7 | Corey | 12 | 34 | 31 | 15 | 0 | 8 | 7 | 3 | 20 | .484 | .529 | .645 | 1.175 |
-| 8 | Slomka | 6 | 18 | 18 | 9 | 0 | 6 | 3 | 0 | 10 | .500 | .500 | .556 | 1.056 |
-| 9 | Porter | 8 | 25 | 24 | 12 | 0 | 5 | 7 | 1 | 12 | .500 | .520 | .500 | 1.020 |
-| 10 | Walsh | 12 | 35 | 33 | 14 | 0 | 5 | 10 | 2 | 16 | .424 | .457 | .485 | .942 |
-| 11 | Duff | 12 | 34 | 30 | 10 | 1 | 8 | 5 | 4 | 14 | .333 | .412 | .467 | .878 |
-| 12 | Jason | 9 | 25 | 25 | 9 | 0 | 7 | 3 | 0 | 9 | .360 | .360 | .360 | .720 |
-| 13 | Joey | 10 | 24 | 23 | 6 | 0 | 1 | 4 | 0 | 6 | .261 | .261 | .261 | .522 |
-| | **Team** | **12** | **429** | **401** | **196** | **29** | **140** | **144** | **24** | **325** | **.489** | **.518** | **.811** | **1.329** |
+| # | Player | G | PA | AB | H | HR | R | RBI | BB | TB | AVG | OBP | SLG | OPS | wRC+ |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Tristan | 12 | 41 | 37 | 24 | 11 | 23 | 26 | 3 | 59 | .649 | .675 | 1.595 | **2.270** | **167** |
+| 2 | Tim | 12 | 41 | 39 | 24 | 4 | 16 | 18 | 1 | 46 | .615 | .625 | 1.179 | 1.804 | 137 |
+| 3 | Glove | 12 | 40 | 39 | 23 | 3 | 18 | 21 | 1 | 41 | .590 | .600 | 1.051 | 1.651 | 133 |
+| 4 | Kives | 12 | 40 | 40 | 21 | 5 | 16 | 22 | 0 | 43 | .525 | .525 | 1.075 | 1.600 | 126 |
+| 5 | JJ | 12 | 42 | 37 | 18 | 2 | 16 | 6 | 5 | 29 | .486 | .548 | .784 | 1.331 | 98 |
+| 6 | Joel | 10 | 30 | 25 | 11 | 3 | 11 | 12 | 4 | 20 | .440 | .517 | .800 | 1.317 | 91 |
+| 7 | Corey | 12 | 34 | 31 | 15 | 0 | 8 | 7 | 3 | 20 | .484 | .529 | .645 | 1.175 | 91 |
+| 8 | Slomka | 6 | 18 | 18 | 9 | 0 | 6 | 3 | 0 | 10 | .500 | .500 | .556 | 1.056 | 85 |
+| 9 | Porter | 8 | 25 | 24 | 12 | 0 | 5 | 7 | 1 | 12 | .500 | .520 | .500 | 1.020 | 72 |
+| 10 | Walsh | 12 | 35 | 33 | 14 | 0 | 5 | 10 | 2 | 16 | .424 | .457 | .485 | .942 | 70 |
+| 11 | Duff | 12 | 34 | 30 | 10 | 1 | 8 | 5 | 4 | 14 | .333 | .412 | .467 | .878 | 65 |
+| 12 | Jason | 9 | 25 | 25 | 9 | 0 | 7 | 3 | 0 | 9 | .360 | .360 | .360 | .720 | 52 |
+| 13 | Joey | 10 | 24 | 23 | 6 | 0 | 1 | 4 | 0 | 6 | .261 | .261 | .261 | .522 | 35 |
+| | **Team** | **12** | **429** | **401** | **196** | **29** | **140** | **144** | **24** | **325** | **.489** | **.518** | **.811** | **1.329** | **100** |
+
+*wRC+ is indexed so 100 = team average; it weights how a hitter actually produces runs (linear weights), so it reorders the card slightly versus OPS. JJ's elite on-base but lighter slug lands him right at league-average run creation; Tristan's 167 means he created 67% more runs per plate appearance than the team norm.*
 
 ## What Matters Next
 
