@@ -222,7 +222,9 @@ def _opponent_player_splits(stats, opponent: str):
     grouped = (
         filtered.groupby(["player", "canonical_name"], dropna=False)
         .agg(
-            G=("game_date", "nunique"),
+            # One row per player-game, so count rows — NOT unique dates, which
+            # would undercount doubleheaders (two games share one date).
+            G=("game_date", "count"),
             PA=("pa", "sum"),
             AB=("ab", "sum"),
             H=("hits", "sum"),
