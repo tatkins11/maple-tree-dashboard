@@ -676,6 +676,24 @@ def _render_game_log_mobile_cards(dataframe: pd.DataFrame) -> None:
         )
 
 
+def _render_top_games_mobile_cards(dataframe: pd.DataFrame) -> None:
+    for _, row in dataframe.iterrows():
+        opponent = escape(str(row.get("opponent") or "Opponent"))
+        season_label = escape(str(row.get("season_label") or ""))
+        game_date = escape(str(row.get("game_date") or "Game"))
+        st.markdown(
+            f"""
+            <div class="player-compact-card">
+              <div class="player-compact-title">{game_date} vs {opponent}</div>
+              <div class="player-compact-row"><strong>Game Score:</strong> {row['game_score']:.1f} &nbsp; <strong>Season:</strong> {season_label}</div>
+              <div class="player-compact-row"><strong>{int(row['hits'])}-for-{int(row['ab'])}</strong> &nbsp; <strong>HR:</strong> {int(row['hr'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+              <div class="player-compact-row"><strong>OPS:</strong> {row['ops']:.3f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+
 TREND_TONE = {
     "hot": ("Hot streak", "#16a34a"),
     "cold": ("Cold streak", "#dc2626"),
@@ -1042,11 +1060,12 @@ _render_recent_form_section(
 
 _render_analytics_trend_chart(connection, season_history, advanced_history)
 
-overview_tab, standard_tab, game_log_tab, h2h_tab, advanced_tab, context_tab = st.tabs(
+overview_tab, standard_tab, game_log_tab, top_games_tab, h2h_tab, advanced_tab, context_tab = st.tabs(
     [
         "Overview",
         "Season-by-Season Stats",
         "Game Log",
+        "Top Games",
         "Head-to-Head",
         "Advanced History",
         "Milestones & Records",
@@ -1166,6 +1185,51 @@ with game_log_tab:
                 hide_index=True,
                 use_container_width=True,
                 column_config=_game_log_column_config(),
+            )
+
+with top_games_tab:
+    st.markdown(
+        "<div class='player-section-note'>This player's five highest single-game scores. Game Score = calibrated "
+        "linear-weight runs (1B .50 · 2B .90 · 3B 1.10 · HR 1.40 · BB .40) + .20 per run &amp; RBI − .25 per out — the "
+        "same metric that headlines the Single-Game Hall of Fame.</div>",
+        unsafe_allow_html=True,
+    )
+    if game_log.empty or "game_score" not in game_log.columns:
+        st.info("No game log rows are loaded for this player yet.")
+    else:
+        top_games = game_log.sort_values(
+            ["game_score", "tb", "hits"], ascending=[False, False, False]
+        ).head(5)
+        top_games_columns = [
+            "game_score",
+            "game_date",
+            "opponent",
+            "season_label",
+            "pa",
+            "ab",
+            "hits",
+            "hr",
+            "bb",
+            "r",
+            "rbi",
+            "tb",
+            "avg",
+            "obp",
+            "slg",
+            "ops",
+        ]
+        top_games_display = top_games[[column for column in top_games_columns if column in top_games.columns]].copy()
+        if layout.is_mobile_layout:
+            _render_top_games_mobile_cards(top_games_display)
+        else:
+            st.dataframe(
+                top_games_display,
+                hide_index=True,
+                use_container_width=True,
+                column_config={
+                    **_game_log_column_config(),
+                    "game_score": st.column_config.NumberColumn("Game Score", format="%.1f", width="small"),
+                },
             )
 
 with h2h_tab:
