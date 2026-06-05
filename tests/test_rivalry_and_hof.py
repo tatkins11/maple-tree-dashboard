@@ -259,6 +259,23 @@ def test_single_game_score_leaders_rank_by_linear_weights(tmp_path: Path) -> Non
     assert {"ab", "r", "rbi", "1b", "2b", "3b", "hr", "bb"}.issubset(leaders.columns)
 
 
+def test_single_game_score_leaders_ascending_is_worst_first(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "worst.sqlite")
+    try:
+        initialize_database(connection)
+        _seed_franchise(connection)
+        best = fetch_single_game_score_leaders(connection, limit=20)
+        worst = fetch_single_game_score_leaders(connection, limit=20, ascending=True)
+    finally:
+        connection.close()
+
+    worst_scores = [float(v) for v in worst["game_score"]]
+    # Ascending order, worst game first.
+    assert worst_scores == sorted(worst_scores)
+    # With the full set in view, worst-first is exactly best-first reversed.
+    assert worst_scores == list(reversed([float(v) for v in best["game_score"]]))
+
+
 def test_game_score_penalizes_at_bat_outs(tmp_path: Path) -> None:
     """A 4-for-4 should edge a 4-for-5 with the same hits by exactly the out weight."""
     from src.dashboard.data import GAME_SCORE_OUT_WEIGHT

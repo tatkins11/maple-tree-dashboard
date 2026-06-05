@@ -3938,6 +3938,7 @@ def fetch_single_game_score_leaders(
     limit: int = 10,
     active_only: bool = False,
     min_pa: int = 1,
+    ascending: bool = False,
 ) -> pd.DataFrame:
     """Best single games ranked by Game Score (one number for the loudest night).
 
@@ -3947,8 +3948,9 @@ def fetch_single_game_score_leaders(
     ``GAME_SCORE_CONTEXT_WEIGHT`` (0.20) per run scored and per RBI so high-impact
     nights are rewarded, and an out penalty of ``GAME_SCORE_OUT_WEIGHT`` (-0.25)
     per at-bat out (AB - H) so an efficient 4-for-4 edges a 4-for-5. Returns up to
-    ``limit`` rows, highest score first, with columns ``SINGLE_GAME_SCORE_COLUMNS``
-    (``game_score`` rounded to 2 dp).
+    ``limit`` rows with columns ``SINGLE_GAME_SCORE_COLUMNS`` (``game_score``
+    rounded to 2 dp) — highest score first, or, when ``ascending`` is True, the
+    lowest-scoring "rough nights" first.
     """
     source = fetch_single_game_stats(connection, seasons=seasons, min_pa=max(min_pa, 1))
     if source.empty:
@@ -3960,7 +3962,7 @@ def fetch_single_game_score_leaders(
             return pd.DataFrame(columns=SINGLE_GAME_SCORE_COLUMNS)
     board = source.sort_values(
         ["game_score", "tb", "hits", "game_date"],
-        ascending=[False, False, False, False],
+        ascending=[ascending, ascending, ascending, False],
     ).head(limit)
     board = board[[column for column in SINGLE_GAME_SCORE_COLUMNS if column in board.columns]].reset_index(drop=True)
     return board.assign(game_score=board["game_score"].round(2))

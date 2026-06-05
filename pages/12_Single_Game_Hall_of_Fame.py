@@ -197,28 +197,17 @@ def _render_headliners(headliners, score_leaders, *, is_mobile_layout: bool) -> 
             )
 
 
-def _render_game_score_board(score_leaders) -> None:
-    st.markdown("### Game Score Leaderboard")
-    st.markdown(
-        '<div class="hof-note">One number for the loudest overall single game — runs created from the site\'s calibrated '
-        "linear weights (1B .50 · 2B .90 · 3B 1.10 · HR 1.40 · BB .40, the same engine behind wOBA/wRC+), plus a light "
-        "+.20 per run scored and driven in for game impact, minus .25 per out so a clean 4-for-4 edges a 4-for-5. "
-        "Records are not final — playoff games count.</div>",
-        unsafe_allow_html=True,
-    )
-    if score_leaders.empty:
-        st.info("No single-game lines match the current filters.")
-        return
+def _game_score_table(rows) -> None:
     board = pd.DataFrame(
         {
-            "#": range(1, len(score_leaders) + 1),
-            "Player": score_leaders["player"],
-            "canonical_name": score_leaders["canonical_name"],
-            "GS": score_leaders["game_score"],
-            "Line": [_format_full_line(row) for _, row in score_leaders.iterrows()],
-            "Date": score_leaders["game_date"],
-            "Opponent": score_leaders["opponent"],
-            "Season": score_leaders["season"].map(format_player_season_label),
+            "#": range(1, len(rows) + 1),
+            "Player": rows["player"],
+            "canonical_name": rows["canonical_name"],
+            "GS": rows["game_score"],
+            "Line": [_format_full_line(row) for _, row in rows.iterrows()],
+            "Date": rows["game_date"],
+            "Opponent": rows["opponent"],
+            "Season": rows["season"].map(format_player_season_label),
         }
     )
     board = with_player_link_column(
@@ -230,6 +219,29 @@ def _render_game_score_board(score_leaders) -> None:
         link_columns=["Player"],
         css_class="hof-gamescore-table",
     )
+
+
+def _render_game_score_board(score_leaders, score_trailers) -> None:
+    st.markdown("### Game Score Leaderboard")
+    st.markdown(
+        '<div class="hof-note">One number for the loudest overall single game — runs created from the site\'s calibrated '
+        "linear weights (1B .50 · 2B .90 · 3B 1.10 · HR 1.40 · BB .40, the same engine behind wOBA/wRC+), plus a light "
+        "+.20 per run scored and driven in for game impact, minus .25 per out so a clean 4-for-4 edges a 4-for-5. "
+        "Records are not final — playoff games count.</div>",
+        unsafe_allow_html=True,
+    )
+    if score_leaders.empty:
+        st.info("No single-game lines match the current filters.")
+        return
+    _game_score_table(score_leaders)
+
+    if not score_trailers.empty:
+        st.markdown("### Rough Nights")
+        st.markdown(
+            '<div class="hof-note">The other end of the leaderboard, ranked worst-first — everyone has an 0-for-5 in them.</div>',
+            unsafe_allow_html=True,
+        )
+        _game_score_table(score_trailers)
 
 
 def _display_columns_for_board(label: str, dataframe) -> list[str]:
@@ -395,7 +407,14 @@ score_leaders = fetch_single_game_score_leaders(
 _render_headliners(headliners, score_leaders, is_mobile_layout=layout.is_mobile_layout)
 
 if view == "Game Score":
-    _render_game_score_board(score_leaders)
+    score_trailers = fetch_single_game_score_leaders(
+        connection,
+        seasons=selected_seasons,
+        limit=top_n,
+        active_only=active_only,
+        ascending=True,
+    )
+    _render_game_score_board(score_leaders, score_trailers)
 elif view == "Feats":
     _render_feats(connection, selected_seasons, is_mobile_layout=layout.is_mobile_layout)
 else:
