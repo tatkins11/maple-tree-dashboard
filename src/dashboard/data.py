@@ -332,6 +332,7 @@ def _finalize_single_game_stats_dataframe(dataframe: pd.DataFrame, min_pa: int) 
     )
     dataframe = dataframe.assign(
         ops=dataframe["obp"] + dataframe["slg"],
+        game_score=dataframe.apply(_single_game_score, axis=1),
         season_label=dataframe["season"].map(lambda value: format_player_season_label(str(value))),
     )
     return dataframe[dataframe["pa"] >= min_pa].copy()
@@ -1491,6 +1492,30 @@ def _game_linear_weight_runs(row: pd.Series) -> float:
     )
 
 
+# Single-game "Game Score" (the HOF headline) = batting-event linear-weight runs
+# plus two deliberately LIGHT adjustments:
+#   * a context bonus for runs scored and driven in (game impact), and
+#   * an out penalty for at-bat outs (AB - H), so an efficient 4-for-4 edges a
+#     4-for-5 with the same hits.
+# At 0.20 a run/RBI is ~1/7th of a home run and an out costs 0.25 (half a single's
+# +0.50), so raw hitting still dominates — these only break ties at the margins.
+# This stays separate from _game_linear_weight_runs, which must remain a pure
+# batting-event estimate (it also feeds the consistency metrics, where context
+# stats like RBI/runs/outs would be inappropriate).
+GAME_SCORE_CONTEXT_WEIGHT = 0.20
+GAME_SCORE_OUT_WEIGHT = -0.25
+
+
+def _single_game_score(row: pd.Series) -> float:
+    at_bat_outs = max(float(row.get("ab", 0) or 0) - float(row.get("hits", 0) or 0), 0.0)
+    return (
+        _game_linear_weight_runs(row)
+        + GAME_SCORE_CONTEXT_WEIGHT * float(row.get("r", 0) or 0)
+        + GAME_SCORE_CONTEXT_WEIGHT * float(row.get("rbi", 0) or 0)
+        + GAME_SCORE_OUT_WEIGHT * at_bat_outs
+    )
+
+
 def _classify_consistency(cv: float | None) -> str:
     if cv is None:
         return "Insufficient data"
@@ -1834,6 +1859,162 @@ def fetch_team_vs_opponent(
         "avg_runs_for": runs_for_total / completed_count,
         "avg_runs_against": runs_against_total / completed_count,
         "recent_meetings": recent_meetings,
+    }
+
+
+def fetch_franchise_opponents(connection: sqlite3.Connection) -> list[str]:
+    """All-time opponents across every franchise era, most-played first.
+
+    Reads the franchise-wide ``games`` table — every team-name era (Soviet
+    Sluggers, Smoking Bunts, Maple Tree Tappers, Maple Tree) counts as one
+    franchise, so there is no ``team_name`` filter. Grouping is case-insensitive
+    so a stray-cased entry can never split a single rival into two rows.
+    """
+    rows = connection.execute(
+        """
+        SELECT MIN(opponent_name) AS opponent, COUNT(*) AS games
+        FROM games
+        WHERE COALESCE(opponent_name, '') <> ''
+        GROUP BY LOWER(opponent_name)
+        ORDER BY games DESC, LOWER(opponent_name)
+        """
+    ).fetchall()
+    return [str(row["opponent"]) for row in rows]
+
+
+def fetch_franchise_opponent_ledger(connection: sqlite3.Connection) -> pd.DataFrame:
+    """All-time head-to-head ledger versus every opponent, franchise-wide.
+
+    One row per opponent from the ``games`` table (all eras). Columns:
+    ``opponent, games, wins, losses, ties, win_pct, runs_for, runs_against,
+    run_diff, first_played, last_played``. Sorted most-played first.
+    """
+    frame = pd.read_sql_query(
+        """
+        SELECT
+            MIN(opponent_name) AS opponent,
+            COUNT(*) AS games,
+            SUM(CASE WHEN team_score > opponent_score THEN 1 ELSE 0 END) AS wins,
+            SUM(CASE WHEN team_score < opponent_score THEN 1 ELSE 0 END) AS losses,
+            SUM(CASE WHEN team_score = opponent_score THEN 1 ELSE 0 END) AS ties,
+            SUM(team_score) AS runs_for,
+            SUM(opponent_score) AS runs_against,
+            SUM(team_score - opponent_score) AS run_diff,
+            MIN(game_date) AS first_played,
+            MAX(game_date) AS last_played
+        FROM games
+        WHERE COALESCE(opponent_name, '') <> ''
+          AND team_score IS NOT NULL
+          AND opponent_score IS NOT NULL
+        GROUP BY LOWER(opponent_name)
+        ORDER BY games DESC, LOWER(opponent_name)
+        """,
+        connection,
+    )
+    if frame.empty:
+        return frame
+    int_columns = {
+        column: frame[column].fillna(0).astype(int)
+        for column in ("games", "wins", "losses", "ties", "runs_for", "runs_against", "run_diff")
+    }
+    frame = frame.assign(**int_columns)
+    frame = frame.assign(
+        win_pct=[
+            round(int(wins) / int(games), 3) if int(games) else 0.0
+            for wins, games in zip(frame["wins"], frame["games"])
+        ]
+    )
+    return frame
+
+
+def fetch_franchise_vs_opponent(
+    connection: sqlite3.Connection,
+    *,
+    opponent: str,
+) -> dict[str, object]:
+    """Franchise-wide detail for one opponent: summary line plus every meeting.
+
+    Matches on ``LOWER(opponent_name)`` so casing never splits a rival, and spans
+    all team-name eras (no ``team_name`` filter). The ``meetings`` DataFrame is
+    one row per game, newest first, and carries the franchise ``era`` (team_name)
+    of each meeting.
+    """
+    rows = connection.execute(
+        """
+        SELECT season, team_name, game_date, game_time, opponent_name,
+               team_score, opponent_score
+        FROM games
+        WHERE LOWER(opponent_name) = LOWER(?)
+          AND team_score IS NOT NULL
+          AND opponent_score IS NOT NULL
+        ORDER BY game_date DESC, COALESCE(game_time, '') DESC
+        """,
+        (opponent,),
+    ).fetchall()
+    if not rows:
+        return {
+            "opponent": opponent,
+            "games": 0,
+            "wins": 0,
+            "losses": 0,
+            "ties": 0,
+            "win_pct": 0.0,
+            "runs_for": 0,
+            "runs_against": 0,
+            "run_diff": 0,
+            "first_played": "",
+            "last_played": "",
+            "meetings": pd.DataFrame(),
+        }
+
+    def _result(team_score: int, opponent_score: int) -> str:
+        if team_score > opponent_score:
+            return "W"
+        if team_score < opponent_score:
+            return "L"
+        return "T"
+
+    wins = sum(1 for row in rows if int(row["team_score"]) > int(row["opponent_score"]))
+    losses = sum(1 for row in rows if int(row["team_score"]) < int(row["opponent_score"]))
+    ties = sum(1 for row in rows if int(row["team_score"]) == int(row["opponent_score"]))
+    runs_for = sum(int(row["team_score"]) for row in rows)
+    runs_against = sum(int(row["opponent_score"]) for row in rows)
+    dates = [str(row["game_date"] or "") for row in rows]
+    meetings = pd.DataFrame(
+        [
+            {
+                "season": str(row["season"] or ""),
+                "era": str(row["team_name"] or ""),
+                "game_date": str(row["game_date"] or ""),
+                "game_time": str(row["game_time"] or ""),
+                "opponent": str(row["opponent_name"] or ""),
+                "team_score": int(row["team_score"]),
+                "opponent_score": int(row["opponent_score"]),
+                "result": _result(int(row["team_score"]), int(row["opponent_score"])),
+                "run_diff": int(row["team_score"]) - int(row["opponent_score"]),
+            }
+            for row in rows
+        ]
+    )
+    # Use the same canonical casing as the ledger (MIN of all spellings) so the
+    # detail header and the ledger row never disagree on how a rival is spelled.
+    display_opponent = min(
+        (str(row["opponent_name"]) for row in rows if str(row["opponent_name"]).strip()),
+        default=str(opponent),
+    )
+    return {
+        "opponent": display_opponent,
+        "games": len(rows),
+        "wins": wins,
+        "losses": losses,
+        "ties": ties,
+        "win_pct": round(wins / len(rows), 3) if rows else 0.0,
+        "runs_for": runs_for,
+        "runs_against": runs_against,
+        "run_diff": runs_for - runs_against,
+        "first_played": min(dates) if dates else "",
+        "last_played": max(dates) if dates else "",
+        "meetings": meetings,
     }
 
 
@@ -3667,6 +3848,119 @@ def fetch_record_leaderboards(
             value_column=column_name,
         )
     return leaderboards
+
+
+def fetch_single_game_feats(
+    connection: sqlite3.Connection,
+    *,
+    seasons: list[str] | None = None,
+    min_hits: int = 5,
+    min_hr: int = 3,
+    min_tb: int = 11,
+) -> dict[str, pd.DataFrame]:
+    """Curated single-game "feat" boards from the franchise game log.
+
+    Qualifying player-games are filtered by three thresholds — ``min_hits`` (5+
+    hits), ``min_hr`` (3+ home runs), and ``min_tb`` (11+ total bases) — and
+    returned as rare-achievement leaderboards. The dict KEYS are derived from the
+    threshold values (defaults: ``"5-Hit Games"``, ``"3-HR Games"``,
+    ``"11+ Total Base Games"``), so callers that pass non-default thresholds should
+    expect the keys to change to match rather than assume the default labels. Each
+    board is one row per qualifying player-game with columns ``player,
+    canonical_name, game_date, season, opponent, pa, hits, hr, rbi, tb``, sorted by
+    the board's driving stat. TB/hits are taken straight from
+    :func:`fetch_single_game_stats` (computed in SQL) so they never drift from the
+    rest of the app.
+    """
+    columns = [
+        "player",
+        "canonical_name",
+        "game_date",
+        "season",
+        "opponent",
+        "pa",
+        "hits",
+        "hr",
+        "rbi",
+        "tb",
+    ]
+    labels = (
+        f"{min_hits}-Hit Games",
+        f"{min_hr}-HR Games",
+        f"{min_tb}+ Total Base Games",
+    )
+    source = fetch_single_game_stats(connection, seasons=seasons, min_pa=0)
+    if source.empty:
+        return {label: pd.DataFrame(columns=columns) for label in labels}
+
+    base = source[[column for column in columns if column in source.columns]].copy()
+
+    def _board(filtered: pd.DataFrame, primary: str) -> pd.DataFrame:
+        if filtered.empty:
+            return pd.DataFrame(columns=columns)
+        return filtered.sort_values(
+            [primary, "tb", "hits", "game_date"],
+            ascending=[False, False, False, False],
+        ).reset_index(drop=True)
+
+    return {
+        labels[0]: _board(base[base["hits"] >= min_hits], "hits"),
+        labels[1]: _board(base[base["hr"] >= min_hr], "hr"),
+        labels[2]: _board(base[base["tb"] >= min_tb], "tb"),
+    }
+
+
+SINGLE_GAME_SCORE_COLUMNS = [
+    "player",
+    "canonical_name",
+    "game_date",
+    "opponent",
+    "season",
+    "pa",
+    "hits",
+    "1b",
+    "2b",
+    "3b",
+    "hr",
+    "bb",
+    "tb",
+    "game_score",
+]
+
+
+def fetch_single_game_score_leaders(
+    connection: sqlite3.Connection,
+    *,
+    seasons: list[str] | None = None,
+    limit: int = 10,
+    active_only: bool = False,
+    min_pa: int = 1,
+) -> pd.DataFrame:
+    """Best single games ranked by Game Score (one number for the loudest night).
+
+    Game Score builds on the same calibrated linear-weight run values that power
+    the site's wOBA/wRC+ (singles 0.50, doubles 0.90, triples 1.10, HR 1.40, walks
+    0.40), then adds two deliberately LIGHT adjustments: a context bonus of
+    ``GAME_SCORE_CONTEXT_WEIGHT`` (0.20) per run scored and per RBI so high-impact
+    nights are rewarded, and an out penalty of ``GAME_SCORE_OUT_WEIGHT`` (-0.25)
+    per at-bat out (AB - H) so an efficient 4-for-4 edges a 4-for-5. Returns up to
+    ``limit`` rows, highest score first, with columns ``SINGLE_GAME_SCORE_COLUMNS``
+    (``game_score`` rounded to 2 dp).
+    """
+    source = fetch_single_game_stats(connection, seasons=seasons, min_pa=max(min_pa, 1))
+    if source.empty:
+        return pd.DataFrame(columns=SINGLE_GAME_SCORE_COLUMNS)
+    if active_only:
+        active_names = set(_fetch_active_roster_names(connection))
+        source = source[source["player"].isin(active_names)].copy()
+        if source.empty:
+            return pd.DataFrame(columns=SINGLE_GAME_SCORE_COLUMNS)
+    board = source.sort_values(
+        ["game_score", "tb", "hits", "game_date"],
+        ascending=[False, False, False, False],
+    ).head(limit)
+    board = board[[column for column in SINGLE_GAME_SCORE_COLUMNS if column in board.columns]].reset_index(drop=True)
+    return board.assign(game_score=board["game_score"].round(2))
 
 
 def fetch_record_headliners(

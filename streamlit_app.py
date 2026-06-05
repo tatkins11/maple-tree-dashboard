@@ -72,9 +72,11 @@ def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
         {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats"},
         {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats"},
         {"page": "pages/5_Records.py", "title": "Records"},
+        {"page": "pages/12_Single_Game_Hall_of_Fame.py", "title": "Single-Game Hall of Fame"},
         {"page": "pages/6_Milestones.py", "title": "Milestones"},
         {"page": "pages/7_Advanced_Analytics.py", "title": "Advanced Analytics"},
         {"page": "pages/8_Schedule.py", "title": "Schedule"},
+        {"page": "pages/11_Rivalry_Ledger.py", "title": "Rivalry Ledger"},
         {"page": "pages/9_Write_Ups.py", "title": "Write-Ups"},
     ]
     if role == ROLE_ADMIN:
@@ -495,17 +497,19 @@ def render_home_page() -> None:
     _render_postgame_card(saved_postgames)
 
     st.markdown("### Quick Links")
-    link_rows = [st.columns(3), st.columns(3), st.columns(3)]
+    link_rows = [st.columns(3), st.columns(3), st.columns(3), st.columns(3)]
     link_rows[0][0].page_link("pages/1_Current_Season_Stats.py", label="Current Season Stats")
     link_rows[0][1].page_link("pages/2_All_Time_Career_Stats.py", label="All-Time / Career Stats")
     link_rows[0][2].page_link("pages/7_Advanced_Analytics.py", label="Advanced Analytics")
     link_rows[1][0].page_link("pages/5_Records.py", label="Records")
-    link_rows[1][1].page_link("pages/6_Milestones.py", label="Milestones")
-    link_rows[1][2].page_link("pages/8_Schedule.py", label="Schedule")
-    link_rows[2][0].page_link("pages/9_Write_Ups.py", label="Write-Ups")
+    link_rows[1][1].page_link("pages/12_Single_Game_Hall_of_Fame.py", label="Single-Game Hall of Fame")
+    link_rows[1][2].page_link("pages/6_Milestones.py", label="Milestones")
+    link_rows[2][0].page_link("pages/8_Schedule.py", label="Schedule")
+    link_rows[2][1].page_link("pages/11_Rivalry_Ledger.py", label="Rivalry Ledger")
+    link_rows[2][2].page_link("pages/9_Write_Ups.py", label="Write-Ups")
     if role == ROLE_ADMIN:
-        link_rows[2][1].page_link("pages/3_Lineup_Optimizer.py", label="Lineup Optimizer")
-        link_rows[2][2].page_link("pages/4_Admin_Data.py", label="Admin / Data")
+        link_rows[3][0].page_link("pages/3_Lineup_Optimizer.py", label="Lineup Optimizer")
+        link_rows[3][1].page_link("pages/4_Admin_Data.py", label="Admin / Data")
 
     st.markdown("### Top Hitters")
     st.markdown(
