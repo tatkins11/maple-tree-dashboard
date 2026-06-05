@@ -388,6 +388,21 @@ def _compact_season_label(value: str) -> str:
     return value
 
 
+def format_display_date(value: object) -> str:
+    """Render a stored ``YYYY-MM-DD`` date string as ``MM/DD/YY`` for display.
+
+    Leaves the underlying ISO value untouched everywhere it is used for sorting or
+    keys — this is purely a presentation helper. Non-ISO / empty input is returned
+    as-is so callers can format defensively.
+    """
+    text = str(value or "").strip()
+    match = re.match(r"^(\d{4})-(\d{2})-(\d{2})", text)
+    if not match:
+        return text
+    year, month, day = match.group(1), match.group(2), match.group(3)
+    return f"{month}/{day}/{year[2:]}"
+
+
 def format_player_season_label(season: str) -> str:
     value = str(season or "").strip()
     if not value:
@@ -2452,7 +2467,7 @@ def fetch_team_data_freshness(
     runs_against = latest.get("runs_against")
     result = str(latest.get("result_display") or latest.get("result") or "").strip().upper()
     opponent = str(latest.get("opponent_display") or latest.get("opponent_name") or "").strip()
-    date_display = str(latest.get("date_display") or latest.get("game_date") or "").strip()
+    date_display = str(latest.get("date_display") or format_display_date(latest.get("game_date")) or "").strip()
 
     score_text = ""
     if pd.notna(runs_for) and pd.notna(runs_against):
@@ -4487,6 +4502,8 @@ def _finalize_record_leaderboard(
     result.insert(0, "#", range(1, len(result) + 1))
     if "season" in result.columns:
         result.loc[:, "season"] = result["season"].map(lambda value: _compact_season_label(str(value)))
+    if "game_date" in result.columns:
+        result.loc[:, "game_date"] = result["game_date"].map(format_display_date)
     ordered_columns = ["#", *[column for column in result.columns if column != "#"]]
     result = result[ordered_columns]
     return result.rename(columns={column: DISPLAY_COLUMN_LABELS.get(column, column) for column in result.columns})
@@ -4538,7 +4555,7 @@ def _format_record_value(value_label: str, value: object) -> str:
 def _format_game_context(game_date: str, game_time: str, opponent: str) -> str:
     parts: list[str] = []
     if game_date:
-        parts.append(game_date)
+        parts.append(format_display_date(game_date))
     if game_time:
         parts.append(game_time)
     if opponent:

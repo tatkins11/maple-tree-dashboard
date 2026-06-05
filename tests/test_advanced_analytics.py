@@ -1188,12 +1188,12 @@ def test_single_game_helpers_support_player_cards_and_records(tmp_path: Path) ->
     assert hits_board.iloc[0]["Opponent"] == "Bullseyes"
     assert headliners["Single-Game Hits"]["formatted_value"] == "5"
     assert headliners["Single-Game Hits"]["value_label"] == "Hits"
-    assert "2026-04-22" in headliners["Single-Game Hits"]["context"]
+    assert "04/22/26" in headliners["Single-Game Hits"]["context"]
     assert "vs Bullseyes" in headliners["Single-Game Hits"]["context"]
     assert headliners["Single-Game TB"]["formatted_value"] == "12"
     assert headliners["Single-Game TB"]["value_label"] == "Total Bases"
     assert "Single Game" in set(record_context["placements"]["scope"])
-    assert "2026-04-22 6:30 PM vs Bullseyes" in set(record_context["placements"]["game"])
+    assert "04/22/26 6:30 PM vs Bullseyes" in set(record_context["placements"]["game"])
 
 
 def test_fetch_single_game_stats_normalizes_hosted_date_and_time_values(monkeypatch) -> None:
@@ -1363,7 +1363,7 @@ def test_single_game_records_tolerate_pre_migration_boxscore_schema(tmp_path: Pa
     assert int(single_game_stats.iloc[0]["r"]) == 0
     assert int(single_game_stats.iloc[0]["rbi"]) == 0
     assert headliners["Single-Game Hits"]["formatted_value"] == "5"
-    assert headliners["Single-Game Hits"]["context"] == "2026-04-22 | vs Bullseyes | Maple Tree Spring 2026"
+    assert headliners["Single-Game Hits"]["context"] == "04/22/26 | vs Bullseyes | Maple Tree Spring 2026"
 
 
 def test_single_game_stats_fall_back_to_boxscore_csv_when_database_rows_are_missing(tmp_path: Path, monkeypatch) -> None:
@@ -1418,7 +1418,7 @@ def test_single_game_stats_fall_back_to_boxscore_csv_when_database_rows_are_miss
     assert int(single_game_stats.iloc[0]["hits"]) == 5
     assert int(single_game_stats.iloc[0]["rbi"]) == 6
     assert headliners["Single-Game Hits"]["formatted_value"] == "5"
-    assert "2026-04-22" in headliners["Single-Game Hits"]["context"]
+    assert "04/22/26" in headliners["Single-Game Hits"]["context"]
 
 
 def test_passed_milestones_use_highest_cleared_threshold_for_club_counts(tmp_path: Path) -> None:

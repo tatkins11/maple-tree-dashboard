@@ -111,7 +111,7 @@ if mode == "team_aware":
     )
     st.dataframe(
         _lineup_table(preferred_baseline, projection_rows),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "proj_obp": st.column_config.NumberColumn("Proj OBP", format="%.3f"),
@@ -122,7 +122,7 @@ if mode == "team_aware":
 st.subheader("Available Projection Pool")
 st.dataframe(
     projection_rows,
-    use_container_width=True,
+    width="stretch",
     hide_index=True,
     column_config={
         "proj_obp": st.column_config.NumberColumn("Proj OBP", format="%.3f"),
@@ -153,7 +153,7 @@ if st.button("Run optimizer", type="primary", disabled=not selected_players):
     st.caption(result.best_lineup.lineup_type)
     st.dataframe(
         _lineup_table(result.best_lineup.ordered_player_names, projection_rows),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "proj_obp": st.column_config.NumberColumn("Proj OBP", format="%.3f"),
@@ -175,7 +175,7 @@ if st.button("Run optimizer", type="primary", disabled=not selected_players):
         )
     st.dataframe(
         pd.DataFrame(alternate_rows),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "expected_runs": st.column_config.NumberColumn("Expected Runs", format="%.3f"),

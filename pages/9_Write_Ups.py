@@ -294,7 +294,7 @@ def _render_saved_postgame_archive(connection, *, season: str, key_prefix: str) 
             "source": "Source",
         }
     )
-    st.dataframe(summary, use_container_width=True, hide_index=True)
+    st.dataframe(summary, width="stretch", hide_index=True)
 
     selected_id = st.selectbox(
         "Open saved recap",
@@ -478,7 +478,7 @@ def main() -> None:
                         "proj_xbh_rate",
                     ]
                 ],
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config={
                     "fixed_dhh": st.column_config.CheckboxColumn("Fixed DHH"),
@@ -617,7 +617,7 @@ def main() -> None:
             st.subheader(saved_lineup_title)
             st.dataframe(
                 pd.DataFrame(saved_lineup_rows),
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config={
                     "lineup_note": st.column_config.TextColumn("Note"),
@@ -719,7 +719,7 @@ def main() -> None:
                         key=f"{game_prefix}_upload",
                     )
                     if upload is not None:
-                        st.image(upload, use_container_width=True, caption=f"Game {index} box score reference")
+                        st.image(upload, width="stretch", caption=f"Game {index} box score reference")
                     else:
                         st.caption("Upload a screenshot here for visual reference while you write the recap.")
                     st.markdown("</div>", unsafe_allow_html=True)

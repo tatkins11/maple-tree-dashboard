@@ -33,6 +33,7 @@ from src.dashboard.data import (
     fetch_team_vs_opponent,
     fetch_top_hitters,
     fetch_writeup_milestone_watch,
+    format_display_date,
     get_connection,
     with_dashboard_default_season,
 )
@@ -214,7 +215,7 @@ def _format_pregame_meeting(row) -> str:
     score = ""
     if runs_for is not None and runs_against is not None and str(runs_for) != "" and str(runs_against) != "":
         score = f" {int(runs_for)}-{int(runs_against)}"
-    return f"{row.get('game_date', '')} — {result}{score}".strip(" —")
+    return f"{format_display_date(row.get('game_date', ''))} — {result}{score}".strip(" —")
 
 
 def _render_pregame_snapshot(
@@ -406,7 +407,7 @@ def _render_home_standings(standings, *, is_mobile_layout: bool) -> None:
     ]
     st.dataframe(
         display[[column for column in display_columns if column in display.columns]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config=_home_standings_column_config(),
     )

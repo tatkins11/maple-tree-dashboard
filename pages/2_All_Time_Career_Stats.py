@@ -360,7 +360,7 @@ else:
                 st.dataframe(
                     dataframe,
                     hide_index=True,
-                    use_container_width=True,
+                    width="stretch",
                     column_config=leader_column_config,
                 )
         else:
@@ -376,7 +376,7 @@ else:
                     column.dataframe(
                         dataframe,
                         hide_index=True,
-                        use_container_width=True,
+                        width="stretch",
                         column_config=leader_column_config,
                     )
 
@@ -416,7 +416,7 @@ else:
             .encode(x="v:Q")
         )
         chart_height = max(220, len(chart_source) * 26)
-        st.altair_chart((bars + rule).properties(height=chart_height), use_container_width=True)
+        st.altair_chart((bars + rule).properties(height=chart_height), width="stretch")
 
     # Season-to-season reliability: steady performers vs one-year wonders.
     st.subheader("Career Consistency")

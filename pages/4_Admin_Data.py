@@ -278,7 +278,7 @@ def _render_aliases_tab(connection) -> None:
         st.info("No aliases recorded yet.")
         return
 
-    st.dataframe(aliases, use_container_width=True, hide_index=True)
+    st.dataframe(aliases, width="stretch", hide_index=True)
 
     identities = fetch_player_identities(connection)
     if identities.empty:
@@ -394,18 +394,18 @@ tabs = st.tabs(
 identities_tab, aliases_tab, metadata_tab, roster_tab, projections_tab, schedule_tab, audit_tab = tabs
 
 with identities_tab:
-    st.dataframe(fetch_player_identities(connection), use_container_width=True, hide_index=True)
+    st.dataframe(fetch_player_identities(connection), width="stretch", hide_index=True)
 
 with aliases_tab:
     _render_aliases_tab(connection)
 
 with metadata_tab:
-    st.dataframe(fetch_player_metadata(connection), use_container_width=True, hide_index=True)
+    st.dataframe(fetch_player_metadata(connection), width="stretch", hide_index=True)
 
 with roster_tab:
     st.dataframe(
         fetch_active_roster(connection, season_name=DEFAULT_ACTIVE_ROSTER_SEASON),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
@@ -414,11 +414,11 @@ with projections_tab:
     projection_inventory = fetch_projection_inventory(connection, projection_filter)
     counts_col, inventory_col = st.columns([1, 3])
     counts_col.markdown("**Source counts**")
-    counts_col.dataframe(source_counts, use_container_width=True, hide_index=True)
+    counts_col.dataframe(source_counts, width="stretch", hide_index=True)
     inventory_col.markdown("**Projection inventory**")
     inventory_col.dataframe(
         projection_inventory,
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "current_season_weight": st.column_config.NumberColumn("Current Wt", format="%.3f"),

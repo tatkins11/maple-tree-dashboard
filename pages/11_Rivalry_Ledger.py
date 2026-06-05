@@ -14,6 +14,7 @@ from src.dashboard.data import (
     fetch_franchise_opponents,
     fetch_franchise_vs_opponent,
     fetch_single_game_stats,
+    format_display_date,
     format_player_season_label,
     get_connection,
 )
@@ -204,6 +205,8 @@ def _render_ledger(ledger, sort_choice: str) -> None:
         formatters={
             "Win%": "{:.3f}",
             "Diff": _signed,
+            "First": format_display_date,
+            "Last": format_display_date,
         },
         css_class="rivalry-ledger-table",
     )
@@ -262,7 +265,7 @@ def _render_detail(connection, opponent: str, *, is_mobile_layout: bool) -> None
             &nbsp;<span style="font-size:1rem;font-weight:600;color:#6b7280;">({detail['win_pct']:.3f})</span></div>
           <div class="rivalry-summary-meta">
             {int(detail['runs_for'])} scored · {int(detail['runs_against'])} allowed · {escape(_signed(detail['run_diff']))} run differential<br>
-            {escape(detail['first_played'])} → {escape(detail['last_played'])} · {escape(', '.join(eras))}
+            {escape(format_display_date(detail['first_played']))} → {escape(format_display_date(detail['last_played']))} · {escape(', '.join(eras))}
           </div>
         </div>
         """,
@@ -285,7 +288,7 @@ def _render_detail(connection, opponent: str, *, is_mobile_layout: bool) -> None
     st.markdown("#### Game-by-game")
     render_static_table(
         meetings_display,
-        formatters={"Diff": _signed},
+        formatters={"Diff": _signed, "Date": format_display_date},
         css_class="rivalry-meetings-table",
     )
 

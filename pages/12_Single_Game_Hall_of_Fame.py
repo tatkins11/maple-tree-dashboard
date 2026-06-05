@@ -15,6 +15,7 @@ from src.dashboard.data import (
     fetch_seasons,
     fetch_single_game_feats,
     fetch_single_game_score_leaders,
+    format_display_date,
     format_player_season_label,
     get_connection,
     with_dashboard_default_season,
@@ -215,7 +216,7 @@ def _game_score_table(rows) -> None:
     )
     render_static_table(
         board[["#", "Player", "GS", "Line", "Date", "Opponent", "Season"]],
-        formatters={"GS": "{:.1f}"},
+        formatters={"GS": "{:.1f}", "Date": format_display_date},
         link_columns=["Player"],
         css_class="hof-gamescore-table",
     )
@@ -328,6 +329,7 @@ def _render_feats(connection, selected_seasons, *, is_mobile_layout: bool) -> No
         )
         render_static_table(
             prepared[display_order],
+            formatters={"Date": format_display_date},
             link_columns=["Player"],
             css_class="hof-feat-table",
         )

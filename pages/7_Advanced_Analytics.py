@@ -541,13 +541,13 @@ if chart_label_state_key not in st.session_state:
 
 chart_preset_cols = st.columns([0.9, 0.9, 0.7, 1.2, 1.1], gap="small")
 with chart_preset_cols[0]:
-    if st.button("Top wRC+ labels", use_container_width=True):
+    if st.button("Top wRC+ labels", width="stretch"):
         st.session_state[chart_label_state_key] = default_chart_labels
 with chart_preset_cols[1]:
-    if st.button("Active roster labels", use_container_width=True):
+    if st.button("Active roster labels", width="stretch"):
         st.session_state[chart_label_state_key] = active_chart_labels
 with chart_preset_cols[2]:
-    if st.button("Clear labels", use_container_width=True):
+    if st.button("Clear labels", width="stretch"):
         st.session_state[chart_label_state_key] = []
 with chart_preset_cols[3]:
     selected_label_archetype = st.selectbox(
@@ -557,7 +557,7 @@ with chart_preset_cols[3]:
         key="advanced_chart_label_archetype",
     )
 with chart_preset_cols[4]:
-    if st.button("Apply archetype labels", use_container_width=True):
+    if st.button("Apply archetype labels", width="stretch"):
         if selected_label_archetype == "Custom":
             st.session_state[chart_label_state_key] = default_chart_labels
         else:
@@ -697,7 +697,7 @@ labels_left = (
 )
 st.altair_chart(
     (zone + vline + hline + scatter + label_rules + label_halo + label_halo_left + labels + labels_left).properties(height=400),
-    use_container_width=True,
+    width="stretch",
 )
 st.caption(
     "Power (ISO) up, on-base (OBP) right. Dashed lines mark the group average, so the four quadrants map to the "
@@ -714,7 +714,7 @@ with archetype_columns[0]:
     st.dataframe(
         archetype_summary,
         hide_index=True,
-        use_container_width=True,
+        width="stretch",
         column_config={
             "archetype": st.column_config.TextColumn("Archetype", width="medium"),
             "hitters": st.column_config.NumberColumn("Hitters", format="%d", width="small"),
@@ -762,7 +762,7 @@ else:
     comparison_df = fetch_advanced_player_comparison(analytics_df, comparison_choices[:3])
     st.dataframe(
         _format_player_comparison(_rename_comparison_index(comparison_df)),
-        use_container_width=True,
+        width="stretch",
     )
 
 if scope == "Season" and selected_season:

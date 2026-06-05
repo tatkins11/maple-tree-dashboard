@@ -22,6 +22,7 @@ from src.dashboard.data import (
     fetch_player_record_context,
     fetch_player_season_history,
     fetch_player_vs_opponent,
+    format_display_date,
     sort_seasons,
     get_connection,
     with_dashboard_default_season,
@@ -548,7 +549,7 @@ def _render_analytics_trend_chart(
             )
         )
         chart = (baseline_line + player_line).properties(height=260)
-    st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, width="stretch")
 
 
 def _standard_history_column_config() -> dict[str, st.column_config.Column]:
@@ -899,6 +900,8 @@ def _render_head_to_head_section(
         "ops",
     ]
     display = recent_games[[col for col in display_columns if col in recent_games.columns]].copy()
+    if "game_date" in display.columns:
+        display.loc[:, "game_date"] = display["game_date"].map(format_display_date)
     if is_mobile_layout:
         for _, row in display.iterrows():
             st.markdown(
@@ -916,7 +919,7 @@ def _render_head_to_head_section(
         st.dataframe(
             display,
             hide_index=True,
-            use_container_width=True,
+            width="stretch",
             column_config={
                 "game_date": st.column_config.TextColumn("Date", width="small"),
                 "season_label": st.column_config.TextColumn("Season", width="small"),
@@ -1087,7 +1090,7 @@ with overview_tab:
             st.dataframe(
                 _milestone_table(upcoming, include_next=True),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
     with overview_cols[-1]:
         st.markdown("#### Record Context")
@@ -1102,7 +1105,7 @@ with overview_tab:
             st.dataframe(
                 _record_table(placements),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
 
 with standard_tab:
@@ -1142,7 +1145,7 @@ with standard_tab:
             st.dataframe(
                 standard_display,
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
                 column_config=_standard_history_column_config(),
             )
 
@@ -1177,13 +1180,15 @@ with game_log_tab:
             "ops",
         ]
         game_log_display = game_log[[column for column in game_log_columns if column in game_log.columns]].copy()
+        if "game_date" in game_log_display.columns:
+            game_log_display.loc[:, "game_date"] = game_log_display["game_date"].map(format_display_date)
         if layout.is_mobile_layout:
             _render_game_log_mobile_cards(game_log_display)
         else:
             st.dataframe(
                 game_log_display,
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
                 column_config=_game_log_column_config(),
             )
 
@@ -1219,13 +1224,15 @@ with top_games_tab:
             "ops",
         ]
         top_games_display = top_games[[column for column in top_games_columns if column in top_games.columns]].copy()
+        if "game_date" in top_games_display.columns:
+            top_games_display.loc[:, "game_date"] = top_games_display["game_date"].map(format_display_date)
         if layout.is_mobile_layout:
             _render_top_games_mobile_cards(top_games_display)
         else:
             st.dataframe(
                 top_games_display,
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
                 column_config={
                     **_game_log_column_config(),
                     "game_score": st.column_config.NumberColumn("Game Score", format="%.1f", width="small"),
@@ -1276,7 +1283,7 @@ with advanced_tab:
             st.dataframe(
                 advanced_display,
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
                 column_config=_advanced_history_column_config(),
             )
 
@@ -1291,7 +1298,7 @@ with context_tab:
             st.dataframe(
                 _milestone_table(upcoming, include_next=True),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
 
         st.markdown("#### Cleared Milestones")
@@ -1302,7 +1309,7 @@ with context_tab:
             st.dataframe(
                 _milestone_table(cleared, include_next=False),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
 
     with context_cols[-1]:
@@ -1314,7 +1321,7 @@ with context_tab:
             st.dataframe(
                 _record_table(owned_records),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )
 
         st.markdown("#### Best Record Placements")
@@ -1325,5 +1332,5 @@ with context_tab:
             st.dataframe(
                 _record_table(placements),
                 hide_index=True,
-                use_container_width=True,
+                width="stretch",
             )

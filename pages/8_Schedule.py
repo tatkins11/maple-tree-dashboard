@@ -382,7 +382,7 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_
     display_columns = ["Selected", "Team", "W", "L", "Pct", "GB", "RF", "RA", "RD"]
     st.dataframe(
         standings_display[[column for column in display_columns if column in standings_display.columns]],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "Selected": st.column_config.TextColumn("", width="small"),
@@ -481,7 +481,7 @@ def _render_team_schedule(connection, selected_season: str, *, is_mobile_layout:
         else:
             st.dataframe(
                 _mobile_team_schedule_display_table(upcoming_display) if is_mobile_layout else upcoming_display,
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
@@ -493,7 +493,7 @@ def _render_team_schedule(connection, selected_season: str, *, is_mobile_layout:
         else:
             st.dataframe(
                 _mobile_team_schedule_display_table(recent_display) if is_mobile_layout else recent_display,
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
@@ -505,7 +505,7 @@ def _render_team_schedule(connection, selected_season: str, *, is_mobile_layout:
         else:
             st.dataframe(
                 _mobile_team_schedule_display_table(display_table) if is_mobile_layout else display_table,
-                use_container_width=True,
+                width="stretch",
                 hide_index=True,
                 column_config=_mobile_team_schedule_column_config() if is_mobile_layout else _team_schedule_column_config(),
             )
@@ -700,7 +700,7 @@ def _render_league_scouting(connection, selected_season: str, *, is_mobile_layou
     else:
         st.dataframe(
             _mobile_league_schedule_display_table(scoreboard, result_column="league_result_display") if is_mobile_layout else _league_schedule_display_table(scoreboard, result_column="league_result_display", include_notes=False),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
@@ -730,7 +730,7 @@ def _render_league_scouting(connection, selected_season: str, *, is_mobile_layou
                 result_column="team_result_display" if team_name != "All teams" else "league_result_display",
                 include_notes=False,
             ),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
@@ -749,7 +749,7 @@ def _render_league_scouting(connection, selected_season: str, *, is_mobile_layou
     else:
         st.dataframe(
             _mobile_league_schedule_display_table(league_schedule, result_column="league_result_display") if is_mobile_layout else _league_schedule_display_table(league_schedule, result_column="league_result_display", include_notes=True),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config=_mobile_league_schedule_column_config() if is_mobile_layout else _league_schedule_column_config(),
         )
