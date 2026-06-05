@@ -255,6 +255,8 @@ def test_single_game_score_leaders_rank_by_linear_weights(tmp_path: Path) -> Non
     assert scores == sorted(scores, reverse=True)
     # Identity column is present for player links.
     assert "canonical_name" in leaders.columns
+    # Columns needed to render the full box-score line are present.
+    assert {"ab", "r", "rbi", "1b", "2b", "3b", "hr", "bb"}.issubset(leaders.columns)
 
 
 def test_game_score_penalizes_at_bat_outs(tmp_path: Path) -> None:

@@ -116,6 +116,7 @@ _RATE_LABELS = {"AVG", "OBP", "SLG", "OPS"}
 
 
 def _format_line(row) -> str:
+    """Compact line for the hero card, e.g. '5H 3HR 15TB'."""
     parts = [f"{int(row['hits'])}H"]
     if int(row["hr"]):
         parts.append(f"{int(row['hr'])}HR")
@@ -123,6 +124,23 @@ def _format_line(row) -> str:
     if int(row["bb"]):
         parts.append(f"{int(row['bb'])}BB")
     return " ".join(parts)
+
+
+def _format_full_line(row) -> str:
+    """Full box-score line, e.g. '5-5 · 1 1B, 1 2B, 3 HR · 8 RBI · 5 R'."""
+    parts = [f"{int(row['hits'])}-{int(row['ab'])}"]
+    hit_types = [
+        f"{int(row[column])} {label}"
+        for column, label in (("1b", "1B"), ("2b", "2B"), ("3b", "3B"), ("hr", "HR"))
+        if int(row[column])
+    ]
+    if hit_types:
+        parts.append(", ".join(hit_types))
+    if int(row["bb"]):
+        parts.append(f"{int(row['bb'])} BB")
+    parts.append(f"{int(row['rbi'])} RBI")
+    parts.append(f"{int(row['r'])} R")
+    return " · ".join(parts)
 
 
 def _game_score_card(score_leaders, active_players: set[str]) -> dict[str, object] | None:
@@ -197,7 +215,7 @@ def _render_game_score_board(score_leaders) -> None:
             "Player": score_leaders["player"],
             "canonical_name": score_leaders["canonical_name"],
             "GS": score_leaders["game_score"],
-            "Line": [_format_line(row) for _, row in score_leaders.iterrows()],
+            "Line": [_format_full_line(row) for _, row in score_leaders.iterrows()],
             "Date": score_leaders["game_date"],
             "Opponent": score_leaders["opponent"],
             "Season": score_leaders["season"].map(format_player_season_label),
