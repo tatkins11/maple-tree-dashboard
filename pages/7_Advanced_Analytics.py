@@ -475,6 +475,7 @@ render_static_table(
         "hbp_rate": "{:.3f}",
     },
     link_columns=["player"],
+    heat_columns=["wrc_plus"],
     css_class="advanced-analytics-table",
 )
 

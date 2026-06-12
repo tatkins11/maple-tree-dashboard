@@ -12,6 +12,7 @@ from src.dashboard.data import (
     fetch_advanced_analytics_view,
     fetch_current_season_leader_snapshot,
     fetch_current_season_stats,
+    fetch_recent_tb_series,
     fetch_seasons,
     fetch_team_data_freshness,
     fetch_team_summary,
@@ -26,6 +27,7 @@ from src.dashboard.ui import (
     persistent_selectbox,
     render_data_freshness_caption,
     render_static_table,
+    sparkline_svg,
     with_player_link_column,
 )
 
@@ -216,8 +218,20 @@ else:
             _render_mobile_standard_cards(standard_display)
         else:
             standard_table = with_player_link_column(standard_display, output_column="player")
+            form_series = fetch_recent_tb_series(connection, selected_season)
+            standard_table = standard_table.assign(
+                form=[
+                    sparkline_svg(form_series.get(str(canonical), []))
+                    for canonical in standard_table["canonical_name"]
+                ]
+            )
+            display_order = [
+                column
+                for column in [*standard_columns, "form"]
+                if column in standard_table.columns and column != "canonical_name"
+            ]
             render_static_table(
-                standard_table[[column for column in standard_columns if column in standard_table.columns and column != "canonical_name"]],
+                standard_table[display_order],
                 column_labels={
                     "player": "Player",
                     "games": "G",
@@ -236,6 +250,7 @@ else:
                     "obp": "OBP",
                     "slg": "SLG",
                     "ops": "OPS",
+                    "form": "Last 5 (TB)",
                 },
                 formatters={
                     "avg": "{:.3f}",
@@ -244,6 +259,7 @@ else:
                     "ops": "{:.3f}",
                 },
                 link_columns=["player"],
+                heat_columns=["ops"],
                 css_class="current-stats-standard-table",
             )
 
@@ -282,5 +298,6 @@ else:
                     "owar": "{:.2f}",
                 },
                 link_columns=["player"],
+                heat_columns=["team_relative_ops"],
                 css_class="current-stats-advanced-table",
             )

@@ -4621,6 +4621,27 @@ def _club_label_for_row(club_size: object, next_milestone: object) -> str:
     return f"{numeric_club_size} in club"
 
 
+def fetch_recent_tb_series(
+    connection: sqlite3.Connection,
+    season: str,
+    *,
+    window: int = 5,
+) -> dict[str, list[int]]:
+    """Per-player total-bases series over their last ``window`` games of a season.
+
+    Keyed by canonical_name (chronological order, oldest first) — feeds the
+    sparkline column on the season stats table.
+    """
+    games = fetch_single_game_stats(connection, seasons=[season], min_pa=0)
+    if games.empty:
+        return {}
+    ordered = games.sort_values(["game_date", "game_time"], ascending=[True, True])
+    series: dict[str, list[int]] = {}
+    for canonical, group in ordered.groupby("canonical_name"):
+        series[str(canonical)] = [int(v) for v in group["tb"].tail(window)]
+    return series
+
+
 # --- Streamlit query caching -------------------------------------------------
 #
 # The dashboard's read path re-ran every query on every widget interaction; in
@@ -4703,6 +4724,7 @@ _CACHED_QUERY_FUNCTIONS = [
     "fetch_franchise_opponent_ledger",
     "fetch_franchise_vs_opponent",
     "fetch_active_roster",
+    "fetch_recent_tb_series",
 ]
 
 

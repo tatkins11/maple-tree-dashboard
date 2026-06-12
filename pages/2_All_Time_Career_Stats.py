@@ -298,6 +298,7 @@ else:
                         "ops": "{:.3f}",
                     },
                     link_columns=["player"],
+                    heat_columns=["ops"],
                     css_class="career-stats-standard-table",
                 )
 
@@ -340,6 +341,7 @@ else:
                             "owar": "{:.2f}",
                         },
                         link_columns=["player"],
+                        heat_columns=["wrc_plus"],
                         css_class="career-stats-advanced-table",
                     )
 

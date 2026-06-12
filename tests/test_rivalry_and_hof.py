@@ -322,3 +322,30 @@ def test_franchise_helpers_handle_empty_database(tmp_path: Path) -> None:
     # to the on-disk box-score CSV when player_game_batting is empty; just assert the
     # board structure is intact rather than emptiness.
     assert set(feats.keys()) == {"5-Hit Games", "3-HR Games", "11+ Total Base Games"}
+
+
+def test_recent_tb_series_orders_chronologically_and_windows(tmp_path: Path) -> None:
+    from src.dashboard.data import fetch_recent_tb_series
+
+    connection = connect_db(tmp_path / "series.sqlite")
+    try:
+        initialize_database(connection)
+        _seed_franchise(connection)
+        all_series = {
+            season: fetch_recent_tb_series(connection, season)
+            for season in (
+                "Soviet Sluggers Summer 2021",
+                "Maple Tree Fall 2025",
+                "Maple Tree Spring 2026",
+            )
+        }
+    finally:
+        connection.close()
+
+    # Tristan's 2021 game: 1 single + 3 HR = 13 TB.
+    assert all_series["Soviet Sluggers Summer 2021"]["tristan"] == [13]
+    # Glove's 2025 game: 2 singles + 3 HR = 14 TB.
+    assert all_series["Maple Tree Fall 2025"]["glove"] == [14]
+    # Spring 2026 has Joey's 2-single game and Glove's 1-single game.
+    assert all_series["Maple Tree Spring 2026"]["snaxx"] == [2]
+    assert all_series["Maple Tree Spring 2026"]["glove"] == [1]

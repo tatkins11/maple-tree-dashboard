@@ -166,3 +166,31 @@ def test_render_static_table_can_render_into_explicit_container(monkeypatch) -> 
     assert len(container_calls) == 2
     assert "table.test-static-table-container" in container_calls[0][0]
     assert 'href="./player-card?player=tristan#Tristan"' in container_calls[1][0]
+
+
+def test_heat_color_interpolates_paper_to_green() -> None:
+    from src.dashboard.ui import _heat_color
+
+    assert _heat_color(0.0) == "#fbfaf7"
+    assert _heat_color(1.0) == "#7ee2a8"
+    assert _heat_color(0.5) == "#dcfce7"
+    # Out-of-range input clamps instead of exploding.
+    assert _heat_color(-3) == "#fbfaf7"
+    assert _heat_color(7) == "#7ee2a8"
+
+
+def test_sparkline_svg_renders_polyline_and_handles_edge_cases() -> None:
+    from src.dashboard.ui import sparkline_svg
+
+    svg = sparkline_svg([2, 5, 1, 8])
+    assert svg.startswith("<svg")
+    assert "polyline" in svg and "circle" in svg
+    assert svg.count(",") >= 4  # four x,y points
+
+    # Single value renders a centered dot, not a crash.
+    single = sparkline_svg([4])
+    assert "circle" in single
+
+    # Empty/NaN-only input renders nothing.
+    assert sparkline_svg([]) == ""
+    assert sparkline_svg([float("nan")]) == ""

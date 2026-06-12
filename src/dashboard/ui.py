@@ -247,12 +247,53 @@ def _format_link_cell(value) -> str:
     return f'<a href="{escape(href, quote=True)}" target="_self">{escape(label)}</a>'
 
 
+_HEAT_STOPS = ((0.0, (251, 250, 247)), (0.5, (220, 252, 231)), (1.0, (126, 226, 168)))
+
+
+def _heat_color(norm: float) -> str:
+    """Interpolate the Maple Tree heat scale (paper -> soft green) at norm 0..1."""
+    norm = max(0.0, min(1.0, float(norm)))
+    for (low, low_rgb), (high, high_rgb) in zip(_HEAT_STOPS, _HEAT_STOPS[1:]):
+        if norm <= high:
+            span = (high - low) or 1.0
+            t = (norm - low) / span
+            r, g, b = (round(a + (b_ - a) * t) for a, b_ in zip(low_rgb, high_rgb))
+            return f"#{r:02x}{g:02x}{b:02x}"
+    return "#7ee2a8"
+
+
+def sparkline_svg(values, *, width: int = 64, height: int = 20, stroke: str = "#15803d") -> str:
+    """Tiny inline-SVG sparkline (polyline + end dot) for static table cells."""
+    numbers = [float(v) for v in values if v is not None and not pd.isna(v)]
+    if not numbers:
+        return ""
+    pad = 3
+    low, high = min(numbers), max(numbers)
+    span = (high - low) or 1.0
+    if len(numbers) == 1:
+        xs = [width / 2]
+    else:
+        step = (width - 2 * pad) / (len(numbers) - 1)
+        xs = [pad + i * step for i in range(len(numbers))]
+    ys = [height - pad - ((v - low) / span) * (height - 2 * pad) for v in numbers]
+    points = " ".join(f"{x:.1f},{y:.1f}" for x, y in zip(xs, ys))
+    return (
+        f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" '
+        f'xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;">'
+        f'<polyline points="{points}" fill="none" stroke="{stroke}" stroke-width="1.6" '
+        f'stroke-linecap="round" stroke-linejoin="round"/>'
+        f'<circle cx="{xs[-1]:.1f}" cy="{ys[-1]:.1f}" r="2" fill="{stroke}"/>'
+        f"</svg>"
+    )
+
+
 def render_static_table(
     dataframe: pd.DataFrame,
     *,
     column_labels: dict[str, str] | None = None,
     formatters: dict[str, object] | None = None,
     link_columns: list[str] | None = None,
+    heat_columns: list[str] | None = None,
     css_class: str = "dashboard-static-table",
     container=None,
 ) -> None:
@@ -265,6 +306,24 @@ def render_static_table(
     for column, formatter in formatters.items():
         if column in display.columns:
             display.loc[:, column] = display[column].map(lambda value: _format_table_cell(value, formatter))
+
+    # Heat pills: color each cell by where its (numeric) value sits in the
+    # column's range. Applied after formatting so the pill wraps the display
+    # string, but normalized on the original numeric values.
+    for column in heat_columns or []:
+        if column not in display.columns or column not in dataframe.columns:
+            continue
+        numeric = pd.to_numeric(dataframe[column], errors="coerce")
+        low, high = numeric.min(), numeric.max()
+        span = float(high - low) if pd.notna(low) and pd.notna(high) and high != low else 1.0
+        pills = []
+        for raw, formatted in zip(numeric, display[column]):
+            if pd.isna(raw) or formatted in ("", None):
+                pills.append(formatted)
+                continue
+            color = _heat_color((float(raw) - float(low)) / span if pd.notna(low) else 0.0)
+            pills.append(f'<span class="mt-heat" style="background:{color};">{formatted}</span>')
+        display.loc[:, column] = pills
 
     if column_labels:
         ordered_columns = [column for column in dataframe.columns if column in display.columns]
@@ -318,6 +377,15 @@ def render_static_table(
         }}
         table.{css_class} a:hover {{
             text-decoration: underline;
+        }}
+        table.{css_class} .mt-heat {{
+            display: inline-block;
+            min-width: 3.4em;
+            padding: 0.06rem 0.5rem;
+            border-radius: 999px;
+            text-align: center;
+            font-weight: 600;
+            color: #14532d;
         }}
         </style>
         """,
