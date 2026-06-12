@@ -120,13 +120,62 @@ def _inject_home_css() -> None:
             margin-top: -0.1rem;
             margin-bottom: 0.75rem;
         }
+        .home-hero {
+            background: linear-gradient(135deg, #14532d 0%, #166534 60%, #1d7a44 100%);
+            border-radius: 1rem;
+            padding: 1.35rem 1.5rem 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(20, 83, 45, 0.22);
+        }
+        .home-hero-kicker {
+            color: #bbf7d0;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.18rem;
+        }
+        .home-hero-title {
+            color: #ffffff;
+            font-size: 2.1rem;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: 0.01em;
+        }
+        .home-hero-sub {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+        .home-hero-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 0.75rem;
+        }
+        .home-hero-pill {
+            display: inline-block;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-radius: 999px;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .stMarkdown h3 {
+            border-bottom: 2px solid #e3eadf;
+            padding-bottom: 0.25rem;
+        }
         .home-card {
-            border: 1px solid rgba(49, 51, 63, 0.10);
+            border: 1px solid #e2e8de;
+            border-top: 3px solid #15803d;
             border-radius: 0.95rem;
             padding: 0.95rem 1rem;
-            background: #fafafa;
+            background: #ffffff;
             min-height: 10.5rem;
             margin-bottom: 0.8rem;
+            box-shadow: 0 1px 3px rgba(22, 101, 52, 0.07);
         }
         .home-card-title {
             font-size: 1.45rem;
@@ -377,7 +426,7 @@ def _render_home_standings(standings, *, is_mobile_layout: bool) -> None:
     snapshot_date = str(standings["snapshot_date"].iloc[0]) if "snapshot_date" in standings.columns else ""
     if snapshot_date:
         st.markdown(
-            f"<div class='home-section-note'>Latest local standings snapshot for the current season. As of {escape(snapshot_date)}.</div>",
+            f"<div class='home-section-note'>Latest local standings snapshot for the current season. As of {escape(format_display_date(snapshot_date))}.</div>",
             unsafe_allow_html=True,
         )
 
@@ -413,24 +462,42 @@ def _render_home_standings(standings, *, is_mobile_layout: bool) -> None:
     )
 
 
+def _render_home_hero(season: str = "", record: str = "") -> None:
+    pills: list[str] = []
+    if season:
+        season_pill = season.replace("Maple Tree ", "").strip() or season
+        pills.append(f'<span class="home-hero-pill">{escape(season_pill)}</span>')
+    if record:
+        pills.append(f'<span class="home-hero-pill">Record {escape(record)}</span>')
+    pills_html = f'<div class="home-hero-pills">{"".join(pills)}</div>' if pills else ""
+    st.markdown(
+        f"""
+        <div class="home-hero">
+          <div class="home-hero-kicker">Slow-Pitch Softball</div>
+          <div class="home-hero-title">🥎 Maple Tree</div>
+          <div class="home-hero-sub">Stats, schedule, records, analytics &amp; write-ups</div>
+          {pills_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_home_page() -> None:
     role = ensure_authenticated()
     _inject_home_css()
     layout = get_responsive_layout_context(key="home")
 
-    st.title("Maple Tree Home")
-    st.caption("Maple Tree team dashboard for stats, schedule, records, analytics, and write-ups.")
-
     db_path = database_path_control(DEFAULT_DB_PATH, key="home_db_path")
     connection = get_db_connection(db_path, get_connection_cache_key())
     seasons = with_dashboard_default_season(fetch_seasons(connection))
     if not seasons:
+        _render_home_hero()
         st.info("No season batting stats found yet.")
         return
 
     selected_season = get_home_selected_season(seasons)
 
-    summary = fetch_team_summary(connection, selected_season)
     schedule_seasons = fetch_schedule_seasons(connection)
     schedule_season = (
         selected_season
@@ -446,6 +513,9 @@ def render_home_page() -> None:
         season=schedule_season,
         team_name=DEFAULT_SCHEDULE_TEAM_NAME,
     )
+    _render_home_hero(selected_season, str(schedule_summary.get("record") or ""))
+
+    summary = fetch_team_summary(connection, selected_season)
     next_game = fetch_next_game(
         connection,
         season=schedule_season,

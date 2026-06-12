@@ -1,0 +1,35 @@
+# Maple Tree theme — forest green brand over a warm paper background.
+# Keys validated against streamlit.config.get_config_options() for the pinned
+# Streamlit version; the [theme.sidebar] block gives the nav its own deep-green
+# branded treatment.
+
+[theme]
+base = "light"
+primaryColor = "#15803d"
+backgroundColor = "#fbfaf7"
+secondaryBackgroundColor = "#eff2ea"
+textColor = "#1f2937"
+linkColor = "#166534"
+borderColor = "#dde3d8"
+baseRadius = "10px"
+buttonRadius = "10px"
+dataframeBorderColor = "#dbe3d6"
+dataframeHeaderBackgroundColor = "#e9f0e5"
+metricValueFontWeight = 700
+metricValueFontSize = "2rem"
+chartCategoricalColors = [
+    "#15803d",
+    "#b45309",
+    "#1d4ed8",
+    "#7c3aed",
+    "#dc2626",
+    "#0d9488",
+]
+
+[theme.sidebar]
+backgroundColor = "#173b26"
+secondaryBackgroundColor = "#1f4d32"
+textColor = "#e8f0e8"
+primaryColor = "#86efac"
+linkColor = "#bbf7d0"
+borderColor = "#2c5e3f"
