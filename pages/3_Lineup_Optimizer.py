@@ -16,6 +16,7 @@ from src.dashboard.data import (
     run_optimizer,
 )
 from src.dashboard.ui import database_path_control
+from src.dashboard.ui import render_page_header
 from src.models.optimizer import DEFAULT_PREFERRED_LINEUP
 from src.models.roster import DEFAULT_ACTIVE_ROSTER_SEASON
 
@@ -60,7 +61,7 @@ def _mode_label(value: str) -> str:
 
 require_admin()
 
-st.title("Lineup Optimizer")
+render_page_header("Lineup Optimizer", kicker="Manager")
 db_path = database_path_control(DEFAULT_DB_PATH, key="optimizer_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 projection_seasons = fetch_projection_seasons(connection)

@@ -21,6 +21,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
@@ -201,7 +202,7 @@ _inject_career_stats_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="career_stats")
 
-st.title("All-Time / Career Stats")
+render_page_header("All-Time / Career Stats", kicker="Stats")
 db_path = database_path_control(DEFAULT_DB_PATH, key="career_stats_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))

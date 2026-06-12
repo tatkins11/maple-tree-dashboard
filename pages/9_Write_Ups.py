@@ -35,6 +35,7 @@ from src.dashboard.data import (
     sort_seasons,
 )
 from src.dashboard.ui import database_path_control
+from src.dashboard.ui import render_page_header
 from src.dashboard.writeups import (
     annotate_pregame_lineup,
     build_postgame_markdown,
@@ -325,8 +326,7 @@ def main() -> None:
     role = ensure_authenticated()
     _inject_writeup_css()
 
-    st.title("Write-Ups")
-    st.caption("Weekly pregame and doubleheader recap generation built directly into the dashboard.")
+    render_page_header("Write-Ups", kicker="Game Day", subtitle="Weekly pregame and doubleheader recap generation built directly into the dashboard.")
 
     db_path = database_path_control(DEFAULT_DB_PATH, key="writeups_db_path")
     connection = get_db_connection(db_path, get_connection_cache_key())

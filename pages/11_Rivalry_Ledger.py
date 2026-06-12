@@ -19,6 +19,7 @@ from src.dashboard.data import (
     get_connection,
 )
 from src.dashboard.ui import (
+    render_page_header,
     database_path_control,
     get_responsive_layout_context,
     persistent_segmented_control,
@@ -319,8 +320,7 @@ _inject_rivalry_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="rivalry_ledger")
 
-st.title("Rivalry Ledger")
-st.caption("All-time head-to-head records versus every opponent the franchise has ever played — across all four team-name eras.")
+render_page_header("Rivalry Ledger", kicker="History", subtitle="All-time head-to-head records versus every opponent the franchise has ever played — across all four team-name eras.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="rivalry_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())

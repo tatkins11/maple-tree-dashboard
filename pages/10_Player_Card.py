@@ -28,6 +28,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     database_path_control,
     get_responsive_layout_context,
     persistent_selectbox,
@@ -1042,8 +1043,7 @@ if summary is None:
     st.warning("Player not found. Choose a player from the selector to continue.")
     st.stop()
 
-st.title(str(summary.get("player") or "Player Card"))
-st.caption("Full player hub with career snapshot, season history, game logs, milestones, records, and trend context.")
+render_page_header(str(summary.get("player") or "Player Card"), kicker="Stats", subtitle="Full player hub with career snapshot, season history, game logs, milestones, records, and trend context.")
 
 _render_header(summary)
 _render_hitter_profile(connection, player_query, advanced_history)

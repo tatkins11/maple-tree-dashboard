@@ -37,6 +37,7 @@ from src.dashboard.data import (
     sort_seasons,
 )
 from src.dashboard.ui import (
+    render_page_header,
     database_path_control,
     get_responsive_layout_context,
     render_mobile_standings_cards,
@@ -759,8 +760,7 @@ _inject_schedule_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="schedule")
 
-st.title("Schedule")
-st.caption("Local team schedule plus league-wide scouting powered by imported CSV data.")
+render_page_header("Schedule", kicker="Game Day", subtitle="Local team schedule plus league-wide scouting powered by imported CSV data.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="schedule_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())

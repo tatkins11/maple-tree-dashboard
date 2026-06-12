@@ -10,6 +10,7 @@ from src.dashboard.auth import require_admin
 from src.dashboard.config import get_connection_cache_key
 from src.dashboard.data import (
     DEFAULT_DB_PATH,
+    clear_query_cache,
     fetch_active_roster,
     fetch_player_aliases,
     fetch_player_identities,
@@ -22,6 +23,7 @@ from src.dashboard.data import (
     get_connection,
 )
 from src.dashboard.ui import database_path_control
+from src.dashboard.ui import render_page_header
 from src.models.audit import (
     AuditError,
     fetch_recent_audit_log,
@@ -367,8 +369,11 @@ def _render_recent_changes(connection) -> None:
 
 
 require_admin()
+# Admin edits data; drop cached query results on every run of this page so any
+# write (game result, alias change, roster edit) is immediately visible.
+clear_query_cache()
 
-st.title("Admin / Data")
+render_page_header("Admin / Data", kicker="Manager")
 db_path = database_path_control(DEFAULT_DB_PATH, key="admin_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 

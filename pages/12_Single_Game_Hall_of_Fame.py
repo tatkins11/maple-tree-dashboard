@@ -21,6 +21,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
@@ -339,8 +340,7 @@ _inject_hof_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="hall_of_fame")
 
-st.title("Single-Game Hall of Fame")
-st.caption("The loudest individual box-score lines in franchise history, across every season and era.")
+render_page_header("Single-Game Hall of Fame", kicker="History", subtitle="The loudest individual box-score lines in franchise history, across every season and era.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="hof_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())

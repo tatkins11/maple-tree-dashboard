@@ -28,6 +28,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     database_path_control,
     persistent_multiselect,
     persistent_segmented_control,
@@ -258,7 +259,7 @@ def _build_scatter_label_positions(
 _inject_analytics_css()
 ensure_authenticated()
 
-st.title("Advanced Analytics")
+render_page_header("Advanced Analytics", kicker="Stats")
 st.markdown(
     """
     <div class="analytics-note">

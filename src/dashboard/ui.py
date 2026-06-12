@@ -495,6 +495,63 @@ def persistent_toggle(
     return value
 
 
+def render_page_header(title: str, *, kicker: str = "", subtitle: str = "") -> None:
+    """Branded page header: green kicker, bold title, subtitle, accent rule.
+
+    Shared by every page so headers stay visually consistent with the Maple
+    Tree theme without each page carrying its own header CSS.
+    """
+    st.markdown(
+        """
+        <style>
+        .mt-page-header {
+            margin: 0.1rem 0 1rem 0;
+        }
+        .mt-page-kicker {
+            color: #15803d;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.1rem;
+        }
+        .mt-page-title {
+            color: #14532d;
+            font-size: 2.05rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+        .mt-page-subtitle {
+            color: #6b7280;
+            font-size: 0.95rem;
+            margin-top: 0.3rem;
+        }
+        .mt-page-rule {
+            width: 52px;
+            height: 4px;
+            border-radius: 999px;
+            background: #15803d;
+            margin-top: 0.55rem;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    kicker_html = f'<div class="mt-page-kicker">{escape(kicker)}</div>' if kicker else ""
+    subtitle_html = f'<div class="mt-page-subtitle">{escape(subtitle)}</div>' if subtitle else ""
+    st.markdown(
+        f"""
+        <div class="mt-page-header">
+          {kicker_html}
+          <div class="mt-page-title">{escape(title)}</div>
+          {subtitle_html}
+          <div class="mt-page-rule"></div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def render_data_freshness_caption(
     freshness: dict[str, object] | None,
     *,

@@ -19,6 +19,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
@@ -311,8 +312,7 @@ _inject_records_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="records")
 
-st.title("Records")
-st.caption("Team hitter records across career totals, single seasons, and single-game box score lines.")
+render_page_header("Records", kicker="History", subtitle="Team hitter records across career totals, single seasons, and single-game box score lines.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="records_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())

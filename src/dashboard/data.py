@@ -4619,3 +4619,140 @@ def _club_label_for_row(club_size: object, next_milestone: object) -> str:
     if numeric_club_size == 0:
         return f"First to {int(next_milestone)}"
     return f"{numeric_club_size} in club"
+
+
+# --- Streamlit query caching -------------------------------------------------
+#
+# The dashboard's read path re-ran every query on every widget interaction; in
+# hosted mode that meant a round of Supabase round-trips per click. The hot
+# viewer-page fetchers below are wrapped in st.cache_data, keyed per-database via
+# hash_funcs so two connections to different databases never share entries.
+#
+# Caching is gated on a live Streamlit runtime: pytest and offline scripts create
+# many short-lived databases and interleave writes with reads, so they must
+# always hit the database directly.
+
+_QUERY_CACHE_TTL_SECONDS = 300
+
+# Viewer-page read queries only. Admin/projection/alias/audit fetchers and the
+# write-up generation helpers are deliberately excluded (their flows interleave
+# writes with reads), as are the cheap DataFrame-in/DataFrame-out transformers.
+_CACHED_QUERY_FUNCTIONS = [
+    "fetch_seasons",
+    "fetch_team_summary",
+    "fetch_schedule_seasons",
+    "fetch_schedule_season_summary",
+    "fetch_next_game",
+    "fetch_saved_writeups",
+    "fetch_saved_writeup",
+    "fetch_writeup_milestone_watch",
+    "fetch_enriched_standings_snapshot",
+    "fetch_team_data_freshness",
+    "fetch_top_hitters",
+    "fetch_pregame_hot_bats",
+    "fetch_team_recent_form",
+    "fetch_team_vs_opponent",
+    "fetch_current_season_stats",
+    "fetch_current_season_leader_snapshot",
+    "fetch_career_stats",
+    "fetch_career_summary",
+    "fetch_all_time_leaders",
+    "fetch_career_leader_snapshot",
+    "fetch_single_season_stats",
+    "fetch_record_leaderboards",
+    "fetch_record_headliners",
+    "fetch_single_game_stats",
+    "fetch_single_game_feats",
+    "fetch_single_game_score_leaders",
+    "fetch_career_milestones",
+    "fetch_passed_milestones_summary",
+    "fetch_advanced_analytics_view",
+    "fetch_consistency_scores",
+    "fetch_career_consistency",
+    "fetch_schedule_rows",
+    "fetch_schedule_games",
+    "fetch_schedule_weeks",
+    "fetch_schedule_team_names",
+    "fetch_schedule_opponents",
+    "fetch_upcoming_schedule",
+    "fetch_week_scoreboard",
+    "fetch_current_schedule_week",
+    "fetch_maple_tree_week_bundle",
+    "fetch_current_league_week",
+    "fetch_previous_completed_league_week",
+    "fetch_league_divisions",
+    "fetch_league_schedule_games",
+    "fetch_league_schedule_seasons",
+    "fetch_league_team_names",
+    "fetch_league_team_recent_results",
+    "fetch_league_team_summary",
+    "fetch_league_team_upcoming_games",
+    "fetch_league_team_week_opponents",
+    "fetch_league_weeks",
+    "fetch_player_identities",
+    "fetch_player_profile_summary",
+    "fetch_player_season_history",
+    "fetch_player_game_log",
+    "fetch_player_advanced_history",
+    "fetch_player_milestone_context",
+    "fetch_player_record_context",
+    "fetch_player_consistency",
+    "fetch_player_recent_form",
+    "fetch_player_vs_opponent",
+    "fetch_franchise_opponents",
+    "fetch_franchise_opponent_ledger",
+    "fetch_franchise_vs_opponent",
+    "fetch_active_roster",
+]
+
+
+def clear_query_cache() -> None:
+    """Drop all cached query results (call after any admin data write)."""
+    try:
+        import streamlit as st
+
+        st.cache_data.clear()
+    except Exception:
+        pass
+
+
+def _sqlite_connection_token(connection: sqlite3.Connection) -> str:
+    """Stable cache identity for a SQLite connection: the attached file paths."""
+    try:
+        rows = connection.execute("PRAGMA database_list").fetchall()
+        files = [
+            str(row["file"] if isinstance(row, sqlite3.Row) else row[2])
+            for row in rows
+        ]
+        return "sqlite:" + "|".join(files)
+    except Exception:
+        return f"sqlite:id:{id(connection)}"
+
+
+def _enable_streamlit_query_caching() -> None:
+    try:
+        import streamlit as st
+        from streamlit import runtime
+
+        from src.dashboard.config import get_database_url
+        from src.utils.db import PostgresConnectionAdapter
+    except Exception:
+        return
+    if not runtime.exists():
+        return
+
+    hash_funcs = {
+        sqlite3.Connection: _sqlite_connection_token,
+        PostgresConnectionAdapter: lambda _conn: f"postgres:{get_database_url()}",
+    }
+    for _name in _CACHED_QUERY_FUNCTIONS:
+        _fn = globals().get(_name)
+        if callable(_fn):
+            globals()[_name] = st.cache_data(
+                ttl=_QUERY_CACHE_TTL_SECONDS,
+                show_spinner=False,
+                hash_funcs=hash_funcs,
+            )(_fn)
+
+
+_enable_streamlit_query_caching()

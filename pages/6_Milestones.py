@@ -17,6 +17,7 @@ from src.dashboard.data import (
     select_in_play_milestones,
 )
 from src.dashboard.ui import (
+    render_page_header,
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
@@ -331,8 +332,7 @@ _inject_milestone_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="milestones")
 
-st.title("Milestone Tracker")
-st.caption("Career batting milestones based on canonical player identities and verified career totals.")
+render_page_header("Milestone Tracker", kicker="History", subtitle="Career batting milestones based on canonical player identities and verified career totals.")
 
 db_path = database_path_control(DEFAULT_DB_PATH, key="milestones_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())

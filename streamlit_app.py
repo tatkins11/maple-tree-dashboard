@@ -64,27 +64,28 @@ def get_db_connection(db_path: str, cache_key: str):
 
 def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
     viewer_pages = [
-        {"page": render_home_page, "title": "Home", "icon": "🏠", "default": True},
+        {"page": render_home_page, "title": "Home", "icon": "🏠", "default": True, "section": "Game Day"},
+        {"page": "pages/8_Schedule.py", "title": "Schedule", "section": "Game Day"},
+        {"page": "pages/9_Write_Ups.py", "title": "Write-Ups", "section": "Game Day"},
         {
             "page": "pages/10_Player_Card.py",
             "title": "Player Card",
             "url_path": PLAYER_CARD_URL_PATH,
+            "section": "Stats",
         },
-        {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats"},
-        {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats"},
-        {"page": "pages/5_Records.py", "title": "Records"},
-        {"page": "pages/12_Single_Game_Hall_of_Fame.py", "title": "Single-Game Hall of Fame"},
-        {"page": "pages/6_Milestones.py", "title": "Milestones"},
-        {"page": "pages/7_Advanced_Analytics.py", "title": "Advanced Analytics"},
-        {"page": "pages/8_Schedule.py", "title": "Schedule"},
-        {"page": "pages/11_Rivalry_Ledger.py", "title": "Rivalry Ledger"},
-        {"page": "pages/9_Write_Ups.py", "title": "Write-Ups"},
+        {"page": "pages/1_Current_Season_Stats.py", "title": "Current Season Stats", "section": "Stats"},
+        {"page": "pages/2_All_Time_Career_Stats.py", "title": "All-Time / Career Stats", "section": "Stats"},
+        {"page": "pages/7_Advanced_Analytics.py", "title": "Advanced Analytics", "section": "Stats"},
+        {"page": "pages/5_Records.py", "title": "Records", "section": "History"},
+        {"page": "pages/12_Single_Game_Hall_of_Fame.py", "title": "Single-Game Hall of Fame", "section": "History"},
+        {"page": "pages/6_Milestones.py", "title": "Milestones", "section": "History"},
+        {"page": "pages/11_Rivalry_Ledger.py", "title": "Rivalry Ledger", "section": "History"},
     ]
     if role == ROLE_ADMIN:
         viewer_pages.extend(
             [
-                {"page": "pages/3_Lineup_Optimizer.py", "title": "Lineup Optimizer"},
-                {"page": "pages/4_Admin_Data.py", "title": "Admin / Data"},
+                {"page": "pages/3_Lineup_Optimizer.py", "title": "Lineup Optimizer", "section": "Manager"},
+                {"page": "pages/4_Admin_Data.py", "title": "Admin / Data", "section": "Manager"},
             ]
         )
     return viewer_pages
@@ -95,10 +96,10 @@ def get_home_selected_season(seasons: list[str]) -> str:
     return ordered[0] if ordered else ""
 
 
-def _build_navigation(role: str) -> list[Any]:
-    specs = get_navigation_page_specs(role)
-    return [
-        st.Page(
+def _build_navigation(role: str) -> dict[str, list[Any]]:
+    sections: dict[str, list[Any]] = {}
+    for spec in get_navigation_page_specs(role):
+        page = st.Page(
             spec["page"],
             title=str(spec["title"]),
             icon=str(spec["icon"]) if spec.get("icon") else None,
@@ -106,8 +107,8 @@ def _build_navigation(role: str) -> list[Any]:
             url_path=str(spec["url_path"]) if spec.get("url_path") else None,
             visibility=str(spec["visibility"]) if spec.get("visibility") else "visible",
         )
-        for spec in specs
-    ]
+        sections.setdefault(str(spec.get("section") or "Pages"), []).append(page)
+    return sections
 
 
 def _inject_home_css() -> None:

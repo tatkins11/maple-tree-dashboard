@@ -19,6 +19,7 @@ from src.dashboard.data import (
     with_dashboard_default_season,
 )
 from src.dashboard.ui import (
+    render_page_header,
     build_player_link_html,
     database_path_control,
     get_responsive_layout_context,
@@ -160,7 +161,7 @@ _inject_current_stats_css()
 ensure_authenticated()
 layout = get_responsive_layout_context(key="current_stats")
 
-st.title("Current Season Stats")
+render_page_header("Current Season Stats", kicker="Stats")
 db_path = database_path_control(DEFAULT_DB_PATH, key="current_stats_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 seasons = with_dashboard_default_season(fetch_seasons(connection))
