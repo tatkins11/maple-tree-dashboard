@@ -1,4 +1,4 @@
-﻿league_game_id,season,league_name,division_name,week_label,game_date,game_time,location_or_field,home_team,away_team,status,completed_flag,home_runs,away_runs,result_summary,notes,source
+league_game_id,season,league_name,division_name,week_label,game_date,game_time,location_or_field,home_team,away_team,status,completed_flag,home_runs,away_runs,result_summary,notes,source
 spring-2026-week-1-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,6:30 PM,Boncosky Blue,Maple Tree,Soft Ballz,completed,1,7,17,"Soft Ballz 17, Maple Tree 7",Week 1 Game 1 corrected from uploaded Maple Tree box score,league_schedule_games.csv
 spring-2026-week-1-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,6:30 PM,Boncosky Red,Wasted Talent,No Dice,completed,1,1,23,"No Dice 23, Wasted Talent 1",Week 1 Game 1,league_schedule_games.csv
 spring-2026-week-1-g3,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,7:30 PM,Boncosky Blue,Soft Ballz,Maple Tree,completed,1,18,17,"Soft Ballz 18, Maple Tree 17",Week 1 Game 2,league_schedule_games.csv
@@ -59,9 +59,3 @@ spring-2026-week-5-g3,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 
 spring-2026-week-5-g4,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 5,2026-05-20,7:30 PM,Boncosky Red,cacheouts,Bullseyes,scheduled,0,,,,,league_schedule_games.csv
 spring-2026-week-5-g5,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 5,2026-05-20,8:30 PM,Boncosky Red,No Dice,Soft Ballz,scheduled,0,,,,,league_schedule_games.csv
 spring-2026-week-5-g6,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 5,2026-05-20,9:30 PM,Boncosky Red,Soft Ballz,No Dice,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,6:30 PM,Boncosky Green,Bullseyes,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,6:30 PM,Boncosky Yellow,Maple Tree,No Dice,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g3,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,7:30 PM,Boncosky Green,Wasted Talent,Bullseyes,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g4,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,7:30 PM,Boncosky Yellow,No Dice,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g5,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,8:30 PM,Boncosky Yellow,Soft Ballz,cacheouts,scheduled,0,,,,,league_schedule_games.csv
-spring-2026-week-7-g6,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,9:30 PM,Boncosky Yellow,cacheouts,Soft Ballz,scheduled,0,,,,,league_schedule_games.csv
