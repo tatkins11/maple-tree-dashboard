@@ -117,10 +117,10 @@ def test_csv_to_projections_to_leaderboard_pipeline(tmp_path: Path) -> None:
     assert int(jane["hits"]) == 10
     assert int(jane["hr"]) == 1
     assert int(jane["rbi"]) == 9
-    # OBP/OPS are recomputed from components so they match the career/records pages,
-    # not trusted from the CSV's stored figures (which credit reached-on-error).
-    # Jane: OBP=(10+1)/(18+1+1)=.550, SLG=17/18=.944, OPS=1.494. The stored CSV
-    # OPS of 1.544 is intentionally ignored.
+    # OBP/OPS are recomputed so every page agrees and matches GameChanger, keyed off
+    # recorded PA rather than a denominator rebuilt from AB+BB+SF. Jane: PA 20, so
+    # OBP=(10+1)/20=.550, SLG=17/18=.944, OPS=1.494. The CSV's stored OPS of 1.544
+    # is intentionally ignored.
     assert abs(float(jane["obp"]) - 0.550) < 1e-3
     assert abs(float(jane["ops"]) - 1.494) < 1e-3
 

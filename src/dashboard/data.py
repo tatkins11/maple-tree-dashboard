@@ -542,27 +542,33 @@ def _safe_rate_series(numerator: pd.Series, denominator: pd.Series) -> pd.Series
 
 
 def _assign_rate_stats(dataframe: pd.DataFrame) -> pd.DataFrame:
-    """Recompute AVG/OBP/SLG/OPS from component totals — the single rate-stat formula.
+    """Recompute AVG/OBP/SLG/OPS so every view agrees and matches GameChanger.
 
     Every batting-line view (current season, single season, career, records) routes
-    through this so a player's OBP/OPS is identical on every page. We derive from
-    components rather than trusting the scorebook's stored on-base/OPS because the
-    stored figures credit reached-on-error toward on-base, while standard scoring
-    (and the career aggregation, which can't read a stored career rate) does not.
-    Definitions: AVG = H/AB, OBP = (H+BB)/(AB+BB+SF), SLG = TB/AB, OPS = OBP+SLG.
+    through this, so a player's OBP/OPS is identical on every page. OBP keys off the
+    recorded plate appearances rather than a denominator rebuilt from AB+BB+SF: some
+    box scores have a plate appearance that lands in the PA total but never gets
+    itemized into a walk/sac fly, so summing components undercounts the denominator
+    (which inflated one hitter's OBP from .610 to .625). PA is the reliable figure and
+    reproduces GameChanger exactly.
+    Definitions: AVG = H/AB, OBP = (H+BB+HBP)/(PA-SH), SLG = TB/AB, OPS = OBP+SLG.
+    PA-SH equals the standard OBP denominator AB+BB+HBP+SF; SH/HBP are 0 in this league
+    today but stay in the formula so it remains correct if that ever changes.
     """
-    if not {"ab", "hits", "bb", "tb"}.issubset(dataframe.columns):
+    if not {"pa", "ab", "hits", "bb", "tb"}.issubset(dataframe.columns):
         return dataframe
+
+    def _component(name):
+        return pd.to_numeric(dataframe[name], errors="coerce").fillna(0.0) if name in dataframe.columns else 0.0
+
+    plate_appearances = pd.to_numeric(dataframe["pa"], errors="coerce").fillna(0.0)
     at_bats = pd.to_numeric(dataframe["ab"], errors="coerce").fillna(0.0)
     hits = pd.to_numeric(dataframe["hits"], errors="coerce").fillna(0.0)
     walks = pd.to_numeric(dataframe["bb"], errors="coerce").fillna(0.0)
-    sac_flies = (
-        pd.to_numeric(dataframe["sf"], errors="coerce").fillna(0.0)
-        if "sf" in dataframe.columns
-        else 0.0
-    )
+    hit_by_pitch = _component("hbp")
+    sac_hits = _component("sh")
     total_bases = pd.to_numeric(dataframe["tb"], errors="coerce").fillna(0.0)
-    on_base = _safe_rate_series(hits + walks, at_bats + walks + sac_flies)
+    on_base = _safe_rate_series(hits + walks + hit_by_pitch, plate_appearances - sac_hits)
     slugging = _safe_rate_series(total_bases, at_bats)
     return dataframe.assign(
         avg=_safe_rate_series(hits, at_bats),
@@ -585,30 +591,35 @@ def fetch_team_summary(connection: sqlite3.Connection, season: str) -> dict[str,
             COALESCE(SUM(runs), 0) AS runs,
             COALESCE(SUM(rbi), 0) AS rbi,
             COALESCE(SUM(walks), 0) AS walks,
-            COALESCE(SUM(sacrifice_flies), 0) AS sacrifice_flies,
+            COALESCE(SUM(hit_by_pitch), 0) AS hit_by_pitch,
+            COALESCE(SUM(sacrifice_hits), 0) AS sacrifice_hits,
             COALESCE(SUM(total_bases), 0) AS total_bases
         FROM season_batting_stats
         WHERE season = ?
         """,
         (season,),
     ).fetchone()
+    plate_appearances = int(row["plate_appearances"])
     at_bats = int(row["at_bats"])
     hits = int(row["hits"])
     walks = int(row["walks"])
-    sf = int(row["sacrifice_flies"])
+    hit_by_pitch = int(row["hit_by_pitch"])
+    sac_hits = int(row["sacrifice_hits"])
     total_bases = int(row["total_bases"])
-    obp_denom = at_bats + walks + sf
+    # OBP keys off recorded PA (minus sac bunts) to match GameChanger; see _assign_rate_stats.
+    obp_denom = plate_appearances - sac_hits
+    on_base = _safe_divide(hits + walks + hit_by_pitch, obp_denom)
     return {
         "team_games": int(row["team_games"]),
         "hitters": int(row["hitters"]),
-        "plate_appearances": int(row["plate_appearances"]),
+        "plate_appearances": plate_appearances,
         "runs": int(row["runs"]),
         "home_runs": int(row["home_runs"]),
         "rbi": int(row["rbi"]),
         "avg": _safe_divide(hits, at_bats),
-        "obp": _safe_divide(hits + walks, obp_denom),
+        "obp": on_base,
         "slg": _safe_divide(total_bases, at_bats),
-        "ops": _safe_divide(hits + walks, obp_denom) + _safe_divide(total_bases, at_bats),
+        "ops": on_base + _safe_divide(total_bases, at_bats),
     }
 
 
@@ -638,7 +649,9 @@ def fetch_current_season_stats(
             s.reached_on_error AS roe,
             s.fielder_choice AS fc,
             s.grounded_into_double_play AS gidp,
-            s.sacrifice_flies AS sf
+            s.sacrifice_flies AS sf,
+            s.hit_by_pitch AS hbp,
+            s.sacrifice_hits AS sh
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
@@ -808,7 +821,9 @@ def fetch_career_stats(
             SUM(s.rbi) AS rbi,
             SUM(s.total_bases) AS tb,
             SUM(s.grounded_into_double_play) AS gidp,
-            SUM(s.sacrifice_flies) AS sf
+            SUM(s.sacrifice_flies) AS sf,
+            SUM(s.hit_by_pitch) AS hbp,
+            SUM(s.sacrifice_hits) AS sh
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
@@ -847,14 +862,17 @@ def fetch_career_summary(
             "ops": 0.0,
         }
 
+    plate_appearances = float(career["pa"].sum())
     hits = float(career["hits"].sum())
     at_bats = float(career["ab"].sum())
     walks = float(career["bb"].sum())
-    sacrifice_flies = float(career["sf"].sum()) if "sf" in career.columns else 0.0
+    hit_by_pitch = float(career["hbp"].sum()) if "hbp" in career.columns else 0.0
+    sac_hits = float(career["sh"].sum()) if "sh" in career.columns else 0.0
     total_bases = float(career["tb"].sum())
 
     avg = _safe_divide(hits, at_bats)
-    obp = _safe_divide(hits + walks, at_bats + walks + sacrifice_flies)
+    # OBP keys off recorded PA (minus sac bunts) to match GameChanger; see _assign_rate_stats.
+    obp = _safe_divide(hits + walks + hit_by_pitch, plate_appearances - sac_hits)
     slg = _safe_divide(total_bases, at_bats)
 
     return {
@@ -973,7 +991,9 @@ def fetch_single_season_stats(
             s.runs AS r,
             s.rbi,
             s.total_bases AS tb,
-            s.sacrifice_flies AS sf
+            s.sacrifice_flies AS sf,
+            s.hit_by_pitch AS hbp,
+            s.sacrifice_hits AS sh
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id

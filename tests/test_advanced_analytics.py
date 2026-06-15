@@ -617,8 +617,8 @@ def test_current_season_stats_helpers_support_team_facing_page(tmp_path: Path) -
     assert list(stats["player"]) == ["Tristan", "Jj", "Glove"]
     assert summary["runs"] == 13
     assert summary["home_runs"] == 5
-    assert round(summary["ops"], 3) == 2.318
-    assert leaders["ops_leader"] == "Tristan (OPS 3.457)"
+    assert round(summary["ops"], 3) == 2.287
+    assert leaders["ops_leader"] == "Tristan (OPS 3.350)"
     assert leaders["hr_leader"] == "Tristan (HR 3)"
     assert leaders["rbi_leader"] == "Tristan (RBI 6)"
     assert leaders["avg_leader"] == "Tristan (AVG 0.800)"
@@ -754,10 +754,10 @@ def test_career_stats_helpers_support_team_facing_page(tmp_path: Path) -> None:
     assert summary["runs"] == 16
     assert summary["home_runs"] == 6
     assert round(summary["avg"], 3) == 0.600
-    assert round(summary["obp"], 3) == 0.684
+    assert round(summary["obp"], 3) == 0.667
     assert round(summary["slg"], 3) == 1.367
-    assert round(summary["ops"], 3) == 2.051
-    assert leaders["ops_leader"] == "Tristan (OPS 2.374)"
+    assert round(summary["ops"], 3) == 2.033
+    assert leaders["ops_leader"] == "Tristan (OPS 2.343)"
     assert leaders["hr_leader"] == "Tristan (HR 5)"
     assert leaders["rbi_leader"] == "Tristan (RBI 13)"
     assert leaders["avg_leader"] == "Tristan (AVG 0.647)"
