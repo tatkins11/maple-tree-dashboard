@@ -403,6 +403,32 @@ def format_display_date(value: object) -> str:
     return f"{month}/{day}/{year[2:]}"
 
 
+def with_outs_made(
+    dataframe: pd.DataFrame,
+    *,
+    ab_col: str = "ab",
+    hits_col: str = "hits",
+    dp_col: str = "gidp",
+    target: str = "outs_made",
+) -> pd.DataFrame:
+    """Append a total-outs column.
+
+    Every at-bat that isn't a hit is an out, and a double play adds the extra
+    (runner) out: ``outs = (AB - H) + GIDP``. Distinct from the per-game ``outs``
+    box-score field, which is only the residual "generic field outs" bucket.
+    """
+    if dataframe.empty or ab_col not in dataframe.columns or hits_col not in dataframe.columns:
+        return dataframe
+    at_bats = pd.to_numeric(dataframe[ab_col], errors="coerce").fillna(0)
+    hits = pd.to_numeric(dataframe[hits_col], errors="coerce").fillna(0)
+    double_plays = (
+        pd.to_numeric(dataframe[dp_col], errors="coerce").fillna(0)
+        if dp_col in dataframe.columns
+        else 0
+    )
+    return dataframe.assign(**{target: ((at_bats - hits).clip(lower=0) + double_plays).astype(int)})
+
+
 def format_player_season_label(season: str) -> str:
     value = str(season or "").strip()
     if not value:
@@ -743,6 +769,7 @@ def fetch_career_stats(
             SUM(s.runs) AS r,
             SUM(s.rbi) AS rbi,
             SUM(s.total_bases) AS tb,
+            SUM(s.grounded_into_double_play) AS gidp,
             SUM(s.sacrifice_flies) AS sf
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id

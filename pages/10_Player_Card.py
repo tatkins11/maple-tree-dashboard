@@ -26,6 +26,7 @@ from src.dashboard.data import (
     sort_seasons,
     get_connection,
     with_dashboard_default_season,
+    with_outs_made,
 )
 from src.dashboard.ui import (
     render_page_header,
@@ -610,6 +611,7 @@ def _game_log_column_config() -> dict[str, st.column_config.Column]:
         "r": st.column_config.NumberColumn("R", format="%d", width="small"),
         "rbi": st.column_config.NumberColumn("RBI", format="%d", width="small"),
         "tb": st.column_config.NumberColumn("TB", format="%d", width="small"),
+        "outs_made": st.column_config.NumberColumn("Outs", format="%d", width="small"),
         "avg": st.column_config.NumberColumn("AVG", format="%.3f", width="small"),
         "obp": st.column_config.NumberColumn("OBP", format="%.3f", width="small"),
         "slg": st.column_config.NumberColumn("SLG", format="%.3f", width="small"),
@@ -670,7 +672,7 @@ def _render_game_log_mobile_cards(dataframe: pd.DataFrame) -> None:
               <div class="player-compact-row"><strong>Season:</strong> {season_label}</div>
               <div class="player-compact-row"><strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
               <div class="player-compact-row"><strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
-              <div class="player-compact-row"><strong>R:</strong> {int(row['r'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>SO:</strong> {int(row['so'])}</div>
+              <div class="player-compact-row"><strong>R:</strong> {int(row['r'])} &nbsp; <strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>SO:</strong> {int(row['so'])} &nbsp; <strong>Outs:</strong> {int(row['outs_made'])}</div>
               <div class="player-compact-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
             </div>
             """,
@@ -1035,7 +1037,7 @@ if player_query not in available_players:
 summary = fetch_player_profile_summary(connection, player_query)
 season_history = fetch_player_season_history(connection, player_query)
 advanced_history = fetch_player_advanced_history(connection, player_query)
-game_log = fetch_player_game_log(connection, player_query)
+game_log = with_outs_made(fetch_player_game_log(connection, player_query), dp_col="dp")
 milestone_context = fetch_player_milestone_context(connection, player_query)
 record_context = fetch_player_record_context(connection, player_query)
 
@@ -1174,6 +1176,7 @@ with game_log_tab:
             "r",
             "rbi",
             "tb",
+            "outs_made",
             "avg",
             "obp",
             "slg",

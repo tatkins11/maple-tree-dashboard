@@ -19,6 +19,7 @@ from src.dashboard.data import (
     fetch_seasons,
     get_connection,
     with_dashboard_default_season,
+    with_outs_made,
 )
 from src.dashboard.ui import (
     render_page_header,
@@ -50,6 +51,7 @@ STANDARD_CAREER_COLUMNS = [
     "r",
     "rbi",
     "tb",
+    "outs_made",
     "avg",
     "obp",
     "slg",
@@ -172,7 +174,7 @@ def _render_mobile_career_cards(dataframe) -> None:
               <div class="career-stats-card-title">{player_markup}</div>
               <div class="career-stats-card-row"><strong>Seasons:</strong> {int(row['seasons_played'])} &nbsp; <strong>G:</strong> {int(row['games'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])}</div>
               <div class="career-stats-card-row"><strong>H:</strong> {int(row['hits'])} &nbsp; <strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
-              <div class="career-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+              <div class="career-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])} &nbsp; <strong>Outs:</strong> {int(row['outs_made'])}</div>
               <div class="career-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
             </div>
             """,
@@ -227,7 +229,7 @@ else:
 
     career_summary = fetch_career_summary(connection, seasons=selected_seasons, min_pa=min_pa)
     leader_snapshot = fetch_career_leader_snapshot(connection, seasons=selected_seasons, min_pa=min_pa)
-    career_stats = fetch_career_stats(connection, seasons=selected_seasons, min_pa=min_pa)
+    career_stats = with_outs_made(fetch_career_stats(connection, seasons=selected_seasons, min_pa=min_pa), dp_col="gidp")
     advanced_stats, _ = fetch_advanced_analytics_view(
         connection,
         view_mode="Career",
@@ -286,6 +288,7 @@ else:
                         "r": "Runs",
                         "rbi": "RBI",
                         "tb": "TB",
+                        "outs_made": "Outs",
                         "avg": "AVG",
                         "obp": "OBP",
                         "slg": "SLG",

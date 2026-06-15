@@ -349,3 +349,18 @@ def test_recent_tb_series_orders_chronologically_and_windows(tmp_path: Path) -> 
     # Spring 2026 has Joey's 2-single game and Glove's 1-single game.
     assert all_series["Maple Tree Spring 2026"]["snaxx"] == [2]
     assert all_series["Maple Tree Spring 2026"]["glove"] == [1]
+
+
+def test_with_outs_made_counts_nonhit_abs_plus_double_plays() -> None:
+    import pandas as pd
+
+    from src.dashboard.data import with_outs_made
+
+    frame = pd.DataFrame({"ab": [5, 4, 3, 0], "hits": [2, 4, 0, 0], "gidp": [1, 0, 0, 0]})
+    result = with_outs_made(frame, dp_col="gidp")
+    # outs = (AB - H) + GIDP: (5-2)+1=4 ; (4-4)+0=0 ; (3-0)+0=3 ; (0-0)+0=0
+    assert list(result["outs_made"]) == [4, 0, 3, 0]
+
+    # Missing double-play column degrades to AB - H (every non-hit at-bat).
+    only_ab = with_outs_made(pd.DataFrame({"ab": [6], "hits": [2]}), dp_col="dp")
+    assert list(only_ab["outs_made"]) == [4]

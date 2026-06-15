@@ -18,6 +18,7 @@ from src.dashboard.data import (
     fetch_team_summary,
     get_connection,
     with_dashboard_default_season,
+    with_outs_made,
 )
 from src.dashboard.ui import (
     render_page_header,
@@ -134,7 +135,7 @@ def _render_mobile_standard_cards(dataframe) -> None:
               <div class="current-stats-card-title">{player_markup}</div>
               <div class="current-stats-card-row"><strong>G:</strong> {int(row['games'])} &nbsp; <strong>PA:</strong> {int(row['pa'])} &nbsp; <strong>AB:</strong> {int(row['ab'])} &nbsp; <strong>H:</strong> {int(row['hits'])}</div>
               <div class="current-stats-card-row"><strong>1B:</strong> {int(row['1b'])} &nbsp; <strong>2B:</strong> {int(row['2b'])} &nbsp; <strong>3B:</strong> {int(row['3b'])} &nbsp; <strong>HR:</strong> {int(row['hr'])}</div>
-              <div class="current-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])}</div>
+              <div class="current-stats-card-row"><strong>RBI:</strong> {int(row['rbi'])} &nbsp; <strong>R:</strong> {int(row['r'])} &nbsp; <strong>BB:</strong> {int(row['bb'])} &nbsp; <strong>TB:</strong> {int(row['tb'])} &nbsp; <strong>Outs:</strong> {int(row['outs_made'])}</div>
               <div class="current-stats-card-row"><strong>AVG:</strong> {row['avg']:.3f} &nbsp; <strong>OBP:</strong> {row['obp']:.3f} &nbsp; <strong>SLG:</strong> {row['slg']:.3f} &nbsp; <strong>OPS:</strong> {row['ops']:.3f}</div>
             </div>
             """,
@@ -182,7 +183,7 @@ else:
 
     team_summary = fetch_team_summary(connection, selected_season)
     leader_snapshot = fetch_current_season_leader_snapshot(connection, selected_season)
-    standard_stats = fetch_current_season_stats(connection, selected_season)
+    standard_stats = with_outs_made(fetch_current_season_stats(connection, selected_season), dp_col="gidp")
     advanced_stats, _ = fetch_advanced_analytics_view(
         connection,
         view_mode="Season",
@@ -212,7 +213,7 @@ else:
             "<div class='current-stats-note'>Core season batting line with the highest-signal counting and rate stats.</div>",
             unsafe_allow_html=True,
         )
-        standard_columns = ["player", "canonical_name", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "avg", "obp", "slg", "ops"]
+        standard_columns = ["player", "canonical_name", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "outs_made", "avg", "obp", "slg", "ops"]
         standard_display = standard_stats[[column for column in standard_columns if column in standard_stats.columns]]
         if layout.is_mobile_layout:
             _render_mobile_standard_cards(standard_display)
@@ -246,6 +247,7 @@ else:
                     "r": "R",
                     "rbi": "RBI",
                     "tb": "TB",
+                    "outs_made": "Outs",
                     "avg": "AVG",
                     "obp": "OBP",
                     "slg": "SLG",
