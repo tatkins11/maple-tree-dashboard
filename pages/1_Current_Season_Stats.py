@@ -213,6 +213,8 @@ else:
             "<div class='current-stats-note'>Core season batting line with the highest-signal counting and rate stats.</div>",
             unsafe_allow_html=True,
         )
+        if standard_stats.empty:
+            st.info("No batting stats are loaded for this season yet — they'll appear here after the first game is imported.")
         standard_columns = ["player", "canonical_name", "games", "pa", "ab", "hits", "1b", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "outs_made", "avg", "obp", "slg", "ops"]
         standard_display = standard_stats[[column for column in standard_columns if column in standard_stats.columns]]
         if layout.is_mobile_layout:
@@ -270,6 +272,8 @@ else:
             "<div class='current-stats-note'>Curated advanced metrics for quick team-facing evaluation. The deeper methodology and expanded views remain on Advanced Analytics.</div>",
             unsafe_allow_html=True,
         )
+        if advanced_stats.empty:
+            st.info("No advanced metrics are available for this season yet — they'll appear once hitters have logged plate appearances.")
         advanced_columns = ["player", "canonical_name", "pa", "iso", "xbh_rate", "hr_rate", "tb_per_pa", "team_relative_ops", "rar", "owar", "archetype"]
         advanced_display = advanced_stats[[column for column in advanced_columns if column in advanced_stats.columns]]
         if layout.is_mobile_layout:

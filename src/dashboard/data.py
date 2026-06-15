@@ -533,6 +533,45 @@ def fetch_projection_seasons(connection: sqlite3.Connection) -> list[str]:
     return sort_seasons([str(row["projection_season"]) for row in rows])
 
 
+def _safe_rate_series(numerator: pd.Series, denominator: pd.Series) -> pd.Series:
+    """Vectorized divide that yields 0.0 wherever the denominator is 0 (or NaN)."""
+    numerator = pd.to_numeric(numerator, errors="coerce").fillna(0.0)
+    denominator = pd.to_numeric(denominator, errors="coerce").fillna(0.0)
+    ratio = numerator.divide(denominator.replace(0.0, float("nan")))
+    return ratio.fillna(0.0).astype(float)
+
+
+def _assign_rate_stats(dataframe: pd.DataFrame) -> pd.DataFrame:
+    """Recompute AVG/OBP/SLG/OPS from component totals — the single rate-stat formula.
+
+    Every batting-line view (current season, single season, career, records) routes
+    through this so a player's OBP/OPS is identical on every page. We derive from
+    components rather than trusting the scorebook's stored on-base/OPS because the
+    stored figures credit reached-on-error toward on-base, while standard scoring
+    (and the career aggregation, which can't read a stored career rate) does not.
+    Definitions: AVG = H/AB, OBP = (H+BB)/(AB+BB+SF), SLG = TB/AB, OPS = OBP+SLG.
+    """
+    if not {"ab", "hits", "bb", "tb"}.issubset(dataframe.columns):
+        return dataframe
+    at_bats = pd.to_numeric(dataframe["ab"], errors="coerce").fillna(0.0)
+    hits = pd.to_numeric(dataframe["hits"], errors="coerce").fillna(0.0)
+    walks = pd.to_numeric(dataframe["bb"], errors="coerce").fillna(0.0)
+    sac_flies = (
+        pd.to_numeric(dataframe["sf"], errors="coerce").fillna(0.0)
+        if "sf" in dataframe.columns
+        else 0.0
+    )
+    total_bases = pd.to_numeric(dataframe["tb"], errors="coerce").fillna(0.0)
+    on_base = _safe_rate_series(hits + walks, at_bats + walks + sac_flies)
+    slugging = _safe_rate_series(total_bases, at_bats)
+    return dataframe.assign(
+        avg=_safe_rate_series(hits, at_bats),
+        obp=on_base,
+        slg=slugging,
+        ops=(on_base + slugging).astype(float),
+    )
+
+
 def fetch_team_summary(connection: sqlite3.Connection, season: str) -> dict[str, float | int]:
     row = connection.execute(
         """
@@ -599,19 +638,18 @@ def fetch_current_season_stats(
             s.reached_on_error AS roe,
             s.fielder_choice AS fc,
             s.grounded_into_double_play AS gidp,
-            s.batting_average AS avg,
-            s.on_base_percentage AS obp,
-            s.slugging_percentage AS slg,
-            s.ops
+            s.sacrifice_flies AS sf
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
         WHERE s.season = ?
-        ORDER BY s.ops DESC, LOWER(pm.preferred_display_name)
+        ORDER BY LOWER(pm.preferred_display_name)
         """,
         connection,
         params=(season,),
     )
+    dataframe = _assign_rate_stats(dataframe)
+    dataframe = dataframe.sort_values(["ops", "player"], ascending=[False, True]).reset_index(drop=True)
     if include_projections and projection_season:
         projection_df = pd.read_sql_query(
             """
@@ -783,18 +821,7 @@ def fetch_career_stats(
     if dataframe.empty:
         return dataframe
 
-    dataframe = dataframe.assign(
-        avg=dataframe.apply(lambda row: _safe_divide(row["hits"], row["ab"]), axis=1),
-        obp=dataframe.apply(
-            lambda row: _safe_divide(
-                row["hits"] + row["bb"],
-                row["ab"] + row["bb"] + row["sf"],
-            ),
-            axis=1,
-        ),
-        slg=dataframe.apply(lambda row: _safe_divide(row["tb"], row["ab"]), axis=1),
-    )
-    dataframe = dataframe.assign(ops=dataframe["obp"] + dataframe["slg"])
+    dataframe = _assign_rate_stats(dataframe)
     filtered = dataframe[dataframe["pa"] >= min_pa].copy()
     filtered = filtered.sort_values(["ops", "pa"], ascending=[False, False])
     return filtered
@@ -946,22 +973,22 @@ def fetch_single_season_stats(
             s.runs AS r,
             s.rbi,
             s.total_bases AS tb,
-            s.sacrifice_flies AS sf,
-            s.batting_average AS avg,
-            s.on_base_percentage AS obp,
-            s.slugging_percentage AS slg,
-            s.ops
+            s.sacrifice_flies AS sf
         FROM season_batting_stats s
         JOIN player_identity pi ON pi.player_id = s.player_id
         JOIN player_metadata pm ON pm.player_id = s.player_id
         {where_clause}
-        ORDER BY s.season DESC, s.ops DESC, LOWER(pm.preferred_display_name)
+        ORDER BY s.season DESC, LOWER(pm.preferred_display_name)
         """,
         connection,
         params=params,
     )
     if dataframe.empty:
         return dataframe
+    dataframe = _assign_rate_stats(dataframe)
+    dataframe = dataframe.sort_values(
+        ["season", "ops", "player"], ascending=[False, False, True]
+    ).reset_index(drop=True)
     return dataframe[dataframe["pa"] >= min_pa].copy()
 
 

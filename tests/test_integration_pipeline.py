@@ -10,9 +10,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from src.dashboard.data import (
+    fetch_career_stats,
     fetch_current_season_stats,
     fetch_pregame_hot_bats,
     fetch_seasons,
+    fetch_single_season_stats,
     fetch_team_data_freshness,
     fetch_team_recent_form,
     fetch_team_vs_opponent,
@@ -102,6 +104,8 @@ def test_csv_to_projections_to_leaderboard_pipeline(tmp_path: Path) -> None:
 
         season_stats = fetch_current_season_stats(connection, SEASON_NAME)
         top_hitters = fetch_top_hitters(connection, SEASON_NAME, min_pa=0, limit=5)
+        career_stats = fetch_career_stats(connection, seasons=[SEASON_NAME])
+        single_season_stats = fetch_single_season_stats(connection, seasons=[SEASON_NAME])
     finally:
         connection.close()
 
@@ -113,7 +117,21 @@ def test_csv_to_projections_to_leaderboard_pipeline(tmp_path: Path) -> None:
     assert int(jane["hits"]) == 10
     assert int(jane["hr"]) == 1
     assert int(jane["rbi"]) == 9
-    assert abs(float(jane["ops"]) - 1.544) < 1e-3
+    # OBP/OPS are recomputed from components so they match the career/records pages,
+    # not trusted from the CSV's stored figures (which credit reached-on-error).
+    # Jane: OBP=(10+1)/(18+1+1)=.550, SLG=17/18=.944, OPS=1.494. The stored CSV
+    # OPS of 1.544 is intentionally ignored.
+    assert abs(float(jane["obp"]) - 0.550) < 1e-3
+    assert abs(float(jane["ops"]) - 1.494) < 1e-3
+
+    # A player's OBP/OPS must be identical on every batting-line view. Regression
+    # guard for the bug where season pages showed stored rates and career/records
+    # showed recomputed ones, so the same player had two different OPS.
+    jane_career = career_stats.loc[career_stats["player"] == "Jane Smith"].iloc[0]
+    jane_single = single_season_stats.loc[single_season_stats["player"] == "Jane Smith"].iloc[0]
+    assert abs(float(jane_career["ops"]) - float(jane["ops"])) < 1e-6
+    assert abs(float(jane_single["ops"]) - float(jane["ops"])) < 1e-6
+    assert abs(float(jane_career["obp"]) - float(jane["obp"])) < 1e-6
 
     assert not top_hitters.empty
     assert top_hitters.iloc[0]["player"] == "Jane Smith"

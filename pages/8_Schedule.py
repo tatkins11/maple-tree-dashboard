@@ -33,6 +33,7 @@ from src.dashboard.data import (
     fetch_schedule_weeks,
     fetch_upcoming_schedule,
     fetch_week_scoreboard,
+    format_display_date,
     get_connection,
     sort_seasons,
 )
@@ -353,7 +354,7 @@ def _render_standings(standings: pd.DataFrame, *, selected_team: str, is_mobile_
         return
 
     st.subheader("Standings")
-    as_of = _clean_display_text(standings.iloc[0].get("snapshot_date"))
+    as_of = format_display_date(_clean_display_text(standings.iloc[0].get("snapshot_date")))
     summary = "Latest local standings snapshot loaded for the selected season."
     if as_of:
         summary += f" As of {as_of}."
