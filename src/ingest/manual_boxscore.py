@@ -249,9 +249,11 @@ def _build_player_game_record(
             f"{game_key}: hits mismatch for {batting_row['player_name']}: listed {listed_hits}, derived {derived_hits}"
         )
 
-    explicit_outs = batting_row["outs"]
-    derived_outs = int(batting_row["ab"]) - derived_hits - strikeouts - fielder_choice - double_plays
-    outs = explicit_outs if explicit_outs is not None else max(0, derived_outs)
+    # `outs` is the residual count of in-play field outs: at-bats that were not
+    # hits, strikeouts, fielder's choices, or double plays. Always derive it from
+    # the other fields rather than trusting the hand-entered CSV value, which was
+    # inconsistent on a handful of rows (some used AB - H, double-counting Ks).
+    outs = max(0, int(batting_row["ab"]) - derived_hits - strikeouts - fielder_choice - double_plays)
 
     return PlayerGameBattingRecord(
         lineup_spot=int(batting_row["lineup_spot"]),

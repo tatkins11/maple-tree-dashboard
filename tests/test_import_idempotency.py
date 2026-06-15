@@ -74,3 +74,23 @@ def test_league_schedule_csv_has_no_duplicate_ids() -> None:
         ids = [row["league_game_id"] for row in csv.DictReader(handle)]
 
     assert len(ids) == len(set(ids)), "league_schedule_games.csv has duplicate league_game_id rows"
+
+
+def test_outs_is_derived_and_ignores_bogus_csv_value() -> None:
+    """`outs` is computed as the field-out residual, not trusted from the CSV.
+
+    Guards the fix that made the importer derive `outs = AB - hits - SO - FC - DP`
+    rather than store the hand-entered value (which was inconsistent on a few rows).
+    """
+    from src.ingest.manual_boxscore import _build_player_game_record
+
+    row = {
+        "lineup_spot": 1, "player_name": "Tester", "pa": 4, "ab": 4,
+        "1b": 1, "2b": 0, "3b": 0, "hr": 0, "h": 1, "bb": 0,
+        "so": 1, "sf": 0, "fc": 0, "gidp": 0, "r": 0, "rbi": 0,
+        "outs": 99,  # bogus explicit value that must be ignored
+    }
+    record = _build_player_game_record(game_key="g1", batting_row=row, uncertainties=[])
+
+    # residual = AB 4 - hits 1 - SO 1 - FC 0 - DP 0 = 2 (the bogus 99 is ignored)
+    assert record.outs == 2
