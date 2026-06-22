@@ -724,9 +724,32 @@ def _start_navigation(role: str):
 
 def main() -> None:
     role = ensure_authenticated(render_session_controls=False)
+    if not hasattr(st, "navigation"):
+        # Streamlit too old for programmatic navigation: fall back to the automatic
+        # pages/ sidebar and render the home page directly so it isn't blank.
+        render_home_page()
+        return
     navigation = _start_navigation(role)
     navigation.run()
 
 
-if __name__ == "__main__":
+def _running_under_streamlit() -> bool:
+    """True only when executed by ``streamlit run`` (locally or on Streamlit Cloud).
+
+    Streamlit Cloud does not reliably run the entry script with ``__name__ == "__main__"``, so
+    guarding main() on that left it (and our ``st.navigation`` sidebar) un-run on deploy — which
+    silently dropped the app to Streamlit's flat auto-generated ``pages/`` nav with no sections.
+    Keying off the live runtime fires under ``streamlit run`` everywhere while staying False on a
+    plain import (e.g. pytest importing helpers from this module), so main() never runs at import
+    time.
+    """
+    try:
+        from streamlit import runtime
+
+        return runtime.exists()
+    except Exception:
+        return False
+
+
+if _running_under_streamlit():
     main()
