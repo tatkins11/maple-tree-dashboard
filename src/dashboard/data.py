@@ -34,8 +34,10 @@ from src.utils.db import connect_app_db
 
 
 DEFAULT_DB_PATH = Path("db/all_seasons_identity.sqlite")
-DEFAULT_DASHBOARD_SEASON = "Maple Tree Spring 2026"
-DEFAULT_STATS_SEASON = DEFAULT_DASHBOARD_SEASON
+DEFAULT_DASHBOARD_SEASON = "Maple Tree Summer 2026"
+# Stats still default to the most recent season that actually has data until Summer games
+# are played; with_dashboard_default_season() falls back gracefully when this has no stats.
+DEFAULT_STATS_SEASON = "Maple Tree Spring 2026"
 WRITEUP_EMPTY_OPPONENT_SCOUTING = "No completed opponent results are loaded yet, so this week starts the scouting baseline."
 WRITEUP_INVALID_DOUBLEHEADER_MESSAGE = "Phase 1 write-up generation expects a two-game Maple Tree doubleheader for the selected week."
 WRITEUP_BYE_WEEK_MESSAGE = "The selected week is a bye week, so phase 1 write-up generation is disabled."
