@@ -11,6 +11,7 @@ from src.dashboard.data import (
     fetch_potw_history,
     fetch_potw_leaderboard,
     fetch_seasons,
+    fetch_team_weekly_results,
     format_display_date,
     format_player_season_label,
     get_connection,
@@ -65,6 +66,12 @@ if history.empty:
     st.stop()
 
 leaderboard = fetch_potw_leaderboard(connection)
+weekly_results = fetch_team_weekly_results(connection)
+results_lookup = (
+    weekly_results[["season", "game_date", "result_display"]]
+    if not weekly_results.empty
+    else None
+)
 
 # ----- Player of the Week leaderboard (all-time) -----
 st.markdown("### 🏅 Player of the Week — All-Time")
@@ -81,14 +88,21 @@ render_static_table(
 
 # ----- Biggest weeks on record -----
 st.markdown("### 🔥 Biggest Weeks on Record")
-st.caption("The most dominant single weeks any hitter has posted (by combined Game Score).")
+st.caption("The most dominant single weeks any hitter has posted (by combined Game Score), "
+           "and how the team fared that week.")
 big = history.sort_values("game_score", ascending=False).head(10).copy()
 big["line"] = big.apply(_format_week_line, axis=1)
 big["date_display"] = big["game_date"].map(format_display_date)
 big["season_label"] = big["season"].map(format_player_season_label)
+if results_lookup is not None:
+    big = big.merge(results_lookup, on=["season", "game_date"], how="left")
+if "result_display" in big.columns:
+    big["result_display"] = big["result_display"].fillna("—")
+else:
+    big["result_display"] = "—"
 big_table = with_player_link_column(big, output_column="player")
 render_static_table(
-    big_table[["player", "date_display", "season_label", "opponents", "line", "game_score"]],
+    big_table[["player", "date_display", "season_label", "opponents", "line", "game_score", "result_display"]],
     column_labels={
         "player": "Player",
         "date_display": "Week",
@@ -96,6 +110,7 @@ render_static_table(
         "opponents": "Opponent",
         "line": "Combined Line",
         "game_score": "Game Score",
+        "result_display": "Team Result",
     },
     formatters={"game_score": "{:.1f}"},
     link_columns=["player"],
@@ -103,8 +118,10 @@ render_static_table(
     css_class="wbw-biggest",
 )
 
-# ----- Weekly log -----
-st.markdown("### 📅 Weekly Log")
+# ----- Week in review (weekly log with team result) -----
+st.markdown("### 📅 Week in Review")
+st.caption("Every game day, recapped: how the team did (record + scores) alongside the hitter "
+           "who owned the week.")
 seasons = fetch_seasons(connection)
 season_choice = persistent_selectbox(
     "Season",
@@ -117,7 +134,13 @@ log = log.copy()
 log["line"] = log.apply(_format_week_line, axis=1)
 log["date_display"] = log["game_date"].map(format_display_date)
 log["season_label"] = log["season"].map(format_player_season_label)
-log_columns = ["date_display", "season_label", "opponents", "player", "line", "game_score"]
+if results_lookup is not None:
+    log = log.merge(results_lookup, on=["season", "game_date"], how="left")
+if "result_display" in log.columns:
+    log["result_display"] = log["result_display"].fillna("—")
+else:
+    log["result_display"] = "—"
+log_columns = ["date_display", "season_label", "opponents", "result_display", "player", "line", "game_score"]
 log_table = with_player_link_column(log, output_column="player")
 render_static_table(
     log_table[log_columns],
@@ -125,6 +148,7 @@ render_static_table(
         "date_display": "Week",
         "season_label": "Season",
         "opponents": "Opponent",
+        "result_display": "Team Result",
         "player": "Player of the Week",
         "line": "Winning Line",
         "game_score": "GS",

@@ -22,6 +22,7 @@ from src.dashboard.data import (
     fetch_schedule_season_summary,
     fetch_schedule_seasons,
     fetch_schedule_weeks,
+    fetch_team_weekly_results,
     fetch_upcoming_schedule,
 )
 from src.models.schedule import import_schedule_bundle, update_game_result
@@ -418,5 +419,60 @@ def test_enriched_standings_default_to_zero_when_no_completed_games_exist(tmp_pa
         assert maple_tree["runs_for"] == 0
         assert maple_tree["runs_against"] == 0
         assert maple_tree["run_diff"] == 0
+    finally:
+        connection.close()
+
+
+def _build_weekly_results_csv(tmp_path: Path) -> Path:
+    return _write_text(
+        tmp_path / "weekly_results.csv",
+        "\n".join(
+            [
+                "game_id,season,league_name,division_name,week_label,game_date,game_time,team_name,opponent_name,home_away,location_or_field,status,completed_flag,is_bye,result,runs_for,runs_against,notes,source",
+                # Week 1 doubleheader -> split (win game 1, lose game 2). Out-of-order times to prove sorting.
+                "w1b,Spring 2026,Wednesday Men's,Blue,Week 1,2026-05-06,7:30 PM,Maple Tree,Soft Ballz,away,Field,completed,1,0,L,5,12,,results.csv",
+                "w1a,Spring 2026,Wednesday Men's,Blue,Week 1,2026-05-06,6:30 PM,Maple Tree,Soft Ballz,home,Field,completed,1,0,W,19,14,,results.csv",
+                # Week 2 doubleheader -> swept (both wins).
+                "w2a,Spring 2026,Wednesday Men's,Blue,Week 2,2026-05-13,6:30 PM,Maple Tree,Wasted Talent,home,Field,completed,1,0,W,10,2,,results.csv",
+                "w2b,Spring 2026,Wednesday Men's,Blue,Week 2,2026-05-13,7:30 PM,Maple Tree,Wasted Talent,away,Field,completed,1,0,W,8,7,,results.csv",
+                # Week 3 single completed game -> lone loss.
+                "w3a,Spring 2026,Wednesday Men's,Blue,Week 3,2026-05-20,6:30 PM,Maple Tree,No Dice,home,Field,completed,1,0,L,4,16,,results.csv",
+                # Week 4 scheduled (no result) + a bye -> both excluded.
+                "w4a,Spring 2026,Wednesday Men's,Blue,Week 4,2026-05-27,6:30 PM,Maple Tree,Bullseyes,home,Field,scheduled,0,0,,,,,results.csv",
+                "w4bye,Spring 2026,Wednesday Men's,Blue,Week 5,2026-06-03,,Maple Tree,,bye,,scheduled,0,1,,,,,results.csv",
+            ]
+        ),
+    )
+
+
+def test_team_weekly_results_summarize_each_game_day(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "schedule.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(connection, _build_weekly_results_csv(tmp_path), None)
+
+        results = fetch_team_weekly_results(connection)
+        by_date = {row["game_date"]: row for _, row in results.iterrows()}
+
+        # Only the three completed game days appear; the scheduled game and the bye are excluded.
+        assert set(by_date) == {"2026-05-06", "2026-05-13", "2026-05-20"}
+
+        split = by_date["2026-05-06"]
+        assert split["games"] == 2 and split["wins"] == 1 and split["losses"] == 1
+        assert split["runs_for"] == 24 and split["runs_against"] == 26
+        # Scores are ordered by game time (6:30 before 7:30) despite the CSV row order.
+        assert split["result_display"] == "Split 1-1 (19-14, 5-12)"
+
+        swept = by_date["2026-05-13"]
+        assert swept["wins"] == 2 and swept["losses"] == 0
+        assert swept["result_display"] == "Swept 2-0 (10-2, 8-7)"
+
+        single = by_date["2026-05-20"]
+        assert single["games"] == 1
+        assert single["result_display"] == "L 4-16"
+
+        # Season filter narrows to the same set; an unknown season yields nothing.
+        assert len(fetch_team_weekly_results(connection, season="Spring 2026")) == 3
+        assert fetch_team_weekly_results(connection, season="Nonexistent 2099").empty
     finally:
         connection.close()

@@ -4659,6 +4659,69 @@ def fetch_potw_leaderboard(connection: sqlite3.Connection) -> pd.DataFrame:
     return board.sort_values(["potw", "best_week"], ascending=False).reset_index(drop=True)
 
 
+def _format_weekly_result(wins: int, losses: int, ties: int, games: int, scores: str) -> str:
+    """Compact team-result label for a game day, e.g. 'W 29-16', 'Split 1-1 (29-16, 7-0)'."""
+    if games <= 1:
+        tag = "W" if wins else ("L" if losses else "T")
+        return f"{tag} {scores}".strip()
+    record = f"{wins}-{losses}" + (f"-{ties}" if ties else "")
+    if losses == 0 and ties == 0:
+        word = "Swept"
+    elif wins == 0 and ties == 0:
+        word = "Lost"
+    else:
+        word = "Split"
+    return f"{word} {record} ({scores})" if scores else f"{word} {record}"
+
+
+def fetch_team_weekly_results(
+    connection: sqlite3.Connection, season: str | None = None,
+) -> pd.DataFrame:
+    """Team result for every completed game day (W-L record + scores), keyed (season, game_date).
+
+    ``schedule_games`` holds only our franchise's games (the team name varies by season). A
+    doubleheader is one game day with two rows, summed here. Columns: season, game_date, games,
+    wins, losses, runs_for, runs_against, run_diff, score_display, result_display."""
+    columns = ["season", "game_date", "games", "wins", "losses", "runs_for",
+               "runs_against", "run_diff", "score_display", "result_display"]
+    query = (
+        "SELECT season, game_date, result, runs_for, runs_against, game_time "
+        "FROM schedule_games WHERE is_bye = 0 AND result IS NOT NULL AND result <> ''"
+    )
+    params: tuple = ()
+    if season:
+        query += " AND season = ?"
+        params = (season,)
+    games = pd.read_sql_query(query, connection, params=params)
+    if games.empty:
+        return pd.DataFrame(columns=columns)
+
+    games = games.assign(
+        _time=pd.to_datetime(games["game_time"], format="%I:%M %p", errors="coerce"),
+        result=games["result"].astype(str).str.strip().str.upper(),
+    )
+    rows: list[dict[str, object]] = []
+    for (season_val, game_date), group in games.groupby(["season", "game_date"], sort=False):
+        ordered = group.sort_values(["_time", "game_time"], na_position="last")
+        wins = int((ordered["result"] == "W").sum())
+        losses = int((ordered["result"] == "L").sum())
+        ties = int((ordered["result"] == "T").sum())
+        runs_for = int(ordered["runs_for"].fillna(0).sum())
+        runs_against = int(ordered["runs_against"].fillna(0).sum())
+        scores = ", ".join(
+            f"{int(rf)}-{int(ra)}"
+            for rf, ra in zip(ordered["runs_for"], ordered["runs_against"])
+            if pd.notna(rf) and pd.notna(ra)
+        )
+        rows.append({
+            "season": season_val, "game_date": game_date, "games": int(len(ordered)),
+            "wins": wins, "losses": losses, "runs_for": runs_for, "runs_against": runs_against,
+            "run_diff": runs_for - runs_against, "score_display": scores,
+            "result_display": _format_weekly_result(wins, losses, ties, len(ordered), scores),
+        })
+    return pd.DataFrame(rows, columns=columns)
+
+
 def _format_team_record(wins: int, losses: int) -> str:
     return f"{wins}-{losses}"
 
