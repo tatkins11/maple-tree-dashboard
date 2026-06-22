@@ -3549,6 +3549,111 @@ def fetch_league_team_summary(
     }
 
 
+def _seed_race_headline(standings: pd.DataFrame, team_name: str) -> str:
+    """One-line outlook for the #1-seed race, written from our team's point of view."""
+    if standings.empty:
+        return "No league schedule is loaded for this season yet."
+    games_total = int(standings["games"].sum())
+    leader = standings.iloc[0]
+    leader_name = str(leader["team_name"])
+    leader_wins, leader_losses = int(leader["wins"]), int(leader["losses"])
+    team_rows = standings[standings["team_name"] == team_name]
+
+    if games_total == 0:
+        return (f"The race is wide open — all {len(standings)} teams open 0-0. "
+                "Win the regular season, host the bracket.")
+    if team_rows.empty:
+        return f"{leader_name} holds the #1 seed at {leader_wins}-{leader_losses}."
+
+    row = team_rows.iloc[0]
+    seed = int(row["seed"])
+    record = f"{int(row['wins'])}-{int(row['losses'])}"
+    run_diff = int(row["run_diff"])
+    diff_str = f"{'+' if run_diff >= 0 else ''}{run_diff}"
+    remaining = int(row["games_remaining"])
+    play_str = f"{remaining} to play" if remaining else "season complete"
+    chasers_max = int(standings.iloc[1:]["max_wins"].max()) if len(standings) > 1 else leader_wins
+
+    if seed == 1:
+        if remaining == 0 or leader_wins > chasers_max:
+            verb = "has clinched" if remaining else "finished as"
+            return f"Maple Tree {verb} the #1 seed at {record} ({diff_str}). The bracket runs through us."
+        if len(standings) > 1:
+            second = standings.iloc[1]
+            gap = float(second["games_back"])
+            cushion = (f"a {gap:g}-game lead over {second['team_name']}"
+                       if gap > 0 else f"tied with {second['team_name']}")
+            return f"Maple Tree holds the #1 seed at {record} ({diff_str}) — {cushion}, {play_str}."
+        return f"Maple Tree holds the #1 seed at {record} ({diff_str})."
+
+    games_back = float(row["games_back"])
+    if int(row["max_wins"]) < leader_wins:
+        return (f"Maple Tree is the #{seed} seed at {record} ({diff_str}) and can no longer catch "
+                f"{leader_name} for the top seed — {play_str} to set the seed line.")
+    back_str = f"{games_back:g} game{'s' if games_back != 1 else ''} back"
+    return (f"Maple Tree is the #{seed} seed at {record} ({diff_str}), {back_str} of {leader_name} "
+            f"for the #1 seed with {play_str}.")
+
+
+def fetch_seed_race(
+    connection: sqlite3.Connection,
+    season: str,
+    division_name: str | None = None,
+    team_name: str = DEFAULT_SCHEDULE_TEAM_NAME,
+    as_of: date | datetime | str | None = None,
+) -> dict[str, object]:
+    """Live race for the #1 playoff seed, computed from league game results.
+
+    Every team makes the playoffs, so the regular season is a race for seeding. Standings are
+    sorted by win pct, then run differential, then wins. Returns a dict with the ``standings``
+    DataFrame (seed, team_name, wins, losses, ties, games, win_pct, runs_for, runs_against,
+    run_diff, games_remaining, max_wins, games_back, is_team), plus leader / team_seed / a
+    point-of-view ``headline``."""
+    teams = fetch_league_team_names(connection, season, division_name)
+    if not teams:
+        return {"standings": pd.DataFrame(), "leader": None, "team_seed": None,
+                "team_name": team_name, "games_played_total": 0,
+                "headline": _seed_race_headline(pd.DataFrame(), team_name)}
+
+    rows: list[dict[str, object]] = []
+    for name in teams:
+        summary = fetch_league_team_summary(
+            connection, season=season, team_name=name,
+            division_name=division_name, as_of=as_of)
+        wins, losses, ties = int(summary["wins"]), int(summary["losses"]), int(summary["ties"])
+        played, remaining = int(summary["games_completed"]), int(summary["games_remaining"])
+        runs_for, runs_against = int(summary["runs_for"]), int(summary["runs_against"])
+        rows.append({
+            "team_name": name, "wins": wins, "losses": losses, "ties": ties, "games": played,
+            "win_pct": round((wins + 0.5 * ties) / played, 4) if played else 0.0,
+            "runs_for": runs_for, "runs_against": runs_against, "run_diff": runs_for - runs_against,
+            "games_remaining": remaining, "max_wins": wins + remaining,
+        })
+
+    standings = pd.DataFrame(rows).sort_values(
+        ["win_pct", "run_diff", "wins", "team_name"],
+        ascending=[False, False, False, True]).reset_index(drop=True)
+    standings.insert(0, "seed", range(1, len(standings) + 1))
+    leader = standings.iloc[0]
+    leader_wins, leader_losses = int(leader["wins"]), int(leader["losses"])
+    standings = standings.assign(
+        games_back=(((leader_wins - standings["wins"])
+                     + (standings["losses"] - leader_losses)) / 2.0).clip(lower=0),
+        is_team=standings["team_name"] == team_name,
+    )
+    team_rows = standings[standings["team_name"] == team_name]
+    team_seed = int(team_rows.iloc[0]["seed"]) if not team_rows.empty else None
+
+    return {
+        "standings": standings,
+        "leader": str(leader["team_name"]),
+        "team_seed": team_seed,
+        "team_name": team_name,
+        "games_played_total": int(standings["games"].sum()),
+        "headline": _seed_race_headline(standings, team_name),
+    }
+
+
 def fetch_league_team_recent_results(
     connection: sqlite3.Connection,
     *,

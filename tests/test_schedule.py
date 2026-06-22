@@ -18,6 +18,7 @@ from src.dashboard.data import (
     fetch_week_scoreboard,
     fetch_next_game,
     fetch_schedule_games,
+    fetch_seed_race,
     fetch_schedule_opponents,
     fetch_schedule_season_summary,
     fetch_schedule_seasons,
@@ -474,5 +475,69 @@ def test_team_weekly_results_summarize_each_game_day(tmp_path: Path) -> None:
         # Season filter narrows to the same set; an unknown season yields nothing.
         assert len(fetch_team_weekly_results(connection, season="Spring 2026")) == 3
         assert fetch_team_weekly_results(connection, season="Nonexistent 2099").empty
+    finally:
+        connection.close()
+
+
+def _build_seed_race_league_csv(tmp_path: Path) -> Path:
+    return _write_text(
+        tmp_path / "seed_league.csv",
+        "\n".join(
+            [
+                "league_game_id,season,league_name,division_name,week_label,game_date,game_time,location_or_field,home_team,away_team,status,completed_flag,home_runs,away_runs,result_summary,notes,source",
+                # Week 1: Maple Tree and No Dice both win big.
+                "sg1,Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,6:30 PM,Field,Maple Tree,Soft Ballz,completed,1,20,10,,,seed.csv",
+                "sg2,Spring 2026,Wednesday Men's,Blue Division,Week 1,2026-04-22,7:30 PM,Field,No Dice,Bullseyes,completed,1,15,5,,,seed.csv",
+                # Week 2: Maple Tree beats No Dice (2-0); Soft Ballz beats Bullseyes.
+                "sg3,Spring 2026,Wednesday Men's,Blue Division,Week 2,2026-04-29,6:30 PM,Field,Maple Tree,No Dice,completed,1,12,8,,,seed.csv",
+                "sg4,Spring 2026,Wednesday Men's,Blue Division,Week 2,2026-04-29,7:30 PM,Field,Soft Ballz,Bullseyes,completed,1,14,7,,,seed.csv",
+                # Week 3: still on the schedule (one game left for everyone).
+                "sg5,Spring 2026,Wednesday Men's,Blue Division,Week 3,2026-05-06,6:30 PM,Field,Maple Tree,Bullseyes,scheduled,0,,,,,seed.csv",
+                "sg6,Spring 2026,Wednesday Men's,Blue Division,Week 3,2026-05-06,7:30 PM,Field,No Dice,Soft Ballz,scheduled,0,,,,,seed.csv",
+            ]
+        ),
+    )
+
+
+def test_seed_race_orders_by_winpct_then_run_diff(tmp_path: Path) -> None:
+    connection = connect_db(tmp_path / "schedule.sqlite")
+    try:
+        initialize_database(connection)
+        import_schedule_bundle(
+            connection,
+            _build_schedule_csv(tmp_path),
+            None,
+            _build_seed_race_league_csv(tmp_path),
+        )
+
+        race = fetch_seed_race(connection, "Spring 2026", team_name="Maple Tree")
+        standings = race["standings"]
+
+        # Maple Tree (2-0) is the #1 seed; the headline speaks from our point of view.
+        assert race["leader"] == "Maple Tree"
+        assert race["team_seed"] == 1
+        assert race["games_played_total"] == 8  # 4 completed games x 2 teams each
+        assert "Maple Tree holds the #1 seed" in race["headline"]
+
+        # No Dice and Soft Ballz are both 1-1; run differential breaks the tie (No Dice +6 > -3).
+        order = list(standings["team_name"])
+        assert order == ["Maple Tree", "No Dice", "Soft Ballz", "Bullseyes"]
+        no_dice = standings[standings["team_name"] == "No Dice"].iloc[0]
+        soft_ballz = standings[standings["team_name"] == "Soft Ballz"].iloc[0]
+        assert no_dice["seed"] == 2 and soft_ballz["seed"] == 3
+        assert no_dice["run_diff"] > soft_ballz["run_diff"]
+
+        # Games back is measured from the top seed; everyone still has one game left.
+        by_team = {row["team_name"]: row for _, row in standings.iterrows()}
+        assert by_team["Maple Tree"]["games_back"] == 0
+        assert by_team["No Dice"]["games_back"] == 1.0
+        assert by_team["Bullseyes"]["games_back"] == 2.0
+        assert set(standings["games_remaining"]) == {1}
+        assert by_team["Maple Tree"]["max_wins"] == 3  # 2 wins + 1 game left
+
+        # An unknown season produces an empty board, not an error.
+        empty = fetch_seed_race(connection, "Nonexistent 2099")
+        assert empty["standings"].empty
+        assert empty["team_seed"] is None
     finally:
         connection.close()

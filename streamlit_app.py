@@ -69,6 +69,7 @@ def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
     viewer_pages = [
         {"page": render_home_page, "title": "Home", "icon": "🏠", "default": True, "section": "Game Day"},
         {"page": "pages/8_Schedule.py", "title": "Schedule", "section": "Game Day"},
+        {"page": "pages/14_Playoff_Race.py", "title": "Playoff Race", "section": "Game Day"},
         {"page": "pages/9_Write_Ups.py", "title": "Write-Ups", "section": "Game Day"},
         {
             "page": "pages/10_Player_Card.py",
