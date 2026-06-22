@@ -4629,6 +4629,36 @@ def fetch_records_and_milestones_watch(
     return out
 
 
+def fetch_potw_history(connection: sqlite3.Connection, season: str | None = None) -> pd.DataFrame:
+    """Player of the Week for every game day (combined Game Score across that day's games).
+
+    Columns: season, game_date, player, canonical_name, game_score, games, ab, hits, hr, rbi,
+    r, bb, tb, opponents. Sorted newest first."""
+    games = fetch_single_game_stats(connection, seasons=[season] if season else None)
+    if games.empty or "game_score" not in games.columns:
+        return pd.DataFrame()
+    agg = games.groupby(["season", "game_date", "player", "canonical_name"], as_index=False).agg(
+        game_score=("game_score", "sum"), games=("game_score", "count"), ab=("ab", "sum"),
+        hits=("hits", "sum"), hr=("hr", "sum"), rbi=("rbi", "sum"), r=("r", "sum"),
+        bb=("bb", "sum"), tb=("tb", "sum"))
+    potw = agg.sort_values(["game_score", "tb"], ascending=False).drop_duplicates(["season", "game_date"])
+    opponents = (games.groupby(["season", "game_date"])["opponent"]
+                 .apply(lambda s: ", ".join(sorted({str(x) for x in s.dropna() if str(x).strip()})))
+                 .reset_index().rename(columns={"opponent": "opponents"}))
+    potw = potw.merge(opponents, on=["season", "game_date"], how="left")
+    return potw.sort_values("game_date", ascending=False).reset_index(drop=True)
+
+
+def fetch_potw_leaderboard(connection: sqlite3.Connection) -> pd.DataFrame:
+    """All-time Player of the Week counts per player, with their best single week."""
+    history = fetch_potw_history(connection)
+    if history.empty:
+        return pd.DataFrame()
+    board = history.groupby(["player", "canonical_name"], as_index=False).agg(
+        potw=("game_score", "count"), best_week=("game_score", "max"))
+    return board.sort_values(["potw", "best_week"], ascending=False).reset_index(drop=True)
+
+
 def _format_team_record(wins: int, losses: int) -> str:
     return f"{wins}-{losses}"
 

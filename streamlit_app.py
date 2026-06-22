@@ -83,6 +83,7 @@ def get_navigation_page_specs(role: str) -> list[dict[str, Any]]:
         {"page": "pages/12_Single_Game_Hall_of_Fame.py", "title": "Single-Game Hall of Fame", "section": "History"},
         {"page": "pages/6_Milestones.py", "title": "Milestones", "section": "History"},
         {"page": "pages/11_Rivalry_Ledger.py", "title": "Rivalry Ledger", "section": "History"},
+        {"page": "pages/13_Week_by_Week.py", "title": "Week by Week", "section": "History"},
     ]
     if role == ROLE_ADMIN:
         viewer_pages.extend(
@@ -412,8 +413,10 @@ def _render_potw_card(potw: dict | None) -> None:
     extras = [f"{value} {label}" for value, label in
               ((potw["hr"], "HR"), (potw["rbi"], "RBI"), (potw["r"], "R"), (potw["bb"], "BB")) if value]
     line = f"{potw['hits']}-for-{potw['ab']}" + ((", " + ", ".join(extras)) if extras else "")
+    if int(potw.get("games", 1)) > 1:
+        line += f"  ·  {int(potw['games'])}-game total"
     meta = (f"vs {potw['opponents']} · {format_display_date(potw['game_date'])} · "
-            f"Game Score {potw['game_score']:.1f}")
+            f"Game Score {potw['game_score']:.1f} (combined)")
     st.markdown(
         f"""
         <div class="home-card">
