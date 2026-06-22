@@ -19,7 +19,10 @@ def test_dashboard_stats_default_prefers_populated_maple_tree_spring_season() ->
     ordered = with_dashboard_default_season(seasons)
 
     assert ordered[0] == DEFAULT_STATS_SEASON
-    assert ordered.count(DEFAULT_DASHBOARD_SEASON) == 1
+    # The populated stats season is preferred and appears exactly once (not duplicated). The
+    # current dashboard season (Summer) is schedule-only with no stats, so it isn't added here.
+    assert ordered.count(DEFAULT_STATS_SEASON) == 1
+    assert DEFAULT_DASHBOARD_SEASON not in ordered
     assert dashboard_default_season_index(ordered) == 0
 
 

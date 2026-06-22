@@ -4553,6 +4553,82 @@ def _writeup_remaining_phrase(remaining: int) -> str:
     return f"{remaining} away"
 
 
+def fetch_player_of_the_week(connection: sqlite3.Connection, season: str) -> dict | None:
+    """Top batting line of the most recent game day this season (by summed Game Score)."""
+    games = fetch_single_game_stats(connection, seasons=[season])
+    if games.empty or "game_score" not in games.columns:
+        return None
+    latest = games["game_date"].max()
+    day = games[games["game_date"] == latest]
+    if day.empty:
+        return None
+    agg = day.groupby(["player", "canonical_name"], as_index=False).agg(
+        games=("game_date", "count"), game_score=("game_score", "sum"), ab=("ab", "sum"),
+        hits=("hits", "sum"), hr=("hr", "sum"), rbi=("rbi", "sum"), r=("r", "sum"),
+        bb=("bb", "sum"), tb=("tb", "sum"))
+    if agg.empty:
+        return None
+    top = agg.sort_values(["game_score", "tb"], ascending=False).iloc[0]
+    opponents = ", ".join(sorted({str(o) for o in day["opponent"].dropna() if str(o).strip()}))
+    return {
+        "player": str(top["player"]), "canonical_name": str(top["canonical_name"]),
+        "game_date": str(latest), "opponents": opponents, "games": int(top["games"]),
+        "game_score": float(top["game_score"]), "ab": int(top["ab"]), "hits": int(top["hits"]),
+        "hr": int(top["hr"]), "rbi": int(top["rbi"]), "r": int(top["r"]),
+        "bb": int(top["bb"]), "tb": int(top["tb"]),
+    }
+
+
+def fetch_records_and_milestones_watch(
+    connection: sqlite3.Connection, season: str, margin: int = 5, limit: int = 6,
+) -> list[str]:
+    """Active players within reach of a single-season franchise record (this season) or a
+    round-number career milestone. Record chases lead; career-club milestones fill in."""
+    roster = fetch_active_roster(connection)
+    actives = set(roster["canonical_name"]) if not roster.empty else set()
+    items: list[tuple[int, float, str]] = []
+
+    words = {"HR": "home run", "RBI": "RBI", "Hits": "hit", "Total Bases": "total base",
+             "Runs": "run", "Doubles": "double", "Walks": "walk"}
+    cur = fetch_single_season_stats(connection, seasons=[season])
+    boards = fetch_record_leaderboards(connection, scope="single_season", limit=1)
+    for label, col in [("HR", "hr"), ("RBI", "rbi"), ("Hits", "hits"), ("Total Bases", "tb"),
+                       ("Runs", "r"), ("Doubles", "2b"), ("Walks", "bb")]:
+        if not cur.empty and label in boards and not boards[label].empty and col in cur.columns:
+            record_value = int(boards[label].iloc[0][label])
+            holder = str(boards[label].iloc[0]["Player"])
+            for _, player in cur.iterrows():
+                if player["canonical_name"] not in actives:
+                    continue
+                need = record_value + 1 - int(player[col])
+                if 0 < need <= margin:
+                    word = words[label]
+                    noun = word if (need == 1 or word == "RBI") else word + "s"
+                    verb = "extend" if holder == player["player"] else "break"
+                    items.append((0, need, f"{player['player']} needs {need} more {noun} to {verb} "
+                                  f"the single-season {label} record ({record_value}, {holder})"))
+
+    milestones = fetch_career_milestones(
+        connection, active_only=True, sort_by="nearest milestone", max_remaining=margin)
+    if not milestones.empty:
+        for _, m in milestones.head(8).iterrows():
+            display = m.get("next_milestone_display") or m.get("next_milestone")
+            items.append((1, float(m["remaining"]),
+                          f"{m['player']} is {int(m['remaining'])} from {display} career "
+                          f"{str(m['stat']).lower()}"))
+
+    items.sort(key=lambda x: (x[0], x[1]))
+    seen: set[str] = set()
+    out: list[str] = []
+    for _, _, text in items:
+        if text not in seen:
+            seen.add(text)
+            out.append(text)
+        if len(out) >= limit:
+            break
+    return out
+
+
 def _format_team_record(wins: int, losses: int) -> str:
     return f"{wins}-{losses}"
 

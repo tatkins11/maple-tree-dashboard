@@ -21,8 +21,12 @@ from src.dashboard.data import (
     DEFAULT_DB_PATH,
     DEFAULT_DASHBOARD_SEASON,
     fetch_enriched_standings_snapshot,
+    fetch_league_team_recent_results,
+    fetch_league_team_summary,
     fetch_next_game,
+    fetch_player_of_the_week,
     fetch_pregame_hot_bats,
+    fetch_records_and_milestones_watch,
     fetch_saved_writeups,
     fetch_seasons,
     fetch_schedule_season_summary,
@@ -32,7 +36,6 @@ from src.dashboard.data import (
     fetch_team_summary,
     fetch_team_vs_opponent,
     fetch_top_hitters,
-    fetch_writeup_milestone_watch,
     format_display_date,
     get_connection,
     with_dashboard_default_season,
@@ -268,6 +271,21 @@ def _format_pregame_meeting(row) -> str:
     return f"{format_display_date(row.get('game_date', ''))} — {result}{score}".strip(" —")
 
 
+def _format_scouting_result(row, team_name: str) -> str:
+    """Format a league game from a given team's perspective: 'MM/DD/YY: W 18-8 vs Foe'."""
+    home, away = str(row.get("home_team") or ""), str(row.get("away_team") or "")
+    home_runs, away_runs = row.get("home_runs"), row.get("away_runs")
+    if home_runs is None or away_runs is None or str(home_runs) == "" or str(away_runs) == "":
+        return ""
+    home_runs, away_runs = int(home_runs), int(away_runs)
+    if team_name == home:
+        team_runs, opp_runs, foe, loc = home_runs, away_runs, away, "vs"
+    else:
+        team_runs, opp_runs, foe, loc = away_runs, home_runs, home, "@"
+    result = "W" if team_runs > opp_runs else "L" if team_runs < opp_runs else "T"
+    return f"{format_display_date(row.get('game_date', ''))}: {result} {team_runs}-{opp_runs} {loc} {foe}"
+
+
 def _render_pregame_snapshot(
     connection,
     *,
@@ -318,6 +336,34 @@ def _render_pregame_snapshot(
                     unsafe_allow_html=True,
                 )
 
+        st.markdown(f"**Scouting report: {escape(opponent)}**")
+        opp_summary = fetch_league_team_summary(connection, season=schedule_season, team_name=opponent)
+        opp_games = int(opp_summary.get("games_completed") or 0)
+        if opp_games == 0:
+            st.caption("No league games on record yet this season — check back once they've played.")
+        else:
+            opp_ties = int(opp_summary.get("ties") or 0)
+            runs_for = int(opp_summary["runs_for"])
+            runs_against = int(opp_summary["runs_against"])
+            run_diff = runs_for - runs_against
+            scouting_line = (
+                f"League {opp_summary['record']}" + (f"-{opp_ties}" if opp_ties else "")
+                + f" · {runs_for / opp_games:.1f} scored / {runs_against / opp_games:.1f} allowed per game"
+                + f" · {'+' if run_diff >= 0 else ''}{run_diff} run diff"
+            )
+            st.markdown(
+                f"<div class='home-section-note'>{escape(scouting_line)}</div>",
+                unsafe_allow_html=True,
+            )
+            opp_recent = fetch_league_team_recent_results(
+                connection, season=schedule_season, team_name=opponent, limit=3
+            )
+            scouting_items = [_format_scouting_result(row, opponent) for _, row in opp_recent.iterrows()]
+            scouting_items = [item for item in scouting_items if item]
+            if scouting_items:
+                items_html = "".join(f"<li>{escape(item)}</li>" for item in scouting_items)
+                st.markdown(f"<ul class='home-card-list'>{items_html}</ul>", unsafe_allow_html=True)
+
         st.markdown(f"**Recent form ({schedule_season})**")
         if team_form["games_played"] == 0:
             st.caption("No completed games on record for the current season yet.")
@@ -358,13 +404,35 @@ def _format_pregame_delta(value: float) -> str:
     return f"{value:.3f}"
 
 
+def _render_potw_card(potw: dict | None) -> None:
+    st.markdown("### Player of the Week")
+    if not potw:
+        st.caption("The first Player of the Week posts after the season's opening games.")
+        return
+    extras = [f"{value} {label}" for value, label in
+              ((potw["hr"], "HR"), (potw["rbi"], "RBI"), (potw["r"], "R"), (potw["bb"], "BB")) if value]
+    line = f"{potw['hits']}-for-{potw['ab']}" + ((", " + ", ".join(extras)) if extras else "")
+    meta = (f"vs {potw['opponents']} · {format_display_date(potw['game_date'])} · "
+            f"Game Score {potw['game_score']:.1f}")
+    st.markdown(
+        f"""
+        <div class="home-card">
+          <div style="font-size:1.1rem;font-weight:800;color:#14532d;">{escape(potw['player'])}</div>
+          <div class="home-section-note">{escape(line)}</div>
+          <div class="home-section-note" style="color:#475569;">{escape(meta)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def _render_milestone_card(lines: list[str]) -> None:
-    st.markdown("### Milestone Watch")
+    st.markdown("### Milestones &amp; Records in Reach")
     if not lines:
-        st.caption("No immediate milestone watch items.")
+        st.caption("No records or milestones within reach right now.")
         return
 
-    items = "".join(f"<li>{escape(line)}</li>" for line in lines[:4])
+    items = "".join(f"<li>{escape(line)}</li>" for line in lines[:6])
     st.markdown(
         f"""
         <div class="home-card">
@@ -527,7 +595,8 @@ def render_home_page() -> None:
         team_name=DEFAULT_SCHEDULE_TEAM_NAME,
     )
     saved_postgames = fetch_saved_writeups(connection, season=selected_season, phase="postgame")
-    milestone_lines = fetch_writeup_milestone_watch(connection, limit=4)
+    milestone_lines = fetch_records_and_milestones_watch(connection, schedule_season)
+    player_of_week = fetch_player_of_the_week(connection, schedule_season)
     standings = fetch_enriched_standings_snapshot(connection, season=schedule_season)
     data_freshness = fetch_team_data_freshness(
         connection,
@@ -558,6 +627,8 @@ def render_home_page() -> None:
     )
 
     _render_home_standings(standings, is_mobile_layout=layout.is_mobile_layout)
+
+    _render_potw_card(player_of_week)
 
     detail_cols = st.columns(1 if layout.is_mobile_layout else 2, gap="small")
     with detail_cols[0]:
