@@ -707,7 +707,9 @@ def render_home_page() -> None:
 
 def main() -> None:
     role = ensure_authenticated(render_session_controls=False)
-    navigation = st.navigation(_build_navigation(role), position="sidebar")
+    # expanded=True keeps every section (and the Manager pages) visible instead of
+    # collapsing the overflow behind a "View X more" link once we pass 12 pages.
+    navigation = st.navigation(_build_navigation(role), position="sidebar", expanded=True)
     navigation.run()
 
 
