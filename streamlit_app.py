@@ -706,11 +706,25 @@ def render_home_page() -> None:
     render_mobile_install_help()
 
 
+def _start_navigation(role: str):
+    """Build the section-grouped sidebar navigation.
+
+    ``expanded=True`` (newer Streamlit) keeps every section visible instead of collapsing the
+    overflow behind a "View X more" link once we pass ~12 pages. The deployed runtime can be an
+    older Streamlit that doesn't accept ``expanded`` — there, passing it raises ``TypeError`` and
+    Streamlit drops to its flat auto-pages sidebar. Fall back to the plain call so the
+    section-grouped sidebar still renders everywhere.
+    """
+    pages = _build_navigation(role)
+    try:
+        return st.navigation(pages, position="sidebar", expanded=True)
+    except TypeError:
+        return st.navigation(pages, position="sidebar")
+
+
 def main() -> None:
     role = ensure_authenticated(render_session_controls=False)
-    # expanded=True keeps every section (and the Manager pages) visible instead of
-    # collapsing the overflow behind a "View X more" link once we pass 12 pages.
-    navigation = st.navigation(_build_navigation(role), position="sidebar", expanded=True)
+    navigation = _start_navigation(role)
     navigation.run()
 
 

@@ -14,13 +14,11 @@ from src.dashboard.data import (
     fetch_league_schedule_seasons,
     fetch_next_game,
     fetch_seed_race,
-    format_player_season_label,
     get_connection,
 )
 from src.dashboard.ui import (
     database_path_control,
     get_responsive_layout_context,
-    persistent_selectbox,
     render_page_header,
     render_static_table,
 )
@@ -49,10 +47,10 @@ def _fmt_gb(value: float) -> str:
     return "—" if value <= 0 else f"{value:g}"
 
 
-def _marker(is_team: bool, seed: int) -> str:
+def _marker(is_team: bool, seed: int, show_crown: bool) -> str:
     if is_team:
         return "🍁"
-    return "🥇" if seed == 1 else ""
+    return "🥇" if (show_crown and seed == 1) else ""
 
 
 def _team_label(name: str, is_team: bool) -> str:
@@ -90,27 +88,17 @@ st.markdown(
 db_path = database_path_control(DEFAULT_DB_PATH, key="playoff_race_db_path")
 connection = get_db_connection(db_path, get_connection_cache_key())
 
-seasons = fetch_league_schedule_seasons(connection)
-if not seasons:
+# This page always tracks the current season's race (no historical picker — a finished season's
+# bracket is already decided). Fall back to the newest league season if the dashboard season has
+# no league schedule loaded yet.
+league_seasons = fetch_league_schedule_seasons(connection)
+if not league_seasons:
     st.info("No league schedule is loaded yet — the seed race appears once a league schedule is imported.")
     st.stop()
-
-default_season = DEFAULT_DASHBOARD_SEASON if DEFAULT_DASHBOARD_SEASON in seasons else seasons[0]
-season = persistent_selectbox(
-    "Season",
-    options=seasons,
-    query_key="race_season",
-    default=default_season,
-    format_func=format_player_season_label,
-)
+season = DEFAULT_DASHBOARD_SEASON if DEFAULT_DASHBOARD_SEASON in league_seasons else league_seasons[0]
 
 divisions = fetch_league_divisions(connection, season)
-division = None
-if len(divisions) > 1:
-    division = persistent_selectbox(
-        "Division", options=divisions, query_key="race_division", default=divisions[0])
-elif divisions:
-    division = divisions[0]
+division = divisions[0] if divisions else None
 
 race = fetch_seed_race(connection, season, division_name=division, team_name=DEFAULT_SCHEDULE_TEAM_NAME)
 standings = race["standings"]
@@ -118,10 +106,12 @@ if standings.empty:
     st.info("No teams are loaded for this season yet.")
     st.stop()
 
+season_label = season.replace("Maple Tree ", "").strip() or season
+st.caption(f"{season_label}" + (f" · {division}" if division else ""))
 st.markdown(f"<div class='race-headline'>{race['headline']}</div>", unsafe_allow_html=True)
 
-# ----- Preseason: no games played, seeds are not yet meaningful -----
-if int(race["games_played_total"]) == 0:
+preseason = int(race["games_played_total"]) == 0
+if preseason:
     upcoming = fetch_next_game(connection, season=season, team_name=DEFAULT_SCHEDULE_TEAM_NAME)
     if upcoming:
         opponent = str(upcoming.get("opponent_display") or "").strip()
@@ -129,23 +119,12 @@ if int(race["games_played_total"]) == 0:
         if opponent and when:
             st.markdown(f"<div class='race-note'>First pitch: {when} vs {opponent}.</div>",
                         unsafe_allow_html=True)
-    st.caption("Seeds lock in as results come in. Every team in the field is listed below.")
-    field = standings.sort_values("team_name").copy()
-    field["marker"] = field["is_team"].map(lambda flag: "🍁" if flag else "")
-    field["team_label"] = [
-        _team_label(name, flag) for name, flag in zip(field["team_name"], field["is_team"])
-    ]
-    render_static_table(
-        field[["marker", "team_label", "games_remaining"]],
-        column_labels={"marker": "", "team_label": "Team", "games_remaining": "Games"},
-        css_class="race-preseason",
-    )
-    st.stop()
 
-# ----- Live seed board -----
+# ----- Seed board (same template before and during the season) -----
 board = standings.copy()
 board["marker"] = [
-    _marker(flag, seed) for flag, seed in zip(board["is_team"], board["seed"])
+    _marker(flag, seed, show_crown=not preseason)
+    for flag, seed in zip(board["is_team"], board["seed"])
 ]
 board["team_label"] = [
     _team_label(name, flag) for name, flag in zip(board["team_name"], board["is_team"])
@@ -165,10 +144,16 @@ render_static_table(
         "games_remaining": "Left",
     },
     formatters={"win_pct": _fmt_pct, "games_back": _fmt_gb, "run_diff": _fmt_diff},
-    heat_columns=["win_pct", "run_diff"],
+    heat_columns=None if preseason else ["win_pct", "run_diff"],
     css_class="race-board",
 )
-st.caption(
-    "🥇 = current #1 seed · 🍁 = Maple Tree. Seeded by win %, then run differential. "
-    "GB = games behind the top seed · Left = games remaining."
-)
+if preseason:
+    st.caption(
+        "🍁 = Maple Tree. Everyone starts level — seeds, win %, run differential and games back "
+        "all move as results come in. Seeded by win %, then run differential."
+    )
+else:
+    st.caption(
+        "🥇 = current #1 seed · 🍁 = Maple Tree. Seeded by win %, then run differential. "
+        "GB = games behind the top seed · Left = games remaining."
+    )
