@@ -500,21 +500,25 @@ def render_home_page() -> None:
     selected_season = get_home_selected_season(seasons)
 
     schedule_seasons = fetch_schedule_seasons(connection)
+    # Orient the home to the current dashboard season (its schedule + next game), even when
+    # it's a brand-new season with no stats yet. The stats sections below fall back to the
+    # most recent season that actually has data (selected_season).
     schedule_season = (
-        selected_season
-        if selected_season in schedule_seasons
-        else DEFAULT_DASHBOARD_SEASON
+        DEFAULT_DASHBOARD_SEASON
         if DEFAULT_DASHBOARD_SEASON in schedule_seasons
+        else selected_season
+        if selected_season in schedule_seasons
         else schedule_seasons[0]
         if schedule_seasons
         else selected_season
     )
     schedule_summary = fetch_schedule_season_summary(
-        connection,
-        season=schedule_season,
-        team_name=DEFAULT_SCHEDULE_TEAM_NAME,
+        connection, season=schedule_season, team_name=DEFAULT_SCHEDULE_TEAM_NAME,
     )
-    _render_home_hero(selected_season, str(schedule_summary.get("record") or ""))
+    stats_summary = fetch_schedule_season_summary(
+        connection, season=selected_season, team_name=DEFAULT_SCHEDULE_TEAM_NAME,
+    )
+    _render_home_hero(schedule_season, str(schedule_summary.get("record") or ""))
 
     summary = fetch_team_summary(connection, selected_season)
     next_game = fetch_next_game(
@@ -532,10 +536,15 @@ def render_home_page() -> None:
     )
     render_data_freshness_caption(data_freshness)
 
-    st.markdown("### Team Snapshot")
+    snapshot_title = (
+        "Team Snapshot"
+        if selected_season == schedule_season
+        else f"Last Season — {selected_season.replace('Maple Tree ', '').strip()}"
+    )
+    st.markdown(f"### {snapshot_title}")
     _render_metric_grid(
         [
-            ("Record", str(schedule_summary["record"])),
+            ("Record", str(stats_summary.get("record") or "—")),
             ("Games", str(int(summary["team_games"]))),
             ("Runs", str(int(summary["runs"]))),
             ("HR", str(int(summary["home_runs"]))),

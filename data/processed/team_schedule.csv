@@ -13,16 +13,16 @@ spring-2026-week-6-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 
 spring-2026-week-7-g1,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,6:30 PM,Maple Tree,No Dice,home,Boncosky Yellow,completed,1,0,L,9,11,Week 7 game 1 vs No Dice at Boncosky Yellow.,team_schedule.csv
 spring-2026-week-7-g2,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Week 7,2026-06-03,7:30 PM,Maple Tree,No Dice,away,Boncosky Yellow,completed,1,0,L,5,17,Week 7 game 2 vs No Dice at Boncosky Yellow. Box-score team total read 8; corrected to 5 per individual runs and user confirmation.,team_schedule.csv
 spring-2026-playoffs-r1-mt-vs-bullseyes,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Playoffs,2026-06-17,7:30 PM,Maple Tree,Bullseyes,away,Boncosky Red,completed,1,0,L,8,18,"Playoff Round 1, Game 3: #6 Maple Tree vs #3 Bullseyes (single elimination). Rescheduled from 2026-06-10 (rainout).",playoff_bracket
-summer-2026-week-1-bye,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 1,2026-06-24,,Maple Tree,,bye,,scheduled,0,1,,,,Doubleheader bye week,team_schedule.csv
-summer-2026-week-2-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 2,2026-07-01,8:30 PM,Maple Tree,Como,home,Boncosky Blue,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-2-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 2,2026-07-01,9:30 PM,Maple Tree,Como,away,Boncosky Blue,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-3-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 3,2026-07-08,6:30 PM,Maple Tree,Brew Crew,away,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-3-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 3,2026-07-08,7:30 PM,Maple Tree,Brew Crew,home,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-4-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 4,2026-07-15,6:30 PM,Maple Tree,Zero to Hiro,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-4-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 4,2026-07-15,7:30 PM,Maple Tree,Zero to Hiro,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-5-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 5,2026-07-22,8:30 PM,Maple Tree,Bleacher Bums,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-5-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 5,2026-07-22,9:30 PM,Maple Tree,Bleacher Bums,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-6-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 6,2026-07-29,6:30 PM,Maple Tree,Sandlot Vibes,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-6-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 6,2026-07-29,7:30 PM,Maple Tree,Sandlot Vibes,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-7-g1,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 7,2026-08-05,6:30 PM,Maple Tree,Wasted Talent,away,Boncosky Yellow,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-7-g2,Maple Tree Summer 2026,Wednesday Men's,Blue Division,Week 7,2026-08-05,7:30 PM,Maple Tree,Wasted Talent,home,Boncosky Yellow,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-1-bye,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,,Maple Tree,,bye,,scheduled,0,1,,,,Doubleheader bye week,team_schedule.csv
+summer-2026-week-2-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,8:30 PM,Maple Tree,Como,home,Boncosky Blue,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-2-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,9:30 PM,Maple Tree,Como,away,Boncosky Blue,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-3-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Maple Tree,Brew Crew,away,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-3-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Maple Tree,Brew Crew,home,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-4-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,6:30 PM,Maple Tree,Zero to Hiro,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-4-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,7:30 PM,Maple Tree,Zero to Hiro,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-5-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,8:30 PM,Maple Tree,Bleacher Bums,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-5-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,9:30 PM,Maple Tree,Bleacher Bums,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-6-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,6:30 PM,Maple Tree,Sandlot Vibes,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-6-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,7:30 PM,Maple Tree,Sandlot Vibes,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-7-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,6:30 PM,Maple Tree,Wasted Talent,away,Boncosky Yellow,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-7-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,7:30 PM,Maple Tree,Wasted Talent,home,Boncosky Yellow,scheduled,0,0,,,,,team_schedule.csv

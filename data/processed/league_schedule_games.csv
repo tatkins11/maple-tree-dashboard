@@ -65,3 +65,69 @@ spring-2026-playoffs-g3,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Pla
 spring-2026-playoffs-g4,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Playoffs,2026-06-17,8:30 PM,Boncosky Yellow,No Dice,Soft Ballz,completed,1,27,14,"No Dice 27, Soft Ballz 14",Playoff Semifinal (Game 4): [1] No Dice def. [5] Soft Ballz.,playoff_bracket
 spring-2026-playoffs-g5,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Playoffs,2026-06-17,8:30 PM,Boncosky Red,cacheouts,Bullseyes,completed,1,29,13,"cacheouts 29, Bullseyes 13",Playoff Semifinal (Game 5): [2] cacheouts def. [3] Bullseyes.,playoff_bracket
 spring-2026-playoffs-g6,Maple Tree Spring 2026,Wednesday Men's,Blue Division,Playoffs,2026-06-17,9:30 PM,,No Dice,cacheouts,completed,1,16,29,"cacheouts 29, No Dice 16",Playoff Championship (Game 6): [2] cacheouts def. [1] No Dice for the title.,playoff_bracket
+summer-2026-week-1-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,6:30 PM,Boncosky Blue,Mean Beanz,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,6:30 PM,Boncosky Green,Sandlot Vibes,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,6:30 PM,Boncosky Yellow,Nuketown,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,7:30 PM,Boncosky Blue,Wasted Talent,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,7:30 PM,Boncosky Green,Everything hurts,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,7:30 PM,Boncosky Yellow,Slaughtered in 3,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,8:30 PM,Boncosky Blue,Zero to Hiro,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,8:30 PM,Boncosky Green,Como,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,9:30 PM,Boncosky Blue,Bleacher Bums,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-1-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-06-24,9:30 PM,Boncosky Green,Brew Crew,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,6:30 PM,Boncosky Green,Zero to Hiro,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,6:30 PM,Boncosky Red,Nuketown,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,7:30 PM,Boncosky Green,Brew Crew,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,7:30 PM,Boncosky Red,Mean Beanz,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,8:30 PM,Boncosky Blue,Maple Tree,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,8:30 PM,Boncosky Green,Everything hurts,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,8:30 PM,Boncosky Red,Bleacher Bums,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,9:30 PM,Boncosky Blue,Como,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,9:30 PM,Boncosky Green,Slaughtered in 3,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-2-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,9:30 PM,Boncosky Red,Sandlot Vibes,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Boncosky Green,Slaughtered in 3,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Boncosky Red,Brew Crew,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Boncosky Yellow,Bleacher Bums,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Boncosky Green,Wasted Talent,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Boncosky Red,Maple Tree,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Boncosky Yellow,Como,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,8:30 PM,Boncosky Green,Sandlot Vibes,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,8:30 PM,Boncosky Red,Everything hurts,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,9:30 PM,Boncosky Green,Nuketown,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-3-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,9:30 PM,Boncosky Red,Zero to Hiro,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,6:30 PM,Boncosky Blue,Slaughtered in 3,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,6:30 PM,Boncosky Green,Maple Tree,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,6:30 PM,Boncosky Yellow,Mean Beanz,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,7:30 PM,Boncosky Blue,Bleacher Bums,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,7:30 PM,Boncosky Green,Zero to Hiro,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,7:30 PM,Boncosky Yellow,Everything hurts,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,8:30 PM,Boncosky Blue,Brew Crew,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,8:30 PM,Boncosky Green,Wasted Talent,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,9:30 PM,Boncosky Blue,Sandlot Vibes,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-4-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,9:30 PM,Boncosky Green,Nuketown,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,6:30 PM,Boncosky Blue,Zero to Hiro,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,6:30 PM,Boncosky Green,Everything hurts,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,7:30 PM,Boncosky Blue,Nuketown,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,7:30 PM,Boncosky Green,Como,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,8:30 PM,Boncosky Blue,Slaughtered in 3,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,8:30 PM,Boncosky Green,Bleacher Bums,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,8:30 PM,Boncosky Red,Sandlot Vibes,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,9:30 PM,Boncosky Blue,Mean Beanz,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,9:30 PM,Boncosky Green,Maple Tree,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-5-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,9:30 PM,Boncosky Red,Wasted Talent,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,6:30 PM,Boncosky Green,Maple Tree,Sandlot Vibes,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,6:30 PM,Boncosky Red,Como,Zero to Hiro,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,6:30 PM,Boncosky Yellow,Brew Crew,Slaughtered in 3,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,7:30 PM,Boncosky Green,Sandlot Vibes,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,7:30 PM,Boncosky Red,Zero to Hiro,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,7:30 PM,Boncosky Yellow,Slaughtered in 3,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g7,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,8:30 PM,Boncosky Red,Wasted Talent,Everything hurts,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g8,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,8:30 PM,Boncosky Yellow,Mean Beanz,Bleacher Bums,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g9,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,9:30 PM,Boncosky Red,Everything hurts,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-6-g10,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 6,2026-07-29,9:30 PM,Boncosky Yellow,Bleacher Bums,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,6:30 PM,Boncosky Blue,Nuketown,Brew Crew,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,6:30 PM,Boncosky Green,Como,Mean Beanz,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g3,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,6:30 PM,Boncosky Yellow,Wasted Talent,Maple Tree,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g4,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,7:30 PM,Boncosky Blue,Brew Crew,Nuketown,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g5,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,7:30 PM,Boncosky Green,Mean Beanz,Como,scheduled,0,,,,,league_schedule_games.csv
+summer-2026-week-7-g6,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 7,2026-08-05,7:30 PM,Boncosky Yellow,Maple Tree,Wasted Talent,scheduled,0,,,,,league_schedule_games.csv
