@@ -1,0 +1,17 @@
+<script>
+  // Segmented-control toggles. A [data-seg] button group switches sibling [data-panel]
+  // blocks within the nearest [data-seg-scope]; panel names match each button's data-show.
+  for (const seg of document.querySelectorAll<HTMLElement>('[data-seg]')) {
+    const scope = seg.closest<HTMLElement>('[data-seg-scope]') ?? document.body;
+    const buttons = Array.from(seg.querySelectorAll<HTMLButtonElement>('.seg-btn'));
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        buttons.forEach((b) => b.classList.toggle('active', b === btn));
+        const show = btn.dataset.show;
+        for (const panel of scope.querySelectorAll<HTMLElement>('[data-panel]')) {
+          panel.hidden = panel.dataset.panel !== show;
+        }
+      });
+    });
+  }
+</script>

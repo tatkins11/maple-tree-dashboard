@@ -24,6 +24,7 @@ from src.dashboard.data import (  # noqa: E402
     DEFAULT_DB_PATH,
     DEFAULT_SCHEDULE_TEAM_NAME,
     fetch_active_roster,
+    fetch_advanced_analytics_view,
     fetch_career_milestones,
     fetch_career_stats,
     fetch_franchise_opponent_ledger,
@@ -135,6 +136,41 @@ def main() -> None:
 
     display_name: dict[str, str] = {}  # canonical -> site display name (from stats rows)
 
+    # ---- advanced analytics (reuses the dashboard's wOBA / wRC+ / RAR engine) ----
+    season_adv: dict[tuple[str, str], pd.Series] = {}
+    for s in seasons:
+        adv_df, _ = fetch_advanced_analytics_view(connection, view_mode="Season", selected_season=s)
+        for _, r in adv_df.iterrows():
+            season_adv[(s, str(r["canonical_name"]))] = r
+    career_adv_df, _ = fetch_advanced_analytics_view(connection, view_mode="Career")
+    if "canonical_name" not in career_adv_df.columns:
+        name_to_canonical = dict(zip(career["player"].astype(str), career["canonical_name"].astype(str)))
+        career_adv_df = career_adv_df.assign(
+            canonical_name=career_adv_df["player"].astype(str).map(name_to_canonical))
+    career_adv = {str(r["canonical_name"]): r for _, r in career_adv_df.iterrows()}
+    gs_season = games.groupby(["season", "canonical_name"])["game_score"].mean()
+    gs_career = games.groupby("canonical_name")["game_score"].mean()
+
+    def opt(value, digits: int = 4):
+        if value is None or (isinstance(value, float) and pd.isna(value)) or pd.isna(value):
+            return None
+        return round(float(value), digits)
+
+    def adv_fields(stat_row, season_name: str | None, canonical: str) -> dict:
+        """Analytics fields for one player-season (or career when season_name is None)."""
+        adv = career_adv.get(canonical) if season_name is None else season_adv.get((season_name, canonical))
+        gs_val = (gs_career.get(canonical) if season_name is None
+                  else gs_season.get((season_name, canonical)))
+        pa = float(stat_row.get("pa") or 0)
+        return {
+            "woba": opt(adv["woba"]) if adv is not None else None,
+            "wrc_plus": opt(adv["wrc_plus"], 1) if adv is not None else None,
+            "iso": opt(float(stat_row["slg"]) - float(stat_row["avg"])) if stat_row.get("slg") is not None else None,
+            "bb_rate": opt(float(stat_row["bb"]) / pa) if pa else None,
+            "xbh_rate": opt((float(stat_row["2b"]) + float(stat_row["3b"]) + float(stat_row["hr"])) / pa) if pa else None,
+            "gs_avg": opt(gs_val, 2),
+        }
+
     # ---- schedule.json (+ per-game result lookup and per-season records) ----
     schedule_cols = ["week_label", "game_date", "game_time", "opponent_name", "home_away",
                      "location_or_field", "status", "completed_flag", "is_bye", "result",
@@ -177,18 +213,81 @@ def main() -> None:
         for r in player_rows:
             r["slug"] = slugify(r["canonical_name"])
             r["player"] = clean_name(r["player"])
+        advanced = []
+        for r in player_rows:
+            a = season_adv.get((meta["name"], r["canonical_name"]))
+            if a is None:
+                continue
+            advanced.append({
+                "player": r["player"], "slug": r["slug"], "pa": r["pa"],
+                **adv_fields(r, meta["name"], r["canonical_name"]),
+                "rar": opt(a["rar"], 1), "owar": opt(a["owar"], 2),
+                "archetype": str(a["archetype"]),
+            })
+        advanced.sort(key=lambda x: -(x["rar"] if x["rar"] is not None else -999.0))
         seasons_out.append({
             **meta,
             "record": season_record.get(meta["name"], ""),
             "team": team_line(rows),
             "players": player_rows,
+            "advanced": advanced,
         })
     dump("season_stats.json", seasons_out)
 
     # ---- players.json ----
-    pool = season_stats[season_stats["pa"] >= 20].copy()
-    pool = pool.assign(iso=pool["slg"] - pool["avg"], bb_pct=100.0 * pool["bb"] / pool["pa"])
     current_rows = season_stats[season_stats["season"] == current].set_index("canonical_name")
+
+    METRICS = [("avg", "AVG"), ("obp", "OBP"), ("slg", "SLG"), ("ops", "OPS"), ("iso", "ISO"),
+               ("woba", "wOBA"), ("wrc_plus", "wRC+"), ("bb_rate", "BB%"),
+               ("xbh_rate", "XBH%"), ("gs", "GS/G")]
+
+    def stat_vals(row, season_name: str | None, canonical: str) -> dict:
+        a = adv_fields(row, season_name, canonical)
+        return {"avg": float(row["avg"]), "obp": float(row["obp"]), "slg": float(row["slg"]),
+                "ops": float(row["ops"]), "iso": a["iso"], "woba": a["woba"],
+                "wrc_plus": a["wrc_plus"], "bb_rate": a["bb_rate"], "xbh_rate": a["xbh_rate"],
+                "gs": a["gs_avg"]}
+
+    def _adv_series(df, key_fn, source, column):
+        return df.apply(
+            lambda r: float(source[key_fn(r)][column]) if key_fn(r) in source else float("nan"),
+            axis=1)
+
+    pool_df = season_stats[season_stats["pa"] >= 20]
+    _skey = lambda r: (str(r["season"]), str(r["canonical_name"]))  # noqa: E731
+    pool_vals = {
+        "avg": pool_df["avg"], "obp": pool_df["obp"], "slg": pool_df["slg"], "ops": pool_df["ops"],
+        "iso": pool_df["slg"] - pool_df["avg"],
+        "bb_rate": pool_df["bb"] / pool_df["pa"],
+        "xbh_rate": (pool_df["2b"] + pool_df["3b"] + pool_df["hr"]) / pool_df["pa"],
+        "woba": _adv_series(pool_df, _skey, season_adv, "woba"),
+        "wrc_plus": _adv_series(pool_df, _skey, season_adv, "wrc_plus"),
+        "gs": pool_df.apply(
+            lambda r: float(gs_season.get((str(r["season"]), str(r["canonical_name"])), float("nan"))),
+            axis=1),
+    }
+    career_pool_df = career[career["pa"] >= 50]
+    _ckey = lambda r: str(r["canonical_name"])  # noqa: E731
+    career_pool_vals = {
+        "avg": career_pool_df["avg"], "obp": career_pool_df["obp"],
+        "slg": career_pool_df["slg"], "ops": career_pool_df["ops"],
+        "iso": career_pool_df["slg"] - career_pool_df["avg"],
+        "bb_rate": career_pool_df["bb"] / career_pool_df["pa"],
+        "xbh_rate": (career_pool_df["2b"] + career_pool_df["3b"] + career_pool_df["hr"]) / career_pool_df["pa"],
+        "woba": _adv_series(career_pool_df, _ckey, career_adv, "woba"),
+        "wrc_plus": _adv_series(career_pool_df, _ckey, career_adv, "wrc_plus"),
+        "gs": career_pool_df.apply(
+            lambda r: float(gs_career.get(str(r["canonical_name"]), float("nan"))), axis=1),
+    }
+
+    def pct_block(row, season_name: str | None, canonical: str, label: str, pools: dict) -> dict | None:
+        vals = stat_vals(row, season_name, canonical)
+        metrics = [
+            {"key": key, "label": lab, "value": vals[key], "pct": percentile_of(pools[key], vals[key])}
+            for key, lab in METRICS
+            if vals.get(key) is not None
+        ]
+        return {"season": label, "metrics": metrics} if metrics else None
 
     potw_counts = dict(zip(potw_board.get("canonical_name", []), potw_board.get("potw", [])))
     best_weeks = dict(zip(potw_board.get("canonical_name", []), potw_board.get("best_week", [])))
@@ -220,31 +319,24 @@ def main() -> None:
             row["ha"] = info["ha"] if info else None
             row.pop("game_time", None)
 
-        percentiles = None
+        season_block = None
         if canonical in current_rows.index:
-            cur = current_rows.loc[canonical]
-            iso = float(cur["slg"]) - float(cur["avg"])
-            bb_pct = 100.0 * float(cur["bb"]) / float(cur["pa"]) if cur["pa"] else 0.0
-            percentiles = {
-                "season": season_label(current),
-                "metrics": [
-                    {"key": "avg", "label": "AVG", "value": float(cur["avg"]),
-                     "pct": percentile_of(pool["avg"], cur["avg"])},
-                    {"key": "obp", "label": "OBP", "value": float(cur["obp"]),
-                     "pct": percentile_of(pool["obp"], cur["obp"])},
-                    {"key": "slg", "label": "SLG", "value": float(cur["slg"]),
-                     "pct": percentile_of(pool["slg"], cur["slg"])},
-                    {"key": "ops", "label": "OPS", "value": float(cur["ops"]),
-                     "pct": percentile_of(pool["ops"], cur["ops"])},
-                    {"key": "iso", "label": "ISO", "value": iso,
-                     "pct": percentile_of(pool["iso"], iso)},
-                    {"key": "bb_pct", "label": "BB%", "value": bb_pct,
-                     "pct": percentile_of(pool["bb_pct"], bb_pct)},
-                ],
-            }
+            season_block = pct_block(
+                current_rows.loc[canonical], current, canonical, season_label(current), pool_vals)
+        career_block = None
+        if float(c["pa"]) >= 50:
+            career_block = pct_block(c, None, canonical, "Career", career_pool_vals)
+        percentiles = (
+            {"season": season_block, "career": career_block}
+            if (season_block or career_block) else None
+        )
+
+        for row in p_seasons:
+            row.update(adv_fields(row, row["season"], canonical))
 
         career_row = {k: (None if pd.isna(v) else (v.item() if hasattr(v, "item") else v))
                       for k, v in c.items()}
+        career_row.update(adv_fields(career_row, None, canonical))
         players_out.append({
             "name": name,
             "canonical": canonical,
@@ -259,6 +351,40 @@ def main() -> None:
         })
     players_out.sort(key=lambda p: (-int(p["career"].get("games") or 0), p["name"]))
     dump("players.json", players_out)
+
+    # ---- career_stats.json (Career view for the stats page) ----
+    standard = []
+    for p in players_out:
+        c0 = p["career"]
+        standard.append({
+            "player": p["name"], "slug": p["slug"], "active": p["active"],
+            "seasons": c0.get("seasons_played"),
+            **{k: c0.get(k) for k in ("games", "pa", "ab", "hits", "1b", "2b", "3b", "hr",
+                                       "bb", "r", "rbi", "tb", "avg", "obp", "slg", "ops")},
+        })
+    standard.sort(key=lambda r: -(r["ops"] or 0))
+    adv_career_rows = []
+    for p in players_out:
+        a = career_adv.get(p["canonical"])
+        if a is None:
+            continue
+        c0 = p["career"]
+        adv_career_rows.append({
+            "player": p["name"], "slug": p["slug"], "pa": c0.get("pa"),
+            "woba": opt(a["woba"]), "wrc_plus": opt(a["wrc_plus"], 1),
+            "iso": c0.get("iso"), "bb_rate": c0.get("bb_rate"), "xbh_rate": c0.get("xbh_rate"),
+            "gs_avg": c0.get("gs_avg"),
+            "rar": opt(a["rar"], 1), "owar": opt(a["owar"], 2), "archetype": str(a["archetype"]),
+        })
+    adv_career_rows.sort(key=lambda r: -(r["rar"] if r["rar"] is not None else -999.0))
+    franchise = team_line(career)
+    franchise["games"] = int(len(games[["season", "game_date", "game_time"]].drop_duplicates()))
+    dump("career_stats.json", {
+        "standard": standard,
+        "advanced": adv_career_rows,
+        "franchise": franchise,
+        "seasons_count": len(seasons),
+    })
 
     # ---- potw.json ----
     weekly_all = fetch_team_weekly_results(connection)

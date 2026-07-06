@@ -1,0 +1,59 @@
+---
+import TableSort from './TableSort.astro';
+import { rate, int, gs, pct1, wrc, dec1, dec2 } from '../lib/fmt';
+
+interface Props {
+  rows: any[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="tbl-wrap">
+  <table class="tbl" data-sortable>
+    <thead>
+      <tr>
+        <th data-nosort class="rank">#</th>
+        <th>Player</th>
+        <th class="num">PA</th>
+        <th class="num">wOBA</th>
+        <th class="num">wRC+</th>
+        <th class="num">ISO</th>
+        <th class="num">XBH%</th>
+        <th class="num">BB%</th>
+        <th class="num">GS/G</th>
+        <th class="num">RAR</th>
+        <th class="num">oWAR</th>
+        <th>Archetype</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((r: any, i: number) => (
+          <tr>
+            <td class="rank">{i + 1}</td>
+            <td>
+              <a href={`/players/${r.slug}/`}>{r.player}</a>
+            </td>
+            <td class="num">{int(r.pa)}</td>
+            <td class="num" data-v={String(r.woba ?? '')}>{rate(r.woba)}</td>
+            <td class="num" data-v={String(r.wrc_plus ?? '')}>{wrc(r.wrc_plus)}</td>
+            <td class="num" data-v={String(r.iso ?? '')}>{rate(r.iso)}</td>
+            <td class="num" data-v={String(r.xbh_rate ?? '')}>{pct1(r.xbh_rate)}</td>
+            <td class="num" data-v={String(r.bb_rate ?? '')}>{pct1(r.bb_rate)}</td>
+            <td class="num" data-v={String(r.gs_avg ?? '')}>{gs(r.gs_avg)}</td>
+            <td class="num" data-v={String(r.rar ?? '')}>{dec1(r.rar)}</td>
+            <td class="num" data-v={String(r.owar ?? '')}>{dec2(r.owar)}</td>
+            <td class="dim">{r.archetype}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+<p class="table-note">
+  wOBA / wRC+ from the club's calibrated linear-weight run model (100 = franchise average).
+  XBH% / BB% per plate appearance · GS/G = average Game Score · RAR = runs above replacement ·
+  oWAR = offensive wins above replacement.
+</p>
+<TableSort />

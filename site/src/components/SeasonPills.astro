@@ -1,0 +1,22 @@
+---
+import seasonStats from '../data/season_stats.json';
+
+interface Props {
+  active: string; // season slug, or "career"
+}
+
+const { active } = Astro.props;
+---
+
+<div class="season-nav">
+  {
+    seasonStats.map((o: any) => (
+      <a href={`/stats/${o.slug}/`} class:list={['pill', { active: o.slug === active }]}>
+        {o.label}
+      </a>
+    ))
+  }
+  <a href="/stats/career/" class:list={['pill', 'pill-career', { active: active === 'career' }]}>
+    Career
+  </a>
+</div>

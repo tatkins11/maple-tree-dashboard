@@ -1,0 +1,88 @@
+---
+import Base from '../../layouts/Base.astro';
+import AdvancedTable from '../../components/AdvancedTable.astro';
+import SeasonPills from '../../components/SeasonPills.astro';
+import Seg from '../../components/Seg.astro';
+import TableSort from '../../components/TableSort.astro';
+import careerStats from '../../data/career_stats.json';
+import { rate, int } from '../../lib/fmt';
+
+const f: any = careerStats.franchise;
+const counting: [string, string][] = [
+  ['games', 'G'], ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['1b', '1B'], ['2b', '2B'],
+  ['3b', '3B'], ['hr', 'HR'], ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
+];
+const rates = ['avg', 'obp', 'slg', 'ops'];
+---
+
+<Base title="Career Batting — Maple Tree Softball" description="Career batting stats for every player in Maple Tree franchise history, standard and advanced.">
+  <h1 class="page-title">Career <span class="title-sub">Batting</span></h1>
+  <div class="chip-row" style="margin-top:2px">
+    <span class="chip chip-solid">{careerStats.seasons_count} seasons</span>
+    <span class="chip">{int(f.games)} games</span>
+    <span class="chip">Franchise {rate(f.avg)} AVG</span>
+    <span class="chip">{rate(f.ops)} OPS</span>
+  </div>
+
+  <SeasonPills active="career" />
+
+  <div data-seg-scope>
+    <div class="seg" data-seg role="tablist">
+      <button type="button" class="seg-btn active" data-show="std">Standard</button>
+      <button type="button" class="seg-btn" data-show="adv">Advanced</button>
+    </div>
+    <div data-panel="std">
+      <div class="tbl-wrap">
+        <table class="tbl" data-sortable>
+          <thead>
+            <tr>
+              <th data-nosort class="rank">#</th>
+              <th>Player</th>
+              <th class="num">Yrs</th>
+              {counting.map(([, label]) => <th class="num">{label}</th>)}
+              {rates.map((k) => <th class="num">{k.toUpperCase()}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              careerStats.standard.map((p: any, i: number) => (
+                <tr>
+                  <td class="rank">{i + 1}</td>
+                  <td>
+                    <a href={`/players/${p.slug}/`}>{p.player}</a>
+                    {p.active && <span class="active-dot" title="Active roster" />}
+                  </td>
+                  <td class="num">{int(p.seasons)}</td>
+                  {counting.map(([k]) => (
+                    <td class="num">{int(p[k])}</td>
+                  ))}
+                  {rates.map((k) => (
+                    <td class="num" data-v={String(p[k] ?? '')}>{rate(p[k])}</td>
+                  ))}
+                </tr>
+              ))
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td></td>
+              <td>FRANCHISE</td>
+              <td class="num"></td>
+              {counting.map(([k]) => <td class="num">{int(f[k])}</td>)}
+              {rates.map((k) => <td class="num">{rate(f[k])}</td>)}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="table-note">
+        Every player in franchise history, all eras combined. Default order: OPS ·
+        <span class="active-dot" style="margin:0 4px"></span> = active roster.
+      </p>
+      <TableSort />
+    </div>
+    <div data-panel="adv" hidden>
+      <AdvancedTable rows={careerStats.advanced} />
+    </div>
+  </div>
+  <Seg />
+</Base>

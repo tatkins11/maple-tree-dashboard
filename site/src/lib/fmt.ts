@@ -27,6 +27,22 @@ export const diff = (v: number | null | undefined): string => {
   return n > 0 ? `+${n}` : String(n);
 };
 
+/** Fractional rate -> 12.5% (one decimal). */
+export const pct1 = (v: number | null | undefined): string =>
+  v == null || Number.isNaN(Number(v)) ? '—' : `${(Number(v) * 100).toFixed(1)}%`;
+
+/** wRC+ style index — whole number. */
+export const wrc = (v: number | null | undefined): string =>
+  v == null || Number.isNaN(Number(v)) ? '—' : String(Math.round(Number(v)));
+
+/** One-decimal number (RAR). */
+export const dec1 = (v: number | null | undefined): string =>
+  v == null || Number.isNaN(Number(v)) ? '—' : Number(v).toFixed(1);
+
+/** Two-decimal number (oWAR). */
+export const dec2 = (v: number | null | undefined): string =>
+  v == null || Number.isNaN(Number(v)) ? '—' : Number(v).toFixed(2);
+
 /** 2026-07-01 -> Jul 1, 2026 */
 export const datePretty = (iso: string): string =>
   new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', {

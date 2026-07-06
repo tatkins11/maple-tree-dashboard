@@ -2,8 +2,9 @@
 import Base from '../../layouts/Base.astro';
 import TableSort from '../../components/TableSort.astro';
 import PercentileBar from '../../components/PercentileBar.astro';
+import Seg from '../../components/Seg.astro';
 import players from '../../data/players.json';
-import { rate, int, gs, dateShort } from '../../lib/fmt';
+import { rate, int, gs, dateShort, pct1, wrc } from '../../lib/fmt';
 
 export function getStaticPaths() {
   return players.map((p: any) => ({ params: { slug: p.slug }, props: { p } }));
@@ -20,7 +21,12 @@ const logCols: [string, string][] = [
   ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['2b', '2B'], ['3b', '3B'], ['hr', 'HR'],
   ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
 ];
-const pctDisplay = (m: any) => (m.key === 'bb_pct' ? `${m.value.toFixed(1)}%` : rate(m.value));
+const pctDisplay = (m: any) =>
+  m.key === 'bb_rate' || m.key === 'xbh_rate' ? pct1(m.value)
+  : m.key === 'wrc_plus' ? wrc(m.value)
+  : m.key === 'gs' ? gs(m.value)
+  : rate(m.value);
+const analyticsSeasons = p.seasons.filter((s: any) => s.woba != null);
 ---
 
 <Base title={`${p.name} — Maple Tree Softball`} description={`${p.name} career stats, game logs, and franchise history with Maple Tree slow-pitch softball.`}>
@@ -54,14 +60,38 @@ const pctDisplay = (m: any) => (m.key === 'bb_pct' ? `${m.value.toFixed(1)}%` : 
 
   {
     p.percentiles && (
-      <section class="card pct-card">
-        <div class="card-kicker">{p.percentiles.season} percentile rankings</div>
-        <p class="pct-note">vs. every qualified player-season in franchise history (20+ PA)</p>
-        <div class="pct-grid">
-          {p.percentiles.metrics.map((m: any) => (
-            <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
-          ))}
+      <section class="card pct-card" data-seg-scope>
+        <div class="pct-head">
+          <div class="card-kicker">Percentile rankings</div>
+          {p.percentiles.season && p.percentiles.career && (
+            <div class="seg" data-seg role="tablist">
+              <button type="button" class="seg-btn active" data-show="season">
+                {p.percentiles.season.season}
+              </button>
+              <button type="button" class="seg-btn" data-show="career">Career</button>
+            </div>
+          )}
         </div>
+        {p.percentiles.season && (
+          <div data-panel="season">
+            <p class="pct-note">vs. every qualified player-season in franchise history (20+ PA)</p>
+            <div class="pct-grid">
+              {p.percentiles.season.metrics.map((m: any) => (
+                <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
+              ))}
+            </div>
+          </div>
+        )}
+        {p.percentiles.career && (
+          <div data-panel="career" hidden={Boolean(p.percentiles.season)}>
+            <p class="pct-note">vs. every qualified career in franchise history (50+ PA)</p>
+            <div class="pct-grid">
+              {p.percentiles.career.metrics.map((m: any) => (
+                <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     )
   }
@@ -102,6 +132,61 @@ const pctDisplay = (m: any) => (m.key === 'bb_pct' ? `${m.value.toFixed(1)}%` : 
       </tfoot>
     </table>
   </div>
+
+  {
+    analyticsSeasons.length > 0 && (
+      <>
+        <h2 class="section-title">
+          Season by season — analytics
+          <span class="st-note">wOBA / wRC+ run model · GS/G = average Game Score</span>
+        </h2>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Season</th>
+                <th class="num">PA</th>
+                <th class="num">wOBA</th>
+                <th class="num">wRC+</th>
+                <th class="num">ISO</th>
+                <th class="num">XBH%</th>
+                <th class="num">BB%</th>
+                <th class="num">GS/G</th>
+              </tr>
+            </thead>
+            <tbody>
+              {analyticsSeasons.map((s: any) => (
+                <tr>
+                  <td>
+                    <a href={`/stats/${s.season_slug}/`}>{s.label}</a>
+                  </td>
+                  <td class="num">{int(s.pa)}</td>
+                  <td class="num">{rate(s.woba)}</td>
+                  <td class="num">{wrc(s.wrc_plus)}</td>
+                  <td class="num">{rate(s.iso)}</td>
+                  <td class="num">{pct1(s.xbh_rate)}</td>
+                  <td class="num">{pct1(s.bb_rate)}</td>
+                  <td class="num">{gs(s.gs_avg)}</td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Career</td>
+                <td class="num">{int(c.pa)}</td>
+                <td class="num">{rate(c.woba)}</td>
+                <td class="num">{wrc(c.wrc_plus)}</td>
+                <td class="num">{rate(c.iso)}</td>
+                <td class="num">{pct1(c.xbh_rate)}</td>
+                <td class="num">{pct1(c.bb_rate)}</td>
+                <td class="num">{gs(c.gs_avg)}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </>
+    )
+  }
 
   <h2 class="section-title">
     Game log
@@ -145,4 +230,5 @@ const pctDisplay = (m: any) => (m.key === 'bb_pct' ? `${m.value.toFixed(1)}%` : 
   </div>
   <p class="table-note">GS = Game Score — single-game offensive impact on the club's 0–10ish scale.</p>
   <TableSort />
+  <Seg />
 </Base>

@@ -1,6 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import SeasonTable from '../../components/SeasonTable.astro';
+import AdvancedTable from '../../components/AdvancedTable.astro';
+import SeasonPills from '../../components/SeasonPills.astro';
+import Seg from '../../components/Seg.astro';
 import meta from '../../data/meta.json';
 import seasonStats from '../../data/season_stats.json';
 import { rate } from '../../lib/fmt';
@@ -17,18 +20,22 @@ const s: any = seasonStats.find((x: any) => x.name === meta.current_season.name)
     <span class="chip">{s.team.r} runs</span>
   </div>
 
-  <div class="season-nav">
-    {
-      seasonStats.map((o: any) => (
-        <a href={`/stats/${o.slug}/`} class:list={['pill', { active: o.slug === s.slug }]}>
-          {o.label}
-        </a>
-      ))
-    }
-  </div>
+  <SeasonPills active={s.slug} />
 
-  <SeasonTable season={s} />
-  <p class="table-note">
-    Default order: OPS. Click any column to sort. OBP uses the PA-based formula — (H+BB+HBP) ÷ (PA−SH) — matching GameChanger.
-  </p>
+  <div data-seg-scope>
+    <div class="seg" data-seg role="tablist">
+      <button type="button" class="seg-btn active" data-show="std">Standard</button>
+      <button type="button" class="seg-btn" data-show="adv">Advanced</button>
+    </div>
+    <div data-panel="std">
+      <SeasonTable season={s} />
+      <p class="table-note">
+        Default order: OPS. Click any column to sort. OBP uses the PA-based formula — (H+BB+HBP) ÷ (PA−SH) — matching GameChanger.
+      </p>
+    </div>
+    <div data-panel="adv" hidden>
+      <AdvancedTable rows={s.advanced} />
+    </div>
+  </div>
+  <Seg />
 </Base>

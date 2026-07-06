@@ -27,7 +27,13 @@
    "avg": 0.4326923076923077,
    "obp": 0.4424778761061947,
    "slg": 0.5432692307692307,
-   "ops": 0.9857471068754254
+   "ops": 0.9857471068754254,
+   "woba": 0.3861,
+   "wrc_plus": 74.7,
+   "iso": 0.1106,
+   "bb_rate": 0.0442,
+   "xbh_rate": 0.0752,
+   "gs_avg": 0.64
   },
   "seasons": [
    {
@@ -51,7 +57,13 @@
     "slg": 0.625,
     "ops": 1.0892857143,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.4333,
+    "wrc_plus": 85.7,
+    "iso": 0.1607,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1071,
+    "gs_avg": 0.87
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -74,7 +86,13 @@
     "slg": 0.5,
     "ops": 0.94,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.3255,
+    "wrc_plus": 61.5,
+    "iso": 0.0455,
+    "bb_rate": 0.04,
+    "xbh_rate": 0.04,
+    "gs_avg": 0.64
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -97,7 +115,13 @@
     "slg": 0.4375,
     "ops": 0.75,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.3485,
+    "wrc_plus": 73.0,
+    "iso": 0.125,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0625,
+    "gs_avg": 0.18
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -120,7 +144,13 @@
     "slg": 0.4864864865,
     "ops": 0.941031941,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.3592,
+    "wrc_plus": 65.5,
+    "iso": 0.0811,
+    "bb_rate": 0.1136,
+    "xbh_rate": 0.0682,
+    "gs_avg": 0.66
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -143,7 +173,13 @@
     "slg": 0.6470588235,
     "ops": 1.1875993641,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.4882,
+    "wrc_plus": 95.8,
+    "iso": 0.1471,
+    "bb_rate": 0.0811,
+    "xbh_rate": 0.1081,
+    "gs_avg": 0.79
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -166,7 +202,13 @@
     "slg": 0.4,
     "ops": 0.6857142857,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.2758,
+    "wrc_plus": 49.8,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.62
    }
   ],
   "game_log": [
@@ -1692,45 +1734,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.4,
-     "pct": 26
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.2857142857142857,
-     "pct": 1
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.4,
-     "pct": 12
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 0.6857142857142857,
-     "pct": 7
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.4,
+      "pct": 26
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.2857142857142857,
+      "pct": 1
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.4,
+      "pct": 12
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.6857142857142857,
+      "pct": 7
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.2758,
+      "pct": 5
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 49.8,
+      "pct": 5
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.62,
+      "pct": 26
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.4326923076923077,
+      "pct": 34
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4424778761061947,
+      "pct": 34
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5432692307692307,
+      "pct": 28
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.9857471068754254,
+      "pct": 28
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.1106,
+      "pct": 25
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3861,
+      "pct": 19
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 74.7,
+      "pct": 19
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0442,
+      "pct": 38
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0752,
+      "pct": 19
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.64,
+      "pct": 19
+     }
+    ]
+   }
   },
   "potw": 1,
   "best_week": 1.45
@@ -1763,7 +1896,13 @@
    "avg": 0.4423963133640553,
    "obp": 0.4588744588744589,
    "slg": 0.631336405529954,
-   "ops": 1.0902108644044128
+   "ops": 1.0902108644044128,
+   "woba": 0.4234,
+   "wrc_plus": 81.9,
+   "iso": 0.1889,
+   "bb_rate": 0.0433,
+   "xbh_rate": 0.1126,
+   "gs_avg": 0.73
   },
   "seasons": [
    {
@@ -1787,7 +1926,13 @@
     "slg": 0.7592592593,
     "ops": 1.3047138047,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.509,
+    "wrc_plus": 100.7,
+    "iso": 0.2037,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1273,
+    "gs_avg": 1.03
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -1810,7 +1955,13 @@
     "slg": 0.7058823529,
     "ops": 1.1481900452,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.4129,
+    "wrc_plus": 78.0,
+    "iso": 0.2549,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1346,
+    "gs_avg": 0.81
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -1833,7 +1984,13 @@
     "slg": 0.3870967742,
     "ops": 0.7204301075,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.3232,
+    "wrc_plus": 67.7,
+    "iso": 0.0968,
+    "bb_rate": 0.0606,
+    "xbh_rate": 0.0606,
+    "gs_avg": 0.23
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -1856,7 +2013,13 @@
     "slg": 0.7380952381,
     "ops": 1.2912867275,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.4989,
+    "wrc_plus": 91.0,
+    "iso": 0.2143,
+    "bb_rate": 0.0851,
+    "xbh_rate": 0.1489,
+    "gs_avg": 1.11
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -1879,7 +2042,13 @@
     "slg": 0.4242424242,
     "ops": 0.8026208026,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.311,
+    "wrc_plus": 61.0,
+    "iso": 0.1212,
+    "bb_rate": 0.1081,
+    "xbh_rate": 0.0541,
+    "gs_avg": 0.37
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -1902,7 +2071,13 @@
     "slg": 0.5,
     "ops": 0.7857142857,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.3717,
+    "wrc_plus": 67.1,
+    "iso": 0.1667,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1429,
+    "gs_avg": 0.6
    }
   ],
   "game_log": [
@@ -3428,45 +3603,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.3333333333333333,
-     "pct": 16
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.2857142857142857,
-     "pct": 1
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.5,
-     "pct": 29
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 0.7857142857142857,
-     "pct": 14
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.16666666666666669,
-     "pct": 45
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.3333333333333333,
+      "pct": 16
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.2857142857142857,
+      "pct": 1
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5,
+      "pct": 29
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.7857142857142857,
+      "pct": 14
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.1667,
+      "pct": 45
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3717,
+      "pct": 26
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 67.1,
+      "pct": 16
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1429,
+      "pct": 59
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.6,
+      "pct": 24
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.4423963133640553,
+      "pct": 47
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4588744588744589,
+      "pct": 47
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.631336405529954,
+      "pct": 41
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.0902108644044128,
+      "pct": 47
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.1889,
+      "pct": 44
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4234,
+      "pct": 44
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 81.9,
+      "pct": 44
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0433,
+      "pct": 38
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1126,
+      "pct": 50
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.73,
+      "pct": 44
+     }
+    ]
+   }
   },
   "potw": 0,
   "best_week": null
@@ -3499,7 +3765,13 @@
    "avg": 0.5584415584415584,
    "obp": 0.5938697318007663,
    "slg": 0.8961038961038961,
-   "ops": 1.4899736279046625
+   "ops": 1.4899736279046625,
+   "woba": 0.5711,
+   "wrc_plus": 110.5,
+   "iso": 0.3377,
+   "bb_rate": 0.0996,
+   "xbh_rate": 0.1686,
+   "gs_avg": 1.43
   },
   "seasons": [
    {
@@ -3523,7 +3795,13 @@
     "slg": 0.8245614035,
     "ops": 1.3412280702,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.5325,
+    "wrc_plus": 105.4,
+    "iso": 0.2982,
+    "bb_rate": 0.0167,
+    "xbh_rate": 0.1667,
+    "gs_avg": 1.15
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -3546,7 +3824,13 @@
     "slg": 0.9795918367,
     "ops": 1.5510204082,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.5559,
+    "wrc_plus": 105.0,
+    "iso": 0.449,
+    "bb_rate": 0.1071,
+    "xbh_rate": 0.2143,
+    "gs_avg": 1.47
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -3569,7 +3853,13 @@
     "slg": 0.9428571429,
     "ops": 1.6095238095,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.6692,
+    "wrc_plus": 140.2,
+    "iso": 0.3143,
+    "bb_rate": 0.1026,
+    "xbh_rate": 0.1282,
+    "gs_avg": 1.37
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -3592,7 +3882,13 @@
     "slg": 0.8888888889,
     "ops": 1.5740740741,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.5907,
+    "wrc_plus": 107.7,
+    "iso": 0.2667,
+    "bb_rate": 0.1667,
+    "xbh_rate": 0.1667,
+    "gs_avg": 1.93
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -3615,7 +3911,13 @@
     "slg": 0.825,
     "ops": 1.3583333333,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.5277,
+    "wrc_plus": 103.5,
+    "iso": 0.35,
+    "bb_rate": 0.1111,
+    "xbh_rate": 0.1556,
+    "gs_avg": 1.21
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -3638,7 +3940,13 @@
     "slg": 1.2,
     "ops": 1.9142857143,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.7195,
+    "wrc_plus": 129.8,
+    "iso": 0.4,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.1429,
+    "gs_avg": 2.17
    }
   ],
   "game_log": [
@@ -5164,45 +5472,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.8,
-     "pct": 99
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.7142857142857143,
-     "pct": 99
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 1.2,
-     "pct": 84
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.9142857142857141,
-     "pct": 91
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.3999999999999999,
-     "pct": 74
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 14.285714285714286,
-     "pct": 93
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.8,
+      "pct": 99
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.7142857142857143,
+      "pct": 99
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.2,
+      "pct": 84
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.9142857142857141,
+      "pct": 91
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.4,
+      "pct": 75
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.7195,
+      "pct": 90
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 129.8,
+      "pct": 79
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.1429,
+      "pct": 93
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1429,
+      "pct": 59
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 2.17,
+      "pct": 90
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5584415584415584,
+      "pct": 72
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5938697318007663,
+      "pct": 78
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.8961038961038961,
+      "pct": 72
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.4899736279046625,
+      "pct": 72
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.3377,
+      "pct": 75
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.5711,
+      "pct": 75
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 110.5,
+      "pct": 69
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0996,
+      "pct": 88
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1686,
+      "pct": 69
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.43,
+      "pct": 69
+     }
+    ]
+   }
   },
   "potw": 3,
   "best_week": 7.25
@@ -5235,7 +5634,13 @@
    "avg": 0.6026200873362445,
    "obp": 0.603112840466926,
    "slg": 1.3973799126637554,
-   "ops": 2.0004927531306813
+   "ops": 2.0004927531306813,
+   "woba": 0.7671,
+   "wrc_plus": 148.5,
+   "iso": 0.7948,
+   "bb_rate": 0.0661,
+   "xbh_rate": 0.3035,
+   "gs_avg": 2.26
   },
   "seasons": [
    {
@@ -5259,7 +5664,13 @@
     "slg": 1.224137931,
     "ops": 1.8431855501,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.7264,
+    "wrc_plus": 143.8,
+    "iso": 0.6034,
+    "bb_rate": 0.0476,
+    "xbh_rate": 0.2857,
+    "gs_avg": 1.97
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -5282,7 +5693,13 @@
     "slg": 1.6470588235,
     "ops": 2.179316888,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.7493,
+    "wrc_plus": 141.6,
+    "iso": 1.1176,
+    "bb_rate": 0.0968,
+    "xbh_rate": 0.4032,
+    "gs_avg": 2.34
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -5305,7 +5722,13 @@
     "slg": 0.6086956522,
     "ops": 1.0729813665,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.4415,
+    "wrc_plus": 92.5,
+    "iso": 0.1304,
+    "bb_rate": 0.0714,
+    "xbh_rate": 0.0357,
+    "gs_avg": 1.07
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -5328,7 +5751,13 @@
     "slg": 1.693877551,
     "ops": 2.399759904,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.9553,
+    "wrc_plus": 174.2,
+    "iso": 1.0,
+    "bb_rate": 0.0392,
+    "xbh_rate": 0.3922,
+    "gs_avg": 3.28
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -5351,7 +5780,13 @@
     "slg": 1.6153846154,
     "ops": 2.2744755245,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.8608,
+    "wrc_plus": 168.9,
+    "iso": 0.9744,
+    "bb_rate": 0.0909,
+    "xbh_rate": 0.3182,
+    "gs_avg": 2.52
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -5374,7 +5809,13 @@
     "slg": 0.5555555556,
     "ops": 1.1111111111,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.4663,
+    "wrc_plus": 84.1,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 1.35
    }
   ],
   "game_log": [
@@ -6820,45 +7261,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.5555555555555556,
-     "pct": 70
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.5555555555555556,
-     "pct": 66
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.5555555555555556,
-     "pct": 38
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.1111111111111112,
-     "pct": 45
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5555555555555556,
+      "pct": 70
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5555555555555556,
+      "pct": 66
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5555555555555556,
+      "pct": 38
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.1111111111111112,
+      "pct": 45
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4663,
+      "pct": 50
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 84.1,
+      "pct": 40
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.35,
+      "pct": 69
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.6026200873362445,
+      "pct": 91
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.603112840466926,
+      "pct": 91
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.3973799126637554,
+      "pct": 97
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 2.0004927531306813,
+      "pct": 97
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.7948,
+      "pct": 99
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.7671,
+      "pct": 94
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 148.5,
+      "pct": 99
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0661,
+      "pct": 81
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.3035,
+      "pct": 88
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 2.26,
+      "pct": 94
+     }
+    ]
+   }
   },
   "potw": 12,
   "best_week": 11.8
@@ -6891,7 +7423,13 @@
    "avg": 0.6313559322033898,
    "obp": 0.6370967741935484,
    "slg": 1.0805084745762712,
-   "ops": 1.7176052487698197
+   "ops": 1.7176052487698197,
+   "woba": 0.6742,
+   "wrc_plus": 130.5,
+   "iso": 0.4492,
+   "bb_rate": 0.0363,
+   "xbh_rate": 0.2298,
+   "gs_avg": 2.02
   },
   "seasons": [
    {
@@ -6915,7 +7453,13 @@
     "slg": 1.2037037037,
     "ops": 1.8177387914,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.7151,
+    "wrc_plus": 141.5,
+    "iso": 0.5926,
+    "bb_rate": 0.0351,
+    "xbh_rate": 0.2632,
+    "gs_avg": 2.04
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -6938,7 +7482,13 @@
     "slg": 0.94,
     "ops": 1.6,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.5807,
+    "wrc_plus": 109.7,
+    "iso": 0.28,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.18,
+    "gs_avg": 1.97
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -6961,7 +7511,13 @@
     "slg": 0.9487179487,
     "ops": 1.5987179487,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.703,
+    "wrc_plus": 147.3,
+    "iso": 0.3077,
+    "bb_rate": 0.025,
+    "xbh_rate": 0.225,
+    "gs_avg": 1.48
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -6984,7 +7540,13 @@
     "slg": 1.2558139535,
     "ops": 1.8884670147,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.7193,
+    "wrc_plus": 131.2,
+    "iso": 0.6279,
+    "bb_rate": 0.0816,
+    "xbh_rate": 0.2449,
+    "gs_avg": 2.89
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -7007,7 +7569,13 @@
     "slg": 1.0238095238,
     "ops": 1.6284606866,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.6572,
+    "wrc_plus": 128.9,
+    "iso": 0.4286,
+    "bb_rate": 0.0233,
+    "xbh_rate": 0.2326,
+    "gs_avg": 1.77
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -7030,7 +7598,13 @@
     "slg": 1.125,
     "ops": 1.9027777778,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.8208,
+    "wrc_plus": 148.1,
+    "iso": 0.375,
+    "bb_rate": 0.1111,
+    "xbh_rate": 0.2222,
+    "gs_avg": 2.65
    }
   ],
   "game_log": [
@@ -8396,45 +8970,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.75,
-     "pct": 99
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.7777777777777778,
-     "pct": 99
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 1.125,
-     "pct": 84
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.9027777777777777,
-     "pct": 91
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.375,
-     "pct": 74
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 11.11111111111111,
-     "pct": 86
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.75,
+      "pct": 99
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.7777777777777778,
+      "pct": 99
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.125,
+      "pct": 84
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.9027777777777777,
+      "pct": 91
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.375,
+      "pct": 74
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.8208,
+      "pct": 97
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 148.1,
+      "pct": 95
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.1111,
+      "pct": 84
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.2222,
+      "pct": 76
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 2.65,
+      "pct": 97
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.6313559322033898,
+      "pct": 97
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.6370967741935484,
+      "pct": 97
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.0805084745762712,
+      "pct": 84
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.7176052487698197,
+      "pct": 84
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.4492,
+      "pct": 88
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.6742,
+      "pct": 81
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 130.5,
+      "pct": 88
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0363,
+      "pct": 19
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.2298,
+      "pct": 81
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 2.02,
+      "pct": 81
+     }
+    ]
+   }
   },
   "potw": 7,
   "best_week": 10.899999999999999
@@ -8467,7 +9132,13 @@
    "avg": 0.5643564356435643,
    "obp": 0.5674418604651162,
    "slg": 0.9851485148514851,
-   "ops": 1.5525903753166013
+   "ops": 1.5525903753166013,
+   "woba": 0.6088,
+   "wrc_plus": 117.8,
+   "iso": 0.4208,
+   "bb_rate": 0.0372,
+   "xbh_rate": 0.2093,
+   "gs_avg": 1.54
   },
   "seasons": [
    {
@@ -8491,7 +9162,13 @@
     "slg": 0.7666666667,
     "ops": 1.2818181818,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.5135,
+    "wrc_plus": 101.6,
+    "iso": 0.2667,
+    "bb_rate": 0.0606,
+    "xbh_rate": 0.1818,
+    "gs_avg": 1.19
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -8514,7 +9191,13 @@
     "slg": 0.8409090909,
     "ops": 1.4366537718,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.5143,
+    "wrc_plus": 97.2,
+    "iso": 0.25,
+    "bb_rate": 0.0426,
+    "xbh_rate": 0.1277,
+    "gs_avg": 1.32
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -8537,7 +9220,13 @@
     "slg": 0.6764705882,
     "ops": 1.1336134454,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.5079,
+    "wrc_plus": 106.4,
+    "iso": 0.2353,
+    "bb_rate": 0.0286,
+    "xbh_rate": 0.1143,
+    "gs_avg": 0.85
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -8560,7 +9249,13 @@
     "slg": 1.3555555556,
     "ops": 1.9882086168,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.755,
+    "wrc_plus": 137.7,
+    "iso": 0.6889,
+    "bb_rate": 0.0204,
+    "xbh_rate": 0.3061,
+    "gs_avg": 2.32
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -8583,7 +9278,13 @@
     "slg": 1.0731707317,
     "ops": 1.6313102666,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.6454,
+    "wrc_plus": 126.6,
+    "iso": 0.5366,
+    "bb_rate": 0.0465,
+    "xbh_rate": 0.2558,
+    "gs_avg": 1.72
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -8606,7 +9307,13 @@
     "slg": 1.375,
     "ops": 2.125,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.9863,
+    "wrc_plus": 178.0,
+    "iso": 0.625,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.375,
+    "gs_avg": 3.1
    }
   ],
   "game_log": [
@@ -9932,45 +10639,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.75,
-     "pct": 99
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.75,
-     "pct": 99
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 1.375,
-     "pct": 93
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 2.125,
-     "pct": 93
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.625,
-     "pct": 90
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.75,
+      "pct": 99
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.75,
+      "pct": 99
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.375,
+      "pct": 93
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 2.125,
+      "pct": 93
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.625,
+      "pct": 90
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.9863,
+      "pct": 99
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 178.0,
+      "pct": 99
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.375,
+      "pct": 95
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 3.1,
+      "pct": 98
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5643564356435643,
+      "pct": 78
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5674418604651162,
+      "pct": 72
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.9851485148514851,
+      "pct": 78
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.5525903753166013,
+      "pct": 78
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.4208,
+      "pct": 81
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.6088,
+      "pct": 75
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 117.8,
+      "pct": 75
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0372,
+      "pct": 19
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.2093,
+      "pct": 75
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.54,
+      "pct": 81
+     }
+    ]
+   }
   },
   "potw": 7,
   "best_week": 10.3
@@ -10003,7 +10801,13 @@
    "avg": 0.310126582278481,
    "obp": 0.3989071038251366,
    "slg": 0.3227848101265823,
-   "ops": 0.7216919139517188
+   "ops": 0.7216919139517188,
+   "woba": 0.2912,
+   "wrc_plus": 56.4,
+   "iso": 0.0127,
+   "bb_rate": 0.1311,
+   "xbh_rate": 0.0109,
+   "gs_avg": 0.35
   },
   "seasons": [
    {
@@ -10027,7 +10831,13 @@
     "slg": 0.2727272727,
     "ops": 0.6256684492,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.2503,
+    "wrc_plus": 49.5,
+    "iso": 0.0,
+    "bb_rate": 0.1176,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.22
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -10050,7 +10860,13 @@
     "slg": 0.21875,
     "ops": 0.5243055556,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.2082,
+    "wrc_plus": 39.3,
+    "iso": 0.0,
+    "bb_rate": 0.1111,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.13
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -10073,7 +10889,13 @@
     "slg": 0.25,
     "ops": 0.65,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.3273,
+    "wrc_plus": 68.6,
+    "iso": 0.0,
+    "bb_rate": 0.2,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.2
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -10096,7 +10918,13 @@
     "slg": 0.4545454545,
     "ops": 0.9783549784,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.3884,
+    "wrc_plus": 70.8,
+    "iso": 0.0606,
+    "bb_rate": 0.2143,
+    "xbh_rate": 0.0476,
+    "gs_avg": 0.76
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -10119,7 +10947,13 @@
     "slg": 0.3703703704,
     "ops": 0.7407407407,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.2779,
+    "wrc_plus": 54.5,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.3
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -10142,7 +10976,13 @@
     "slg": 0.5,
     "ops": 1.0714285714,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.4557,
+    "wrc_plus": 82.2,
+    "iso": 0.0,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.0,
+    "gs_avg": 1.28
    }
   ],
   "game_log": [
@@ -11448,45 +12288,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.5,
-     "pct": 57
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.5714285714285714,
-     "pct": 72
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.5,
-     "pct": 29
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.0714285714285714,
-     "pct": 41
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 14.285714285714286,
-     "pct": 93
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5,
+      "pct": 57
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5714285714285714,
+      "pct": 72
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5,
+      "pct": 29
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.0714285714285714,
+      "pct": 41
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4557,
+      "pct": 50
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 82.2,
+      "pct": 40
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.1429,
+      "pct": 93
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.28,
+      "pct": 67
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.310126582278481,
+      "pct": 3
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.3989071038251366,
+      "pct": 3
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.3227848101265823,
+      "pct": 3
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.7216919139517188,
+      "pct": 3
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0127,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.2912,
+      "pct": 1
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 56.4,
+      "pct": 6
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.1311,
+      "pct": 94
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0109,
+      "pct": 1
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.35,
+      "pct": 1
+     }
+    ]
+   }
   },
   "potw": 0,
   "best_week": null
@@ -11519,7 +12450,13 @@
    "avg": 0.5347593582887701,
    "obp": 0.5517241379310345,
    "slg": 0.8716577540106952,
-   "ops": 1.4233818919417298
+   "ops": 1.4233818919417298,
+   "woba": 0.5478,
+   "wrc_plus": 106.0,
+   "iso": 0.3369,
+   "bb_rate": 0.0591,
+   "xbh_rate": 0.1773,
+   "gs_avg": 1.27
   },
   "seasons": [
    {
@@ -11543,7 +12480,13 @@
     "slg": 1.0727272727,
     "ops": 1.6692185008,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.6627,
+    "wrc_plus": 131.2,
+    "iso": 0.4545,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.2456,
+    "gs_avg": 1.79
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -11566,7 +12509,13 @@
     "slg": 1.22,
     "ops": 1.8563636364,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.6507,
+    "wrc_plus": 122.9,
+    "iso": 0.6,
+    "bb_rate": 0.0727,
+    "xbh_rate": 0.2727,
+    "gs_avg": 1.8
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -11589,7 +12538,13 @@
     "slg": 0.55,
     "ops": 0.99,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.4396,
+    "wrc_plus": 92.1,
+    "iso": 0.2,
+    "bb_rate": 0.16,
+    "xbh_rate": 0.12,
+    "gs_avg": 0.61
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -11612,7 +12567,13 @@
     "slg": 0.5517241379,
     "ops": 1.0033370412,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.3947,
+    "wrc_plus": 72.0,
+    "iso": 0.1379,
+    "bb_rate": 0.0645,
+    "xbh_rate": 0.129,
+    "gs_avg": 0.66
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -11635,7 +12596,13 @@
     "slg": 0.4615384615,
     "ops": 0.9615384615,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.3616,
+    "wrc_plus": 70.9,
+    "iso": 0.0,
+    "bb_rate": 0.0714,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.63
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -11658,7 +12625,13 @@
     "slg": 0.5714285714,
     "ops": 1.1428571429,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.4797,
+    "wrc_plus": 86.5,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 1.12
    }
   ],
   "game_log": [
@@ -12904,45 +13877,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.5714285714285714,
-     "pct": 72
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.5714285714285714,
-     "pct": 72
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.5714285714285714,
-     "pct": 41
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.1428571428571428,
-     "pct": 47
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5714285714285714,
+      "pct": 72
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5714285714285714,
+      "pct": 72
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5714285714285714,
+      "pct": 41
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.1428571428571428,
+      "pct": 47
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4797,
+      "pct": 50
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 86.5,
+      "pct": 45
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.12,
+      "pct": 60
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5347593582887701,
+      "pct": 66
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5517241379310345,
+      "pct": 66
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.8716577540106952,
+      "pct": 66
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.4233818919417298,
+      "pct": 66
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.3369,
+      "pct": 69
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.5478,
+      "pct": 62
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 106.0,
+      "pct": 62
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0591,
+      "pct": 75
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1773,
+      "pct": 69
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.27,
+      "pct": 69
+     }
+    ]
+   }
   },
   "potw": 2,
   "best_week": 4.6000000000000005
@@ -12975,7 +14039,13 @@
    "avg": 0.40186915887850466,
    "obp": 0.4260869565217391,
    "slg": 0.514018691588785,
-   "ops": 0.9401056481105241
+   "ops": 0.9401056481105241,
+   "woba": 0.3635,
+   "wrc_plus": 70.3,
+   "iso": 0.1121,
+   "bb_rate": 0.0522,
+   "xbh_rate": 0.0522,
+   "gs_avg": 0.65
   },
   "seasons": [
    {
@@ -12999,7 +14069,13 @@
     "slg": 0.5454545455,
     "ops": 1.0160427807,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.4254,
+    "wrc_plus": 89.1,
+    "iso": 0.0606,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0588,
+    "gs_avg": 0.63
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -13022,7 +14098,13 @@
     "slg": 0.35,
     "ops": 0.6914634146,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.2806,
+    "wrc_plus": 51.2,
+    "iso": 0.025,
+    "bb_rate": 0.0244,
+    "xbh_rate": 0.0244,
+    "gs_avg": 0.4
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -13045,7 +14127,13 @@
     "slg": 0.7142857143,
     "ops": 1.1688311688,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.4326,
+    "wrc_plus": 84.9,
+    "iso": 0.3214,
+    "bb_rate": 0.1212,
+    "xbh_rate": 0.0909,
+    "gs_avg": 0.92
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -13068,7 +14156,13 @@
     "slg": 0.5,
     "ops": 1.0714285714,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.4557,
+    "wrc_plus": 82.2,
+    "iso": 0.0,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.77
    }
   ],
   "game_log": [
@@ -13814,45 +14908,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.5,
-     "pct": 57
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.5714285714285714,
-     "pct": 72
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.5,
-     "pct": 29
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.0714285714285714,
-     "pct": 41
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 14.285714285714286,
-     "pct": 93
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5,
+      "pct": 57
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5714285714285714,
+      "pct": 72
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5,
+      "pct": 29
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.0714285714285714,
+      "pct": 41
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4557,
+      "pct": 50
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 82.2,
+      "pct": 40
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.1429,
+      "pct": 93
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.77,
+      "pct": 41
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.40186915887850466,
+      "pct": 16
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4260869565217391,
+      "pct": 16
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.514018691588785,
+      "pct": 16
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.9401056481105241,
+      "pct": 16
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.1121,
+      "pct": 25
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3635,
+      "pct": 12
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 70.3,
+      "pct": 12
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0522,
+      "pct": 69
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0522,
+      "pct": 19
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.65,
+      "pct": 25
+     }
+    ]
+   }
   },
   "potw": 0,
   "best_week": null
@@ -13885,7 +15070,13 @@
    "avg": 0.422680412371134,
    "obp": 0.4411764705882353,
    "slg": 0.44329896907216493,
-   "ops": 0.8844754396604002
+   "ops": 0.8844754396604002,
+   "woba": 0.333,
+   "wrc_plus": 64.4,
+   "iso": 0.0206,
+   "bb_rate": 0.0392,
+   "xbh_rate": 0.0196,
+   "gs_avg": 0.4
   },
   "seasons": [
    {
@@ -13909,7 +15100,13 @@
     "slg": 0.46875,
     "ops": 0.9375,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.3788,
+    "wrc_plus": 79.4,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.34
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -13932,7 +15129,13 @@
     "slg": 0.5,
     "ops": 1.0,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.3873,
+    "wrc_plus": 70.6,
+    "iso": 0.05,
+    "bb_rate": 0.0909,
+    "xbh_rate": 0.0455,
+    "gs_avg": 0.72
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -13955,7 +15158,13 @@
     "slg": 0.32,
     "ops": 0.6276923077,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.2241,
+    "wrc_plus": 44.0,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.1
    }
   ],
   "game_log": [
@@ -14660,7 +15869,74 @@
     "ha": ""
    }
   ],
-  "percentiles": null,
+  "percentiles": {
+   "season": null,
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.422680412371134,
+      "pct": 22
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4411764705882353,
+      "pct": 28
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.44329896907216493,
+      "pct": 9
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.8844754396604002,
+      "pct": 9
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0206,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.333,
+      "pct": 6
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 64.4,
+      "pct": 6
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0392,
+      "pct": 25
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0196,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.4,
+      "pct": 6
+     }
+    ]
+   }
+  },
   "potw": 0,
   "best_week": null
  },
@@ -14692,7 +15968,13 @@
    "avg": 0.43,
    "obp": 0.4528301886792453,
    "slg": 0.55,
-   "ops": 1.0028301886792454
+   "ops": 1.0028301886792454,
+   "woba": 0.3944,
+   "wrc_plus": 76.3,
+   "iso": 0.12,
+   "bb_rate": 0.0472,
+   "xbh_rate": 0.0755,
+   "gs_avg": 0.66
   },
   "seasons": [
    {
@@ -14716,7 +15998,13 @@
     "slg": 0.5357142857,
     "ops": 0.9743107769,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.3929,
+    "wrc_plus": 77.8,
+    "iso": 0.1071,
+    "bb_rate": 0.0175,
+    "xbh_rate": 0.0702,
+    "gs_avg": 0.68
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -14739,7 +16027,13 @@
     "slg": 0.5681818182,
     "ops": 1.0375695733,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.3734,
+    "wrc_plus": 70.6,
+    "iso": 0.1364,
+    "bb_rate": 0.0816,
+    "xbh_rate": 0.0816,
+    "gs_avg": 0.65
    }
   ],
   "game_log": [
@@ -15444,7 +16738,74 @@
     "ha": ""
    }
   ],
-  "percentiles": null,
+  "percentiles": {
+   "season": null,
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.43,
+      "pct": 28
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4528301886792453,
+      "pct": 41
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.55,
+      "pct": 34
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.0028301886792454,
+      "pct": 34
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.12,
+      "pct": 31
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3944,
+      "pct": 38
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 76.3,
+      "pct": 31
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0472,
+      "pct": 50
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0755,
+      "pct": 31
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.66,
+      "pct": 38
+     }
+    ]
+   }
+  },
   "potw": 0,
   "best_week": null
  },
@@ -15476,7 +16837,13 @@
    "avg": 0.5826086956521739,
    "obp": 0.5983606557377049,
    "slg": 1.2869565217391303,
-   "ops": 1.8853171774768351
+   "ops": 1.8853171774768351,
+   "woba": 0.7543,
+   "wrc_plus": 146.0,
+   "iso": 0.7043,
+   "bb_rate": 0.0492,
+   "xbh_rate": 0.3279,
+   "gs_avg": 2.11
   },
   "seasons": [
    {
@@ -15500,7 +16867,13 @@
     "slg": 0.8333333333,
     "ops": 1.5476190476,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.5972,
+    "wrc_plus": 118.2,
+    "iso": 0.1667,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.1429,
+    "gs_avg": 1.45
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -15523,7 +16896,13 @@
     "slg": 1.5409836066,
     "ops": 2.1441582097,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.8028,
+    "wrc_plus": 151.7,
+    "iso": 0.9508,
+    "bb_rate": 0.0317,
+    "xbh_rate": 0.3968,
+    "gs_avg": 2.59
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -15546,7 +16925,13 @@
     "slg": 1.1219512195,
     "ops": 1.7128603104,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.6854,
+    "wrc_plus": 134.5,
+    "iso": 0.5366,
+    "bb_rate": 0.0455,
+    "xbh_rate": 0.3182,
+    "gs_avg": 1.78
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -15569,7 +16954,13 @@
     "slg": 0.4285714286,
     "ops": 0.9285714286,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.3987,
+    "wrc_plus": 71.9,
+    "iso": 0.0,
+    "bb_rate": 0.125,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.75
    }
   ],
   "game_log": [
@@ -16255,45 +17646,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.42857142857142855,
-     "pct": 34
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.5,
-     "pct": 50
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.42857142857142855,
-     "pct": 16
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 0.9285714285714286,
-     "pct": 21
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.0,
-     "pct": 6
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 12.5,
-     "pct": 93
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.42857142857142855,
+      "pct": 34
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5,
+      "pct": 50
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.42857142857142855,
+      "pct": 16
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.9285714285714286,
+      "pct": 21
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3987,
+      "pct": 38
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 71.9,
+      "pct": 28
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.125,
+      "pct": 93
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0,
+      "pct": 6
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.75,
+      "pct": 40
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5826086956521739,
+      "pct": 84
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5983606557377049,
+      "pct": 84
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 1.2869565217391303,
+      "pct": 91
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.8853171774768351,
+      "pct": 91
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.7043,
+      "pct": 88
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.7543,
+      "pct": 88
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 146.0,
+      "pct": 94
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0492,
+      "pct": 62
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.3279,
+      "pct": 99
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 2.11,
+      "pct": 94
+     }
+    ]
+   }
   },
   "potw": 5,
   "best_week": 10.099999999999998
@@ -16326,7 +17808,13 @@
    "avg": 0.3939393939393939,
    "obp": 0.4230769230769231,
    "slg": 0.6363636363636364,
-   "ops": 1.0594405594405594
+   "ops": 1.0594405594405594,
+   "woba": 0.4224,
+   "wrc_plus": 81.7,
+   "iso": 0.2424,
+   "bb_rate": 0.0481,
+   "xbh_rate": 0.1346,
+   "gs_avg": 0.65
   },
   "seasons": [
    {
@@ -16350,7 +17838,13 @@
     "slg": 0.5882352941,
     "ops": 0.977124183,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.3899,
+    "wrc_plus": 77.2,
+    "iso": 0.2353,
+    "bb_rate": 0.0556,
+    "xbh_rate": 0.1111,
+    "gs_avg": 0.49
    },
    {
     "season": "Maple Tree Tappers Summer 2025",
@@ -16373,7 +17867,13 @@
     "slg": 0.8,
     "ops": 1.2615384615,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.5563,
+    "wrc_plus": 116.6,
+    "iso": 0.36,
+    "bb_rate": 0.0385,
+    "xbh_rate": 0.1923,
+    "gs_avg": 0.81
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -16396,7 +17896,13 @@
     "slg": 0.8,
     "ops": 1.1333333333,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.4661,
+    "wrc_plus": 85.0,
+    "iso": 0.4667,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.2667,
+    "gs_avg": 0.82
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -16419,7 +17925,13 @@
     "slg": 0.4571428571,
     "ops": 0.9045112782,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.3508,
+    "wrc_plus": 68.8,
+    "iso": 0.0571,
+    "bb_rate": 0.0789,
+    "xbh_rate": 0.0526,
+    "gs_avg": 0.52
    },
    {
     "season": "Maple Tree Summer 2026",
@@ -16442,7 +17954,13 @@
     "slg": 0.7142857143,
     "ops": 1.1428571429,
     "label": "Summer 2026",
-    "season_slug": "summer-2026"
+    "season_slug": "summer-2026",
+    "woba": 0.5756,
+    "wrc_plus": 103.9,
+    "iso": 0.2857,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1429,
+    "gs_avg": 0.85
    }
   ],
   "game_log": [
@@ -17148,45 +18666,136 @@
    }
   ],
   "percentiles": {
-   "season": "Summer 2026",
-   "metrics": [
-    {
-     "key": "avg",
-     "label": "AVG",
-     "value": 0.42857142857142855,
-     "pct": 34
-    },
-    {
-     "key": "obp",
-     "label": "OBP",
-     "value": 0.42857142857142855,
-     "pct": 21
-    },
-    {
-     "key": "slg",
-     "label": "SLG",
-     "value": 0.7142857142857143,
-     "pct": 51
-    },
-    {
-     "key": "ops",
-     "label": "OPS",
-     "value": 1.1428571428571428,
-     "pct": 47
-    },
-    {
-     "key": "iso",
-     "label": "ISO",
-     "value": 0.28571428571428575,
-     "pct": 64
-    },
-    {
-     "key": "bb_pct",
-     "label": "BB%",
-     "value": 0.0,
-     "pct": 11
-    }
-   ]
+   "season": {
+    "season": "Summer 2026",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.42857142857142855,
+      "pct": 34
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.42857142857142855,
+      "pct": 21
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.7142857142857143,
+      "pct": 51
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.1428571428571428,
+      "pct": 47
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.2857,
+      "pct": 64
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.5756,
+      "pct": 71
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 103.9,
+      "pct": 64
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0,
+      "pct": 11
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1429,
+      "pct": 59
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.85,
+      "pct": 47
+     }
+    ]
+   },
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.3939393939393939,
+      "pct": 9
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4230769230769231,
+      "pct": 9
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.6363636363636364,
+      "pct": 47
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.0594405594405594,
+      "pct": 41
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.2424,
+      "pct": 50
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4224,
+      "pct": 44
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 81.7,
+      "pct": 38
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0481,
+      "pct": 56
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1346,
+      "pct": 50
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.65,
+      "pct": 25
+     }
+    ]
+   }
   },
   "potw": 0,
   "best_week": null
@@ -17219,7 +18828,13 @@
    "avg": 0.5050505050505051,
    "obp": 0.5145631067961165,
    "slg": 0.7575757575757576,
-   "ops": 1.272138864371874
+   "ops": 1.272138864371874,
+   "woba": 0.499,
+   "wrc_plus": 96.6,
+   "iso": 0.2525,
+   "bb_rate": 0.0291,
+   "xbh_rate": 0.165,
+   "gs_avg": 1.05
   },
   "seasons": [
    {
@@ -17243,7 +18858,13 @@
     "slg": 0.734375,
     "ops": 1.296875,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.5167,
+    "wrc_plus": 102.3,
+    "iso": 0.1719,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.1406,
+    "gs_avg": 1.16
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -17266,7 +18887,13 @@
     "slg": 0.8,
     "ops": 1.2358974359,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.4484,
+    "wrc_plus": 84.7,
+    "iso": 0.4,
+    "bb_rate": 0.0769,
+    "xbh_rate": 0.2051,
+    "gs_avg": 0.9
    }
   ],
   "game_log": [
@@ -17891,7 +19518,74 @@
     "ha": ""
    }
   ],
-  "percentiles": null,
+  "percentiles": {
+   "season": null,
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.5050505050505051,
+      "pct": 59
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.5145631067961165,
+      "pct": 59
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.7575757575757576,
+      "pct": 59
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.272138864371874,
+      "pct": 59
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.2525,
+      "pct": 56
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.499,
+      "pct": 62
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 96.6,
+      "pct": 62
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0291,
+      "pct": 6
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.165,
+      "pct": 56
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 1.05,
+      "pct": 59
+     }
+    ]
+   }
+  },
   "potw": 0,
   "best_week": null
  },
@@ -17923,7 +19617,13 @@
    "avg": 0.4567901234567901,
    "obp": 0.47191011235955055,
    "slg": 0.6419753086419753,
-   "ops": 1.1138854210015259
+   "ops": 1.1138854210015259,
+   "woba": 0.4335,
+   "wrc_plus": 83.9,
+   "iso": 0.1852,
+   "bb_rate": 0.0562,
+   "xbh_rate": 0.1124,
+   "gs_avg": 0.83
   },
   "seasons": [
    {
@@ -17947,7 +19647,13 @@
     "slg": 0.46875,
     "ops": 0.8201013514,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.3107,
+    "wrc_plus": 61.5,
+    "iso": 0.1562,
+    "bb_rate": 0.0811,
+    "xbh_rate": 0.0541,
+    "gs_avg": 0.5
    },
    {
     "season": "Smoking Bunts Summer 2022",
@@ -17970,7 +19676,13 @@
     "slg": 0.7551020408,
     "ops": 1.3127943485,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.4843,
+    "wrc_plus": 91.5,
+    "iso": 0.2041,
+    "bb_rate": 0.0385,
+    "xbh_rate": 0.1538,
+    "gs_avg": 1.07
    }
   ],
   "game_log": [
@@ -18555,7 +20267,74 @@
     "ha": ""
    }
   ],
-  "percentiles": null,
+  "percentiles": {
+   "season": null,
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.4567901234567901,
+      "pct": 53
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.47191011235955055,
+      "pct": 53
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.6419753086419753,
+      "pct": 53
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 1.1138854210015259,
+      "pct": 53
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.1852,
+      "pct": 44
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.4335,
+      "pct": 50
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 83.9,
+      "pct": 56
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0562,
+      "pct": 75
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.1124,
+      "pct": 44
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.83,
+      "pct": 50
+     }
+    ]
+   }
+  },
   "potw": 0,
   "best_week": null
  },
@@ -18587,7 +20366,13 @@
    "avg": 0.43859649122807015,
    "obp": 0.4406779661016949,
    "slg": 0.5263157894736842,
-   "ops": 0.9669937555753791
+   "ops": 0.9669937555753791,
+   "woba": 0.3921,
+   "wrc_plus": 75.9,
+   "iso": 0.0877,
+   "bb_rate": 0.0169,
+   "xbh_rate": 0.0847,
+   "gs_avg": 0.6
   },
   "seasons": [
    {
@@ -18611,7 +20396,13 @@
     "slg": 0.4117647059,
     "ops": 0.7941176471,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.3494,
+    "wrc_plus": 73.2,
+    "iso": 0.0294,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0294,
+    "gs_avg": 0.31
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -18634,7 +20425,13 @@
     "slg": 1.2,
     "ops": 1.7714285714,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.6762,
+    "wrc_plus": 123.3,
+    "iso": 0.6,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.4286,
+    "gs_avg": 2.0
    },
    {
     "season": "Maple Tree Spring 2026",
@@ -18657,7 +20454,13 @@
     "slg": 0.5555555556,
     "ops": 1.0555555556,
     "label": "Spring 2026",
-    "season_slug": "spring-2026"
+    "season_slug": "spring-2026",
+    "woba": 0.4209,
+    "wrc_plus": 82.6,
+    "iso": 0.0556,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0556,
+    "gs_avg": 0.74
    }
   ],
   "game_log": [
@@ -19082,7 +20885,74 @@
     "ha": ""
    }
   ],
-  "percentiles": null,
+  "percentiles": {
+   "season": null,
+   "career": {
+    "season": "Career",
+    "metrics": [
+     {
+      "key": "avg",
+      "label": "AVG",
+      "value": 0.43859649122807015,
+      "pct": 41
+     },
+     {
+      "key": "obp",
+      "label": "OBP",
+      "value": 0.4406779661016949,
+      "pct": 22
+     },
+     {
+      "key": "slg",
+      "label": "SLG",
+      "value": 0.5263157894736842,
+      "pct": 22
+     },
+     {
+      "key": "ops",
+      "label": "OPS",
+      "value": 0.9669937555753791,
+      "pct": 22
+     },
+     {
+      "key": "iso",
+      "label": "ISO",
+      "value": 0.0877,
+      "pct": 12
+     },
+     {
+      "key": "woba",
+      "label": "wOBA",
+      "value": 0.3921,
+      "pct": 25
+     },
+     {
+      "key": "wrc_plus",
+      "label": "wRC+",
+      "value": 75.9,
+      "pct": 31
+     },
+     {
+      "key": "bb_rate",
+      "label": "BB%",
+      "value": 0.0169,
+      "pct": 1
+     },
+     {
+      "key": "xbh_rate",
+      "label": "XBH%",
+      "value": 0.0847,
+      "pct": 31
+     },
+     {
+      "key": "gs",
+      "label": "GS/G",
+      "value": 0.6,
+      "pct": 19
+     }
+    ]
+   }
+  },
   "potw": 0,
   "best_week": null
  },
@@ -19114,7 +20984,13 @@
    "avg": 0.40625,
    "obp": 0.40625,
    "slg": 0.5625,
-   "ops": 0.96875
+   "ops": 0.96875,
+   "woba": 0.3752,
+   "wrc_plus": 72.6,
+   "iso": 0.1562,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.0938,
+   "gs_avg": 0.59
   },
   "seasons": [
    {
@@ -19138,7 +21014,13 @@
     "slg": 0.5625,
     "ops": 0.96875,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.3826,
+    "wrc_plus": 75.7,
+    "iso": 0.1562,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0938,
+    "gs_avg": 0.59
    }
   ],
   "game_log": [
@@ -19395,7 +21277,13 @@
    "avg": 0.6153846153846154,
    "obp": 0.6428571428571429,
    "slg": 1.0769230769230769,
-   "ops": 1.7197802197802199
+   "ops": 1.7197802197802199,
+   "woba": 0.672,
+   "wrc_plus": 130.0,
+   "iso": 0.4615,
+   "bb_rate": 0.0714,
+   "xbh_rate": 0.2143,
+   "gs_avg": 1.56
   },
   "seasons": [
    {
@@ -19419,7 +21307,13 @@
     "slg": 0.9375,
     "ops": 1.6041666667,
     "label": "Tappers Summer 2025",
-    "season_slug": "tappers-summer-2025"
+    "season_slug": "tappers-summer-2025",
+    "woba": 0.6868,
+    "wrc_plus": 143.9,
+    "iso": 0.3125,
+    "bb_rate": 0.1111,
+    "xbh_rate": 0.1667,
+    "gs_avg": 1.33
    },
    {
     "season": "Maple Tree Fall 2025",
@@ -19442,7 +21336,13 @@
     "slg": 1.3,
     "ops": 1.9,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.7574,
+    "wrc_plus": 138.1,
+    "iso": 0.7,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.3,
+    "gs_avg": 2.0
    }
   ],
   "game_log": [
@@ -19659,7 +21559,13 @@
    "avg": 0.3333333333333333,
    "obp": 0.25,
    "slg": 0.6666666666666666,
-   "ops": 0.9166666666666666
+   "ops": 0.9166666666666666,
+   "woba": 0.3294,
+   "wrc_plus": 63.8,
+   "iso": 0.3333,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.25,
+   "gs_avg": 0.3
   },
   "seasons": [
    {
@@ -19683,7 +21589,13 @@
     "slg": 0.6666666667,
     "ops": 0.9166666667,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.3359,
+    "wrc_plus": 66.5,
+    "iso": 0.3333,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.25,
+    "gs_avg": 0.3
    }
   ],
   "game_log": [
@@ -19760,7 +21672,13 @@
    "avg": 0.0,
    "obp": 0.2,
    "slg": 0.0,
-   "ops": 0.2
+   "ops": 0.2,
+   "woba": 0.1171,
+   "wrc_plus": 22.7,
+   "iso": 0.0,
+   "bb_rate": 0.2,
+   "xbh_rate": 0.0,
+   "gs_avg": -0.3
   },
   "seasons": [
    {
@@ -19784,7 +21702,13 @@
     "slg": 0.0,
     "ops": 0.2,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.1194,
+    "wrc_plus": 23.6,
+    "iso": 0.0,
+    "bb_rate": 0.2,
+    "xbh_rate": 0.0,
+    "gs_avg": -0.3
    }
   ],
   "game_log": [
@@ -19861,7 +21785,13 @@
    "avg": 0.25,
    "obp": 0.25,
    "slg": 0.5,
-   "ops": 0.75
+   "ops": 0.75,
+   "woba": 0.3294,
+   "wrc_plus": 63.8,
+   "iso": 0.25,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.25,
+   "gs_avg": 0.08
   },
   "seasons": [
    {
@@ -19885,7 +21815,13 @@
     "slg": 0.5,
     "ops": 0.75,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.3277,
+    "wrc_plus": 59.8,
+    "iso": 0.25,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.25,
+    "gs_avg": 0.08
    }
   ],
   "game_log": [
@@ -19962,7 +21898,13 @@
    "avg": 0.42857142857142855,
    "obp": 0.375,
    "slg": 0.42857142857142855,
-   "ops": 0.8035714285714286
+   "ops": 0.8035714285714286,
+   "woba": 0.2745,
+   "wrc_plus": 53.1,
+   "iso": 0.0,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.0,
+   "gs_avg": 0.65
   },
   "seasons": [
    {
@@ -19986,7 +21928,13 @@
     "slg": 0.4285714286,
     "ops": 0.8035714286,
     "label": "Fall 2025",
-    "season_slug": "fall-2025"
+    "season_slug": "fall-2025",
+    "woba": 0.2731,
+    "wrc_plus": 49.8,
+    "iso": 0.0,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.0,
+    "gs_avg": 0.65
    }
   ],
   "game_log": [
@@ -20063,7 +22011,13 @@
    "avg": 0.6,
    "obp": 0.6,
    "slg": 1.0,
-   "ops": 1.6
+   "ops": 1.6,
+   "woba": 0.6735,
+   "wrc_plus": 130.3,
+   "iso": 0.4,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.4,
+   "gs_avg": 1.3
   },
   "seasons": [
    {
@@ -20087,7 +22041,13 @@
     "slg": 1.0,
     "ops": 1.6,
     "label": "Soviet Sluggers Summer 2021",
-    "season_slug": "soviet-sluggers-summer-2021"
+    "season_slug": "soviet-sluggers-summer-2021",
+    "woba": 0.6868,
+    "wrc_plus": 135.9,
+    "iso": 0.4,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.4,
+    "gs_avg": 1.3
    }
   ],
   "game_log": [
@@ -20164,7 +22124,13 @@
    "avg": 0.4,
    "obp": 0.4,
    "slg": 0.8,
-   "ops": 1.2000000000000002
+   "ops": 1.2000000000000002,
+   "woba": 0.571,
+   "wrc_plus": 110.5,
+   "iso": 0.4,
+   "bb_rate": 0.0,
+   "xbh_rate": 0.4,
+   "gs_avg": 0.93
   },
   "seasons": [
    {
@@ -20188,7 +22154,13 @@
     "slg": 0.8,
     "ops": 1.2,
     "label": "Smoking Bunts Summer 2022",
-    "season_slug": "smoking-bunts-summer-2022"
+    "season_slug": "smoking-bunts-summer-2022",
+    "woba": 0.5267,
+    "wrc_plus": 99.5,
+    "iso": 0.4,
+    "bb_rate": 0.0,
+    "xbh_rate": 0.4,
+    "gs_avg": 0.93
    }
   ],
   "game_log": [

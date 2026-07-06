@@ -487,8 +487,38 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* segmented toggle (Standard/Advanced, Season/Career) */
+.seg {
+  display: inline-flex;
+  background: var(--sand-strong);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+  margin: 4px 0 14px;
+}
+.seg-btn {
+  border: 0;
+  background: transparent;
+  padding: 5px 16px;
+  border-radius: 999px;
+  font: 700 11.5px var(--sans);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg-btn.active { background: var(--green-800); color: #fff; }
+.seg-btn:hover:not(.active) { color: var(--green-800); }
+.pct-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.pct-head .seg { margin: 0 0 6px; }
+
 /* season pills */
 .season-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 16px; }
+.pill-career { border-color: var(--maple); color: var(--maple); }
+.pill-career:hover { color: var(--maple); border-color: var(--maple); background: var(--maple-soft); }
+.pill-career.active { background: var(--maple); border-color: var(--maple); color: #fff; }
 .pill {
   padding: 5px 13px;
   border: 1px solid var(--line-2);
