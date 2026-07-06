@@ -482,8 +482,21 @@ def main() -> None:
                  "Doubles": "2b", "Triples": "3b", "HR": "hr", "RBI": "rbi", "Runs": "r",
                  "Walks": "bb", "Total Bases": "tb"}
     reached: list[dict] = []
+    # Authoritative career totals come from the season CSVs; per-game box scores can
+    # drift by a run or an RBI (e.g. Kives logs sum to 101 RBI vs 99 official). Only
+    # report a milestone the official career table confirms was actually reached.
+    CAREER_TOTAL_COLS = {"Games": "games", "PA": "pa", "AB": "ab", "Hits": "hits",
+                         "Singles": "1b", "Doubles": "2b", "Triples": "3b", "HR": "hr",
+                         "RBI": "rbi", "Runs": "r", "Walks": "bb", "Total Bases": "tb"}
+    career_totals = {
+        str(r["canonical_name"]): {
+            stat: float(r[col] or 0) for stat, col in CAREER_TOTAL_COLS.items()
+        }
+        for _, r in career.iterrows()
+    }
     ordered_games = games.sort_values(["game_date", "game_time"])
     for canon, grp in ordered_games.groupby("canonical_name"):
+        confirmed = career_totals.get(str(canon), {})
         cum: dict[str, float] = {}
         for _, g in grp.iterrows():
             for stat, col in STAT_COLS.items():
@@ -494,6 +507,8 @@ def main() -> None:
                 cum[stat] = prev + inc
                 for rung in extend_milestone_ladder(MILESTONE_LADDERS[stat], int(cum[stat])):
                     if prev < rung <= cum[stat]:
+                        if rung > confirmed.get(stat, 0.0):
+                            continue
                         reached.append({
                             "player": display_name.get(str(canon), str(canon).title()),
                             "slug": slugify(str(canon)), "stat": stat, "milestone": int(rung),
@@ -646,6 +661,124 @@ def main() -> None:
         "franchise": franchise,
         "seasons_count": len(seasons),
     })
+
+    # ---- cards.json (trading cards + generated card backs) ----
+    manifest_path = OUT_DIR.parents[2] / "data" / "processed" / "trading_cards.json"
+    if manifest_path.exists():
+        CARD_STAT_COLS = {"Hits": "hits", "HR": "hr", "Doubles": "2b", "Triples": "3b",
+                          "Runs": "r", "RBI": "rbi", "Total Bases": "tb", "PA": "pa",
+                          "Walks": "bb", "Singles": "1b"}
+        CARD_STAT_WORDS = {"Hits": "hit", "HR": "home run", "Doubles": "double",
+                           "Triples": "triple", "Runs": "run scored", "RBI": "RBI",
+                           "Total Bases": "total base", "PA": "plate appearance",
+                           "Walks": "walk", "Singles": "single"}
+        players_by_slug = {p["slug"]: p for p in players_out}
+        rank_cache: dict[str, list] = {}
+
+        def franchise_rank(col: str, slug: str) -> int | None:
+            if col not in rank_cache:
+                rank_cache[col] = sorted(
+                    players_out, key=lambda p: -(p["career"].get(col) or 0))
+            for i, p in enumerate(rank_cache[col], 1):
+                if p["slug"] == slug:
+                    return i
+            return None
+
+        def pretty_date(iso: str) -> str:
+            d = datetime.fromisoformat(iso)
+            return f"{d.strftime('%b')} {d.day}, {d.year}"
+
+        def _r3(v) -> str:
+            if v is None or pd.isna(v):
+                return "—"
+            s = f"{float(v):.3f}"
+            return s[1:] if s.startswith("0.") else s
+
+        def _slash(row: dict) -> str:
+            return (f"{_r3(row.get('avg'))}/{_r3(row.get('obp'))}/{_r3(row.get('slg'))}"
+                    f" · {_r3(row.get('ops'))} OPS")
+
+        def game_line(g: dict) -> str:
+            parts = [f"{int(g['hits'] or 0)}-for-{int(g['ab'] or 0)}"]
+            if g.get("2b"):
+                parts.append(f"{int(g['2b'])} 2B")
+            if g.get("3b"):
+                parts.append(f"{int(g['3b'])} 3B")
+            if g.get("hr"):
+                parts.append(f"{int(g['hr'])} HR")
+            if g.get("rbi"):
+                parts.append(f"{int(g['rbi'])} RBI")
+            if g.get("r"):
+                parts.append(f"{int(g['r'])} R")
+            return ", ".join(parts)
+
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        n_cards = len(manifest["cards"])
+        cards_out = []
+        for i, card in enumerate(manifest["cards"], 1):
+            p = players_by_slug.get(card["slug"])
+            if p is None:
+                print(f"  ! card {card['asset']}: unknown slug {card['slug']}")
+                continue
+            c0 = p["career"]
+            facts: list[list[str]] = []
+            game_text = None
+            if card["kind"] == "milestone":
+                col = CARD_STAT_COLS[card["stat"]]
+                word = CARD_STAT_WORDS[card["stat"]]
+                target = int(card["value"])
+                cum = 0
+                hit_game = None
+                for g in reversed(p["game_log"]):  # oldest -> newest
+                    cum += int(g.get(col) or 0)
+                    if cum >= target:
+                        hit_game = g
+                        break
+                if hit_game is not None:
+                    where = "at" if hit_game.get("ha") == "away" else "vs"
+                    result = hit_game.get("result") or "final n/a"
+                    noun = word if target == 1 or word == "RBI" else word + "s"
+                    game_text = (
+                        f"Career {word} No. {target} came on {pretty_date(hit_game['game_date'])} "
+                        f"{where} {hit_game['opponent']} ({result}, {hit_game['label']}). "
+                        f"{p['name']} went {game_line(hit_game)} that night."
+                    )
+                    facts.append(["Milestone game", f"{pretty_date(hit_game['game_date'])} {where} {hit_game['opponent']}"])
+                    facts.append(["That night", f"{game_line(hit_game)} · GS {hit_game.get('game_score', '—')}"])
+                    facts.append(["Milestone", f"{target} career {noun}"])
+                current_total = c0.get(col)
+                rank = franchise_rank(col, card["slug"])
+                if current_total is not None:
+                    facts.append(["Career total now", f"{int(current_total)} ({'#' + str(rank) + ' all-time' if rank else 'franchise'})"])
+            else:
+                facts.append(["Career", f"{_slash(c0)} · {int(c0.get('games') or 0)} G"])
+                facts.append(["Power", f"{int(c0.get('hr') or 0)} HR · {int(c0.get('rbi') or 0)} RBI · {int(c0.get('tb') or 0)} TB"])
+                cur_season = next((s for s in reversed(p["seasons"]) if s["season"] == current), None)
+                if cur_season:
+                    facts.append([season_label(current), f"{_slash(cur_season)} in {int(cur_season.get('games') or 0)} G"])
+                if p.get("potw"):
+                    facts.append(["Player of the Week", f"{int(p['potw'])}× all-time"])
+                adv = career_adv.get(p["canonical"])
+                if adv is not None:
+                    facts.append(["Archetype", str(adv["archetype"])])
+            cards_out.append({
+                "asset": card["asset"],
+                "img": f"/cards/{card['asset']}.webp",
+                "player": p["name"],
+                "slug": card["slug"],
+                "kind": card["kind"],
+                "rating": card.get("rating"),
+                "stat": card.get("stat"),
+                "value": card.get("value"),
+                "caption": card.get("caption", ""),
+                "flavor": card.get("flavor", ""),
+                "game_text": game_text,
+                "facts": facts,
+                "number": i,
+                "total": n_cards,
+                "series": "Milestone Series" if card["kind"] == "milestone" else "Live Series",
+            })
+        dump("cards.json", cards_out)
 
     # ---- potw.json ----
     weekly_all = fetch_team_weekly_results(connection)

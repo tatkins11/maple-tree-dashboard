@@ -1,0 +1,686 @@
+[
+ {
+  "asset": "glove-125-hits",
+  "img": "/cards/glove-125-hits.webp",
+  "player": "Glove",
+  "slug": "glove",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Hits",
+  "value": 125,
+  "caption": "First player in Tappers history to reach 125 hits",
+  "flavor": "First to 125 hits in team history. When the bat is on fire, ice storms are optional.",
+  "game_text": "Career hit No. 125 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Glove went 4-for-5, 3 2B, 5 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "4-for-5, 3 2B, 5 RBI, 3 R \u00b7 GS 4.55"
+   ],
+   [
+    "Milestone",
+    "125 career hits"
+   ],
+   [
+    "Career total now",
+    "149 (#1 all-time)"
+   ]
+  ],
+  "number": 1,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "glove-25-doubles",
+  "img": "/cards/glove-25-doubles.webp",
+  "player": "Glove",
+  "slug": "glove",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Doubles",
+  "value": 25,
+  "caption": "First player in Tappers history to reach 25 doubles",
+  "flavor": "First man in team history to 25 doubles \u2014 forged, not found. Somewhere in Cary there is an anvil with his name on it.",
+  "game_text": "Career double No. 25 came on Jul 1, 2026 at Como (W 18-9, Summer 2026). Glove went 4-for-5, 1 2B, 1 3B, 2 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jul 1, 2026 at Como"
+   ],
+   [
+    "That night",
+    "4-for-5, 1 2B, 1 3B, 2 RBI, 3 R \u00b7 GS 3.75"
+   ],
+   [
+    "Milestone",
+    "25 career doubles"
+   ],
+   [
+    "Career total now",
+    "25 (#1 all-time)"
+   ]
+  ],
+  "number": 2,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "glove-20-doubles",
+  "img": "/cards/glove-20-doubles.webp",
+  "player": "Glove",
+  "slug": "glove",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Doubles",
+  "value": 20,
+  "caption": "3rd player in Tappers history to reach 20 doubles",
+  "flavor": "Twenty two-baggers, most of them arriving in a cloud of dirt. The Glove treats second base like it owes him money.",
+  "game_text": "Career double No. 20 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Glove went 4-for-5, 3 2B, 5 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "4-for-5, 3 2B, 5 RBI, 3 R \u00b7 GS 4.55"
+   ],
+   [
+    "Milestone",
+    "20 career doubles"
+   ],
+   [
+    "Career total now",
+    "25 (#1 all-time)"
+   ]
+  ],
+  "number": 3,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "glove-15-hr",
+  "img": "/cards/glove-15-hr.webp",
+  "player": "Glove",
+  "slug": "glove",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "HR",
+  "value": 15,
+  "caption": "Second player on team with 15 home runs",
+  "flavor": "Fifteen bombs in a Tappers uniform. The center fielder never swings for the fences \u2014 the fences just keep getting in the way.",
+  "game_text": "Career home run No. 15 came on Apr 22, 2026 vs Soft Ballz (L 7-17, Spring 2026). Glove went 2-for-3, 1 HR, 4 RBI, 2 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 22, 2026 vs Soft Ballz"
+   ],
+   [
+    "That night",
+    "2-for-3, 1 HR, 4 RBI, 2 R \u00b7 GS 2.85"
+   ],
+   [
+    "Milestone",
+    "15 career home runs"
+   ],
+   [
+    "Career total now",
+    "17 (#2 all-time)"
+   ]
+  ],
+  "number": 4,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "porter-150-tb",
+  "img": "/cards/porter-150-tb.webp",
+  "player": "Porter",
+  "slug": "porter",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Total Bases",
+  "value": 150,
+  "caption": "4th player in Tappers history to reach 150 total bases",
+  "flavor": "150 total bases, no wasted motion. PO out here under the streetlights making it look like a photoshoot \u2014 because it was.",
+  "game_text": "Career total base No. 150 came on Apr 29, 2026 vs Bullseyes (L 5-15, Spring 2026). Porter went 1-for-2 that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 vs Bullseyes"
+   ],
+   [
+    "That night",
+    "1-for-2 \u00b7 GS 0.25"
+   ],
+   [
+    "Milestone",
+    "150 career total bases"
+   ],
+   [
+    "Career total now",
+    "163 (#5 all-time)"
+   ]
+  ],
+  "number": 5,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "porter-100-hits",
+  "img": "/cards/porter-100-hits.webp",
+  "player": "Porter",
+  "slug": "porter",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Hits",
+  "value": 100,
+  "caption": "5th player in Tappers history to reach 100 hits",
+  "flavor": "One hundred hits, delivered on schedule. PO moves product and baserunners \u2014 warehouse hours, warehouse rules.",
+  "game_text": "Career hit No. 100 came on Jul 1, 2026 at Como (W 18-9, Summer 2026). Porter went 2-for-4, 1 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jul 1, 2026 at Como"
+   ],
+   [
+    "That night",
+    "2-for-4, 1 R \u00b7 GS 0.7"
+   ],
+   [
+    "Milestone",
+    "100 career hits"
+   ],
+   [
+    "Career total now",
+    "100 (#5 all-time)"
+   ]
+  ],
+  "number": 6,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "kives-150-tb",
+  "img": "/cards/kives-150-tb.webp",
+  "player": "Kives",
+  "slug": "kives",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Total Bases",
+  "value": 150,
+  "caption": "5th player in Tappers history to reach 150 total bases",
+  "flavor": "A hundred and fifty bases, most of them taken the hard way. Rodger doesn't stop at first and he doesn't apologize at second.",
+  "game_text": "Career total base No. 150 came on Apr 29, 2026 vs Bullseyes (L 5-15, Spring 2026). Kives went 1-for-3, 1 RBI that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 vs Bullseyes"
+   ],
+   [
+    "That night",
+    "1-for-3, 1 RBI \u00b7 GS 0.2"
+   ],
+   [
+    "Milestone",
+    "150 career total bases"
+   ],
+   [
+    "Career total now",
+    "199 (#4 all-time)"
+   ]
+  ],
+  "number": 7,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "tim-50-runs",
+  "img": "/cards/tim-50-runs.webp",
+  "player": "Tim",
+  "slug": "tim",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Runs",
+  "value": 50,
+  "caption": "8th player in Tappers history to reach 50 runs",
+  "flavor": "Fifty times around the bases, achieved with monk-like patience. Tim doesn't chase runs \u2014 he lets them come to him.",
+  "game_text": "Career run scored No. 50 came on Jun 3, 2026 at No Dice (L 5-17, Spring 2026). Tim went 3-for-3, 2 2B, 2 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jun 3, 2026 at No Dice"
+   ],
+   [
+    "That night",
+    "3-for-3, 2 2B, 2 R \u00b7 GS 2.7"
+   ],
+   [
+    "Milestone",
+    "50 career run scoreds"
+   ],
+   [
+    "Career total now",
+    "53 (#8 all-time)"
+   ]
+  ],
+  "number": 8,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "tim-50-rbi",
+  "img": "/cards/tim-50-rbi.webp",
+  "player": "Tim",
+  "slug": "tim",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "RBI",
+  "value": 50,
+  "caption": "6th player in Tappers history to reach 50 RBIs",
+  "flavor": "Fifty runs batted in \u2014 and yes, he called it. 99-cent beers on Wednesdays, priceless RBIs year-round.",
+  "game_text": "Career RBI No. 50 came on May 27, 2026 at cacheouts (L 10-20, Spring 2026). Tim went 1-for-3, 1 2B, 2 RBI, 1 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "May 27, 2026 at cacheouts"
+   ],
+   [
+    "That night",
+    "1-for-3, 1 2B, 2 RBI, 1 R \u00b7 GS 1.0"
+   ],
+   [
+    "Milestone",
+    "50 career RBI"
+   ],
+   [
+    "Career total now",
+    "56 (#6 all-time)"
+   ]
+  ],
+  "number": 9,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "corey-75-hits",
+  "img": "/cards/corey-75-hits.webp",
+  "player": "Corey",
+  "slug": "corey",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Hits",
+  "value": 75,
+  "caption": "7th player in Tappers history to reach 75 hits",
+  "flavor": "Seventy-five knocks for the franchise's steadiest bat. We can neither confirm nor deny the involvement of higher lifeforms.",
+  "game_text": "Career hit No. 75 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Corey went 2-for-4, 1 RBI, 2 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "2-for-4, 1 RBI, 2 R \u00b7 GS 1.1"
+   ],
+   [
+    "Milestone",
+    "75 career hits"
+   ],
+   [
+    "Career total now",
+    "90 (#7 all-time)"
+   ]
+  ],
+  "number": 10,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "corey-50-runs",
+  "img": "/cards/corey-50-runs.webp",
+  "player": "Corey",
+  "slug": "corey",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Runs",
+  "value": 50,
+  "caption": "6th player in Tappers history to reach 50 runs",
+  "flavor": "Fifty trips home and a mud-soaked grin to show for it. Maki scores the way he slides \u2014 fully committed.",
+  "game_text": "Career run scored No. 50 came on Apr 22, 2026 at Soft Ballz (L 17-18, Spring 2026). Corey went 3-for-3, 2 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 22, 2026 at Soft Ballz"
+   ],
+   [
+    "That night",
+    "3-for-3, 2 R \u00b7 GS 2.3"
+   ],
+   [
+    "Milestone",
+    "50 career run scoreds"
+   ],
+   [
+    "Career total now",
+    "58 (#6 all-time)"
+   ]
+  ],
+  "number": 11,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "jason-150-pa",
+  "img": "/cards/jason-150-pa.webp",
+  "player": "Jason",
+  "slug": "jason",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "PA",
+  "value": 150,
+  "caption": "8th player in Tappers history to reach 150 plate appearances",
+  "flavor": "150 plate appearances unlocked. Level up. The catcher-turned-completionist grinds every count like a side quest.",
+  "game_text": "Career plate appearance No. 150 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Jason went 3-for-4, 1 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "3-for-4, 1 RBI, 3 R \u00b7 GS 2.05"
+   ],
+   [
+    "Milestone",
+    "150 career plate appearances"
+   ],
+   [
+    "Career total now",
+    "183 (#8 all-time)"
+   ]
+  ],
+  "number": 12,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "jason-50-runs",
+  "img": "/cards/jason-50-runs.webp",
+  "player": "Jason",
+  "slug": "jason",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Runs",
+  "value": 50,
+  "caption": "9th player in Tappers history to reach 50 runs",
+  "flavor": "Fifty runs scored \u2014 Walters crosses home like it's the Kentucky Derby, and the scoreboard agrees.",
+  "game_text": "Career run scored No. 50 came on Jul 1, 2026 at Como (W 18-9, Summer 2026). Jason went 1-for-4, 2 RBI, 1 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jul 1, 2026 at Como"
+   ],
+   [
+    "That night",
+    "1-for-4, 2 RBI, 1 R \u00b7 GS 0.35"
+   ],
+   [
+    "Milestone",
+    "50 career run scoreds"
+   ],
+   [
+    "Career total now",
+    "50 (#9 all-time)"
+   ]
+  ],
+  "number": 13,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "snaxx-100-pa",
+  "img": "/cards/snaxx-100-pa.webp",
+  "player": "Joey",
+  "slug": "snaxx",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "PA",
+  "value": 100,
+  "caption": "14th player in Tappers history to reach 100 plate appearances",
+  "flavor": "One hundred plate appearances for the people's champ. Hot dog in one hand, cold one in the other, OBP somewhere in the cooler.",
+  "game_text": "Career plate appearance No. 100 came on Jun 3, 2026 at No Dice (L 5-17, Spring 2026). Joey went 0-for-1 that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jun 3, 2026 at No Dice"
+   ],
+   [
+    "That night",
+    "0-for-1 \u00b7 GS -0.25"
+   ],
+   [
+    "Milestone",
+    "100 career plate appearances"
+   ],
+   [
+    "Career total now",
+    "102 (#14 all-time)"
+   ]
+  ],
+  "number": 14,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "walsh-25-hits",
+  "img": "/cards/walsh-25-hits.webp",
+  "player": "Walsh",
+  "slug": "walsh",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "Hits",
+  "value": 25,
+  "caption": "15th player in Tappers history to reach 25 hits",
+  "flavor": "Twenty-five career hits and a carnival to celebrate every one. Walsh smiles because he knows the next one's coming.",
+  "game_text": "Career hit No. 25 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Walsh went 2-for-3, 1 RBI, 1 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "2-for-3, 1 RBI, 1 R \u00b7 GS 1.55"
+   ],
+   [
+    "Milestone",
+    "25 career hits"
+   ],
+   [
+    "Career total now",
+    "39 (#14 all-time)"
+   ]
+  ],
+  "number": 15,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "joel-first-hr",
+  "img": "/cards/joel-first-hr.webp",
+  "player": "Joel",
+  "slug": "joel",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "HR",
+  "value": 1,
+  "caption": "Hit first 2 career home runs in Game 2 win versus the Bullseyes",
+  "flavor": "The Rauppy Dinger finally landed \u2014 then another one, same night. Two career firsts in a one-run win, and the fireworks budget has never recovered.",
+  "game_text": "Career home run No. 1 came on Apr 29, 2026 at Bullseyes (W 25-24, Spring 2026). Joel went 3-for-3, 2 HR, 7 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Apr 29, 2026 at Bullseyes"
+   ],
+   [
+    "That night",
+    "3-for-3, 2 HR, 7 RBI, 3 R \u00b7 GS 5.7"
+   ],
+   [
+    "Milestone",
+    "1 career home run"
+   ],
+   [
+    "Career total now",
+    "3 (#7 all-time)"
+   ]
+  ],
+  "number": 16,
+  "total": 20,
+  "series": "Milestone Series"
+ },
+ {
+  "asset": "glove-live",
+  "img": "/cards/glove-live.webp",
+  "player": "Glove",
+  "slug": "glove",
+  "kind": "base",
+  "rating": 89,
+  "stat": null,
+  "value": null,
+  "caption": "Topps Live Series",
+  "flavor": "Brings a whole bag of bats because pitchers keep breaking his heart, never his swing.",
+  "game_text": null,
+  "facts": [
+   [
+    "Career",
+    ".631/.637/1.081 \u00b7 1.718 OPS \u00b7 68 G"
+   ],
+   [
+    "Power",
+    "17 HR \u00b7 113 RBI \u00b7 255 TB"
+   ],
+   [
+    "Summer 2026",
+    ".750/.778/1.125 \u00b7 1.903 OPS in 2 G"
+   ],
+   [
+    "Player of the Week",
+    "7\u00d7 all-time"
+   ],
+   [
+    "Archetype",
+    "Cornerstone"
+   ]
+  ],
+  "number": 17,
+  "total": 20,
+  "series": "Live Series"
+ },
+ {
+  "asset": "jj-live",
+  "img": "/cards/jj-live.webp",
+  "player": "JJ",
+  "slug": "jj",
+  "kind": "base",
+  "rating": 84,
+  "stat": null,
+  "value": null,
+  "caption": "Topps Live Series",
+  "flavor": "Full extension, every play. JJ's glove has frequent-flyer miles.",
+  "game_text": null,
+  "facts": [
+   [
+    "Career",
+    ".558/.594/.896 \u00b7 1.490 OPS \u00b7 76 G"
+   ],
+   [
+    "Power",
+    "13 HR \u00b7 71 RBI \u00b7 207 TB"
+   ],
+   [
+    "Summer 2026",
+    ".800/.714/1.200 \u00b7 1.914 OPS in 2 G"
+   ],
+   [
+    "Player of the Week",
+    "3\u00d7 all-time"
+   ],
+   [
+    "Archetype",
+    "Complete Hitter"
+   ]
+  ],
+  "number": 18,
+  "total": 20,
+  "series": "Live Series"
+ },
+ {
+  "asset": "snaxx-live",
+  "img": "/cards/snaxx-live.webp",
+  "player": "Joey",
+  "slug": "snaxx",
+  "kind": "base",
+  "rating": 72,
+  "stat": null,
+  "value": null,
+  "caption": "Topps Live Series",
+  "flavor": "The vibes-per-plate-appearance leader since the day he showed up.",
+  "game_text": null,
+  "facts": [
+   [
+    "Career",
+    ".423/.441/.443 \u00b7 .884 OPS \u00b7 35 G"
+   ],
+   [
+    "Power",
+    "0 HR \u00b7 16 RBI \u00b7 43 TB"
+   ],
+   [
+    "Archetype",
+    "Depth Bat"
+   ]
+  ],
+  "number": 19,
+  "total": 20,
+  "series": "Live Series"
+ },
+ {
+  "asset": "jason-live",
+  "img": "/cards/jason-live.webp",
+  "player": "Jason",
+  "slug": "jason",
+  "kind": "base",
+  "rating": 68,
+  "stat": null,
+  "value": null,
+  "caption": "Topps Live Series",
+  "flavor": "Jason's Catching Station: throw it here. Response time may vary during ranked matches.",
+  "game_text": null,
+  "facts": [
+   [
+    "Career",
+    ".310/.399/.323 \u00b7 .722 OPS \u00b7 65 G"
+   ],
+   [
+    "Power",
+    "0 HR \u00b7 26 RBI \u00b7 51 TB"
+   ],
+   [
+    "Summer 2026",
+    ".500/.571/.500 \u00b7 1.071 OPS in 2 G"
+   ],
+   [
+    "Archetype",
+    "Depth Bat"
+   ]
+  ],
+  "number": 20,
+  "total": 20,
+  "series": "Live Series"
+ }
+]

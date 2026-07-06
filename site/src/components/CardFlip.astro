@@ -1,0 +1,16 @@
+<script>
+  // Click / Enter / Space flips a trading card over.
+  for (const el of document.querySelectorAll<HTMLElement>('.tcard')) {
+    const flip = () => {
+      el.classList.toggle('flipped');
+      el.setAttribute('aria-pressed', el.classList.contains('flipped') ? 'true' : 'false');
+    };
+    el.addEventListener('click', flip);
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        flip();
+      }
+    });
+  }
+</script>

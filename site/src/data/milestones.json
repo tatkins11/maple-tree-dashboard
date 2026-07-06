@@ -1809,15 +1809,6 @@
    "label": "Summer 2026"
   },
   {
-   "player": "Kives",
-   "slug": "kives",
-   "stat": "RBI",
-   "milestone": 100,
-   "date": "2026-07-01",
-   "opponent": "Como",
-   "label": "Summer 2026"
-  },
-  {
    "player": "Porter",
    "slug": "porter",
    "stat": "PA",
@@ -1849,6 +1840,15 @@
    "slug": "tristan",
    "stat": "PA",
    "milestone": 250,
+   "date": "2026-07-01",
+   "opponent": "Como",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Tristan",
+   "slug": "tristan",
+   "stat": "RBI",
+   "milestone": 150,
    "date": "2026-07-01",
    "opponent": "Como",
    "label": "Summer 2026"

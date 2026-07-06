@@ -3,7 +3,10 @@ import Base from '../../layouts/Base.astro';
 import TableSort from '../../components/TableSort.astro';
 import PercentileBar from '../../components/PercentileBar.astro';
 import Seg from '../../components/Seg.astro';
+import TradingCard from '../../components/TradingCard.astro';
+import CardFlip from '../../components/CardFlip.astro';
 import players from '../../data/players.json';
+import cards from '../../data/cards.json';
 import { rate, int, gs, dateShort, pct1, wrc, shortSeason } from '../../lib/fmt';
 
 export function getStaticPaths() {
@@ -12,6 +15,7 @@ export function getStaticPaths() {
 
 const { p } = Astro.props;
 const c = p.career;
+const playerCards = cards.filter((tc: any) => tc.slug === p.slug);
 const counting: [string, string][] = [
   ['games', 'G'], ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['1b', '1B'], ['2b', '2B'],
   ['3b', '3B'], ['hr', 'HR'], ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
@@ -297,6 +301,22 @@ const msReached: any[] = p.milestones?.reached ?? [];
     )
   }
 
+  {
+    playerCards.length > 0 && (
+      <>
+        <h2 class="section-title">
+          Trading cards
+          <span class="st-note">{playerCards.length} in the collection · tap a card to flip it</span>
+        </h2>
+        <div class="card-grid">
+          {playerCards.map((tc: any) => (
+            <TradingCard card={tc} />
+          ))}
+        </div>
+      </>
+    )
+  }
+
   <h2 class="section-title">
     Game log
     <span class="st-note">{p.game_log.length} games · newest first · click a column to sort</span>
@@ -340,4 +360,5 @@ const msReached: any[] = p.milestones?.reached ?? [];
   <p class="table-note">GS = Game Score — single-game offensive impact on the club's 0–10ish scale.</p>
   <TableSort />
   <Seg />
+  <CardFlip />
 </Base>

@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import TradingCard from '../components/TradingCard.astro';
+import CardFlip from '../components/CardFlip.astro';
+import cards from '../data/cards.json';
+
+const milestone = cards.filter((c: any) => c.kind === 'milestone');
+const base = cards.filter((c: any) => c.kind === 'base');
+---
+
+<Base
+  title="Trading Cards — Maple Tree Softball"
+  description="The official Maple Tree trading card collection — milestone cards and the Live Series base set. Tap a card to flip it over."
+>
+  <h1 class="page-title">Trading Cards</h1>
+  <p class="page-sub">
+    The official club collection — {cards.length} cards minted so far, with more dropping all
+    season. <strong>Tap any card to flip it over.</strong>
+  </p>
+
+  <h2 class="section-title">
+    Milestone Series
+    <span class="st-note">{milestone.length} cards — one for every milestone worth framing</span>
+  </h2>
+  <div class="card-grid">
+    {milestone.map((c: any) => <TradingCard card={c} />)}
+  </div>
+
+  <h2 class="section-title">
+    Live Series
+    <span class="st-note">{base.length} cards — the base set</span>
+  </h2>
+  <div class="card-grid">
+    {base.map((c: any) => <TradingCard card={c} />)}
+  </div>
+  <CardFlip />
+</Base>

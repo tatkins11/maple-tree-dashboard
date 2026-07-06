@@ -1,0 +1,45 @@
+---
+interface Props {
+  card: any;
+}
+
+const { card } = Astro.props;
+const alt =
+  card.kind === 'milestone'
+    ? `${card.player} milestone card — ${card.value} ${card.stat}`
+    : `${card.player} ${card.series} card`;
+---
+
+<div class="tcard" role="button" tabindex="0" aria-label={`${alt}. Tap to flip.`}>
+  <div class="tcard-inner">
+    <div class="tcard-front">
+      <img src={card.img} alt={alt} loading="lazy" decoding="async" />
+    </div>
+    <div class="tcard-back">
+      <div class="tb-head">
+        <span class="tb-leaf" aria-hidden="true">🍁</span>
+        <span class="tb-brand">MAPLE TREE<br /><em>{card.series}</em></span>
+        <span class="tb-num">No. {card.number}<span>/{card.total}</span></span>
+      </div>
+      <div class="tb-title">
+        {card.player}
+        <span class="tb-sub">
+          {card.kind === 'milestone' ? `${card.value} ${card.stat} · Milestone` : `${card.rating} OVR · Base Card`}
+        </span>
+      </div>
+      <p class="tb-flavor">{card.flavor}</p>
+      {card.game_text && <p class="tb-game">{card.game_text}</p>}
+      <dl class="tb-facts">
+        {card.facts.map((f: string[]) => (
+          <>
+            <dt>{f[0]}</dt>
+            <dd>{f[1]}</dd>
+          </>
+        ))}
+      </dl>
+      <div class="tb-foot">
+        {card.kind === 'milestone' && card.caption ? `${card.caption} · ` : ''}The Maple Tree Tap · Cary, Illinois
+      </div>
+    </div>
+  </div>
+</div>

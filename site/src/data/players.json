@@ -16322,15 +16322,6 @@
     {
      "player": "Kives",
      "slug": "kives",
-     "stat": "RBI",
-     "milestone": 100,
-     "date": "2026-07-01",
-     "opponent": "Como",
-     "label": "Summer 2026"
-    },
-    {
-     "player": "Kives",
-     "slug": "kives",
      "stat": "PA",
      "milestone": 200,
      "date": "2026-06-03",
