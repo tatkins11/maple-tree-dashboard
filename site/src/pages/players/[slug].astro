@@ -1,0 +1,148 @@
+---
+import Base from '../../layouts/Base.astro';
+import TableSort from '../../components/TableSort.astro';
+import PercentileBar from '../../components/PercentileBar.astro';
+import players from '../../data/players.json';
+import { rate, int, gs, dateShort } from '../../lib/fmt';
+
+export function getStaticPaths() {
+  return players.map((p: any) => ({ params: { slug: p.slug }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const c = p.career;
+const counting: [string, string][] = [
+  ['games', 'G'], ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['1b', '1B'], ['2b', '2B'],
+  ['3b', '3B'], ['hr', 'HR'], ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
+];
+const rates = ['avg', 'obp', 'slg', 'ops'];
+const logCols: [string, string][] = [
+  ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['2b', '2B'], ['3b', '3B'], ['hr', 'HR'],
+  ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
+];
+const pctDisplay = (m: any) => (m.key === 'bb_pct' ? `${m.value.toFixed(1)}%` : rate(m.value));
+---
+
+<Base title={`${p.name} — Maple Tree Softball`} description={`${p.name} career stats, game logs, and franchise history with Maple Tree slow-pitch softball.`}>
+  <nav class="crumbs"><a href="/players/">Players</a><span>/</span>{p.name}</nav>
+
+  <header class="player-head">
+    <div>
+      <h1 class="player-name">
+        {p.name}{p.active && <span class="badge-active">Active</span>}
+      </h1>
+      <div class="player-slash">
+        <span class="slash">{rate(c.avg)}/{rate(c.obp)}/{rate(c.slg)}</span>
+        <span class="slash-ops">{rate(c.ops)} OPS</span>
+        <span class="slash-note">Career</span>
+      </div>
+      <div class="chip-row">
+        <span class="chip">{int(c.seasons_played)} seasons</span>
+        <span class="chip">{int(c.games)} games</span>
+        {p.potw > 0 && <span class="chip">🏅 {p.potw}× Player of the Week</span>}
+      </div>
+    </div>
+    <div class="player-quick">
+      <div class="qbox"><b>{int(c.hits)}</b><span>Hits</span></div>
+      <div class="qbox"><b>{int(c.hr)}</b><span>HR</span></div>
+      <div class="qbox"><b>{int(c.rbi)}</b><span>RBI</span></div>
+      <div class="qbox"><b>{int(c.r)}</b><span>Runs</span></div>
+      <div class="qbox"><b>{int(c.tb)}</b><span>TB</span></div>
+      <div class="qbox"><b>{int(c.bb)}</b><span>BB</span></div>
+    </div>
+  </header>
+
+  {
+    p.percentiles && (
+      <section class="card pct-card">
+        <div class="card-kicker">{p.percentiles.season} percentile rankings</div>
+        <p class="pct-note">vs. every qualified player-season in franchise history (20+ PA)</p>
+        <div class="pct-grid">
+          {p.percentiles.metrics.map((m: any) => (
+            <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <h2 class="section-title">Season by season</h2>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Season</th>
+          {counting.map(([, label]) => <th class="num">{label}</th>)}
+          {rates.map((k) => <th class="num">{k.toUpperCase()}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          p.seasons.map((s: any) => (
+            <tr>
+              <td>
+                <a href={`/stats/${s.season_slug}/`}>{s.label}</a>
+              </td>
+              {counting.map(([k]) => (
+                <td class="num">{int(s[k])}</td>
+              ))}
+              {rates.map((k) => (
+                <td class="num">{rate(s[k])}</td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Career</td>
+          {counting.map(([k]) => <td class="num">{int(c[k])}</td>)}
+          {rates.map((k) => <td class="num">{rate(c[k])}</td>)}
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <h2 class="section-title">
+    Game log
+    <span class="st-note">{p.game_log.length} games · newest first · click a column to sort</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Season</th>
+          <th>Opponent</th>
+          <th data-nosort>Result</th>
+          {logCols.map(([, label]) => <th class="num">{label}</th>)}
+          <th class="num">GS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          p.game_log.map((g: any) => (
+            <tr>
+              <td data-v={g.game_date}>{dateShort(g.game_date)}</td>
+              <td class="dim">{g.label}</td>
+              <td>{g.ha === 'away' ? 'at' : 'vs'} {g.opponent}</td>
+              <td>
+                <span class={g.result?.startsWith('W') ? 'res-w' : g.result ? 'res-l' : 'res-muted'}>
+                  {g.result ?? '—'}
+                </span>
+              </td>
+              {logCols.map(([k]) => (
+                <td class="num">{int(g[k])}</td>
+              ))}
+              <td class:list={['num', { 'gs-hot': (g.game_score ?? 0) >= 5 }]} data-v={String(g.game_score ?? '')}>
+                {gs(g.game_score)}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">GS = Game Score — single-game offensive impact on the club's 0–10ish scale.</p>
+  <TableSort />
+</Base>

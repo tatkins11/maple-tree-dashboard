@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import TableSort from '../../components/TableSort.astro';
+import players from '../../data/players.json';
+import { rate, int } from '../../lib/fmt';
+
+const counting: [string, string][] = [
+  ['games', 'G'], ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['2b', '2B'], ['3b', '3B'],
+  ['hr', 'HR'], ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'],
+];
+const rates = ['avg', 'obp', 'slg', 'ops'];
+---
+
+<Base title="Players — Maple Tree Softball">
+  <h1 class="page-title">Players</h1>
+  <p class="page-sub">
+    Career batting for every hitter in franchise history · {players.length} players ·
+    <span class="active-dot" style="margin:0 4px 0 2px"></span> = active roster
+  </p>
+
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th class="num">Yrs</th>
+          {counting.map(([, label]) => <th class="num">{label}</th>)}
+          {rates.map((k) => <th class="num">{k.toUpperCase()}</th>)}
+          <th class="num">POTW</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          players.map((p: any) => (
+            <tr>
+              <td>
+                <a href={`/players/${p.slug}/`}>{p.name}</a>
+                {p.active && <span class="active-dot" title="Active roster" />}
+              </td>
+              <td class="num">{int(p.career.seasons_played)}</td>
+              {counting.map(([k]) => (
+                <td class="num">{int(p.career[k])}</td>
+              ))}
+              {rates.map((k) => (
+                <td class="num" data-v={String(p.career[k] ?? '')}>{rate(p.career[k])}</td>
+              ))}
+              <td class="num">{p.potw || ''}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">Click any column to sort. POTW = career Player of the Week awards.</p>
+  <TableSort />
+</Base>

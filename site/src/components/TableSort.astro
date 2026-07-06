@@ -1,0 +1,47 @@
+<script>
+  // Click-to-sort for every table marked data-sortable. Numeric-aware ('.554', '+19', '12'),
+  // string fallback ('W 12-2'). First click on a numeric column sorts descending (stat-style).
+  for (const table of document.querySelectorAll<HTMLTableElement>('table[data-sortable]')) {
+    const head = table.tHead;
+    if (!head) continue;
+    const ths = Array.from(head.rows[0].cells);
+    ths.forEach((th, i) => {
+      if (th.hasAttribute('data-nosort')) return;
+      th.classList.add('sortable');
+      th.addEventListener('click', () => {
+        const tbody = table.tBodies[0];
+        if (!tbody) return;
+        const prev = th.dataset.dir;
+        const first = th.classList.contains('num') ? 'desc' : 'asc';
+        const dir = prev ? (prev === 'asc' ? 'desc' : 'asc') : first;
+        ths.forEach((h) => {
+          delete h.dataset.dir;
+          h.removeAttribute('aria-sort');
+        });
+        th.dataset.dir = dir;
+        th.setAttribute('aria-sort', dir === 'asc' ? 'ascending' : 'descending');
+
+        const rows = Array.from(tbody.rows).map((r) => {
+          const cell = r.cells[i];
+          const raw = (cell?.dataset.v ?? cell?.textContent ?? '').trim();
+          const n = parseFloat(raw.replace(/[,%+]/g, ''));
+          const missing = raw === '' || raw === '—';
+          return { r, raw, n, isNum: !missing && !Number.isNaN(n), missing };
+        });
+        const numeric = rows.every((v) => v.isNum || v.missing);
+        rows.sort((a, b) => {
+          let c: number;
+          if (numeric) {
+            const va = a.isNum ? a.n : -Infinity;
+            const vb = b.isNum ? b.n : -Infinity;
+            c = va - vb;
+          } else {
+            c = a.raw.localeCompare(b.raw);
+          }
+          return dir === 'asc' ? c : -c;
+        });
+        rows.forEach((v) => tbody.appendChild(v.r));
+      });
+    });
+  }
+</script>

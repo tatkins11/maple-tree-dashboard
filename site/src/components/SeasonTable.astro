@@ -1,0 +1,57 @@
+---
+import TableSort from './TableSort.astro';
+import { rate, int } from '../lib/fmt';
+
+interface Props {
+  season: any;
+}
+
+const { season } = Astro.props;
+const t = season.team;
+const counting = ['games', 'pa', 'ab', 'hits', '1b', '2b', '3b', 'hr', 'bb', 'r', 'rbi', 'tb'];
+const labels: Record<string, string> = {
+  games: 'G', pa: 'PA', ab: 'AB', hits: 'H', '1b': '1B', '2b': '2B', '3b': '3B',
+  hr: 'HR', bb: 'BB', r: 'R', rbi: 'RBI', tb: 'TB',
+};
+const rates = ['avg', 'obp', 'slg', 'ops'];
+---
+
+<div class="tbl-wrap">
+  <table class="tbl" data-sortable>
+    <thead>
+      <tr>
+        <th data-nosort class="rank">#</th>
+        <th>Player</th>
+        {counting.map((k) => <th class="num">{labels[k]}</th>)}
+        {rates.map((k) => <th class="num">{k.toUpperCase()}</th>)}
+      </tr>
+    </thead>
+    <tbody>
+      {
+        season.players.map((p: any, i: number) => (
+          <tr>
+            <td class="rank">{i + 1}</td>
+            <td>
+              <a href={`/players/${p.slug}/`}>{p.player}</a>
+            </td>
+            {counting.map((k) => (
+              <td class="num">{int(p[k])}</td>
+            ))}
+            {rates.map((k) => (
+              <td class="num" data-v={String(p[k] ?? '')}>{rate(p[k])}</td>
+            ))}
+          </tr>
+        ))
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <td></td>
+        <td>TEAM</td>
+        {counting.map((k) => <td class="num">{int(t[k])}</td>)}
+        {rates.map((k) => <td class="num">{rate(t[k])}</td>)}
+      </tr>
+    </tfoot>
+  </table>
+</div>
+<TableSort />

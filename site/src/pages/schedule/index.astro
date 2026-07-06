@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import meta from '../../data/meta.json';
+import schedule from '../../data/schedule.json';
+import { datePretty } from '../../lib/fmt';
+
+const s: any = schedule.find((x: any) => x.name === meta.current_season.name) ?? schedule[0];
+const games: any[] = s.games;
+---
+
+<Base title={`${s.label} Schedule — Maple Tree Softball`}>
+  <h1 class="page-title">{s.label} <span class="title-sub">Schedule</span></h1>
+  <div class="chip-row" style="margin-top:2px">
+    <span class="chip chip-solid">Record {s.record}</span>
+    <span class="chip">{games.filter((g) => !g.is_bye).length} games</span>
+  </div>
+
+  <div class="tbl-wrap" style="margin-top:16px">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Date</th>
+          <th class="num">Time</th>
+          <th>Opponent</th>
+          <th>Field</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          games.map((g: any) => (
+            <tr class:list={[{ dim: g.is_bye }]}>
+              <td class="dim">{g.week_label}</td>
+              <td>{datePretty(g.game_date)}</td>
+              <td class="num">{g.game_time ?? ''}</td>
+              <td>
+                {g.is_bye
+                  ? 'BYE'
+                  : `${(g.home_away ?? '').toLowerCase() === 'home' ? 'vs' : 'at'} ${g.opponent_name}`}
+              </td>
+              <td class="dim">{g.location_or_field ?? ''}</td>
+              <td>
+                {g.result ? (
+                  <span class={g.result === 'W' ? 'res-w' : 'res-l'}>
+                    {g.result} {g.runs_for}-{g.runs_against}
+                  </span>
+                ) : (
+                  <span class="res-muted">{g.is_bye ? '—' : 'Scheduled'}</span>
+                )}
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">
+    All games at Boncosky Park. Week 1 was rained out and rescheduled to Aug 12 — it now closes the season.
+  </p>
+</Base>

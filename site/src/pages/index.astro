@@ -1,0 +1,167 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import meta from '../data/meta.json';
+import seasonStats from '../data/season_stats.json';
+import { rate, int, gs, gb, diff, dateShort } from '../lib/fmt';
+
+const race = meta.seed_race;
+const board: any[] = race.board;
+const potw: any = meta.potw;
+const next = meta.next_game;
+const teamRow = board.find((r) => r.is_team);
+const preseason = (race.games_played_total ?? 0) === 0;
+
+const cur: any = seasonStats.find((s: any) => s.name === meta.current_season.name);
+const leaderFor = (key: string) => {
+  const players: any[] = cur?.players ?? [];
+  if (!players.length) return null;
+  return [...players].sort((a, b) => (b[key] ?? 0) - (a[key] ?? 0))[0];
+};
+const leaderCards = [
+  { label: 'AVG', key: 'avg', fmt: rate },
+  { label: 'Hits', key: 'hits', fmt: int },
+  { label: 'HR', key: 'hr', fmt: int },
+  { label: 'RBI', key: 'rbi', fmt: int },
+  { label: 'OPS', key: 'ops', fmt: rate },
+]
+  .map((c) => ({ ...c, p: leaderFor(c.key) }))
+  .filter((c) => c.p);
+---
+
+<Base title="Maple Tree Softball — Stats, Schedule & History">
+  <section class="hero">
+    <div class="hero-main">
+      <div class="kicker">{meta.current_season.label} · Wednesday Men's · Recreational</div>
+      <h1 class="hero-title">Maple Tree</h1>
+      <p class="hero-sub">{race.headline}</p>
+      <div class="chip-row">
+        <span class="chip chip-solid">Record {meta.record}</span>
+        {race.team_seed && <span class="chip">#{race.team_seed} seed</span>}
+        {teamRow && !preseason && <span class="chip">{diff(teamRow.run_diff)} run diff</span>}
+      </div>
+    </div>
+    {
+      next && next.opponent_display && (
+        <aside class="hero-next">
+          <div class="next-kicker">Next up · {next.week_label}</div>
+          <div class="next-opp">
+            {next.home_away_display === 'Home' ? 'vs' : 'at'} {next.opponent_display}
+          </div>
+          <div class="next-meta">{next.date_display} · {next.time_display}</div>
+          <div class="next-meta">{next.location_or_field}</div>
+        </aside>
+      )
+    }
+  </section>
+
+  {
+    leaderCards.length > 0 && (
+      <section class="leaders">
+        {leaderCards.map((c) => (
+          <a class="leader-card" href={`/players/${c.p.slug}/`}>
+            <span class="leader-stat">{c.label} leader</span>
+            <span class="leader-value">{c.fmt(c.p[c.key])}</span>
+            <span class="leader-name">{c.p.player}</span>
+          </a>
+        ))}
+      </section>
+    )
+  }
+
+  <div class="home-grid">
+    <section>
+      <h2 class="section-title">
+        Race to the #1 seed
+        <span class="st-note">every team makes the playoffs — the race is for the top seed</span>
+      </h2>
+      <div class="tbl-wrap">
+        <table class="tbl" data-sortable>
+          <thead>
+            <tr>
+              <th class="num rank" data-nosort>Seed</th>
+              <th>Team</th>
+              <th class="num">W</th>
+              <th class="num">L</th>
+              <th class="num">Pct</th>
+              <th class="num">GB</th>
+              <th class="num">RD</th>
+              <th class="num">Left</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              board.map((r: any) => (
+                <tr class:list={[{ 'is-us': r.is_team }]}>
+                  <td class="num rank">
+                    {!preseason && r.seed === 1 ? '🥇' : ''} {r.seed}
+                  </td>
+                  <td>{r.team_name}{r.is_team ? ' 🍁' : ''}</td>
+                  <td class="num">{int(r.wins)}</td>
+                  <td class="num">{int(r.losses)}</td>
+                  <td class="num" data-v={String(r.win_pct ?? 0)}>{rate(r.win_pct)}</td>
+                  <td class="num" data-v={String(r.games_back ?? 0)}>{gb(r.games_back)}</td>
+                  <td class="num" data-v={String(r.run_diff ?? 0)}>{diff(r.run_diff)}</td>
+                  <td class="num">{int(r.games_remaining)}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">
+        Seeded by win %, then run differential. GB = games behind the top seed · Left = games remaining.
+      </p>
+    </section>
+
+    <aside class="rail">
+      {
+        potw && (
+          <div class="card potw-card">
+            <div class="card-kicker">🏅 Player of the Week</div>
+            <a class="potw-name" href={`/players/${potw.slug}/`}>{potw.player}</a>
+            <div class="potw-line">
+              {potw.hits}-for-{potw.ab}
+              {potw.hr ? `, ${potw.hr} HR` : ''}
+              {potw.rbi ? `, ${potw.rbi} RBI` : ''}
+              {potw.r ? `, ${potw.r} R` : ''}
+            </div>
+            <div class="potw-meta">
+              {potw.games > 1 ? `${potw.games}-game total · ` : ''}vs {potw.opponents} · Game Score {gs(potw.game_score)}
+            </div>
+          </div>
+        )
+      }
+      {
+        meta.weekly_results.length > 0 && (
+          <div class="card">
+            <div class="card-kicker">Last time out</div>
+            <ul class="result-list">
+              {meta.weekly_results.slice(0, 4).map((w: any) => (
+                <li>
+                  <span class="result-date">{dateShort(w.game_date)}</span>
+                  <span class={w.wins > w.losses ? 'res-w' : w.losses > w.wins ? 'res-l' : ''}>
+                    {w.result_display}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+      {
+        meta.milestones.length > 0 && (
+          <div class="card">
+            <div class="card-kicker">Records &amp; milestones watch</div>
+            <ul class="watch-list">
+              {meta.milestones.slice(0, 5).map((m: string) => (
+                <li>{m}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </aside>
+  </div>
+  <TableSort />
+</Base>

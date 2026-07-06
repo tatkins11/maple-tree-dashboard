@@ -1,0 +1,19 @@
+{
+  "name": "mapletree-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.5",
+    "@fontsource-variable/source-serif-4": "^5.2.5",
+    "astro": "^5.2.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

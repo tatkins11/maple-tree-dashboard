@@ -1,0 +1,19 @@
+---
+import meta from '../data/meta.json';
+import { datePretty } from '../lib/fmt';
+---
+
+<footer class="site-foot">
+  <div class="wrap foot-row">
+    <div>
+      <div class="foot-brand">🍁 Maple Tree Softball</div>
+      <div class="foot-line">Wednesday Men's League · Recreational Division · Boncosky Park</div>
+      <div class="foot-line">
+        Franchise lineage: Soviet Sluggers ’21 → Smoking Bunts ’22 → Maple Tree Tappers ’25 → Maple Tree
+      </div>
+    </div>
+    <div class="foot-meta">
+      Stats through {meta.data_through ? datePretty(meta.data_through) : '—'}
+    </div>
+  </div>
+</footer>

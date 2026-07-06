@@ -1,0 +1,8 @@
+# Netlify builds only the public site in site/ — the Streamlit app is unaffected.
+[build]
+  base = "site"
+  command = "npm run build"
+  publish = "site/dist"
+
+[build.environment]
+  NODE_VERSION = "22"

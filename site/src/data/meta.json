@@ -1,0 +1,269 @@
+{
+ "team": "Maple Tree",
+ "generated": "2026-07-06T10:12:09",
+ "data_through": "2026-07-01",
+ "current_season": {
+  "name": "Maple Tree Summer 2026",
+  "label": "Summer 2026",
+  "slug": "summer-2026"
+ },
+ "seasons": [
+  {
+   "name": "Maple Tree Summer 2026",
+   "label": "Summer 2026",
+   "slug": "summer-2026"
+  },
+  {
+   "name": "Maple Tree Spring 2026",
+   "label": "Spring 2026",
+   "slug": "spring-2026"
+  },
+  {
+   "name": "Maple Tree Fall 2025",
+   "label": "Fall 2025",
+   "slug": "fall-2025"
+  },
+  {
+   "name": "Maple Tree Tappers Summer 2025",
+   "label": "Tappers Summer 2025",
+   "slug": "tappers-summer-2025"
+  },
+  {
+   "name": "Smoking Bunts Summer 2022",
+   "label": "Smoking Bunts Summer 2022",
+   "slug": "smoking-bunts-summer-2022"
+  },
+  {
+   "name": "Soviet Sluggers Summer 2021",
+   "label": "Soviet Sluggers Summer 2021",
+   "slug": "soviet-sluggers-summer-2021"
+  }
+ ],
+ "record": "2-0",
+ "seed_race": {
+  "headline": "Maple Tree is the #4 seed at 2-0 (+19), 0 games back of Slaughtered in 3 for the #1 seed with 10 to play.",
+  "team_seed": 4,
+  "leader": "Slaughtered in 3",
+  "games_played_total": 20,
+  "board": [
+   {
+    "seed": 1,
+    "team_name": "Slaughtered in 3",
+    "wins": 2,
+    "losses": 0,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 1.0,
+    "runs_for": 37,
+    "runs_against": 1,
+    "run_diff": 36,
+    "games_remaining": 10,
+    "max_wins": 12,
+    "games_back": 0.0,
+    "is_team": false
+   },
+   {
+    "seed": 2,
+    "team_name": "Nuketown",
+    "wins": 2,
+    "losses": 0,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 1.0,
+    "runs_for": 35,
+    "runs_against": 11,
+    "run_diff": 24,
+    "games_remaining": 10,
+    "max_wins": 12,
+    "games_back": 0.0,
+    "is_team": false
+   },
+   {
+    "seed": 3,
+    "team_name": "Sandlot Vibes",
+    "wins": 2,
+    "losses": 0,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 1.0,
+    "runs_for": 32,
+    "runs_against": 10,
+    "run_diff": 22,
+    "games_remaining": 10,
+    "max_wins": 12,
+    "games_back": 0.0,
+    "is_team": false
+   },
+   {
+    "seed": 4,
+    "team_name": "Maple Tree",
+    "wins": 2,
+    "losses": 0,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 1.0,
+    "runs_for": 30,
+    "runs_against": 11,
+    "run_diff": 19,
+    "games_remaining": 10,
+    "max_wins": 12,
+    "games_back": 0.0,
+    "is_team": true
+   },
+   {
+    "seed": 5,
+    "team_name": "Brew Crew",
+    "wins": 2,
+    "losses": 0,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 1.0,
+    "runs_for": 31,
+    "runs_against": 13,
+    "run_diff": 18,
+    "games_remaining": 10,
+    "max_wins": 12,
+    "games_back": 0.0,
+    "is_team": false
+   },
+   {
+    "seed": 6,
+    "team_name": "Wasted Talent",
+    "wins": 0,
+    "losses": 0,
+    "ties": 0,
+    "games": 0,
+    "win_pct": 0.0,
+    "runs_for": 0,
+    "runs_against": 0,
+    "run_diff": 0,
+    "games_remaining": 12,
+    "max_wins": 12,
+    "games_back": 1.0,
+    "is_team": false
+   },
+   {
+    "seed": 7,
+    "team_name": "Zero to Hiro",
+    "wins": 0,
+    "losses": 2,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 0.0,
+    "runs_for": 13,
+    "runs_against": 31,
+    "run_diff": -18,
+    "games_remaining": 10,
+    "max_wins": 10,
+    "games_back": 2.0,
+    "is_team": false
+   },
+   {
+    "seed": 8,
+    "team_name": "Como",
+    "wins": 0,
+    "losses": 2,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 0.0,
+    "runs_for": 11,
+    "runs_against": 30,
+    "run_diff": -19,
+    "games_remaining": 10,
+    "max_wins": 10,
+    "games_back": 2.0,
+    "is_team": false
+   },
+   {
+    "seed": 9,
+    "team_name": "Bleacher Bums",
+    "wins": 0,
+    "losses": 2,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 0.0,
+    "runs_for": 10,
+    "runs_against": 32,
+    "run_diff": -22,
+    "games_remaining": 10,
+    "max_wins": 10,
+    "games_back": 2.0,
+    "is_team": false
+   },
+   {
+    "seed": 10,
+    "team_name": "Mean Beanz",
+    "wins": 0,
+    "losses": 2,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 0.0,
+    "runs_for": 11,
+    "runs_against": 35,
+    "run_diff": -24,
+    "games_remaining": 10,
+    "max_wins": 10,
+    "games_back": 2.0,
+    "is_team": false
+   },
+   {
+    "seed": 11,
+    "team_name": "Everything hurts",
+    "wins": 0,
+    "losses": 2,
+    "ties": 0,
+    "games": 2,
+    "win_pct": 0.0,
+    "runs_for": 1,
+    "runs_against": 37,
+    "run_diff": -36,
+    "games_remaining": 10,
+    "max_wins": 10,
+    "games_back": 2.0,
+    "is_team": false
+   }
+  ]
+ },
+ "potw": {
+  "player": "Kives",
+  "canonical_name": "kives",
+  "game_date": "2026-07-01",
+  "opponents": "Como",
+  "games": 2,
+  "game_score": 6.2,
+  "ab": 8,
+  "hits": 6,
+  "hr": 1,
+  "rbi": 6,
+  "r": 4,
+  "bb": 0,
+  "tb": 11,
+  "slug": "kives"
+ },
+ "weekly_results": [
+  {
+   "game_date": "2026-07-01",
+   "result_display": "Swept 2-0 (12-2, 18-9)",
+   "wins": 2,
+   "losses": 0,
+   "runs_for": 30,
+   "runs_against": 11
+  }
+ ],
+ "milestones": [
+  "Glove is 1 from 150 career hits",
+  "Jason is 1 from 25 career walks",
+  "Kives is 1 from 100 career rbi",
+  "Kives is 1 from 200 career total bases",
+  "Kives is 1 from 20 career doubles",
+  "Kives is 1 from 15 career hr"
+ ],
+ "next_game": {
+  "week_label": "Week 3",
+  "date_display": "Wed 07/08/26",
+  "time_display": "6:30 PM",
+  "opponent_display": "Brew Crew",
+  "home_away_display": "Away",
+  "location_or_field": "Boncosky Red"
+ }
+}

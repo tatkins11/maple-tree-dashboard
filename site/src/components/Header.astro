@@ -1,0 +1,39 @@
+---
+import meta from '../data/meta.json';
+
+const path = Astro.url.pathname;
+const nav = [
+  { href: '/', label: 'Home' },
+  { href: '/schedule/', label: 'Schedule' },
+  { href: '/stats/', label: 'Stats' },
+  { href: '/players/', label: 'Players' },
+];
+const isActive = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+---
+
+<header class="site-head">
+  <div class="wrap masthead">
+    <a class="brand" href="/">
+      <span class="brand-leaf" aria-hidden="true">🍁</span>
+      <span>
+        <span class="brand-name">Maple Tree</span>
+        <span class="brand-sub">Slow-Pitch Softball Club</span>
+      </span>
+    </a>
+    <div class="mast-right">
+      <span class="mast-season">{meta.current_season.label}</span>
+      <span class="mast-record">{meta.record}</span>
+    </div>
+  </div>
+  <nav class="site-nav" aria-label="Primary">
+    <div class="wrap nav-row">
+      {
+        nav.map((n) => (
+          <a href={n.href} class:list={['nav-link', { active: isActive(n.href) }]}>
+            {n.label}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>

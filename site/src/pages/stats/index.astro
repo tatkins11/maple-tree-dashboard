@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import SeasonTable from '../../components/SeasonTable.astro';
+import meta from '../../data/meta.json';
+import seasonStats from '../../data/season_stats.json';
+import { rate } from '../../lib/fmt';
+
+const s: any = seasonStats.find((x: any) => x.name === meta.current_season.name) ?? seasonStats[0];
+---
+
+<Base title={`${s.label} Batting — Maple Tree Softball`}>
+  <h1 class="page-title">{s.label} <span class="title-sub">Batting</span></h1>
+  <div class="chip-row" style="margin-top:2px">
+    <span class="chip chip-solid">Record {s.record}</span>
+    <span class="chip">Team {rate(s.team.avg)} AVG</span>
+    <span class="chip">{rate(s.team.ops)} OPS</span>
+    <span class="chip">{s.team.r} runs</span>
+  </div>
+
+  <div class="season-nav">
+    {
+      seasonStats.map((o: any) => (
+        <a href={`/stats/${o.slug}/`} class:list={['pill', { active: o.slug === s.slug }]}>
+          {o.label}
+        </a>
+      ))
+    }
+  </div>
+
+  <SeasonTable season={s} />
+  <p class="table-note">
+    Default order: OPS. Click any column to sort. OBP uses the PA-based formula — (H+BB+HBP) ÷ (PA−SH) — matching GameChanger.
+  </p>
+</Base>

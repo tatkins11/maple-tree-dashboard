@@ -1,0 +1,22 @@
+---
+interface Props {
+  label: string;
+  display: string;
+  pct: number | null;
+}
+
+const { label, display, pct } = Astro.props;
+---
+
+{
+  pct != null && (
+    <div class="pbar">
+      <span class="pbar-label">{label}</span>
+      <span class="pbar-val">{display}</span>
+      <span class="pbar-track">
+        <span class="pbar-fill" style={`width:${pct}%;--p:${pct}`} />
+        <span class="pbar-dot" style={`left:${pct}%;--p:${pct}`}>{pct}</span>
+      </span>
+    </div>
+  )
+}
