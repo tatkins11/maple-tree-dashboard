@@ -182,12 +182,28 @@ def main() -> None:
             except ValueError:
                 return 0.0
 
+        def _cell(row: list, col: str) -> str:
+            i = idx.get(col)
+            return (row[i] if i is not None and i < len(row) else "").strip()
+
+        # GameChanger roster names drift across eras: Tristan was "Teo" in '21-'22,
+        # Joey is "Snaxx" in '25-'26, and some names sit in the Last column.
+        BB_ALIASES = {"teo": "tristan", "snaxx": "snaxx"}
         for row in all_rows[2:]:
-            first = (row[idx["First"]] if idx.get("First") is not None and idx["First"] < len(row) else "").strip()
-            if not first or (row[0] or "").strip().lower() == "totals":
+            if not row or (row[0] or "").strip().lower() == "totals":
                 continue
-            canon = name_to_canon.get(first.lower())
+            first, last = _cell(row, "First"), _cell(row, "Last")
+            name = first or last
+            if not name:
+                continue
+            canon = None
+            for key in (name.lower(), f"{first} {last}".strip().lower(),
+                        f"{last} {first}".strip().lower()):
+                canon = BB_ALIASES.get(key) or name_to_canon.get(key)
+                if canon:
+                    break
             if canon is None:
+                print(f"  ! batted-ball: no identity match for '{name}' in {season_name}")
                 continue
             batted = max(_num(row, "AB") - _num(row, "SO") + _num(row, "SF"), 0.0)
             if batted <= 0:

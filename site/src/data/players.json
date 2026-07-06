@@ -1803,13 +1803,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2857,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2857,
-       "pct": 47
+       "pct": 44
       },
       {
        "key": "fb_rate",
@@ -1821,7 +1821,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.1429,
-       "pct": 1
+       "pct": 2
       }
      ]
     },
@@ -1893,25 +1893,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2941,
-       "pct": 29
+       "pct": 26
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1765,
-       "pct": 9
+       "pct": 8
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2647,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.5588,
-       "pct": 96
+       "pct": 97
       }
      ]
     },
@@ -1983,25 +1983,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4444,
-       "pct": 71
+       "pct": 72
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 35
+       "pct": 31
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3889,
-       "pct": 62
+       "pct": 58
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3611,
-       "pct": 55
+       "pct": 59
       }
      ]
     },
@@ -2073,25 +2073,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 38
+       "pct": 34
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4,
-       "pct": 68
+       "pct": 63
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 76
+       "pct": 78
       }
      ]
     },
@@ -2163,25 +2163,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.25,
-       "pct": 15
+       "pct": 14
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1875,
-       "pct": 13
+       "pct": 12
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4167,
-       "pct": 73
+       "pct": 69
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3958,
-       "pct": 72
+       "pct": 75
       }
      ]
     },
@@ -2259,19 +2259,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1176,
-       "pct": 5
+       "pct": 4
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4902,
-       "pct": 88
+       "pct": 85
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3922,
-       "pct": 70
+       "pct": 73
       }
      ]
     }
@@ -2344,25 +2344,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2727,
-      "pct": 13
+      "pct": 12
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.1835,
-      "pct": 13
+      "pct": 12
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.409,
-      "pct": 80
+      "pct": 75
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.4075,
-      "pct": 87
+      "pct": 88
      }
     ]
    }
@@ -4535,19 +4535,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.1667,
-       "pct": 4
+       "pct": 3
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.5,
-       "pct": 92
+       "pct": 93
       }
      ]
     },
@@ -4619,25 +4619,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3125,
-       "pct": 32
+       "pct": 28
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 55
+       "pct": 53
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.25,
-       "pct": 15
+       "pct": 14
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4375,
-       "pct": 84
+       "pct": 85
       }
      ]
     },
@@ -4709,25 +4709,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4419,
-       "pct": 71
+       "pct": 72
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3256,
-       "pct": 68
+       "pct": 66
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3721,
-       "pct": 55
+       "pct": 51
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3023,
-       "pct": 30
+       "pct": 35
       }
      ]
     },
@@ -4799,25 +4799,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3214,
-       "pct": 35
+       "pct": 31
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 35
+       "pct": 31
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3929,
-       "pct": 65
+       "pct": 60
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3571,
-       "pct": 52
+       "pct": 57
       }
      ]
     },
@@ -4889,13 +4889,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3269,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 35
+       "pct": 31
       },
       {
        "key": "fb_rate",
@@ -4907,7 +4907,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 11
+       "pct": 18
       }
      ]
     },
@@ -4979,25 +4979,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2727,
-       "pct": 21
+       "pct": 19
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2745,
-       "pct": 44
+       "pct": 41
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.5098,
-       "pct": 92
+       "pct": 91
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2157,
-       "pct": 7
+       "pct": 11
       }
      ]
     }
@@ -5070,25 +5070,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.338,
-      "pct": 47
+      "pct": 44
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2829,
-      "pct": 47
+      "pct": 44
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.4169,
-      "pct": 87
+      "pct": 81
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3003,
-      "pct": 13
+      "pct": 25
      }
     ]
    }
@@ -7350,7 +7350,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5556,
-       "pct": 87
+       "pct": 86
       },
       {
        "key": "ld_rate",
@@ -7362,13 +7362,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2778,
-       "pct": 20
+       "pct": 18
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 44
+       "pct": 48
       }
      ]
     },
@@ -7440,25 +7440,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3902,
-       "pct": 54
+       "pct": 53
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3171,
-       "pct": 61
+       "pct": 58
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3171,
-       "pct": 28
+       "pct": 25
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3659,
-       "pct": 56
+       "pct": 60
       }
      ]
     },
@@ -7536,19 +7536,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3529,
-       "pct": 80
+       "pct": 78
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3824,
-       "pct": 61
+       "pct": 56
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2647,
-       "pct": 17
+       "pct": 24
       }
      ]
     },
@@ -7620,25 +7620,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4583,
-       "pct": 73
+       "pct": 74
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 55
+       "pct": 53
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3958,
-       "pct": 66
+       "pct": 61
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 26
+       "pct": 32
       }
      ]
     },
@@ -7710,25 +7710,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2456,
-       "pct": 12
+       "pct": 10
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4727,
-       "pct": 86
+       "pct": 84
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3273,
-       "pct": 41
+       "pct": 46
       }
      ]
     }
@@ -7801,25 +7801,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.3964,
-      "pct": 53
+      "pct": 56
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2946,
-      "pct": 53
+      "pct": 50
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3962,
-      "pct": 67
+      "pct": 62
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3093,
-      "pct": 20
+      "pct": 31
      }
     ]
    }
@@ -10029,7 +10029,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4444,
-       "pct": 71
+       "pct": 72
       },
       {
        "key": "ld_rate",
@@ -10041,7 +10041,7 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.5556,
-       "pct": 96
+       "pct": 97
       },
       {
        "key": "gb_rate",
@@ -10119,25 +10119,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.625,
-       "pct": 95
+       "pct": 96
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.45,
-       "pct": 76
+       "pct": 75
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.175,
-       "pct": 3
+       "pct": 4
       }
      ]
     },
@@ -10215,19 +10215,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.375,
-       "pct": 58
+       "pct": 53
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 26
+       "pct": 32
       }
      ]
     },
@@ -10299,25 +10299,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3846,
-       "pct": 52
+       "pct": 50
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3462,
-       "pct": 79
+       "pct": 78
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3462,
-       "pct": 46
+       "pct": 41
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3077,
-       "pct": 36
+       "pct": 41
       }
      ]
     },
@@ -10384,6 +10384,30 @@
        "label": "GS/G",
        "value": 2.34,
        "pct": 91
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.5714,
+       "pct": 90
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.4035,
+       "pct": 91
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.4912,
+       "pct": 88
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.1053,
+       "pct": 2
       }
      ]
     },
@@ -10450,6 +10474,30 @@
        "label": "GS/G",
        "value": 1.97,
        "pct": 88
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.3898,
+       "pct": 52
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.2632,
+       "pct": 35
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.5263,
+       "pct": 92
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.2105,
+       "pct": 9
       }
      ]
     }
@@ -10521,26 +10569,26 @@
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.5691,
-      "pct": 93
+      "value": 0.5252,
+      "pct": 94
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3577,
-      "pct": 93
+      "value": 0.3451,
+      "pct": 88
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.4065,
-      "pct": 67
+      "value": 0.4561,
+      "pct": 94
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.2358,
-      "pct": 7
+      "value": 0.1988,
+      "pct": 1
      }
     ]
    }
@@ -12829,25 +12877,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.625,
-       "pct": 95
+       "pct": 96
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.25,
-       "pct": 15
+       "pct": 14
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.375,
-       "pct": 61
+       "pct": 65
       }
      ]
     },
@@ -12919,25 +12967,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5952,
-       "pct": 90
+       "pct": 91
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4048,
-       "pct": 91
+       "pct": 92
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2143,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.381,
-       "pct": 62
+       "pct": 66
       }
      ]
     },
@@ -13015,19 +13063,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3182,
-       "pct": 63
+       "pct": 60
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2955,
-       "pct": 25
+       "pct": 22
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3864,
-       "pct": 67
+       "pct": 71
       }
      ]
     },
@@ -13099,25 +13147,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4103,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3846,
-       "pct": 88
+       "pct": 86
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2564,
-       "pct": 14
+       "pct": 22
       }
      ]
     },
@@ -13189,7 +13237,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.6122,
-       "pct": 92
+       "pct": 93
       },
       {
        "key": "ld_rate",
@@ -13201,13 +13249,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2449,
-       "pct": 13
+       "pct": 12
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3061,
-       "pct": 34
+       "pct": 39
       }
      ]
     },
@@ -13279,25 +13327,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2727,
-       "pct": 21
+       "pct": 19
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2264,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.5283,
-       "pct": 93
+       "pct": 94
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2453,
-       "pct": 8
+       "pct": 16
       }
      ]
     }
@@ -13370,25 +13418,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.5021,
-      "pct": 87
+      "pct": 88
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.3521,
-      "pct": 87
+      "pct": 94
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3294,
-      "pct": 27
+      "pct": 25
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3143,
-      "pct": 20
+      "pct": 31
      }
     ]
    }
@@ -15553,7 +15601,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "fb_rate",
@@ -15643,19 +15691,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.439,
-       "pct": 95
+       "pct": 96
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4146,
-       "pct": 70
+       "pct": 66
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.1463,
-       "pct": 1
+       "pct": 3
       }
      ]
     },
@@ -15733,19 +15781,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.375,
-       "pct": 58
+       "pct": 53
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 26
+       "pct": 32
       }
      ]
     },
@@ -15817,25 +15865,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3529,
-       "pct": 42
+       "pct": 41
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2941,
-       "pct": 48
+       "pct": 45
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2353,
-       "pct": 9
+       "pct": 8
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4706,
-       "pct": 89
+       "pct": 91
       }
      ]
     },
@@ -15907,25 +15955,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4222,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2667,
-       "pct": 40
+       "pct": 38
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 76
+       "pct": 78
       }
      ]
     },
@@ -15997,25 +16045,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3667,
-       "pct": 52
+       "pct": 50
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2667,
-       "pct": 40
+       "pct": 38
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 76
+       "pct": 78
       }
      ]
     }
@@ -16088,25 +16136,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.4466,
-      "pct": 73
+      "pct": 75
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.3252,
-      "pct": 73
+      "pct": 69
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3544,
-      "pct": 40
+      "pct": 31
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3204,
-      "pct": 40
+      "pct": 44
      }
     ]
    }
@@ -18119,25 +18167,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 38
+       "pct": 34
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 44
+       "pct": 48
       }
      ]
     },
@@ -18209,25 +18257,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.32,
-       "pct": 34
+       "pct": 30
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.32,
-       "pct": 66
+       "pct": 64
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.24,
-       "pct": 11
+       "pct": 9
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.44,
-       "pct": 86
+       "pct": 87
       }
      ]
     },
@@ -18299,25 +18347,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3448,
-       "pct": 40
+       "pct": 38
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2759,
-       "pct": 45
+       "pct": 42
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2069,
-       "pct": 5
+       "pct": 4
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.5172,
-       "pct": 93
+       "pct": 94
       }
      ]
     },
@@ -18389,13 +18437,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2857,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2857,
-       "pct": 47
+       "pct": 44
       },
       {
        "key": "fb_rate",
@@ -18479,25 +18527,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2759,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2069,
-       "pct": 24
+       "pct": 22
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3448,
-       "pct": 43
+       "pct": 39
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4483,
-       "pct": 88
+       "pct": 89
       }
      ]
     },
@@ -18569,7 +18617,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2051,
-       "pct": 8
+       "pct": 7
       },
       {
        "key": "ld_rate",
@@ -18581,13 +18629,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4595,
-       "pct": 78
+       "pct": 77
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4324,
-       "pct": 82
+       "pct": 84
       }
      ]
     }
@@ -18660,25 +18708,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2817,
-      "pct": 27
+      "pct": 25
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2269,
-      "pct": 27
+      "pct": 25
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3093,
-      "pct": 20
+      "pct": 19
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.4638,
-      "pct": 93
+      "pct": 94
      }
     ]
    }
@@ -20492,13 +20540,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2857,
-       "pct": 23
+       "pct": 21
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.1429,
-       "pct": 1
+       "pct": 2
       }
      ]
     },
@@ -20570,25 +20618,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.24,
-       "pct": 11
+       "pct": 9
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.32,
-       "pct": 30
+       "pct": 27
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.48,
-       "pct": 91
+       "pct": 92
       }
      ]
     },
@@ -20672,13 +20720,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.28,
-       "pct": 22
+       "pct": 20
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.28,
-       "pct": 20
+       "pct": 27
       }
      ]
     },
@@ -20750,25 +20798,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 65
+       "pct": 67
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 44
+       "pct": 48
       }
      ]
     },
@@ -20846,19 +20894,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4118,
-       "pct": 93
+       "pct": 94
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2549,
-       "pct": 13
+       "pct": 21
       }
      ]
     },
@@ -20930,25 +20978,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2632,
-       "pct": 19
+       "pct": 17
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1852,
-       "pct": 11
+       "pct": 9
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.463,
-       "pct": 83
+       "pct": 81
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3519,
-       "pct": 49
+       "pct": 54
       }
      ]
     }
@@ -21021,25 +21069,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.4086,
-      "pct": 60
+      "pct": 62
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.3148,
-      "pct": 67
+      "pct": 62
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3623,
-      "pct": 40
+      "pct": 31
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3229,
-      "pct": 47
+      "pct": 50
      }
     ]
    }
@@ -22395,13 +22443,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 38
+       "pct": 34
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
@@ -22413,7 +22461,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.1667,
-       "pct": 2
+       "pct": 3
       }
      ]
     },
@@ -22485,13 +22533,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.36,
-       "pct": 47
+       "pct": 46
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.24,
-       "pct": 30
+       "pct": 27
       },
       {
        "key": "fb_rate",
@@ -22503,7 +22551,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2,
-       "pct": 5
+       "pct": 6
       }
      ]
     },
@@ -22575,13 +22623,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4359,
-       "pct": 67
+       "pct": 69
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3077,
-       "pct": 51
+       "pct": 49
       },
       {
        "key": "fb_rate",
@@ -22593,7 +22641,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.5385,
-       "pct": 95
+       "pct": 96
       }
      ]
     },
@@ -22665,25 +22713,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4375,
-       "pct": 68
+       "pct": 70
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.25,
-       "pct": 15
+       "pct": 14
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.375,
-       "pct": 61
+       "pct": 65
       }
      ]
     }
@@ -22756,25 +22804,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.4118,
-      "pct": 73
+      "pct": 75
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.3137,
-      "pct": 60
+      "pct": 56
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3039,
-      "pct": 7
+      "pct": 6
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3824,
-      "pct": 80
+      "pct": 81
      }
     ]
    }
@@ -23899,6 +23947,30 @@
        "label": "GS/G",
        "value": 0.1,
        "pct": 2
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.3478,
+       "pct": 40
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.3043,
+       "pct": 47
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.3478,
+       "pct": 42
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.3478,
+       "pct": 53
       }
      ]
     },
@@ -23965,6 +24037,30 @@
        "label": "GS/G",
        "value": 0.72,
        "pct": 38
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.4103,
+       "pct": 62
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.3846,
+       "pct": 86
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.4103,
+       "pct": 65
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.2051,
+       "pct": 8
       }
      ]
     },
@@ -24031,6 +24127,30 @@
        "label": "GS/G",
        "value": 0.34,
        "pct": 14
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.3438,
+       "pct": 38
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.3438,
+       "pct": 74
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.4375,
+       "pct": 72
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.2188,
+       "pct": 13
       }
      ]
     }
@@ -24098,6 +24218,30 @@
       "label": "GS/G",
       "value": 0.4,
       "pct": 6
+     },
+     {
+      "key": "hh_rate",
+      "label": "HH%",
+      "value": 0.3723,
+      "pct": 44
+     },
+     {
+      "key": "ld_rate",
+      "label": "LD%",
+      "value": 0.3511,
+      "pct": 94
+     },
+     {
+      "key": "fb_rate",
+      "label": "FB%",
+      "value": 0.4043,
+      "pct": 69
+     },
+     {
+      "key": "gb_rate",
+      "label": "GB%",
+      "value": 0.2447,
+      "pct": 12
      }
     ]
    }
@@ -25155,25 +25299,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4091,
-       "pct": 58
+       "pct": 59
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3182,
-       "pct": 63
+       "pct": 60
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.2955,
-       "pct": 25
+       "pct": 22
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3864,
-       "pct": 67
+       "pct": 71
       }
      ]
     },
@@ -25245,25 +25389,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2115,
-       "pct": 26
+       "pct": 23
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4615,
-       "pct": 81
+       "pct": 79
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3269,
-       "pct": 40
+       "pct": 45
       }
      ]
     }
@@ -25336,25 +25480,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2929,
-      "pct": 27
+      "pct": 25
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2589,
-      "pct": 27
+      "pct": 25
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3877,
-      "pct": 47
+      "pct": 44
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3533,
-      "pct": 53
+      "pct": 56
      }
     ]
    }
@@ -26428,13 +26572,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2857,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1429,
-       "pct": 6
+       "pct": 5
       },
       {
        "key": "fb_rate",
@@ -26446,7 +26590,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2857,
-       "pct": 22
+       "pct": 28
       }
      ]
     },
@@ -26524,19 +26668,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3571,
-       "pct": 81
+       "pct": 79
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3571,
-       "pct": 46
+       "pct": 43
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2857,
-       "pct": 22
+       "pct": 28
       }
      ]
     },
@@ -26608,25 +26752,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4667,
-       "pct": 77
+       "pct": 78
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 35
+       "pct": 31
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3667,
-       "pct": 51
+       "pct": 47
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3833,
-       "pct": 64
+       "pct": 68
       }
      ]
     },
@@ -26716,7 +26860,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 11
+       "pct": 18
       }
      ]
     }
@@ -26789,25 +26933,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.4609,
-      "pct": 87
+      "pct": 88
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2696,
-      "pct": 40
+      "pct": 38
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.3957,
-      "pct": 60
+      "pct": 56
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3348,
-      "pct": 53
+      "pct": 56
      }
     ]
    }
@@ -28119,7 +28263,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2857,
-       "pct": 22
+       "pct": 28
       }
      ]
     },
@@ -28191,25 +28335,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 65
+       "pct": 67
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3143,
-       "pct": 59
+       "pct": 56
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3714,
-       "pct": 53
+       "pct": 49
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3143,
-       "pct": 38
+       "pct": 42
       }
      ]
     },
@@ -28281,25 +28425,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 65
+       "pct": 67
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4286,
-       "pct": 94
+       "pct": 95
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3571,
-       "pct": 46
+       "pct": 43
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2143,
-       "pct": 6
+       "pct": 10
       }
      ]
     },
@@ -28366,6 +28510,30 @@
        "label": "GS/G",
        "value": 0.81,
        "pct": 45
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.4,
+       "pct": 56
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.32,
+       "pct": 64
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.44,
+       "pct": 73
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.24,
+       "pct": 15
       }
      ]
     },
@@ -28437,25 +28605,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2353,
-       "pct": 10
+       "pct": 9
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2353,
-       "pct": 29
+       "pct": 26
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3529,
-       "pct": 46
+       "pct": 43
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4118,
-       "pct": 79
+       "pct": 81
       }
      ]
     }
@@ -28527,26 +28695,26 @@
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.3973,
-      "pct": 60
+      "value": 0.398,
+      "pct": 62
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3425,
-      "pct": 87
+      "value": 0.3367,
+      "pct": 75
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.3424,
-      "pct": 27
+      "value": 0.3673,
+      "pct": 38
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.3151,
-      "pct": 33
+      "value": 0.2959,
+      "pct": 12
      }
     ]
    }
@@ -29549,25 +29717,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2647,
-       "pct": 19
+       "pct": 17
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2059,
-       "pct": 22
+       "pct": 20
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.5294,
-       "pct": 95
+       "pct": 96
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2647,
-       "pct": 17
+       "pct": 24
       }
      ]
     },
@@ -29639,25 +29807,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.1719,
-       "pct": 6
+       "pct": 5
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1667,
-       "pct": 6
+       "pct": 5
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4167,
-       "pct": 73
+       "pct": 69
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4167,
-       "pct": 80
+       "pct": 82
       }
      ]
     }
@@ -29730,7 +29898,7 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2041,
-      "pct": 7
+      "pct": 6
      },
      {
       "key": "ld_rate",
@@ -29742,13 +29910,13 @@
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.4558,
-      "pct": 93
+      "pct": 88
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.364,
-      "pct": 73
+      "pct": 75
      }
     ]
    }
@@ -30692,25 +30860,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3542,
-       "pct": 46
+       "pct": 45
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 55
+       "pct": 53
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3542,
-       "pct": 51
+       "pct": 56
       }
      ]
     },
@@ -30800,7 +30968,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3667,
-       "pct": 59
+       "pct": 63
       }
      ]
     }
@@ -30873,25 +31041,25 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2658,
-      "pct": 7
+      "pct": 6
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.216,
-      "pct": 13
+      "pct": 12
      },
      {
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.4249,
-      "pct": 93
+      "pct": 88
      },
      {
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.3591,
-      "pct": 60
+      "pct": 62
      }
     ]
    }
@@ -31665,13 +31833,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2222,
-       "pct": 10
+       "pct": 9
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2222,
-       "pct": 27
+       "pct": 24
       },
       {
        "key": "fb_rate",
@@ -31761,7 +31929,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
@@ -31773,7 +31941,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.1667,
-       "pct": 2
+       "pct": 3
       }
      ]
     },
@@ -31845,25 +32013,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3636,
-       "pct": 48
+       "pct": 47
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3636,
-       "pct": 49
+       "pct": 46
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.303,
-       "pct": 32
+       "pct": 37
       }
      ]
     }
@@ -31936,13 +32104,13 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.3333,
-      "pct": 33
+      "pct": 31
      },
      {
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2982,
-      "pct": 53
+      "pct": 50
      },
      {
       "key": "fb_rate",
@@ -31954,7 +32122,7 @@
       "key": "gb_rate",
       "label": "GB%",
       "value": 0.4035,
-      "pct": 80
+      "pct": 81
      }
     ]
    }
@@ -32476,25 +32644,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.25,
-       "pct": 15
+       "pct": 14
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1875,
-       "pct": 13
+       "pct": 12
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4688,
-       "pct": 83
+       "pct": 81
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3438,
-       "pct": 46
+       "pct": 50
       }
      ]
     }
@@ -32929,19 +33097,19 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4444,
-       "pct": 75
+       "pct": 74
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2222,
-       "pct": 8
+       "pct": 14
       }
      ]
     },
@@ -33013,25 +33181,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4375,
-       "pct": 68
+       "pct": 70
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.375,
-       "pct": 58
+       "pct": 53
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 11
+       "pct": 18
       }
      ]
     }
@@ -33294,6 +33462,30 @@
        "label": "GS/G",
        "value": 0.3,
        "pct": 12
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.0,
+       "pct": 1
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.0,
+       "pct": 1
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.75,
+       "pct": 99
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.25,
+       "pct": 18
       }
      ]
     }
@@ -33528,6 +33720,30 @@
        "label": "GS/G",
        "value": -0.3,
        "pct": 1
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.0,
+       "pct": 1
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.0,
+       "pct": 1
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.75,
+       "pct": 99
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.25,
+       "pct": 18
       }
      ]
     }
@@ -33749,7 +33965,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 38
+       "pct": 34
       },
       {
        "key": "ld_rate",
@@ -33767,7 +33983,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 44
+       "pct": 48
       }
      ]
     }
@@ -33995,6 +34211,30 @@
        "label": "GS/G",
        "value": 0.65,
        "pct": 32
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.5,
+       "pct": 81
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.375,
+       "pct": 83
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.375,
+       "pct": 53
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.25,
+       "pct": 18
       }
      ]
     }
@@ -34241,25 +34481,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 73
+       "pct": 71
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3333,
-       "pct": 37
+       "pct": 33
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 44
+       "pct": 48
       }
      ]
     }
@@ -34501,6 +34741,30 @@
        "label": "GS/G",
        "value": 0.93,
        "pct": 53
+      },
+      {
+       "key": "hh_rate",
+       "label": "HH%",
+       "value": 0.4,
+       "pct": 56
+      },
+      {
+       "key": "ld_rate",
+       "label": "LD%",
+       "value": 0.4,
+       "pct": 90
+      },
+      {
+       "key": "fb_rate",
+       "label": "FB%",
+       "value": 0.0,
+       "pct": 1
+      },
+      {
+       "key": "gb_rate",
+       "label": "GB%",
+       "value": 0.6,
+       "pct": 99
       }
      ]
     }
