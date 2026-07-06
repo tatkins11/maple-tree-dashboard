@@ -799,6 +799,226 @@
      "opponent": null
     }
    ]
+  },
+  {
+   "label": "Longest Hit Streak",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 30,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "May 26 '21 \u2013 Jun 25 '25"
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 25,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 9 '25 \u2013 May 13 '26"
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 18,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Aug 17 '22 \u2013 Aug 20 '25"
+    },
+    {
+     "rank": 4,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jun 29 '22 \u2013 Jul 2 '25"
+    },
+    {
+     "rank": 5,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 12,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jun 30 '21 \u2013 Jun 29 '22"
+    }
+   ]
+  },
+  {
+   "label": "Longest On-Base Streak",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 40,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 20 '22 \u2013 May 13 '26"
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 30,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "May 26 '21 \u2013 Jun 25 '25"
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 25,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 9 '25 \u2013 May 13 '26"
+    },
+    {
+     "rank": 4,
+     "player": "Joey",
+     "slug": "snaxx",
+     "value": 18,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 30 '25 \u2013 May 13 '26"
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jun 29 '22 \u2013 Jun 25 '25"
+    }
+   ]
+  },
+  {
+   "label": "Longest XBH Streak",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 21 '21 \u2013 Aug 17 '22"
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 11,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Apr 22 '26 \u2013 Jun 3 '26"
+    },
+    {
+     "rank": 3,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 7,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 27 '22 \u2013 Jun 25 '25"
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 5,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jun 23 '21 \u2013 Jul 14 '21"
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 4,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 20 '22 \u2013 Aug 10 '22"
+    }
+   ]
+  },
+  {
+   "label": "Longest HR Streak",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 6,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Sep 3 '25 \u2013 Oct 1 '25"
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 4,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Aug 10 '22 \u2013 Aug 17 '22"
+    },
+    {
+     "rank": 3,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 3,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "May 20 '26 \u2013 May 27 '26"
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 2,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 7 '21"
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 2,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Jul 27 '22"
+    }
+   ]
   }
  ],
  "single_season": [

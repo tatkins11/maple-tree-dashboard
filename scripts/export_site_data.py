@@ -23,6 +23,8 @@ from src.dashboard.data import (  # noqa: E402
     DEFAULT_DASHBOARD_SEASON,
     DEFAULT_DB_PATH,
     DEFAULT_SCHEDULE_TEAM_NAME,
+    MILESTONE_LADDERS,
+    extend_milestone_ladder,
     fetch_active_roster,
     fetch_advanced_analytics_view,
     fetch_career_milestones,
@@ -135,6 +137,8 @@ def main() -> None:
         return value.upper() if len(value) <= 2 else value
 
     display_name: dict[str, str] = {}  # canonical -> site display name (from stats rows)
+    for _, c in career.iterrows():
+        display_name[str(c["canonical_name"])] = clean_name(c["player"])
 
     # ---- advanced analytics (reuses the dashboard's wOBA / wRC+ / RAR engine) ----
     season_adv: dict[tuple[str, str], pd.Series] = {}
@@ -150,6 +154,64 @@ def main() -> None:
     career_adv = {str(r["canonical_name"]): r for _, r in career_adv_df.iterrows()}
     gs_season = games.groupby(["season", "canonical_name"])["game_score"].mean()
     gs_career = games.groupby("canonical_name")["game_score"].mean()
+
+    # ---- batted-ball profiles (HHB / LD% / FB% / GB%) from the raw GameChanger CSVs ----
+    # These live only in the season exports, not the DB. The header row repeats column
+    # names across Batting/Pitching/Fielding sections — first occurrence = batting.
+    import csv as _csv
+
+    name_to_canon = {str(p).strip().lower(): str(c)
+                     for p, c in zip(career["player"], career["canonical_name"])}
+    bb_season: dict[tuple[str, str], dict] = {}
+    csv_dir = Path(__file__).resolve().parents[1] / "data" / "raw" / "season_csv"
+    for csv_path in sorted(csv_dir.glob("*.csv")):
+        season_name = csv_path.stem.replace(" Stats", "").strip()
+        with csv_path.open("r", encoding="utf-8-sig", newline="") as fh:
+            all_rows = list(_csv.reader(fh))
+        if len(all_rows) < 3:
+            continue
+        idx: dict[str, int] = {}
+        for i, col in enumerate(all_rows[1]):
+            idx.setdefault(col, i)
+
+        def _num(row: list, col: str) -> float:
+            i = idx.get(col)
+            raw = row[i] if i is not None and i < len(row) else ""
+            try:
+                return float(str(raw).replace("%", "").strip() or 0)
+            except ValueError:
+                return 0.0
+
+        for row in all_rows[2:]:
+            first = (row[idx["First"]] if idx.get("First") is not None and idx["First"] < len(row) else "").strip()
+            if not first or (row[0] or "").strip().lower() == "totals":
+                continue
+            canon = name_to_canon.get(first.lower())
+            if canon is None:
+                continue
+            batted = max(_num(row, "AB") - _num(row, "SO") + _num(row, "SF"), 0.0)
+            if batted <= 0:
+                continue
+            hhb = _num(row, "HHB")
+            bb_season[(season_name, canon)] = {
+                "batted": batted, "hhb": hhb, "hh": hhb / batted,
+                "ld": _num(row, "LD%") / 100.0,
+                "fb": _num(row, "FB%") / 100.0,
+                "gb": _num(row, "GB%") / 100.0,
+            }
+    career_bb: dict[str, dict] = {}
+    for (_s, canon), d in bb_season.items():
+        agg = career_bb.setdefault(canon, {"batted": 0.0, "hhb": 0.0, "ld": 0.0, "fb": 0.0, "gb": 0.0})
+        agg["batted"] += d["batted"]
+        agg["hhb"] += d["hhb"]
+        for k in ("ld", "fb", "gb"):
+            agg[k] += d[k] * d["batted"]
+    for canon, agg in career_bb.items():
+        batted = agg["batted"] or 1.0
+        agg["hh"] = agg["hhb"] / batted
+        for k in ("ld", "fb", "gb"):
+            agg[k] /= batted
+    print(f"  batted-ball profiles: {len(bb_season)} player-seasons, {len(career_bb)} careers")
 
     def opt(value, digits: int = 4):
         if value is None or (isinstance(value, float) and pd.isna(value)) or pd.isna(value):
@@ -239,14 +301,21 @@ def main() -> None:
 
     METRICS = [("avg", "AVG"), ("obp", "OBP"), ("slg", "SLG"), ("ops", "OPS"), ("iso", "ISO"),
                ("woba", "wOBA"), ("wrc_plus", "wRC+"), ("bb_rate", "BB%"),
-               ("xbh_rate", "XBH%"), ("gs", "GS/G")]
+               ("xbh_rate", "XBH%"), ("gs", "GS/G"),
+               ("hh_rate", "HH%"), ("ld_rate", "LD%"), ("fb_rate", "FB%"), ("gb_rate", "GB%")]
 
     def stat_vals(row, season_name: str | None, canonical: str) -> dict:
         a = adv_fields(row, season_name, canonical)
+        prof = (career_bb.get(canonical) if season_name is None
+                else bb_season.get((season_name, canonical)))
         return {"avg": float(row["avg"]), "obp": float(row["obp"]), "slg": float(row["slg"]),
                 "ops": float(row["ops"]), "iso": a["iso"], "woba": a["woba"],
                 "wrc_plus": a["wrc_plus"], "bb_rate": a["bb_rate"], "xbh_rate": a["xbh_rate"],
-                "gs": a["gs_avg"]}
+                "gs": a["gs_avg"],
+                "hh_rate": opt(prof["hh"]) if prof else None,
+                "ld_rate": opt(prof["ld"]) if prof else None,
+                "fb_rate": opt(prof["fb"]) if prof else None,
+                "gb_rate": opt(prof["gb"]) if prof else None}
 
     def _adv_series(df, key_fn, source, column):
         return df.apply(
@@ -265,6 +334,9 @@ def main() -> None:
         "gs": pool_df.apply(
             lambda r: float(gs_season.get((str(r["season"]), str(r["canonical_name"])), float("nan"))),
             axis=1),
+        **{f"{k}_rate": pool_df.apply(
+            lambda r, k=k: float(bb_season.get(_skey(r), {}).get(k, float("nan"))), axis=1)
+           for k in ("hh", "ld", "fb", "gb")},
     }
     career_pool_df = career[career["pa"] >= 50]
     _ckey = lambda r: str(r["canonical_name"])  # noqa: E731
@@ -278,6 +350,9 @@ def main() -> None:
         "wrc_plus": _adv_series(career_pool_df, _ckey, career_adv, "wrc_plus"),
         "gs": career_pool_df.apply(
             lambda r: float(gs_career.get(str(r["canonical_name"]), float("nan"))), axis=1),
+        **{f"{k}_rate": career_pool_df.apply(
+            lambda r, k=k: float(career_bb.get(_ckey(r), {}).get(k, float("nan"))), axis=1)
+           for k in ("hh", "ld", "fb", "gb")},
     }
 
     def pct_block(row, season_name: str | None, canonical: str, label: str, pools: dict) -> dict | None:
@@ -319,17 +394,51 @@ def main() -> None:
             row["ha"] = info["ha"] if info else None
             row.pop("game_time", None)
 
-        season_block = None
-        if canonical in current_rows.index:
-            season_block = pct_block(
-                current_rows.loc[canonical], current, canonical, season_label(current), pool_vals)
+        my_seasons = season_stats[season_stats["canonical_name"] == canonical].sort_values(
+            "season", key=lambda s: s.map(season_sort_key), ascending=False)
+        season_blocks = []
+        for _, srow in my_seasons.iterrows():
+            label = season_label(str(srow["season"]))
+            blk = pct_block(srow, str(srow["season"]), canonical, label, pool_vals)
+            if blk:
+                season_blocks.append({"slug": slugify(label), "label": label,
+                                      "metrics": blk["metrics"]})
         career_block = None
         if float(c["pa"]) >= 50:
-            career_block = pct_block(c, None, canonical, "Career", career_pool_vals)
+            blk = pct_block(c, None, canonical, "Career", career_pool_vals)
+            if blk:
+                career_block = {"slug": "career", "label": "Career", "metrics": blk["metrics"]}
         percentiles = (
-            {"season": season_block, "career": career_block}
-            if (season_block or career_block) else None
+            {"seasons": season_blocks, "career": career_block}
+            if (season_blocks or career_block) else None
         )
+
+        def _game_best(key: str) -> dict | None:
+            top = None
+            for g in log_rows:
+                v = g.get(key)
+                if v is not None and (top is None or v > top[0]):
+                    top = (v, g)
+            if top is None or (top[0] or 0) <= 0:
+                return None
+            return {"v": top[0], "date": top[1]["game_date"], "opponent": top[1]["opponent"]}
+
+        def _season_best(key: str, min_pa: int = 0) -> dict | None:
+            candidates = [s for s in p_seasons
+                          if (s.get("pa") or 0) >= min_pa and s.get(key) is not None]
+            if not candidates:
+                return None
+            top = max(candidates, key=lambda s: s[key])
+            return {"v": top[key], "label": top["label"]} if (top[key] or 0) > 0 else None
+
+        bests = {
+            "game": {k: _game_best(k) for k in ("hits", "hr", "rbi", "r", "bb", "tb", "game_score")},
+            "season": {
+                **{k: _season_best(k) for k in ("hits", "hr", "rbi", "r", "bb", "tb")},
+                "avg": _season_best("avg", 20),
+                "ops": _season_best("ops", 20),
+            },
+        }
 
         for row in p_seasons:
             row.update(adv_fields(row, row["season"], canonical))
@@ -346,10 +455,146 @@ def main() -> None:
             "seasons": p_seasons,
             "game_log": log_rows,
             "percentiles": percentiles,
+            "bests": bests,
             "potw": int(potw_counts.get(canonical, 0)),
             "best_week": float(best_weeks[canonical]) if canonical in best_weeks else None,
         })
     players_out.sort(key=lambda p: (-int(p["career"].get("games") or 0), p["name"]))
+
+    # ---- milestone events: when each career rung was actually cleared (dated) ----
+    STAT_COLS = {"Games": None, "PA": "pa", "AB": "ab", "Hits": "hits", "Singles": "1b",
+                 "Doubles": "2b", "Triples": "3b", "HR": "hr", "RBI": "rbi", "Runs": "r",
+                 "Walks": "bb", "Total Bases": "tb"}
+    reached: list[dict] = []
+    ordered_games = games.sort_values(["game_date", "game_time"])
+    for canon, grp in ordered_games.groupby("canonical_name"):
+        cum: dict[str, float] = {}
+        for _, g in grp.iterrows():
+            for stat, col in STAT_COLS.items():
+                inc = 1.0 if col is None else float(g[col] or 0)
+                if inc <= 0:
+                    continue
+                prev = cum.get(stat, 0.0)
+                cum[stat] = prev + inc
+                for rung in extend_milestone_ladder(MILESTONE_LADDERS[stat], int(cum[stat])):
+                    if prev < rung <= cum[stat]:
+                        reached.append({
+                            "player": display_name.get(str(canon), str(canon).title()),
+                            "slug": slugify(str(canon)), "stat": stat, "milestone": int(rung),
+                            "date": str(g["game_date"]), "opponent": str(g["opponent"]),
+                            "label": season_label(str(g["season"])),
+                        })
+                    elif rung > cum[stat]:
+                        break
+    reached.sort(key=lambda r: r["date"], reverse=True)
+
+    ms = fetch_career_milestones(connection, active_only=True)
+    ms_rows = records(
+        ms.sort_values(["remaining", "stat"]),
+        ["player", "canonical_name", "stat", "current_total", "next_milestone_display",
+         "remaining", "progress_to_next", "club_label"])
+    for r in ms_rows:
+        r["slug"] = slugify(r["canonical_name"])
+        r["player"] = clean_name(r["player"])
+        r["progress_to_next"] = round(float(r["progress_to_next"] or 0), 3)
+
+    # ---- records.json (the record book, incl. streaks) ----
+    RATE_LABELS = {"AVG", "OBP", "SLG", "OPS"}
+    # Single-game rate records are noise (every 4-for-4 is a 1.000 AVG) and PA/AB
+    # single-game "records" are dull — same call as the season-review PDF.
+    SINGLE_GAME_EXCLUDE = {"PA", "AB", *RATE_LABELS}
+
+    def board_rows(df: pd.DataFrame, label: str) -> list[dict]:
+        rows = []
+        for _, r in df.iterrows():
+            value = r[label]
+            rows.append({
+                "rank": int(r["#"]),
+                "player": clean_name(r["Player"]),
+                "slug": slugify(r["canonical_name"]),
+                "value": (None if pd.isna(value)
+                          else round(float(value), 4) if label in RATE_LABELS
+                          else int(value)),
+                "season": str(r["Season"]) if "Season" in df.columns else None,
+                "date": str(r["Date"]) if "Date" in df.columns else None,
+                "opponent": str(r["Opponent"]) if "Opponent" in df.columns else None,
+            })
+        return rows
+
+    records_out: dict[str, list] = {}
+    for scope in ("career", "single_season", "single_game"):
+        boards = fetch_record_leaderboards(
+            connection, scope=scope, limit=5,
+            min_pa=0 if scope == "single_game" else 20)
+        records_out[scope] = [
+            {"label": label, "rows": board_rows(df, label)}
+            for label, df in boards.items()
+            if not df.empty and not (scope == "single_game" and label in SINGLE_GAME_EXCLUDE)
+        ]
+
+    def _short_date(iso: str) -> str:
+        d = datetime.strptime(iso, "%Y-%m-%d")
+        return f"{d:%b} {d.day} '{d:%y}"
+
+    STREAK_DEFS = [
+        ("Longest Hit Streak", lambda g: float(g["hits"] or 0) > 0),
+        ("Longest On-Base Streak", lambda g: float(g["hits"] or 0) + float(g["bb"] or 0) > 0),
+        ("Longest XBH Streak",
+         lambda g: float(g["2b"] or 0) + float(g["3b"] or 0) + float(g["hr"] or 0) > 0),
+        ("Longest HR Streak", lambda g: float(g["hr"] or 0) > 0),
+    ]
+    for label, flag in STREAK_DEFS:
+        best: dict[str, tuple] = {}
+        for canon, grp in ordered_games.groupby("canonical_name"):
+            run, start, top = 0, None, (0, None, None)
+            for _, g in grp.iterrows():
+                if flag(g):
+                    run += 1
+                    start = start or str(g["game_date"])
+                    if run > top[0]:
+                        top = (run, start, str(g["game_date"]))
+                else:
+                    run, start = 0, None
+            if top[0] > 1:  # a one-game "streak" isn't a record
+                best[str(canon)] = top
+        ranked = sorted(best.items(), key=lambda kv: (-kv[1][0], kv[0]))[:5]
+        records_out["career"].append({"label": label, "rows": [{
+            "rank": i + 1,
+            "player": display_name.get(canon, canon.title()),
+            "slug": slugify(canon),
+            "value": int(length),
+            "season": None, "date": None, "opponent": None,
+            "span": (f"{_short_date(sd)} – {_short_date(ed)}" if sd != ed else _short_date(sd)),
+        } for i, (canon, (length, sd, ed)) in enumerate(ranked)]})
+    dump("records.json", records_out)
+
+    # ---- attach honors + milestones to each player ----
+    records_held: dict[str, list] = {}
+    scope_names = {"career": "Career", "single_season": "Season", "single_game": "Game"}
+    for scope, boards in records_out.items():
+        for b in boards:
+            for r in b["rows"]:
+                if r["rank"] != 1:
+                    continue
+                context = r.get("span") or r.get("season") or (
+                    f"{r['date']} vs {r['opponent']}" if r.get("date") else None)
+                records_held.setdefault(r["slug"], []).append({
+                    "scope": scope_names.get(scope, scope), "label": b["label"],
+                    "value": r["value"], "context": context,
+                })
+    reached_by_slug: dict[str, list] = {}
+    for ev in reached:
+        reached_by_slug.setdefault(ev["slug"], []).append(ev)
+    ms_by_slug: dict[str, list] = {}
+    for r in ms_rows:
+        ms_by_slug.setdefault(r["slug"], []).append(r)
+    for p in players_out:
+        p["honors"] = records_held.get(p["slug"], [])
+        p["milestones"] = {
+            "next": ms_by_slug.get(p["slug"], [])[:5],
+            "reached": reached_by_slug.get(p["slug"], []),
+        }
+
     dump("players.json", players_out)
 
     # ---- career_stats.json (Career view for the stats page) ----
@@ -404,41 +649,6 @@ def main() -> None:
         r["team_result"] = weekly_map.get((r["season"], r["game_date"]))
     dump("potw.json", {"leaderboard": board, "history": history})
 
-    # ---- records.json (the record book) ----
-    RATE_LABELS = {"AVG", "OBP", "SLG", "OPS"}
-    # Single-game rate records are noise (every 4-for-4 is a 1.000 AVG) and PA/AB
-    # single-game "records" are dull — same call as the season-review PDF.
-    SINGLE_GAME_EXCLUDE = {"PA", "AB", *RATE_LABELS}
-
-    def board_rows(df: pd.DataFrame, label: str) -> list[dict]:
-        rows = []
-        for _, r in df.iterrows():
-            value = r[label]
-            rows.append({
-                "rank": int(r["#"]),
-                "player": clean_name(r["Player"]),
-                "slug": slugify(r["canonical_name"]),
-                "value": (None if pd.isna(value)
-                          else round(float(value), 4) if label in RATE_LABELS
-                          else int(value)),
-                "season": str(r["Season"]) if "Season" in df.columns else None,
-                "date": str(r["Date"]) if "Date" in df.columns else None,
-                "opponent": str(r["Opponent"]) if "Opponent" in df.columns else None,
-            })
-        return rows
-
-    records_out: dict[str, list] = {}
-    for scope in ("career", "single_season", "single_game"):
-        boards = fetch_record_leaderboards(
-            connection, scope=scope, limit=5,
-            min_pa=0 if scope == "single_game" else 20)
-        records_out[scope] = [
-            {"label": label, "rows": board_rows(df, label)}
-            for label, df in boards.items()
-            if not df.empty and not (scope == "single_game" and label in SINGLE_GAME_EXCLUDE)
-        ]
-    dump("records.json", records_out)
-
     # ---- hof.json (single-game hall of fame) ----
     gs_cols = ["player", "canonical_name", "game_date", "season", "opponent",
                "pa", "ab", "hits", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "game_score"]
@@ -458,17 +668,8 @@ def main() -> None:
         feat_boards.append({"label": label, "rows": rows})
     dump("hof.json", {"game_scores": gs_rows, "feats": feat_boards})
 
-    # ---- milestones.json (active-roster milestone watch) ----
-    ms = fetch_career_milestones(connection, active_only=True)
-    ms_rows = records(
-        ms.sort_values(["remaining", "stat"]),
-        ["player", "canonical_name", "stat", "current_total", "next_milestone_display",
-         "remaining", "progress_to_next", "club_label"])
-    for r in ms_rows:
-        r["slug"] = slugify(r["canonical_name"])
-        r["player"] = clean_name(r["player"])
-        r["progress_to_next"] = round(float(r["progress_to_next"] or 0), 3)
-    dump("milestones.json", ms_rows)
+    # ---- milestones.json (active watch + recently reached) ----
+    dump("milestones.json", {"watch": ms_rows, "recent": reached[:15]})
 
     # ---- rivalry.json (franchise vs every opponent, all-time) ----
     ledger_rows = records(fetch_franchise_opponent_ledger(connection))

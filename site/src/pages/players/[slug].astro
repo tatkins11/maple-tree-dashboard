@@ -4,7 +4,7 @@ import TableSort from '../../components/TableSort.astro';
 import PercentileBar from '../../components/PercentileBar.astro';
 import Seg from '../../components/Seg.astro';
 import players from '../../data/players.json';
-import { rate, int, gs, dateShort, pct1, wrc } from '../../lib/fmt';
+import { rate, int, gs, dateShort, pct1, wrc, shortSeason } from '../../lib/fmt';
 
 export function getStaticPaths() {
   return players.map((p: any) => ({ params: { slug: p.slug }, props: { p } }));
@@ -21,12 +21,25 @@ const logCols: [string, string][] = [
   ['pa', 'PA'], ['ab', 'AB'], ['hits', 'H'], ['2b', '2B'], ['3b', '3B'], ['hr', 'HR'],
   ['bb', 'BB'], ['r', 'R'], ['rbi', 'RBI'], ['tb', 'TB'],
 ];
+const PCT_PCTS = new Set(['bb_rate', 'xbh_rate', 'hh_rate', 'ld_rate', 'fb_rate', 'gb_rate']);
 const pctDisplay = (m: any) =>
-  m.key === 'bb_rate' || m.key === 'xbh_rate' ? pct1(m.value)
+  PCT_PCTS.has(m.key) ? pct1(m.value)
   : m.key === 'wrc_plus' ? wrc(m.value)
   : m.key === 'gs' ? gs(m.value)
   : rate(m.value);
 const analyticsSeasons = p.seasons.filter((s: any) => s.woba != null);
+const pctPanels: any[] = p.percentiles
+  ? [...p.percentiles.seasons, ...(p.percentiles.career ? [p.percentiles.career] : [])]
+  : [];
+const RATE = new Set(['AVG', 'OBP', 'SLG', 'OPS']);
+const honorVal = (h: any) => (RATE.has(h.label) ? rate(h.value) : int(h.value));
+const bestRows: [string, string][] = [
+  ['hits', 'Hits'], ['hr', 'Home Runs'], ['rbi', 'RBI'], ['r', 'Runs'],
+  ['bb', 'Walks'], ['tb', 'Total Bases'], ['game_score', 'Game Score'],
+];
+const bestVal = (k: string, v: any) => (k === 'game_score' ? gs(v) : int(v));
+const msNext: any[] = p.milestones?.next ?? [];
+const msReached: any[] = p.milestones?.reached ?? [];
 ---
 
 <Base title={`${p.name} — Maple Tree Softball`} description={`${p.name} career stats, game logs, and franchise history with Maple Tree slow-pitch softball.`}>
@@ -59,42 +72,138 @@ const analyticsSeasons = p.seasons.filter((s: any) => s.woba != null);
   </header>
 
   {
-    p.percentiles && (
+    pctPanels.length > 0 && (
       <section class="card pct-card" data-seg-scope>
         <div class="pct-head">
           <div class="card-kicker">Percentile rankings</div>
-          {p.percentiles.season && p.percentiles.career && (
-            <div class="seg" data-seg role="tablist">
-              <button type="button" class="seg-btn active" data-show="season">
-                {p.percentiles.season.season}
-              </button>
-              <button type="button" class="seg-btn" data-show="career">Career</button>
+          {pctPanels.length > 1 && (
+            <div class="seg seg-wrap" data-seg role="tablist">
+              {pctPanels.map((panel: any, i: number) => (
+                <button type="button" class:list={['seg-btn', { active: i === 0 }]} data-show={panel.slug}>
+                  {panel.slug === 'career' ? 'Career' : shortSeason(panel.label)}
+                </button>
+              ))}
             </div>
           )}
         </div>
-        {p.percentiles.season && (
-          <div data-panel="season">
-            <p class="pct-note">vs. every qualified player-season in franchise history (20+ PA)</p>
+        {pctPanels.map((panel: any, i: number) => (
+          <div data-panel={panel.slug} hidden={i !== 0}>
+            <p class="pct-note">
+              {panel.slug === 'career'
+                ? 'vs. every qualified career in franchise history (50+ PA)'
+                : `${panel.label} — vs. every qualified player-season in franchise history (20+ PA)`}
+              {' '}· HH/LD/FB/GB = share of batted balls (GB%: lower is usually better)
+            </p>
             <div class="pct-grid">
-              {p.percentiles.season.metrics.map((m: any) => (
+              {panel.metrics.map((m: any) => (
                 <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
               ))}
             </div>
           </div>
-        )}
-        {p.percentiles.career && (
-          <div data-panel="career" hidden={Boolean(p.percentiles.season)}>
-            <p class="pct-note">vs. every qualified career in franchise history (50+ PA)</p>
-            <div class="pct-grid">
-              {p.percentiles.career.metrics.map((m: any) => (
-                <PercentileBar label={m.label} display={pctDisplay(m)} pct={m.pct} />
-              ))}
-            </div>
-          </div>
-        )}
+        ))}
       </section>
     )
   }
+
+  {
+    (p.honors.length > 0 || msNext.length > 0 || msReached.length > 0) && (
+      <div class="two-col">
+        {p.honors.length > 0 && (
+          <div class="card">
+            <div class="card-kicker">🏆 Franchise records held ({p.honors.length})</div>
+            <ul class="honor-list">
+              {p.honors.map((h: any) => (
+                <li>
+                  <span class="honor-val">{honorVal(h)}</span>
+                  <span class="honor-main">
+                    {h.label} <small>{h.scope}</small>
+                    {h.context && <span class="b-ctx">{h.context}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {(msNext.length > 0 || msReached.length > 0) && (
+          <div class="card">
+            <div class="card-kicker">🎯 Milestone tracker</div>
+            {msNext.length > 0 && (
+              <>
+                <div class="ms-sub">Next up</div>
+                <ul class="ms-list">
+                  {msNext.slice(0, 4).map((m: any) => (
+                    <li>
+                      <b>{m.next_milestone_display} {m.stat === 'Games' ? 'games' : m.stat}</b>
+                      <span class="ms-away">{int(m.remaining)} away</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {msReached.length > 0 && (
+              <>
+                <div class="ms-sub">Recently reached</div>
+                <ul class="ms-list">
+                  {msReached.slice(0, 5).map((e: any) => (
+                    <li>
+                      <b>{e.milestone} {e.stat === 'Games' ? 'games' : e.stat}</b>
+                      <span class="ms-away">{dateShort(e.date)} vs {e.opponent}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
+
+  <h2 class="section-title">
+    Personal bests
+    <span class="st-note">single-game and single-season highs</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Stat</th>
+          <th class="num">Game high</th>
+          <th>In</th>
+          <th class="num">Season high</th>
+          <th>In</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          bestRows.map(([k, label]) => (
+            <tr>
+              <td><strong>{label}</strong></td>
+              <td class="num">{p.bests.game[k] ? bestVal(k, p.bests.game[k].v) : '—'}</td>
+              <td class="dim">
+                {p.bests.game[k] ? `${dateShort(p.bests.game[k].date)} vs ${p.bests.game[k].opponent}` : ''}
+              </td>
+              <td class="num">{p.bests.season[k] ? bestVal(k, p.bests.season[k].v) : '—'}</td>
+              <td class="dim">{p.bests.season[k] ? shortSeason(p.bests.season[k].label) : ''}</td>
+            </tr>
+          ))
+        }
+        {
+          ['avg', 'ops'].map((k) => (
+            p.bests.season[k] && (
+              <tr>
+                <td><strong>{k.toUpperCase()}</strong></td>
+                <td class="num">—</td>
+                <td></td>
+                <td class="num">{rate(p.bests.season[k].v)}</td>
+                <td class="dim">{shortSeason(p.bests.season[k].label)} · 20+ PA</td>
+              </tr>
+            )
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
 
   <h2 class="section-title">Season by season</h2>
   <div class="tbl-wrap">

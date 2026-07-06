@@ -116,12 +116,22 @@ MILESTONE_LADDERS = {
     "Singles": (25, 50, 75, 100, 125),
     "Doubles": (10, 20, 30, 40, 50),
     "Triples": (5, 10, 15, 20),
-    "HR": (5, 10, 15, 20, 25, 30, 40),
+    "HR": (5, 10, 15, 20, 25, 30, 40, 50),
     "RBI": (25, 50, 75, 100, 125, 150),
     "Runs": (25, 50, 75, 100, 125, 150),
     "Walks": (10, 25, 50, 75, 100),
     "Total Bases": (50, 100, 150, 200, 250, 300),
 }
+
+
+def extend_milestone_ladder(ladder: tuple[int, ...], current_total: int) -> tuple[int, ...]:
+    """Ladders keep climbing past the top rung by the final step size, so a franchise
+    leader always has a next milestone (49 HR -> 50, not "all cleared")."""
+    rungs = list(ladder)
+    step = rungs[-1] - rungs[-2] if len(rungs) >= 2 else max(rungs[-1], 1)
+    while current_total >= rungs[-1]:
+        rungs.append(rungs[-1] + step)
+    return tuple(rungs)
 
 
 def get_connection(db_path: Path | str = DEFAULT_DB_PATH) -> sqlite3.Connection:
@@ -4280,7 +4290,8 @@ def fetch_career_milestones(
             if current_total < min_current_total:
                 continue
 
-            milestone_state = calculate_next_milestone_state(current_total, ladder)
+            milestone_state = calculate_next_milestone_state(
+                current_total, extend_milestone_ladder(ladder, current_total))
             remaining = milestone_state["remaining"]
             if max_remaining is not None and (remaining is None or int(remaining) > max_remaining):
                 continue

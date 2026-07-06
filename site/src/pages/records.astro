@@ -6,7 +6,10 @@ import { rate, int } from '../lib/fmt';
 const RATE = new Set(['AVG', 'OBP', 'SLG', 'OPS']);
 const fmtVal = (label: string, v: number | null) => (RATE.has(label) ? rate(v) : int(v));
 const ctx = (scope: string, r: any) =>
-  scope === 'single_season' ? r.season : scope === 'single_game' ? `${r.date} vs ${r.opponent}` : null;
+  r.span ? r.span
+  : scope === 'single_season' ? r.season
+  : scope === 'single_game' ? `${r.date} vs ${r.opponent}`
+  : null;
 
 const sections: [string, string, string][] = [
   ['career', 'Career records', 'Franchise-history totals — every season, every era.'],

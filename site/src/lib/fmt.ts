@@ -27,6 +27,20 @@ export const diff = (v: number | null | undefined): string => {
   return n > 0 ? `+${n}` : String(n);
 };
 
+/** "Smoking Bunts Summer 2022" -> "Bunts ’22" — compact season label for tight UI. */
+export const shortSeason = (label: string): string => {
+  const m = label.match(/(Spring|Summer|Fall)\s+(20\d\d)/);
+  if (!m) return label;
+  const yy = `’${m[2].slice(2)}`;
+  const pre = label
+    .slice(0, m.index)
+    .replace('Soviet Sluggers', 'Sluggers')
+    .replace('Smoking Bunts', 'Bunts')
+    .replace('Maple Tree Tappers', 'Tappers')
+    .trim();
+  return pre ? `${pre} ${yy}` : `${m[1]} ${yy}`;
+};
+
 /** Fractional rate -> 12.5% (one decimal). */
 export const pct1 = (v: number | null | undefined): string =>
   v == null || Number.isNaN(Number(v)) ? '—' : `${(Number(v) * 100).toFixed(1)}%`;

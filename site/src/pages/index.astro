@@ -85,6 +85,8 @@ const leaderCards = [
               <th class="num">L</th>
               <th class="num">Pct</th>
               <th class="num">GB</th>
+              <th class="num">RF</th>
+              <th class="num">RA</th>
               <th class="num">RD</th>
               <th class="num">Left</th>
             </tr>
@@ -101,6 +103,8 @@ const leaderCards = [
                   <td class="num">{int(r.losses)}</td>
                   <td class="num" data-v={String(r.win_pct ?? 0)}>{rate(r.win_pct)}</td>
                   <td class="num" data-v={String(r.games_back ?? 0)}>{gb(r.games_back)}</td>
+                  <td class="num">{int(r.runs_for)}</td>
+                  <td class="num">{int(r.runs_against)}</td>
                   <td class="num" data-v={String(r.run_diff ?? 0)}>{diff(r.run_diff)}</td>
                   <td class="num">{int(r.games_remaining)}</td>
                 </tr>
@@ -110,7 +114,8 @@ const leaderCards = [
         </table>
       </div>
       <p class="table-note">
-        Seeded by win %, then run differential. GB = games behind the top seed · Left = games remaining.
+        Seeded by win %, then run differential. GB = games behind the top seed · RF/RA = runs
+        for/against · Left = games remaining.
       </p>
     </section>
 

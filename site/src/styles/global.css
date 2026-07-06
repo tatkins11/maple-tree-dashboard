@@ -283,6 +283,10 @@ a { color: var(--green-800); }
   align-items: start;
   margin-top: 6px;
 }
+/* grid items default to min-width:auto, which lets a wide table stretch its track
+   instead of scrolling inside .tbl-wrap — pin them down */
+.home-grid > *,
+.two-col > * { min-width: 0; }
 .rail { display: grid; gap: 14px; position: sticky; top: 16px; }
 .rail .section-gap { margin-top: 0; }
 
@@ -513,6 +517,63 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 .seg-btn:hover:not(.active) { color: var(--green-800); }
 .pct-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .pct-head .seg { margin: 0 0 6px; }
+.seg-wrap { flex-wrap: wrap; border-radius: 16px; }
+
+/* player honors + milestone tracker */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: start;
+  margin: 14px 0 6px;
+}
+.honor-list { list-style: none; margin: 0; padding: 0; }
+.honor-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--line);
+  font-size: 13px;
+}
+.honor-list li:last-child { border-bottom: 0; }
+.honor-val {
+  min-width: 44px;
+  text-align: right;
+  font-weight: 800;
+  color: var(--maple);
+  font-variant-numeric: tabular-nums;
+  flex: none;
+}
+.honor-main { font-weight: 600; }
+.honor-main small {
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin-left: 4px;
+}
+.ms-sub {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  margin: 10px 0 2px;
+}
+.ms-list { list-style: none; margin: 0; padding: 0; }
+.ms-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 0;
+  border-bottom: 1px dotted var(--line);
+  font-size: 13px;
+}
+.ms-list li:last-child { border-bottom: 0; }
+.ms-away { color: var(--ink-3); font-size: 12px; white-space: nowrap; }
 
 /* season pills */
 .season-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 16px; }
@@ -622,16 +683,48 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
    Responsive
    -------------------------------------------------------------------------- */
 @media (max-width: 900px) {
-  .hero { grid-template-columns: 1fr; padding: 24px 22px; }
-  .hero-title { font-size: 40px; }
+  .wrap { padding: 0 14px; }
+  main.main { padding: 18px 14px 44px; }
+
+  /* masthead stays a single row, just tighter */
+  .masthead { padding-top: 12px; padding-bottom: 9px; gap: 10px; }
+  .brand { gap: 9px; }
+  .brand-leaf { font-size: 26px; }
+  .brand-name { font-size: 20px; }
+  .brand-sub { font-size: 8.5px; letter-spacing: 0.14em; }
+  .mast-season { display: none; }
+  .mast-record { font-size: 20px; }
+  .nav-link { padding: 9px 12px; font-size: 12px; }
+
+  .hero { grid-template-columns: 1fr; padding: 20px 18px 18px; gap: 14px; }
+  .hero-title { font-size: 33px; }
+  .hero-sub { font-size: 14px; }
+  .hero-next { padding: 13px 15px; }
+  .next-opp { font-size: 20px; }
+
+  .page-title { font-size: 26px; }
+  .section-title { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .leaders { grid-template-columns: repeat(2, 1fr); gap: 9px; }
+  .leader-value { font-size: 21px; }
   .home-grid { grid-template-columns: 1fr; }
   .rail { position: static; }
-  .leaders { grid-template-columns: repeat(2, 1fr); }
+
+  .player-head { grid-template-columns: 1fr; gap: 14px; }
+  .player-name { font-size: 29px; }
+  .slash { font-size: 20px; }
+  .slash-ops { font-size: 14px; }
+  .player-quick { grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .qbox { padding: 7px 8px 6px; min-width: 0; }
+  .qbox b { font-size: 17px; }
   .pct-grid { grid-template-columns: 1fr; }
-  .player-head { grid-template-columns: 1fr; }
-  .player-quick { grid-template-columns: repeat(3, 1fr); }
-  .masthead { flex-direction: column; align-items: flex-start; gap: 6px; }
-  .mast-right { align-self: flex-end; margin-top: -30px; }
+  .pbar { grid-template-columns: 42px 54px 1fr; gap: 9px; }
+  .two-col { grid-template-columns: 1fr; }
+
+  .tbl { font-size: 12.5px; }
+  .tbl td { padding: 5px 8px; }
+  .tbl thead th { padding: 7px 8px; }
+  .seg-btn { padding: 5px 12px; font-size: 11px; }
+
   .foot-row { flex-direction: column; }
   .foot-meta { text-align: left; }
   .foot-left { align-items: flex-start; }

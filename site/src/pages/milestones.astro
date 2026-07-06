@@ -2,9 +2,10 @@
 import Base from '../layouts/Base.astro';
 import TableSort from '../components/TableSort.astro';
 import milestones from '../data/milestones.json';
-import { int } from '../lib/fmt';
+import { int, dateShort } from '../lib/fmt';
 
-const rows: any[] = milestones;
+const rows: any[] = milestones.watch;
+const recent: any[] = milestones.recent;
 const closest = rows.slice(0, 6);
 ---
 
@@ -30,6 +31,43 @@ const closest = rows.slice(0, 6);
       ))
     }
   </div>
+
+  {
+    recent.length > 0 && (
+      <>
+        <h2 class="section-title">
+          Recently reached
+          <span class="st-note">milestones cleared in the latest games</span>
+        </h2>
+        <div class="tbl-wrap" style="margin-bottom:26px">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Player</th>
+                <th>Milestone</th>
+                <th>Game</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recent.map((e: any) => (
+                <tr>
+                  <td>{dateShort(e.date)}</td>
+                  <td>
+                    <a href={`/players/${e.slug}/`}>{e.player}</a>
+                  </td>
+                  <td>
+                    <strong>{e.milestone} {e.stat === 'Games' ? 'games played' : `career ${e.stat}`}</strong>
+                  </td>
+                  <td class="dim">vs {e.opponent} · {e.label}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </>
+    )
+  }
 
   <h2 class="section-title">
     Every active chase
