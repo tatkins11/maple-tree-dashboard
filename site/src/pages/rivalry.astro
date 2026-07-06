@@ -1,0 +1,57 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import rivalry from '../data/rivalry.json';
+import { rate, int, diff } from '../lib/fmt';
+
+const year = (iso: string | null) => (iso ? String(iso).slice(0, 4) : '—');
+---
+
+<Base title="Rivalry Ledger — Maple Tree Softball" description="Maple Tree's all-time record against every opponent in franchise history.">
+  <h1 class="page-title">Rivalry Ledger</h1>
+  <p class="page-sub">
+    The franchise's all-time record against every team it has ever faced — {rivalry.length} opponents
+    across every era, Soviet Sluggers to today.
+  </p>
+
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Opponent</th>
+          <th class="num">G</th>
+          <th data-nosort>Record</th>
+          <th class="num">Win%</th>
+          <th class="num">RF</th>
+          <th class="num">RA</th>
+          <th class="num">Diff</th>
+          <th class="num">First</th>
+          <th class="num">Last</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rivalry.map((r: any) => (
+            <tr>
+              <td><strong>{r.opponent}</strong></td>
+              <td class="num">{int(r.games)}</td>
+              <td>
+                <span class={r.wins > r.losses ? 'res-w' : r.losses > r.wins ? 'res-l' : ''}>{r.record}</span>
+              </td>
+              <td class="num" data-v={String(r.win_pct ?? 0)}>{rate(r.win_pct)}</td>
+              <td class="num">{int(r.runs_for)}</td>
+              <td class="num">{int(r.runs_against)}</td>
+              <td class="num" data-v={String(r.run_diff ?? 0)}>{diff(r.run_diff)}</td>
+              <td class="num">{year(r.first_played)}</td>
+              <td class="num">{year(r.last_played)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">
+    RF/RA = runs for/against across all meetings. Click any column to sort — default order is most games played.
+  </p>
+  <TableSort />
+</Base>

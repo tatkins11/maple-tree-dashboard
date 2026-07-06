@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import records from '../data/records.json';
+import { rate, int } from '../lib/fmt';
+
+const RATE = new Set(['AVG', 'OBP', 'SLG', 'OPS']);
+const fmtVal = (label: string, v: number | null) => (RATE.has(label) ? rate(v) : int(v));
+const ctx = (scope: string, r: any) =>
+  scope === 'single_season' ? r.season : scope === 'single_game' ? `${r.date} vs ${r.opponent}` : null;
+
+const sections: [string, string, string][] = [
+  ['career', 'Career records', 'Franchise-history totals — every season, every era.'],
+  ['single_season', 'Single-season records', 'The best individual seasons ever put up.'],
+  ['single_game', 'Single-game records', 'One-night explosions. Counting stats only — every 4-for-4 is a 1.000 average.'],
+];
+---
+
+<Base title="Record Book — Maple Tree Softball" description="Franchise records: career, single-season, and single-game leaderboards for Maple Tree slow-pitch softball.">
+  <h1 class="page-title">Record Book</h1>
+  <p class="page-sub">
+    Franchise leaderboards across every era — top five in each category. Rate stats require 20+ PA.
+  </p>
+
+  {
+    sections.map(([scope, title, sub]) => (
+      <section>
+        <h2 class="section-title">
+          {title}
+          <span class="st-note">{sub}</span>
+        </h2>
+        <div class="board-grid">
+          {(records as any)[scope].map((b: any) => (
+            <div class="board">
+              <div class="board-title"><span>{b.label}</span></div>
+              <ol>
+                {b.rows.map((r: any) => (
+                  <li>
+                    <span class="b-rank">{r.rank}</span>
+                    <span class="b-main">
+                      <a href={`/players/${r.slug}/`}>{r.player}</a>
+                      {ctx(scope, r) && <span class="b-ctx">{ctx(scope, r)}</span>}
+                    </span>
+                    <span class="b-value">{fmtVal(b.label, r.value)}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</Base>

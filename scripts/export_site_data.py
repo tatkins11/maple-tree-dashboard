@@ -24,15 +24,20 @@ from src.dashboard.data import (  # noqa: E402
     DEFAULT_DB_PATH,
     DEFAULT_SCHEDULE_TEAM_NAME,
     fetch_active_roster,
+    fetch_career_milestones,
     fetch_career_stats,
+    fetch_franchise_opponent_ledger,
     fetch_next_game,
     fetch_player_of_the_week,
     fetch_potw_history,
     fetch_potw_leaderboard,
+    fetch_record_leaderboards,
     fetch_records_and_milestones_watch,
     fetch_schedule_games,
     fetch_seasons,
     fetch_seed_race,
+    fetch_single_game_feats,
+    fetch_single_game_score_leaders,
     fetch_single_game_stats,
     fetch_single_season_stats,
     fetch_team_weekly_results,
@@ -256,6 +261,11 @@ def main() -> None:
     dump("players.json", players_out)
 
     # ---- potw.json ----
+    weekly_all = fetch_team_weekly_results(connection)
+    weekly_map = {
+        (str(r["season"]), str(r["game_date"])): str(r["result_display"])
+        for _, r in weekly_all.iterrows()
+    }
     board = records(potw_board)
     for r in board:
         r["slug"] = slugify(r["canonical_name"])
@@ -265,7 +275,82 @@ def main() -> None:
         r["slug"] = slugify(r["canonical_name"])
         r["player"] = display_name.get(r["canonical_name"], clean_name(r["player"]))
         r["label"] = season_label(r["season"])
+        r["team_result"] = weekly_map.get((r["season"], r["game_date"]))
     dump("potw.json", {"leaderboard": board, "history": history})
+
+    # ---- records.json (the record book) ----
+    RATE_LABELS = {"AVG", "OBP", "SLG", "OPS"}
+    # Single-game rate records are noise (every 4-for-4 is a 1.000 AVG) and PA/AB
+    # single-game "records" are dull — same call as the season-review PDF.
+    SINGLE_GAME_EXCLUDE = {"PA", "AB", *RATE_LABELS}
+
+    def board_rows(df: pd.DataFrame, label: str) -> list[dict]:
+        rows = []
+        for _, r in df.iterrows():
+            value = r[label]
+            rows.append({
+                "rank": int(r["#"]),
+                "player": clean_name(r["Player"]),
+                "slug": slugify(r["canonical_name"]),
+                "value": (None if pd.isna(value)
+                          else round(float(value), 4) if label in RATE_LABELS
+                          else int(value)),
+                "season": str(r["Season"]) if "Season" in df.columns else None,
+                "date": str(r["Date"]) if "Date" in df.columns else None,
+                "opponent": str(r["Opponent"]) if "Opponent" in df.columns else None,
+            })
+        return rows
+
+    records_out: dict[str, list] = {}
+    for scope in ("career", "single_season", "single_game"):
+        boards = fetch_record_leaderboards(
+            connection, scope=scope, limit=5,
+            min_pa=0 if scope == "single_game" else 20)
+        records_out[scope] = [
+            {"label": label, "rows": board_rows(df, label)}
+            for label, df in boards.items()
+            if not df.empty and not (scope == "single_game" and label in SINGLE_GAME_EXCLUDE)
+        ]
+    dump("records.json", records_out)
+
+    # ---- hof.json (single-game hall of fame) ----
+    gs_cols = ["player", "canonical_name", "game_date", "season", "opponent",
+               "pa", "ab", "hits", "2b", "3b", "hr", "bb", "r", "rbi", "tb", "game_score"]
+    gs_rows = records(fetch_single_game_score_leaders(connection, limit=10), gs_cols)
+    for r in gs_rows:
+        r["slug"] = slugify(r["canonical_name"])
+        r["player"] = clean_name(r["player"])
+        r["label"] = season_label(r["season"])
+    feat_boards = []
+    for label, df in fetch_single_game_feats(connection).items():
+        rows = records(df, ["player", "canonical_name", "game_date", "season",
+                            "opponent", "pa", "hits", "hr", "rbi", "tb"])
+        for r in rows:
+            r["slug"] = slugify(r["canonical_name"])
+            r["player"] = clean_name(r["player"])
+            r["label"] = season_label(r["season"])
+        feat_boards.append({"label": label, "rows": rows})
+    dump("hof.json", {"game_scores": gs_rows, "feats": feat_boards})
+
+    # ---- milestones.json (active-roster milestone watch) ----
+    ms = fetch_career_milestones(connection, active_only=True)
+    ms_rows = records(
+        ms.sort_values(["remaining", "stat"]),
+        ["player", "canonical_name", "stat", "current_total", "next_milestone_display",
+         "remaining", "progress_to_next", "club_label"])
+    for r in ms_rows:
+        r["slug"] = slugify(r["canonical_name"])
+        r["player"] = clean_name(r["player"])
+        r["progress_to_next"] = round(float(r["progress_to_next"] or 0), 3)
+    dump("milestones.json", ms_rows)
+
+    # ---- rivalry.json (franchise vs every opponent, all-time) ----
+    ledger_rows = records(fetch_franchise_opponent_ledger(connection))
+    for r in ledger_rows:
+        wins, losses, ties = int(r["wins"]), int(r["losses"]), int(r.get("ties") or 0)
+        r["record"] = f"{wins}-{losses}" + (f"-{ties}" if ties else "")
+    ledger_rows.sort(key=lambda r: (-int(r["games"]), str(r["opponent"]).lower()))
+    dump("rivalry.json", ledger_rows)
 
     # ---- meta.json ----
     race = fetch_seed_race(connection, current, team_name=DEFAULT_SCHEDULE_TEAM_NAME)

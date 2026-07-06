@@ -1,0 +1,2058 @@
+{
+ "career": [
+  {
+   "label": "Games",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 76,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 76,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 76,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 72,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 68,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "PA",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 261,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 257,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 248,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 231,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 226,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "AB",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 236,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 231,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 229,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 217,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 208,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Hits",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 149,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 138,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 129,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 114,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 100,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Singles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 92,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 85,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 73,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 70,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 69,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Doubles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 25,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 23,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 23,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 19,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 18,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Triples",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 15,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 12,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 11,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 9,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 8,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "HR",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 49,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 14,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 13,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "RBI",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 150,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 113,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 99,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 71,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 61,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Runs",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 121,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 115,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 97,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 78,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 63,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Walks",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 26,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 24,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 17,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 12,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 10,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Total Bases",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 320,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 255,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 207,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 199,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 163,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "AVG",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 0.6314,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Bruns",
+     "slug": "bruns",
+     "value": 0.6154,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.6026,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 0.5826,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 0.5644,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "OBP",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Bruns",
+     "slug": "bruns",
+     "value": 0.6429,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 0.6371,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.6031,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 0.5984,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 0.5939,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "SLG",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 1.3974,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 1.287,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 1.0805,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Bruns",
+     "slug": "bruns",
+     "value": 1.0769,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 0.9851,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "OPS",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 2.0005,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 1.8853,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Bruns",
+     "slug": "bruns",
+     "value": 1.7198,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 1.7176,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 1.5526,
+     "season": null,
+     "date": null,
+     "opponent": null
+    }
+   ]
+  }
+ ],
+ "single_season": [
+  {
+   "label": "Games",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 18,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 18,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 18,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 18,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 18,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "PA",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 64,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 63,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 63,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 62,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 60,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "AB",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 64,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 61,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 58,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 57,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 56,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Hits",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 36,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 36,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 36,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 34,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 34,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Singles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 27,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 24,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 23,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 20,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 20,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Doubles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 10,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 8,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 8,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 8,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 7,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Triples",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 7,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 7,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 6,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 5,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 4,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "HR",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 15,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 14,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 13,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 12,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 7,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "RBI",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 41,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 36,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 34,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 31,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 30,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Runs",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 32,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 30,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 26,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 26,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 26,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Walks",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 9,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 9,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 6,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 6,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 6,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "Total Bases",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 94,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 84,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 83,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 71,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 65,
+     "season": "Sluggers 2021",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "AVG",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.6939,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 0.6667,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 0.66,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.641,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 0.641,
+     "season": "Tappers 2025",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "OBP",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.7059,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 0.6852,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 0.6667,
+     "season": "Tappers 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 0.66,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 0.6591,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "SLG",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 1.6939,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 1.6471,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 1.6154,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 1.541,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 1.3556,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  },
+  {
+   "label": "OPS",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 2.3998,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 2.2745,
+     "season": "Maple Tree Spring 2026",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 2.1793,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 4,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 2.1442,
+     "season": "Bunts 2022",
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 5,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 1.9882,
+     "season": "Fall 2025",
+     "date": null,
+     "opponent": null
+    }
+   ]
+  }
+ ],
+ "single_game": [
+  {
+   "label": "Hits",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 5,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 5,
+     "season": "Bunts 2022",
+     "date": "08/10/22",
+     "opponent": "Uncomfortably Large"
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 5,
+     "season": "Fall 2025",
+     "date": "09/10/25",
+     "opponent": "Wasted Talent"
+    },
+    {
+     "rank": 4,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 5,
+     "season": "Fall 2025",
+     "date": "09/24/25",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 5,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 5,
+     "season": "Fall 2025",
+     "date": "10/01/25",
+     "opponent": "Yard Goats"
+    }
+   ]
+  },
+  {
+   "label": "Singles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "JT",
+     "slug": "jt",
+     "value": 4,
+     "season": "Sluggers 2021",
+     "date": "06/09/21",
+     "opponent": "Swan Song"
+    },
+    {
+     "rank": 2,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 4,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 4,
+     "season": "Bunts 2022",
+     "date": "06/15/22",
+     "opponent": "Phantoms"
+    },
+    {
+     "rank": 4,
+     "player": "Stevie",
+     "slug": "stevie",
+     "value": 4,
+     "season": "Bunts 2022",
+     "date": "08/10/22",
+     "opponent": "Uncomfortably Large"
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 4,
+     "season": "Fall 2025",
+     "date": "08/20/25",
+     "opponent": "Bullseyes"
+    }
+   ]
+  },
+  {
+   "label": "Doubles",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 3,
+     "season": "Sluggers 2021",
+     "date": "06/02/21",
+     "opponent": "Long Ballers"
+    },
+    {
+     "rank": 2,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 3,
+     "season": "Fall 2025",
+     "date": "09/03/25",
+     "opponent": "No Dice"
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 3,
+     "season": "Maple Tree Spring 2026",
+     "date": "04/29/26",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 4,
+     "player": "Nick",
+     "slug": "nick",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "05/26/21",
+     "opponent": "Balls Deep"
+    },
+    {
+     "rank": 5,
+     "player": "Layshock",
+     "slug": "layshock",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "06/02/21",
+     "opponent": "Long Ballers"
+    }
+   ]
+  },
+  {
+   "label": "Triples",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Stevie",
+     "slug": "stevie",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "06/02/21",
+     "opponent": "Long Ballers"
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "07/07/21",
+     "opponent": "No Dice"
+    },
+    {
+     "rank": 3,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "07/14/21",
+     "opponent": "Balls Deep"
+    },
+    {
+     "rank": 4,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 2,
+     "season": "Bunts 2022",
+     "date": "08/10/22",
+     "opponent": "Uncomfortably Large"
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 2,
+     "season": "Bunts 2022",
+     "date": "08/17/22",
+     "opponent": "Bullseyes"
+    }
+   ]
+  },
+  {
+   "label": "HR",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 3,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 2,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 3,
+     "season": "Bunts 2022",
+     "date": "07/06/22",
+     "opponent": "F7's"
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 3,
+     "season": "Bunts 2022",
+     "date": "07/27/22",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 4,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 3,
+     "season": "Fall 2025",
+     "date": "10/01/25",
+     "opponent": "Yard Goats"
+    },
+    {
+     "rank": 5,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 2,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    }
+   ]
+  },
+  {
+   "label": "RBI",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 8,
+     "season": "Fall 2025",
+     "date": "10/01/25",
+     "opponent": "Yard Goats"
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 7,
+     "season": "Fall 2025",
+     "date": "09/10/25",
+     "opponent": "Wasted Talent"
+    },
+    {
+     "rank": 3,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 7,
+     "season": "Fall 2025",
+     "date": "09/10/25",
+     "opponent": "Wasted Talent"
+    },
+    {
+     "rank": 4,
+     "player": "Joel",
+     "slug": "joel",
+     "value": 7,
+     "season": "Maple Tree Spring 2026",
+     "date": "04/29/26",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 5,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 6,
+     "season": "Sluggers 2021",
+     "date": "06/16/21",
+     "opponent": "Biohazard"
+    }
+   ]
+  },
+  {
+   "label": "Runs",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 5,
+     "season": "Fall 2025",
+     "date": "10/01/25",
+     "opponent": "Yard Goats"
+    },
+    {
+     "rank": 2,
+     "player": "Stevie",
+     "slug": "stevie",
+     "value": 4,
+     "season": "Sluggers 2021",
+     "date": "06/02/21",
+     "opponent": "Long Ballers"
+    },
+    {
+     "rank": 3,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 4,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 4,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 5,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 4,
+     "season": "Bunts 2022",
+     "date": "07/06/22",
+     "opponent": "F7's"
+    }
+   ]
+  },
+  {
+   "label": "Walks",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 3,
+     "season": "Bunts 2022",
+     "date": "08/17/22",
+     "opponent": "Ringers"
+    },
+    {
+     "rank": 2,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 3,
+     "season": "Fall 2025",
+     "date": "08/20/25",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 3,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 3,
+     "season": "Fall 2025",
+     "date": "09/24/25",
+     "opponent": "Bullseyes"
+    },
+    {
+     "rank": 4,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 2,
+     "season": "Bunts 2022",
+     "date": "07/13/22",
+     "opponent": "Ringers"
+    },
+    {
+     "rank": 5,
+     "player": "Jason",
+     "slug": "jason",
+     "value": 2,
+     "season": "Bunts 2022",
+     "date": "07/27/22",
+     "opponent": "Bullseyes"
+    }
+   ]
+  },
+  {
+   "label": "Total Bases",
+   "rows": [
+    {
+     "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 15,
+     "season": "Sluggers 2021",
+     "date": "06/23/21",
+     "opponent": "Refuse To Win"
+    },
+    {
+     "rank": 2,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 15,
+     "season": "Fall 2025",
+     "date": "10/01/25",
+     "opponent": "Yard Goats"
+    },
+    {
+     "rank": 3,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 13,
+     "season": "Bunts 2022",
+     "date": "07/06/22",
+     "opponent": "F7's"
+    },
+    {
+     "rank": 4,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 13,
+     "season": "Fall 2025",
+     "date": "09/10/25",
+     "opponent": "Wasted Talent"
+    },
+    {
+     "rank": 5,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 12,
+     "season": "Bunts 2022",
+     "date": "07/27/22",
+     "opponent": "Bullseyes"
+    }
+   ]
+  }
+ ]
+}

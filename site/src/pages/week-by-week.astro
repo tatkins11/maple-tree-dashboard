@@ -1,0 +1,134 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import potw from '../data/potw.json';
+import { gs, int, dateShort } from '../lib/fmt';
+
+const line = (r: any) => {
+  const parts = [`${r.hits}-for-${r.ab}`];
+  if (r.hr) parts.push(`${r.hr} HR`);
+  if (r.rbi) parts.push(`${r.rbi} RBI`);
+  if (r.r) parts.push(`${r.r} R`);
+  let text = parts.join(', ');
+  if (r.games > 1) text += ` (${r.games} games)`;
+  return text;
+};
+const resClass = (t: string | null) =>
+  !t ? 'res-muted' : /^(W|Swept)/.test(t) ? 'res-w' : /^(L|Lost)/.test(t) ? 'res-l' : '';
+const biggest = [...potw.history].sort((a: any, b: any) => b.game_score - a.game_score).slice(0, 10);
+---
+
+<Base title="Week by Week — Maple Tree Softball" description="Player of the Week for every game day in Maple Tree franchise history, with the team result each week.">
+  <h1 class="page-title">Week by Week</h1>
+  <p class="page-sub">
+    Player of the Week for every game day in franchise history. Doubleheaders count as one week —
+    both games' Game Scores are added to crown the winner.
+  </p>
+
+  <h2 class="section-title">
+    Player of the Week — all-time
+    <span class="st-note">how many times each player owned the week</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th class="num">POTW</th>
+          <th class="num">Best Week (GS)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          potw.leaderboard.map((r: any) => (
+            <tr>
+              <td>
+                <a href={`/players/${r.slug}/`}>{r.player}</a>
+              </td>
+              <td class="num">{int(r.potw)}</td>
+              <td class="num" data-v={String(r.best_week)}>{gs(r.best_week)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">
+    Biggest weeks on record
+    <span class="st-note">the most dominant single weeks ever</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th class="rank">#</th>
+          <th>Player</th>
+          <th>Week</th>
+          <th>Season</th>
+          <th>Opponent</th>
+          <th>Line</th>
+          <th class="num">GS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          biggest.map((r: any, i: number) => (
+            <tr>
+              <td class="rank">{i + 1}</td>
+              <td>
+                <a href={`/players/${r.slug}/`}>{r.player}</a>
+              </td>
+              <td>{dateShort(r.game_date)}</td>
+              <td class="dim">{r.label}</td>
+              <td>{r.opponents}</td>
+              <td>{line(r)}</td>
+              <td class="num gs-hot">{gs(r.game_score)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">
+    Week in review
+    <span class="st-note">every game day, recapped — team result + the hitter who owned it</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Week</th>
+          <th>Season</th>
+          <th>Opponent</th>
+          <th data-nosort>Team Result</th>
+          <th>Player of the Week</th>
+          <th data-nosort>Winning Line</th>
+          <th class="num">GS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          potw.history.map((r: any) => (
+            <tr>
+              <td data-v={r.game_date}>{dateShort(r.game_date)}</td>
+              <td class="dim">{r.label}</td>
+              <td>{r.opponents}</td>
+              <td>
+                <span class={resClass(r.team_result)}>{r.team_result ?? '—'}</span>
+              </td>
+              <td>
+                <a href={`/players/${r.slug}/`}>{r.player}</a>
+              </td>
+              <td>{line(r)}</td>
+              <td class="num" data-v={String(r.game_score)}>{gs(r.game_score)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p class="table-note">{potw.history.length} game days on record.</p>
+  <TableSort />
+</Base>

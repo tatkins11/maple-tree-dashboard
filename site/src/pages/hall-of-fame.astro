@@ -1,0 +1,93 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import hof from '../data/hof.json';
+import { gs, int, dateShort } from '../lib/fmt';
+
+const line = (g: any) => {
+  const parts = [`${g.hits}-for-${g.ab}`];
+  if (g['2b']) parts.push(`${g['2b']} 2B`);
+  if (g['3b']) parts.push(`${g['3b']} 3B`);
+  if (g.hr) parts.push(`${g.hr} HR`);
+  if (g.bb) parts.push(`${g.bb} BB`);
+  if (g.rbi) parts.push(`${g.rbi} RBI`);
+  if (g.r) parts.push(`${g.r} R`);
+  return parts.join(', ');
+};
+const featValue: Record<string, string> = {
+  '5-Hit Games': 'hits',
+  '3-HR Games': 'hr',
+  '11+ Total Base Games': 'tb',
+};
+---
+
+<Base title="Single-Game Hall of Fame — Maple Tree Softball" description="The greatest single games in Maple Tree franchise history — top Game Scores, 5-hit games, 3-HR games, and 11+ total base nights.">
+  <h1 class="page-title">Single-Game Hall of Fame</h1>
+  <p class="page-sub">The nights nobody shut up about — the loudest single games in franchise history.</p>
+
+  <h2 class="section-title">
+    Loudest nights
+    <span class="st-note">top 10 by Game Score</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th class="rank" data-nosort>#</th>
+          <th>Player</th>
+          <th>Date</th>
+          <th>Season</th>
+          <th>Opponent</th>
+          <th data-nosort>Line</th>
+          <th class="num">TB</th>
+          <th class="num">GS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          hof.game_scores.map((g: any, i: number) => (
+            <tr>
+              <td class="rank">{i + 1}</td>
+              <td>
+                <a href={`/players/${g.slug}/`}>{g.player}</a>
+              </td>
+              <td data-v={g.game_date}>{dateShort(g.game_date)}</td>
+              <td class="dim">{g.label}</td>
+              <td>{g.opponent}</td>
+              <td>{line(g)}</td>
+              <td class="num">{int(g.tb)}</td>
+              <td class="num gs-hot" data-v={String(g.game_score)}>{gs(g.game_score)}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title">
+    Rare feats
+    <span class="st-note">every game that cleared the bar</span>
+  </h2>
+  <div class="board-grid">
+    {
+      hof.feats.map((b: any) => (
+        <div class="board">
+          <div class="board-title"><span>{b.label}</span><span>{b.rows.length}×</span></div>
+          <ol>
+            {b.rows.map((r: any) => (
+              <li>
+                <span class="b-main">
+                  <a href={`/players/${r.slug}/`}>{r.player}</a>
+                  <span class="b-ctx">{dateShort(r.game_date)} vs {r.opponent} · {r.label}</span>
+                </span>
+                <span class="b-value">{int(r[featValue[b.label] ?? 'tb'])}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      ))
+    }
+  </div>
+  <p class="table-note">GS = Game Score — single-game offensive impact. TB = total bases.</p>
+  <TableSort />
+</Base>

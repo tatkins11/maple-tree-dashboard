@@ -521,6 +521,72 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 .foot-brand { font-family: var(--serif); font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 6px; }
 .foot-line { margin-top: 2px; }
 .foot-meta { text-align: right; align-self: end; font-variant-numeric: tabular-nums; }
+.foot-left { display: flex; align-items: center; gap: 20px; }
+.foot-logo { width: 104px; height: auto; flex: none; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
+.foot-credit { margin-top: 8px; color: #e8dcc3; font-weight: 700; }
+
+/* --------------------------------------------------------------------------
+   Record-book boards
+   -------------------------------------------------------------------------- */
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
+  margin-top: 12px;
+}
+.board {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.board-title {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--sand);
+  border-bottom: 2px solid var(--green-800);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--green-900);
+}
+.board ol { list-style: none; margin: 0; padding: 0; }
+.board li {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 6px 12px;
+  border-bottom: 1px dotted var(--line);
+  font-size: 13px;
+}
+.board li:last-child { border-bottom: 0; }
+.board li:first-child { background: #f7f1df; padding-top: 8px; padding-bottom: 8px; }
+.b-rank { color: var(--ink-3); font-size: 11px; width: 14px; flex: none; }
+.b-main { flex: 1; min-width: 0; }
+.b-main a { color: var(--green-800); font-weight: 600; text-decoration: none; }
+.b-main a:hover { text-decoration: underline; color: var(--green-700); }
+.b-ctx { display: block; font-size: 11px; color: var(--ink-3); }
+.b-value { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--green-900); }
+.board li:first-child .b-value { color: var(--maple); font-size: 15.5px; }
+
+/* progress bars (milestone watch) */
+.progress {
+  position: relative;
+  height: 7px;
+  min-width: 110px;
+  background: var(--sand-strong);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.progress > span {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  background: linear-gradient(90deg, var(--green-700), var(--maple));
+  border-radius: 999px;
+}
 
 /* --------------------------------------------------------------------------
    Responsive
@@ -538,4 +604,6 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   .mast-right { align-self: flex-end; margin-top: -30px; }
   .foot-row { flex-direction: column; }
   .foot-meta { text-align: left; }
+  .foot-left { align-items: flex-start; }
+  .foot-logo { width: 84px; }
 }

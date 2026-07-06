@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import milestones from '../data/milestones.json';
+import { int } from '../lib/fmt';
+
+const rows: any[] = milestones;
+const closest = rows.slice(0, 6);
+---
+
+<Base title="Milestone Watch — Maple Tree Softball" description="Career milestones within reach for the active Maple Tree roster — who's closing in on history.">
+  <h1 class="page-title">Milestone Watch</h1>
+  <p class="page-sub">Career round numbers the active roster is closing in on — updated with every game.</p>
+
+  <div class="board-grid" style="margin-bottom:26px">
+    {
+      closest.map((m: any) => (
+        <div class="board">
+          <div class="board-title"><span>{m.stat}</span><span>{int(m.remaining)} away</span></div>
+          <ol>
+            <li>
+              <span class="b-main">
+                <a href={`/players/${m.slug}/`}>{m.player}</a>
+                <span class="b-ctx">{int(m.current_total)} → {m.next_milestone_display}{m.club_label ? ` · ${m.club_label}` : ''}</span>
+              </span>
+              <span class="b-value">{int(m.next_milestone_display)}</span>
+            </li>
+          </ol>
+        </div>
+      ))
+    }
+  </div>
+
+  <h2 class="section-title">
+    Every active chase
+    <span class="st-note">{rows.length} milestones in progress · click a column to sort</span>
+  </h2>
+  <div class="tbl-wrap">
+    <table class="tbl" data-sortable>
+      <thead>
+        <tr>
+          <th>Player</th>
+          <th>Chasing</th>
+          <th class="num">Now</th>
+          <th class="num">Next</th>
+          <th class="num">Left</th>
+          <th>Club</th>
+          <th data-nosort>Progress</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((m: any) => (
+            <tr>
+              <td>
+                <a href={`/players/${m.slug}/`}>{m.player}</a>
+              </td>
+              <td>{m.stat}</td>
+              <td class="num">{int(m.current_total)}</td>
+              <td class="num">{int(m.next_milestone_display)}</td>
+              <td class="num">{int(m.remaining)}</td>
+              <td class="dim">{m.club_label ?? ''}</td>
+              <td>
+                <div class="progress" title={`${Math.round((m.progress_to_next ?? 0) * 100)}%`}>
+                  <span style={`width:${Math.max(2, Math.round((m.progress_to_next ?? 0) * 100))}%`} />
+                </div>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <TableSort />
+</Base>
