@@ -9,7 +9,7 @@ from streamlit_app import get_home_selected_season
 LEGACY_SCHEDULE_SEASON = "Spring 2026"
 
 
-def test_dashboard_stats_default_prefers_populated_maple_tree_spring_season() -> None:
+def test_dashboard_stats_default_prefers_current_populated_season() -> None:
     seasons = [
         "Maple Tree Fall 2025",
         LEGACY_SCHEDULE_SEASON,
@@ -18,11 +18,9 @@ def test_dashboard_stats_default_prefers_populated_maple_tree_spring_season() ->
 
     ordered = with_dashboard_default_season(seasons)
 
+    # Summer is underway, so the stats default is the current season and appears exactly once.
     assert ordered[0] == DEFAULT_STATS_SEASON
-    # The populated stats season is preferred and appears exactly once (not duplicated). The
-    # current dashboard season (Summer) is schedule-only with no stats, so it isn't added here.
     assert ordered.count(DEFAULT_STATS_SEASON) == 1
-    assert DEFAULT_DASHBOARD_SEASON not in ordered
     assert dashboard_default_season_index(ordered) == 0
 
 

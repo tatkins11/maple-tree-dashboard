@@ -25,6 +25,7 @@ from src.dashboard.data import (
     fetch_league_team_summary,
     fetch_next_game,
     fetch_player_of_the_week,
+    fetch_seed_race,
     fetch_pregame_hot_bats,
     fetch_records_and_milestones_watch,
     fetch_saved_writeups,
@@ -602,6 +603,12 @@ def render_home_page() -> None:
     milestone_lines = fetch_records_and_milestones_watch(connection, schedule_season)
     player_of_week = fetch_player_of_the_week(connection, schedule_season)
     standings = fetch_enriched_standings_snapshot(connection, season=schedule_season)
+    if standings.empty:
+        # No manual snapshot loaded for this season — fall back to standings computed live from
+        # league game results (same source as the Playoff Race page).
+        standings = fetch_seed_race(
+            connection, schedule_season, team_name=DEFAULT_SCHEDULE_TEAM_NAME
+        )["standings"]
     data_freshness = fetch_team_data_freshness(
         connection,
         season=schedule_season,
