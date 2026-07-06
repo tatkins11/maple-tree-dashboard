@@ -1,15 +1,18 @@
 /* ==========================================================================
    Maple Tree Softball — design system
    Reference-grade stat tables (Baseball Reference density) with Savant-style
-   data visuals, in the club's forest-green + warm-paper identity.
+   data visuals, branded to The Maple Tree Tap's wood-grain badge: espresso
+   bark, warm cream, and a maple accent. (The green-* names are legacy token
+   names — their values are the brand's bark browns; --green-600 stays a true
+   green for the active-roster dot.)
    ========================================================================== */
 
 :root {
   /* palette */
-  --green-950: #0b2a18;
-  --green-900: #123f24;
-  --green-800: #16542f;
-  --green-700: #1d7a44;
+  --green-950: #1f1107;
+  --green-900: #2c1a0d;
+  --green-800: #4a2e15;
+  --green-700: #6e4a24;
   --green-600: #27995a;
   --paper: #f6f5ef;
   --card: #fffffd;
@@ -31,7 +34,7 @@
   --serif: 'Source Serif 4 Variable', Georgia, 'Times New Roman', serif;
   --sans: 'Inter Variable', -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  --shadow: 0 1px 2px rgba(18, 63, 36, 0.05), 0 6px 20px -12px rgba(18, 63, 36, 0.18);
+  --shadow: 0 1px 2px rgba(44, 26, 13, 0.05), 0 6px 20px -12px rgba(44, 26, 13, 0.18);
   --radius: 10px;
 }
 
@@ -86,14 +89,14 @@ a { color: var(--green-800); }
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: #b9cfb4;
+  color: #d9c9a8;
   margin-top: 3px;
 }
 
 .mast-right { text-align: right; display: flex; align-items: baseline; gap: 10px; }
 .mast-season {
   font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-  color: #b9cfb4;
+  color: #d9c9a8;
 }
 .mast-record {
   font-family: var(--serif);
@@ -108,7 +111,7 @@ a { color: var(--green-800); }
 .nav-link {
   display: block;
   padding: 10px 16px;
-  color: #d6e4d1;
+  color: #e8dcc3;
   font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -212,7 +215,7 @@ a { color: var(--green-800); }
 }
 .kicker {
   font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
-  color: #b9cfb4;
+  color: #d9c9a8;
 }
 .hero-title {
   font-family: var(--serif);
@@ -222,7 +225,7 @@ a { color: var(--green-800); }
   margin: 8px 0 10px;
   color: #fff;
 }
-.hero-sub { margin: 0; max-width: 56ch; font-size: 15.5px; color: #dcE8d8; color: #dce8d8; }
+.hero-sub { margin: 0; max-width: 56ch; font-size: 15.5px; color: #e9ddc4; }
 .hero .chip { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); color: #eef5ec; }
 .hero .chip-solid { background: #fff; border-color: #fff; color: var(--green-900); }
 
@@ -235,10 +238,10 @@ a { color: var(--green-800); }
 }
 .next-kicker {
   font-size: 10.5px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase;
-  color: #b9cfb4; margin-bottom: 6px;
+  color: #d9c9a8; margin-bottom: 6px;
 }
 .next-opp { font-family: var(--serif); font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; }
-.next-meta { font-size: 13px; color: #cfdfca; }
+.next-meta { font-size: 13px; color: #dccfae; }
 
 /* leaders strip */
 .leaders {
@@ -352,7 +355,7 @@ table.tbl {
   white-space: nowrap;
 }
 .tbl tbody tr:nth-child(even) { background: #faf9f3; }
-.tbl tbody tr:hover { background: #f0f6ee; }
+.tbl tbody tr:hover { background: #f5efe0; }
 .tbl tbody tr:last-child td { border-bottom: 0; }
 .tbl .num { text-align: right; }
 .tbl .rank { color: var(--ink-3); font-size: 12px; width: 30px; }
@@ -364,7 +367,7 @@ table.tbl {
   border-top: 2px solid var(--green-800);
   border-bottom: 0;
 }
-tr.is-us td { background: #eaf3e2 !important; font-weight: 600; }
+tr.is-us td { background: #f3ead4 !important; font-weight: 600; }
 tr.is-us td:first-child { box-shadow: inset 3px 0 0 var(--maple); }
 .tbl .dim td, td.dim { color: var(--ink-3); }
 
@@ -506,7 +509,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 .site-foot {
   margin-top: 30px;
   background: var(--green-950);
-  color: #b9cfb4;
+  color: #d9c9a8;
 }
 .foot-row {
   display: flex;
