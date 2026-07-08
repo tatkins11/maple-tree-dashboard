@@ -21,6 +21,6 @@
     {"file": "a527aab8-db75-4f4a-921c-97ff1835ea50.png", "asset": "jj-live", "slug": "jj", "kind": "base", "rating": 84, "caption": "Topps Live Series", "flavor": "Full extension, every play. JJ's glove has frequent-flyer miles."},
     {"file": "10f07928-30d9-40c2-8472-38720b3096d3.png", "asset": "snaxx-live", "slug": "snaxx", "kind": "base", "rating": 72, "caption": "Topps Live Series", "flavor": "The vibes-per-plate-appearance leader since the day he showed up."},
     {"file": "f038c790-7e04-4e9a-acf1-be119d08e83f.png", "asset": "jason-live", "slug": "jason", "kind": "base", "rating": 68, "caption": "Topps Live Series", "flavor": "Jason's Catching Station: throw it here. Response time may vary during ranked matches."},
-    {"file": "", "asset": "snaxx-injured", "slug": "snaxx", "kind": "special", "generated": true, "caption": "Prayers Up — Injured Reserve", "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee — day-to-day, questionable, heroic. The clubhouse lights a candle. Get well soon, Snaxx."}
+    {"file": "", "asset": "snaxx-injured", "slug": "snaxx", "kind": "special", "generated": true, "caption": "Prayers Up — Injured Reserve", "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee — officially day-to-day, with a very real chance it's season-ending. The clubhouse lights a candle. Get well soon, Snaxx."}
   ]
 }

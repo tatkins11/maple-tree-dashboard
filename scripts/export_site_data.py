@@ -751,7 +751,7 @@ def main() -> None:
                 if current_total is not None:
                     facts.append(["Career total now", f"{int(current_total)} ({'#' + str(rank) + ' all-time' if rank else 'franchise'})"])
             elif card["kind"] == "special":
-                facts.append(["Status", "Injured reserve · day-to-day"])
+                facts.append(["Status", "Day-to-day · potential season-ending"])
                 facts.append(["Mechanism", "Cannonball, 4-foot pool"])
                 facts.append(["Career", f"{_slash(c0)} · {int(c0.get('games') or 0)} G"])
                 adv = career_adv.get(p["canonical"])
