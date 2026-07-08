@@ -24,7 +24,11 @@ const alt =
       <div class="tb-title">
         {card.player}
         <span class="tb-sub">
-          {card.kind === 'milestone' ? `${card.value} ${card.stat} · Milestone` : `${card.rating} OVR · Base Card`}
+          {card.kind === 'milestone'
+            ? `${card.value} ${card.stat} · Milestone`
+            : card.kind === 'special'
+              ? 'Special Edition · Injured Reserve'
+              : `${card.rating} OVR · Base Card`}
         </span>
       </div>
       <p class="tb-flavor">{card.flavor}</p>

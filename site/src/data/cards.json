@@ -30,7 +30,7 @@
    ]
   ],
   "number": 1,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -64,7 +64,7 @@
    ]
   ],
   "number": 2,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -98,7 +98,7 @@
    ]
   ],
   "number": 3,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -132,7 +132,7 @@
    ]
   ],
   "number": 4,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -166,7 +166,7 @@
    ]
   ],
   "number": 5,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -200,7 +200,7 @@
    ]
   ],
   "number": 6,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -234,7 +234,7 @@
    ]
   ],
   "number": 7,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -268,7 +268,7 @@
    ]
   ],
   "number": 8,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -302,7 +302,7 @@
    ]
   ],
   "number": 9,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -336,7 +336,7 @@
    ]
   ],
   "number": 10,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -370,7 +370,7 @@
    ]
   ],
   "number": 11,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -404,7 +404,7 @@
    ]
   ],
   "number": 12,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -438,7 +438,7 @@
    ]
   ],
   "number": 13,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -472,7 +472,7 @@
    ]
   ],
   "number": 14,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -506,7 +506,7 @@
    ]
   ],
   "number": 15,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -540,7 +540,7 @@
    ]
   ],
   "number": 16,
-  "total": 20,
+  "total": 21,
   "series": "Milestone Series"
  },
  {
@@ -578,7 +578,7 @@
    ]
   ],
   "number": 17,
-  "total": 20,
+  "total": 21,
   "series": "Live Series"
  },
  {
@@ -616,7 +616,7 @@
    ]
   ],
   "number": 18,
-  "total": 20,
+  "total": 21,
   "series": "Live Series"
  },
  {
@@ -646,7 +646,7 @@
    ]
   ],
   "number": 19,
-  "total": 20,
+  "total": 21,
   "series": "Live Series"
  },
  {
@@ -680,7 +680,41 @@
    ]
   ],
   "number": 20,
-  "total": 20,
+  "total": 21,
   "series": "Live Series"
+ },
+ {
+  "asset": "snaxx-injured",
+  "img": "/cards/snaxx-injured.webp",
+  "player": "Joey",
+  "slug": "snaxx",
+  "kind": "special",
+  "rating": null,
+  "stat": null,
+  "value": null,
+  "caption": "Prayers Up \u2014 Injured Reserve",
+  "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee \u2014 day-to-day, questionable, heroic. The clubhouse lights a candle. Get well soon, Snaxx.",
+  "game_text": null,
+  "facts": [
+   [
+    "Status",
+    "Injured reserve \u00b7 day-to-day"
+   ],
+   [
+    "Mechanism",
+    "Cannonball, 4-foot pool"
+   ],
+   [
+    "Career",
+    ".423/.441/.443 \u00b7 .884 OPS \u00b7 35 G"
+   ],
+   [
+    "Archetype",
+    "Depth Bat"
+   ]
+  ],
+  "number": 21,
+  "total": 21,
+  "series": "Special Edition"
  }
 ]

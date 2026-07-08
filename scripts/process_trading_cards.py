@@ -24,6 +24,9 @@ def main() -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     done = skipped = 0
     for card in manifest["cards"]:
+        if card.get("generated"):  # art built by its own script (e.g. the Joey card)
+            skipped += 1
+            continue
         src = SOURCE_DIR / card["file"]
         dst = OUT_DIR / f"{card['asset']}.webp"
         if not src.exists():

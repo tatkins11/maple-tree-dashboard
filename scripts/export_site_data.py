@@ -750,6 +750,13 @@ def main() -> None:
                 rank = franchise_rank(col, card["slug"])
                 if current_total is not None:
                     facts.append(["Career total now", f"{int(current_total)} ({'#' + str(rank) + ' all-time' if rank else 'franchise'})"])
+            elif card["kind"] == "special":
+                facts.append(["Status", "Injured reserve · day-to-day"])
+                facts.append(["Mechanism", "Cannonball, 4-foot pool"])
+                facts.append(["Career", f"{_slash(c0)} · {int(c0.get('games') or 0)} G"])
+                adv = career_adv.get(p["canonical"])
+                if adv is not None:
+                    facts.append(["Archetype", str(adv["archetype"])])
             else:
                 facts.append(["Career", f"{_slash(c0)} · {int(c0.get('games') or 0)} G"])
                 facts.append(["Power", f"{int(c0.get('hr') or 0)} HR · {int(c0.get('rbi') or 0)} RBI · {int(c0.get('tb') or 0)} TB"])
@@ -776,7 +783,8 @@ def main() -> None:
                 "facts": facts,
                 "number": i,
                 "total": n_cards,
-                "series": "Milestone Series" if card["kind"] == "milestone" else "Live Series",
+                "series": {"milestone": "Milestone Series", "special": "Special Edition"}.get(
+                    card["kind"], "Live Series"),
             })
         dump("cards.json", cards_out)
 

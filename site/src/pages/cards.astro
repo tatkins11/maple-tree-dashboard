@@ -5,6 +5,7 @@ import CardFlip from '../components/CardFlip.astro';
 import cards from '../data/cards.json';
 
 const milestone = cards.filter((c: any) => c.kind === 'milestone');
+const special = cards.filter((c: any) => c.kind === 'special');
 const base = cards.filter((c: any) => c.kind === 'base');
 ---
 
@@ -25,6 +26,20 @@ const base = cards.filter((c: any) => c.kind === 'base');
   <div class="card-grid">
     {milestone.map((c: any) => <TradingCard card={c} />)}
   </div>
+
+  {
+    special.length > 0 && (
+      <>
+        <h2 class="section-title">
+          Special Editions
+          <span class="st-note">{special.length} card{special.length !== 1 ? 's' : ''} — one-of-a-kind inserts</span>
+        </h2>
+        <div class="card-grid">
+          {special.map((c: any) => <TradingCard card={c} />)}
+        </div>
+      </>
+    )
+  }
 
   <h2 class="section-title">
     Live Series
