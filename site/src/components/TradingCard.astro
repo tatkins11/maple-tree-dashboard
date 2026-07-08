@@ -27,7 +27,7 @@ const alt =
           {card.kind === 'milestone'
             ? `${card.value} ${card.stat} · Milestone`
             : card.kind === 'special'
-              ? 'Special Edition · Injured Reserve'
+              ? card.caption
               : `${card.rating} OVR · Base Card`}
         </span>
       </div>

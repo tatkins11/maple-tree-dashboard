@@ -30,7 +30,7 @@
    ]
   ],
   "number": 1,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -64,7 +64,7 @@
    ]
   ],
   "number": 2,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -98,7 +98,7 @@
    ]
   ],
   "number": 3,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -132,7 +132,7 @@
    ]
   ],
   "number": 4,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -166,7 +166,7 @@
    ]
   ],
   "number": 5,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -200,7 +200,7 @@
    ]
   ],
   "number": 6,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -234,7 +234,7 @@
    ]
   ],
   "number": 7,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -268,7 +268,7 @@
    ]
   ],
   "number": 8,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -302,7 +302,7 @@
    ]
   ],
   "number": 9,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -336,7 +336,7 @@
    ]
   ],
   "number": 10,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -370,7 +370,7 @@
    ]
   ],
   "number": 11,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -404,7 +404,7 @@
    ]
   ],
   "number": 12,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -438,7 +438,7 @@
    ]
   ],
   "number": 13,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -472,7 +472,7 @@
    ]
   ],
   "number": 14,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -506,7 +506,7 @@
    ]
   ],
   "number": 15,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -540,7 +540,7 @@
    ]
   ],
   "number": 16,
-  "total": 21,
+  "total": 22,
   "series": "Milestone Series"
  },
  {
@@ -578,7 +578,7 @@
    ]
   ],
   "number": 17,
-  "total": 21,
+  "total": 22,
   "series": "Live Series"
  },
  {
@@ -616,7 +616,7 @@
    ]
   ],
   "number": 18,
-  "total": 21,
+  "total": 22,
   "series": "Live Series"
  },
  {
@@ -646,7 +646,7 @@
    ]
   ],
   "number": 19,
-  "total": 21,
+  "total": 22,
   "series": "Live Series"
  },
  {
@@ -680,7 +680,7 @@
    ]
   ],
   "number": 20,
-  "total": 21,
+  "total": 22,
   "series": "Live Series"
  },
  {
@@ -692,7 +692,7 @@
   "rating": null,
   "stat": null,
   "value": null,
-  "caption": "Prayers Up \u2014 Injured Reserve",
+  "caption": "Prayers Up \u00b7 Injured Reserve",
   "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee \u2014 officially day-to-day, with a very real chance it's season-ending. The clubhouse lights a candle. Get well soon, Snaxx.",
   "game_text": null,
   "facts": [
@@ -714,7 +714,49 @@
    ]
   ],
   "number": 21,
-  "total": 21,
+  "total": 22,
   "series": "Special Edition"
+ },
+ {
+  "asset": "kives-week1-spotlight",
+  "img": "/cards/kives-week1-spotlight.webp",
+  "player": "Kives",
+  "slug": "kives",
+  "kind": "special",
+  "rating": 99,
+  "stat": null,
+  "value": null,
+  "caption": "2026 Summer \u00b7 Week 1 Spotlight",
+  "flavor": "Sun, sand, and a series sweep. Rodger torched Como for a 6-for-8, home-run, 6-RBI opening week and walked off with Player of the Week honors. The beach never stood a chance.",
+  "game_text": null,
+  "facts": [
+   [
+    "Week 1 line",
+    "6-for-8 \u00b7 HR \u00b7 6 RBI \u00b7 4 R"
+   ],
+   [
+    "Series",
+    "Sweep vs Como, 2-0"
+   ],
+   [
+    "Honor",
+    "Player of the Week"
+   ],
+   [
+    "Career",
+    ".564/.567/.985 \u00b7 1.553 OPS \u00b7 66 G"
+   ],
+   [
+    "Player of the Week",
+    "7\u00d7 all-time"
+   ],
+   [
+    "Archetype",
+    "Cornerstone"
+   ]
+  ],
+  "number": 22,
+  "total": 22,
+  "series": "Player Spotlight"
  }
 ]
