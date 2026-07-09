@@ -126,6 +126,20 @@
   "record": "0-3"
  },
  {
+  "opponent": "Brew Crew",
+  "games": 2,
+  "wins": 1,
+  "losses": 1,
+  "ties": 0,
+  "runs_for": 14,
+  "runs_against": 16,
+  "run_diff": -2,
+  "first_played": "2026-07-08",
+  "last_played": "2026-07-08",
+  "win_pct": 0.5,
+  "record": "1-1"
+ },
+ {
   "opponent": "cacheouts",
   "games": 2,
   "wins": 0,

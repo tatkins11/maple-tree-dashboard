@@ -16,8 +16,8 @@ spring-2026-playoffs-r1-mt-vs-bullseyes,Maple Tree Spring 2026,Wednesday Men's,B
 summer-2026-week-1-bye,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 1,2026-08-12,,Maple Tree,,bye,,scheduled,0,1,,,,Bye - Week 1 rescheduled from 6/24 (rainout),team_schedule.csv
 summer-2026-week-2-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,8:30 PM,Maple Tree,Como,home,Boncosky Blue,completed,1,0,W,12,2,Week 2 Game 1 vs Como,team_schedule.csv
 summer-2026-week-2-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 2,2026-07-01,9:30 PM,Maple Tree,Como,away,Boncosky Blue,completed,1,0,W,18,9,Week 2 Game 2 vs Como,team_schedule.csv
-summer-2026-week-3-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Maple Tree,Brew Crew,away,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
-summer-2026-week-3-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Maple Tree,Brew Crew,home,Boncosky Red,scheduled,0,0,,,,,team_schedule.csv
+summer-2026-week-3-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,6:30 PM,Maple Tree,Brew Crew,away,Boncosky Red,completed,1,0,W,10,5,Week 3 Game 1 vs Brew Crew,team_schedule.csv
+summer-2026-week-3-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 3,2026-07-08,7:30 PM,Maple Tree,Brew Crew,home,Boncosky Red,completed,1,0,L,4,11,Week 3 Game 2 vs Brew Crew,team_schedule.csv
 summer-2026-week-4-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,6:30 PM,Maple Tree,Zero to Hiro,home,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
 summer-2026-week-4-g2,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 4,2026-07-15,7:30 PM,Maple Tree,Zero to Hiro,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv
 summer-2026-week-5-g1,Maple Tree Summer 2026,Wednesday Men's,Recreational,Week 5,2026-07-22,8:30 PM,Maple Tree,Bleacher Bums,away,Boncosky Green,scheduled,0,0,,,,,team_schedule.csv

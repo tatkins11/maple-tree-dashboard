@@ -3,7 +3,7 @@
   {
    "player": "Tristan",
    "canonical_name": "tristan",
-   "potw": 12,
+   "potw": 13,
    "best_week": 11.8,
    "slug": "tristan"
   },
@@ -58,6 +58,25 @@
   }
  ],
  "history": [
+  {
+   "season": "Maple Tree Summer 2026",
+   "game_date": "2026-07-08",
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "game_score": 5.4,
+   "games": 2,
+   "ab": 7,
+   "hits": 5,
+   "hr": 0,
+   "rbi": 5,
+   "r": 5,
+   "bb": 0,
+   "tb": 9,
+   "opponents": "Brew Crew",
+   "slug": "tristan",
+   "label": "Summer 2026",
+   "team_result": "Split 1-1 (10-5, 4-11)"
+  },
   {
    "season": "Maple Tree Summer 2026",
    "game_date": "2026-07-01",
