@@ -1,13 +1,19 @@
-"""Reusable weekly Postgame Recap generator (2-page PDF).
+"""Reusable weekly Postgame Recap generator (up to 4 pages).
 
-Recaps the most recent completed game day: scoreboards, the stars, milestones
-actually reached that night, updated standings (page 1), and full box scores for
-each game (page 2). Reuses the shared drawing kit from build_gameday_preview.
+Recaps the most recent completed game day:
+  page 1 — scoreboards, stat tiles, storylines, Player of the Game, every
+           milestone reached that night (auto-sized box)
+  page 2 — Around the League: full standings + every score from the week
+  page 3 — full box scores per game
+  page 4 — The Card Corner: the week's special-edition card drops (auto-detected
+           from cards whose caption mentions the week_label, or --feature-cards)
 
     python scripts/build_postgame_recap.py          # auto = latest completed game day
     python scripts/build_postgame_recap.py --date 2026-07-01
+    ... --story "Lead.|Body" --stories-only         # full editorial control
 
 Run export_site_data.py first so the numbers match the website.
+Reuses the shared drawing kit from build_gameday_preview.
 """
 from __future__ import annotations
 
@@ -71,6 +77,8 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--story", action="append", default=[],
                     help='Extra storyline as "Lead.|Body text" — inserted after The stars.')
+    ap.add_argument("--stories-only", action="store_true",
+                    help="Use only the --story entries (full editorial control, no auto storylines)")
     ap.add_argument("--feature-cards",
                     help="Comma-separated card assets for a Card Corner page 3 "
                          "(default: special cards whose caption mentions this week)")
@@ -188,6 +196,11 @@ def main():
 
     # ---- storylines ----
     stories = []
+    custom = []
+    for s in args.story:
+        lead, _, body = s.partition("|")
+        if body.strip():
+            custom.append((lead.strip(), body.strip()))
     scores = " and ".join(f"{b['rf']}-{b['ra']}" for b in boxes)
     stories.append(("The result.", (
         f"Maple Tree {outcome_verb} {opponent} {'on the night' if n > 1 else ''}, {scores} — "
@@ -197,10 +210,7 @@ def main():
         if len(stars) > 1 and stars[1]["gs"] > 0:
             body += f", and {stars[1]['name']} backed him up with {star_line(stars[1])}"
         stories.append(("The stars.", body + "."))
-    for s in args.story:
-        lead, _, body = s.partition("|")
-        if body.strip():
-            stories.append((lead.strip(), body.strip()))
+    stories.extend(custom)
     if reached:
         marquee = [f"{e['player']}'s {ordinal(e['milestone'])} career {ms_word(e['stat'])}"
                    for e in reached if e["stat"] != "Games"][:3]
@@ -212,7 +222,10 @@ def main():
         stories.append(("Where it leaves us.", (
             f"Maple Tree sits {meta['record']} — the #{us['seed']} seed at {signed(us['run_diff'])} "
             f"run differential, {int(us['games_remaining'])} to play.")))
-    stories = stories[:4]
+    if args.stories_only and custom:
+        stories = custom
+    else:
+        stories = stories[:4]
 
     logo = prep_logo()
     season_slug = meta["current_season"]["slug"]
@@ -299,7 +312,7 @@ def main():
     col_y = ty - 28
     section_title(c, 36, col_y, "How it happened", 318)
     sy = col_y - 24
-    floor = 264  # standings section starts at 250
+    floor = 84  # keep clear of the page footer
     for lead, body in stories:
         need = 13 + wrap_count(body, 318) * 12.5 + 10
         if sy - need < floor:
@@ -339,23 +352,41 @@ def main():
                  + (f" ({potw['games']}-game)" if potw.get("games", 1) > 1 else ""), "Helvetica", 8.5, MUTED)
         _txt(c, tx, b1y + 26, "Player of the Week", "Helvetica-Oblique", 8.5, MAPLE)
 
-    # milestones reached
+    # milestones reached — every one of them, box sized to fit
     if reached:
-        b2y = b1y - 130
-        h2 = 124
+        h2 = 40 + len(reached) * 13.5 + 8
+        b2y = b1y - h2 - 12
         rail_box(b2y, h2, "MILESTONES REACHED")
         ly = b2y + h2 - 36
-        for e in reached[:6]:
+        for e in reached:
             _txt(c, 380, ly, "•", "Helvetica-Bold", 9, MAPLE)
             _txt(c, 392, ly, f"{e['player']} — {e['milestone']} career {ms_word(e['stat'], plural=True)}",
                  "Helvetica", 8.5, INK)
             ly -= 13.5
-        if len(reached) > 6:
-            _txt(c, 392, ly, f"+ {len(reached) - 6} more career milestones", "Helvetica-Oblique", 8, MUTED)
 
-    # standings after
-    st_y = 250
-    section_title(c, 36, st_y, "Standings after", W - 72)
+    def page_footer():
+        c.setStrokeColor(LINE)
+        c.setLineWidth(0.75)
+        c.line(36, 64, W - 36, 64)
+        _txt(c, 36, 50, "MAPLE TREE SOFTBALL", "Helvetica-Bold", 8, BARK, cs=1)
+        _txt(c, W - 36, 50, "mapletreesoftball.netlify.app  ·  The Maple Tree Tap - Cary, Illinois",
+             "Helvetica", 8, MUTED, align="r")
+
+    page_footer()
+    c.showPage()
+
+    # ===== PAGE 2 : THE LEAGUE — full standings + every score from the week =====
+    c.setFillColor(PAPER)
+    c.rect(0, 0, W, H, stroke=0, fill=1)
+    c.setFillColor(BARK)
+    c.rect(0, H - 72, W, 72, stroke=0, fill=1)
+    _txt(c, 36, H - 34, f"STANDINGS & SCORES  ·  {week_label.upper() or date_pretty.upper()}",
+         "Helvetica-Bold", 8.5, TAN, cs=2)
+    _txt(c, 36, H - 58, "AROUND THE LEAGUE", "Helvetica-Bold", 24, WHITE, cs=1)
+    _txt(c, W - 36, H - 58, "Wednesday Men's · Recreational", "Helvetica-Oblique", 9, TAN, align="r")
+
+    st_y = H - 104
+    section_title(c, 36, st_y, f"Standings after {week_label or 'this week'}", W - 72)
     cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RF", 426, "r"),
             ("RA", 476, "r"), ("DIFF", 530, "r"), ("LEFT", 574, "r")]
     hy = st_y - 24
@@ -363,7 +394,7 @@ def main():
     for label, x, _a in cols:
         _txt(c, x, hy, label, "Helvetica-Bold", 7, MUTED, align="r")
     ry, row_h = hy - 8, 17
-    for i, r in enumerate(board[:6]):
+    for i, r in enumerate(board):
         y0 = ry - row_h * (i + 1)
         bold = r["is_team"] or r["team_name"] == opponent
         if r["is_team"]:
@@ -380,14 +411,31 @@ def main():
         _txt(c, 530, y0, signed(dd), f, 9.5, GREEN if dd > 0 else MUTED, align="r")
         _txt(c, 574, y0, str(int(r["games_remaining"])), f, 9.5, align="r")
 
-    c.setStrokeColor(LINE)
-    c.setLineWidth(0.75)
-    c.line(36, 64, W - 36, 64)
-    _txt(c, 36, 50, "MAPLE TREE SOFTBALL", "Helvetica-Bold", 8, BARK, cs=1)
-    _txt(c, W - 36, 50, "mapletreesoftball.netlify.app  ·  The Maple Tree Tap - Cary, Illinois", "Helvetica", 8, MUTED, align="r")
+    lg = con.execute(
+        "SELECT game_time, location_or_field, home_team, away_team, home_runs, away_runs "
+        "FROM league_schedule_games WHERE season=? AND week_label=? AND completed_flag=1 "
+        "ORDER BY game_time, location_or_field", (season_name, week_label)).fetchall()
+    if lg:
+        sc_y = ry - row_h * (len(board) + 1) - 34
+        section_title(c, 36, sc_y, f"{week_label} scores", W - 72)
+        gy = sc_y - 26
+        for gt, loc, home, away, hr_, ar_ in lg:
+            win, wr, lose, lr = (home, hr_, away, ar_) if hr_ > ar_ else (away, ar_, home, hr_)
+            ours = "Maple Tree" in (home, away)
+            f = "Helvetica-Bold" if ours else "Helvetica"
+            if ours:
+                c.setFillColor(SAND)
+                c.rect(36, gy - 4, W - 72, 16, stroke=0, fill=1)
+                c.setFillColor(MAPLE)
+                c.rect(36, gy - 4, 3, 16, stroke=0, fill=1)
+            _txt(c, 44, gy, f"{win} {int(wr)}, {lose} {int(lr)}", f, 9.5, BARK if ours else INK)
+            _txt(c, W - 44, gy, f"{gt}  ·  {loc}", "Helvetica", 8, MUTED, align="r")
+            gy -= 16.5
+
+    page_footer()
     c.showPage()
 
-    # ===== PAGE 2 : BOX SCORES =====
+    # ===== PAGE 3 : BOX SCORES =====
     c.setFillColor(PAPER)
     c.rect(0, 0, W, H, stroke=0, fill=1)
     c.setFillColor(BARK)
@@ -440,7 +488,7 @@ def main():
     _txt(c, W - 36, 54, "mapletreesoftball.netlify.app", "Helvetica", 8, MUTED, align="r")
     c.showPage()
 
-    # ===== PAGE 3 : THE CARD CORNER (when the week minted new special editions) =====
+    # ===== PAGE 4 : THE CARD CORNER (when the week minted new special editions) =====
     if featured:
         c.setFillColor(PAPER)
         c.rect(0, 0, W, H, stroke=0, fill=1)
