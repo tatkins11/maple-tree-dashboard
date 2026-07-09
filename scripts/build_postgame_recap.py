@@ -50,11 +50,30 @@ def ms_word(stat, plural=False):
     return w
 
 
+def prep_card_hd(asset):
+    """Full-resolution card art with rounded corners, for the Card Corner page."""
+    from build_gameday_preview import ASSET_CACHE, CARDS_DIR
+    from PIL import ImageDraw
+    dst = ASSET_CACHE / f"card-hd-{asset}.png"
+    if not dst.exists():
+        img = Image.open(CARDS_DIR / f"{asset}.webp").convert("RGBA")
+        mask = Image.new("L", img.size, 0)
+        ImageDraw.Draw(mask).rounded_rectangle([0, 0, img.size[0] - 1, img.size[1] - 1], radius=36, fill=255)
+        img.putalpha(mask)
+        img.save(dst)
+    return dst
+
+
 def main():
     ap = argparse.ArgumentParser(description="Maple Tree weekly postgame recap PDF")
     ap.add_argument("--date", help="YYYY-MM-DD (default: latest completed game day)")
     ap.add_argument("--season")
     ap.add_argument("--out")
+    ap.add_argument("--story", action="append", default=[],
+                    help='Extra storyline as "Lead.|Body text" — inserted after The stars.')
+    ap.add_argument("--feature-cards",
+                    help="Comma-separated card assets for a Card Corner page 3 "
+                         "(default: special cards whose caption mentions this week)")
     args = ap.parse_args()
 
     meta = load("meta.json")
@@ -74,6 +93,18 @@ def main():
         raise SystemExit(f"No completed team games on {date}.")
     opponent = day[0]["opponent_name"]
     field = day[0]["location_or_field"]
+    week_label = day[0].get("week_label") or ""
+
+    # featured cards for the Card Corner page (explicit flag, else auto-detect
+    # special editions whose caption references this week)
+    if args.feature_cards:
+        wanted = [a.strip() for a in args.feature_cards.split(",") if a.strip()]
+        featured = [c for c in cards if c["asset"] in wanted]
+    else:
+        featured = [c for c in cards
+                    if c["kind"] == "special" and week_label
+                    and week_label.lower() in (c.get("caption") or "").lower()]
+    featured = featured[:2]
 
     from datetime import datetime
     d = datetime.fromisoformat(date)
@@ -166,6 +197,10 @@ def main():
         if len(stars) > 1 and stars[1]["gs"] > 0:
             body += f", and {stars[1]['name']} backed him up with {star_line(stars[1])}"
         stories.append(("The stars.", body + "."))
+    for s in args.story:
+        lead, _, body = s.partition("|")
+        if body.strip():
+            stories.append((lead.strip(), body.strip()))
     if reached:
         marquee = [f"{e['player']}'s {ordinal(e['milestone'])} career {ms_word(e['stat'])}"
                    for e in reached if e["stat"] != "Games"][:3]
@@ -247,11 +282,28 @@ def main():
         _txt(c, x0 + 12, ty + 16, val, "Helvetica-Bold", 23, BARK)
         _txt(c, x0 + 162, ty + 16, sub, "Helvetica", 7.5, MUTED, align="r")
 
-    # storylines (left) + rail (right)
+    # storylines (left) + rail (right) — never let stories run into the standings
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    def wrap_count(txt, width, font="Helvetica", size=9.5):
+        lines, cur = 1, ""
+        for word in txt.split():
+            t = (cur + " " + word).strip()
+            if stringWidth(t, font, size) <= width:
+                cur = t
+            else:
+                lines += 1
+                cur = word
+        return lines
+
     col_y = ty - 28
     section_title(c, 36, col_y, "How it happened", 318)
     sy = col_y - 24
+    floor = 264  # standings section starts at 250
     for lead, body in stories:
+        need = 13 + wrap_count(body, 318) * 12.5 + 10
+        if sy - need < floor:
+            break
         _txt(c, 36, sy, lead, "Helvetica-Bold", 10, BARK)
         sy = wrap(c, 36, sy - 13, body, 318, "Helvetica", 9.5, 12.5, INK) - 10
 
@@ -387,11 +439,59 @@ def main():
          "Helvetica", 8, MUTED)
     _txt(c, W - 36, 54, "mapletreesoftball.netlify.app", "Helvetica", 8, MUTED, align="r")
     c.showPage()
+
+    # ===== PAGE 3 : THE CARD CORNER (when the week minted new special editions) =====
+    if featured:
+        c.setFillColor(PAPER)
+        c.rect(0, 0, W, H, stroke=0, fill=1)
+        c.setFillColor(BARK)
+        c.rect(0, H - 72, W, 72, stroke=0, fill=1)
+        kick = f"{meta['current_season']['label'].upper()}  ·  {week_label.upper() or date_pretty.upper()}  ·  SPECIAL EDITIONS"
+        _txt(c, 36, H - 34, kick, "Helvetica-Bold", 8.5, TAN, cs=2)
+        _txt(c, 36, H - 58, "THE CARD CORNER", "Helvetica-Bold", 24, WHITE, cs=1)
+        _txt(c, W - 36, H - 58, "fresh drops from the clubhouse printer", "Helvetica-Oblique", 9, TAN, align="r")
+
+        cw = 236
+        xs = [(W - cw) / 2] if len(featured) == 1 else [45, W - 45 - cw]
+        for x0, card in zip(xs, featured):
+            path = prep_card_hd(card["asset"])
+            img = Image.open(path)
+            ch = cw * (img.size[1] / img.size[0])
+            top = H - 100
+            c.drawImage(str(path), x0, top - ch, width=cw, height=ch, mask="auto")
+            c.setStrokeColor(LINE)
+            c.setLineWidth(1)
+            c.roundRect(x0 - 7, top - ch - 7, cw + 14, ch + 14, 12, stroke=1, fill=0)
+
+            ty2 = top - ch - 30
+            _txt(c, x0, ty2, (card.get("series") or "Special Edition").upper(),
+                 "Helvetica-Bold", 8, MAPLE, cs=1.5)
+            _txt(c, x0, ty2 - 17, card["player"], "Helvetica-Bold", 14, BARK)
+            _txt(c, x0, ty2 - 30, card.get("caption") or "", "Helvetica", 8.5, MUTED)
+            yy = wrap(c, x0, ty2 - 47, card.get("flavor") or "", cw, "Helvetica", 8.5, 11.5, INK) - 9
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.6)
+            c.line(x0, yy + 4, x0 + cw, yy + 4)
+            yy -= 9
+            for f in (card.get("facts") or [])[:4]:
+                _txt(c, x0, yy, str(f[0]).upper(), "Helvetica-Bold", 7, MUTED, cs=0.5)
+                _txt(c, x0 + cw, yy, str(f[1]), "Helvetica", 8.5, INK, align="r")
+                yy -= 13
+
+        c.setStrokeColor(LINE)
+        c.setLineWidth(0.75)
+        c.line(36, 64, W - 36, 64)
+        _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  TRADING CARDS", "Helvetica-Bold", 8, BARK, cs=1)
+        _txt(c, W - 36, 50, "flip every card at mapletreesoftball.netlify.app/cards", "Helvetica", 8, MUTED, align="r")
+        c.showPage()
+
     c.save()
 
     print(f"\nPostgame recap -> {out}")
     print(f"  {outcome_verb} {opponent}  ·  {date_pretty}  ·  {scores}")
     print(f"  stars: {', '.join(s['name'] for s in stars[:3])}  ·  milestones reached: {len(reached)}")
+    if featured:
+        print(f"  card corner: {', '.join(c_['asset'] for c_ in featured)}")
 
 
 if __name__ == "__main__":
