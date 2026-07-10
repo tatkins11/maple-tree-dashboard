@@ -1,0 +1,73 @@
+﻿season,view,situation,pa,ab,h,1b,2b,3b,hr,tb,rbi,so,bb,hbp,sac,sf,roe,avg,obp,slg,ops
+Maple Tree Tappers Summer 2025,game_state,Bases loaded,14,11,8,4,1,2,1,16,22,0,1,0,0,2,0,0.727,0.643,1.455,2.097
+Maple Tree Tappers Summer 2025,game_state,Wins,102,96,51,42,4,5,0,65,35,2,5,0,0,1,0,0.531,0.549,0.677,1.226
+Maple Tree Tappers Summer 2025,game_state,Scoring position,148,135,69,48,10,7,4,105,91,4,8,0,0,5,0,0.511,0.52,0.778,1.298
+Maple Tree Tappers Summer 2025,game_state,Lead off inning,74,71,36,30,4,1,1,45,1,0,3,0,0,0,0,0.507,0.527,0.634,1.161
+Maple Tree Tappers Summer 2025,game_state,Leading,105,99,48,40,5,2,1,60,36,1,5,0,0,1,0,0.485,0.505,0.606,1.111
+Maple Tree Tappers Summer 2025,game_state,0 outs,145,135,64,54,6,3,1,79,20,3,8,0,0,2,0,0.474,0.497,0.585,1.082
+Maple Tree Tappers Summer 2025,game_state,1 out,131,121,55,46,6,1,2,69,35,7,7,0,0,3,0,0.455,0.473,0.57,1.044
+Maple Tree Tappers Summer 2025,game_state,Runners on,257,236,107,82,12,8,5,150,98,8,16,0,0,5,0,0.453,0.479,0.636,1.114
+Maple Tree Tappers Summer 2025,game_state,Trailing,202,188,85,64,10,5,6,123,49,5,11,0,0,3,0,0.452,0.475,0.654,1.13
+Maple Tree Tappers Summer 2025,game_state,Bases empty,139,134,60,48,7,3,2,79,2,3,5,0,0,0,0,0.448,0.468,0.59,1.057
+Maple Tree Tappers Summer 2025,game_state,Losses,276,256,112,84,15,6,7,160,65,8,16,0,0,4,0,0.438,0.464,0.625,1.089
+Maple Tree Tappers Summer 2025,game_state,2 outs,120,114,48,30,7,7,4,81,45,1,6,0,0,0,0,0.421,0.45,0.711,1.161
+Maple Tree Tappers Summer 2025,game_state,Tied game,89,83,34,26,4,4,0,46,15,5,5,0,0,1,0,0.41,0.438,0.554,0.992
+Maple Tree Tappers Summer 2025,game_state,Ties,18,18,4,4,0,0,0,4,0,1,0,0,0,0,0,0.222,0.222,0.222,0.444
+Maple Tree Tappers Summer 2025,batted_balls,Bunt,1,1,1,1,0,0,0,1,1,0,0,0,0,0,0,1.0,1.0,1.0,2.0
+Maple Tree Tappers Summer 2025,batted_balls,Line drive,118,118,95,72,11,9,3,133,56,0,0,0,0,0,0,0.805,0.805,1.127,1.932
+Maple Tree Tappers Summer 2025,batted_balls,Hard ground ball,19,19,14,13,0,1,0,16,8,0,0,0,0,0,0,0.737,0.737,0.842,1.579
+Maple Tree Tappers Summer 2025,batted_balls,Ground ball,100,100,30,29,1,0,0,31,12,0,0,0,0,0,0,0.3,0.3,0.31,0.61
+Maple Tree Tappers Summer 2025,batted_balls,Fly ball,116,111,26,14,7,1,4,47,21,0,0,0,0,5,0,0.234,0.224,0.423,0.648
+Maple Tree Tappers Summer 2025,batted_balls,Pop fly,10,10,1,1,0,0,0,1,1,0,0,0,0,0,0,0.1,0.1,0.1,0.2
+Maple Tree Fall 2025,game_state,Wins,143,121,71,46,13,4,8,116,61,1,18,0,0,4,0,0.587,0.622,0.959,1.581
+Maple Tree Fall 2025,game_state,0 outs,186,168,95,60,17,6,12,160,55,8,14,0,0,4,0,0.565,0.586,0.952,1.538
+Maple Tree Fall 2025,game_state,Tied game,67,62,35,23,5,2,5,59,24,2,7,0,0,0,0,0.565,0.627,0.952,1.578
+Maple Tree Fall 2025,game_state,Lead off inning,79,75,42,29,7,4,2,63,2,5,4,0,0,0,0,0.56,0.582,0.84,1.422
+Maple Tree Fall 2025,game_state,Bases loaded,15,13,7,2,2,0,3,18,23,1,0,0,0,2,0,0.538,0.467,1.385,1.851
+Maple Tree Fall 2025,game_state,Bases empty,174,163,85,53,19,7,6,136,6,13,13,0,0,0,0,0.521,0.563,0.834,1.398
+Maple Tree Fall 2025,game_state,Trailing,264,240,124,74,27,6,17,214,86,14,21,0,0,3,0,0.517,0.549,0.892,1.441
+Maple Tree Fall 2025,game_state,Scoring position,208,183,94,58,17,3,16,165,138,6,15,0,0,10,0,0.514,0.524,0.902,1.426
+Maple Tree Fall 2025,game_state,Runners on,322,283,145,91,25,5,24,252,159,9,29,0,0,10,0,0.512,0.54,0.89,1.431
+Maple Tree Fall 2025,game_state,1 out,159,137,69,46,11,2,10,114,54,7,16,0,0,6,0,0.504,0.535,0.832,1.367
+Maple Tree Fall 2025,game_state,Leading,165,144,71,47,12,4,8,115,55,6,14,0,0,7,0,0.493,0.515,0.799,1.314
+Maple Tree Fall 2025,game_state,Losses,353,325,159,98,31,8,22,272,104,21,24,0,0,6,0,0.489,0.518,0.837,1.355
+Maple Tree Fall 2025,game_state,2 outs,151,139,66,38,16,4,8,114,56,7,12,0,0,0,0,0.475,0.517,0.82,1.337
+Maple Tree Fall 2025,batted_balls,Hard ground ball,46,46,39,34,5,0,0,44,14,0,0,0,0,0,0,0.848,0.848,0.957,1.804
+Maple Tree Fall 2025,batted_balls,Line drive,142,142,111,62,31,9,9,187,70,0,0,0,0,0,0,0.782,0.782,1.317,2.099
+Maple Tree Fall 2025,batted_balls,Fly ball,144,134,47,17,6,3,21,122,69,0,0,0,0,10,0,0.351,0.326,0.91,1.237
+Maple Tree Fall 2025,batted_balls,Ground ball,100,100,33,31,2,0,0,35,12,0,0,0,0,0,0,0.33,0.33,0.35,0.68
+Maple Tree Spring 2026,game_state,Wins,97,89,55,39,7,1,8,88,48,4,7,0,0,1,0,0.618,0.639,0.989,1.628
+Maple Tree Spring 2026,game_state,Tied game,55,51,30,18,6,2,4,52,21,4,3,0,0,1,0,0.588,0.6,1.02,1.62
+Maple Tree Spring 2026,game_state,Bases loaded,19,16,9,6,3,0,0,12,18,2,2,0,0,1,0,0.563,0.579,0.75,1.329
+Maple Tree Spring 2026,game_state,Leading,159,150,83,61,11,2,9,125,62,2,8,0,0,1,0,0.553,0.572,0.833,1.406
+Maple Tree Spring 2026,game_state,Scoring position,154,139,73,46,15,0,12,124,115,5,11,0,0,4,0,0.525,0.545,0.892,1.438
+Maple Tree Spring 2026,game_state,1 out,171,151,77,53,15,1,8,118,57,4,17,0,0,3,0,0.51,0.55,0.781,1.331
+Maple Tree Spring 2026,game_state,Runners on,277,257,130,85,23,3,19,216,136,7,16,0,0,4,0,0.506,0.527,0.84,1.368
+Maple Tree Spring 2026,game_state,2 outs,151,144,72,49,6,2,15,127,63,5,7,0,0,0,0,0.5,0.523,0.882,1.405
+Maple Tree Spring 2026,game_state,Losses,366,340,151,100,24,4,23,252,100,11,23,0,0,3,0,0.444,0.475,0.741,1.217
+Maple Tree Spring 2026,game_state,Bases empty,186,172,76,54,8,2,12,124,12,8,14,0,0,0,0,0.442,0.484,0.721,1.205
+Maple Tree Spring 2026,game_state,0 outs,141,134,57,37,10,2,8,95,28,6,6,0,0,1,0,0.425,0.447,0.709,1.156
+Maple Tree Spring 2026,game_state,Trailing,249,228,93,60,14,1,18,163,65,9,19,0,0,2,0,0.408,0.45,0.715,1.165
+Maple Tree Spring 2026,game_state,Lead off inning,78,73,29,21,3,1,4,46,4,3,5,0,0,0,0,0.397,0.436,0.63,1.066
+Maple Tree Spring 2026,batted_balls,Pop fly,3,3,3,3,0,0,0,3,3,0,0,0,0,0,0,1.0,1.0,1.0,2.0
+Maple Tree Spring 2026,batted_balls,Hard ground ball,28,28,23,21,2,0,0,25,12,0,0,0,0,0,0,0.821,0.821,0.893,1.714
+Maple Tree Spring 2026,batted_balls,Line drive,136,136,103,66,26,3,8,159,62,0,0,0,0,0,0,0.757,0.757,1.169,1.926
+Maple Tree Spring 2026,batted_balls,Ground ball,117,117,45,44,1,0,0,46,19,0,0,0,0,0,0,0.385,0.385,0.393,0.778
+Maple Tree Spring 2026,batted_balls,Fly ball,134,130,32,5,2,2,23,107,50,0,0,0,0,4,0,0.246,0.239,0.823,1.062
+Maple Tree Summer 2026,game_state,Tied game,7,7,7,4,3,0,0,10,4,0,0,0,0,0,0,1.0,1.0,1.429,2.429
+Maple Tree Summer 2026,game_state,Bases loaded,6,3,2,2,0,0,0,2,8,0,0,0,0,3,0,0.667,0.333,0.667,1.0
+Maple Tree Summer 2026,game_state,Lead off inning,27,25,15,12,1,1,1,21,1,2,2,0,0,0,0,0.6,0.63,0.84,1.47
+Maple Tree Summer 2026,game_state,0 outs,61,55,31,24,4,2,1,42,15,2,3,0,0,3,0,0.564,0.557,0.764,1.321
+Maple Tree Summer 2026,game_state,Bases empty,47,44,24,19,2,2,1,33,1,2,3,0,0,0,0,0.545,0.574,0.75,1.324
+Maple Tree Summer 2026,game_state,1 out,55,51,27,21,4,1,1,36,18,0,1,0,0,3,0,0.529,0.509,0.706,1.215
+Maple Tree Summer 2026,game_state,Wins,122,113,59,44,8,5,2,83,40,2,5,0,0,4,0,0.522,0.525,0.735,1.259
+Maple Tree Summer 2026,game_state,Scoring position,60,53,27,20,4,2,1,38,41,0,1,0,0,6,0,0.509,0.467,0.717,1.184
+Maple Tree Summer 2026,game_state,Leading,115,106,52,40,5,5,2,73,36,2,5,0,0,4,0,0.491,0.496,0.689,1.184
+Maple Tree Summer 2026,game_state,Runners on,106,98,45,34,7,3,1,61,43,0,2,0,0,6,0,0.459,0.443,0.622,1.066
+Maple Tree Summer 2026,game_state,Trailing,31,29,10,9,1,0,0,11,4,0,0,0,0,2,0,0.345,0.323,0.379,0.702
+Maple Tree Summer 2026,game_state,Losses,31,29,10,9,1,0,0,11,4,0,0,0,0,2,0,0.345,0.323,0.379,0.702
+Maple Tree Summer 2026,game_state,2 outs,37,36,11,8,1,2,0,16,11,0,1,0,0,0,0,0.306,0.324,0.444,0.769
+Maple Tree Summer 2026,batted_balls,Hard ground ball,9,9,8,8,0,0,0,8,3,0,0,0,0,0,0,0.889,0.889,0.889,1.778
+Maple Tree Summer 2026,batted_balls,Line drive,50,49,39,28,6,4,1,56,20,0,0,0,0,1,0,0.796,0.78,1.143,1.923
+Maple Tree Summer 2026,batted_balls,Ground ball,22,22,7,6,1,0,0,8,6,0,0,0,0,0,0,0.318,0.318,0.364,0.682
+Maple Tree Summer 2026,batted_balls,Fly ball,65,60,15,11,2,1,1,22,15,0,0,0,0,5,0,0.25,0.231,0.367,0.597
