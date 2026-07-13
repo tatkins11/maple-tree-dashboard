@@ -175,6 +175,8 @@ def resolve_context(args):
 
     if args.week_label:
         week_label = args.week_label
+    elif day_games and day_games[0].get("week_label"):
+        week_label = day_games[0]["week_label"]  # authoritative label from the schedule
     else:
         idx = playdays.index(date) if date in playdays else len(playdays) - 1
         week_label = f"Game Week {idx + 1}"
@@ -221,6 +223,8 @@ def main():
     ap.add_argument("--week-label")
     ap.add_argument("--season")
     ap.add_argument("--out")
+    ap.add_argument("--story", action="append", default=[],
+                    help='Inject a storyline as "Lead.|Body". Repeatable; appears near the top.')
     args = ap.parse_args()
 
     ctx = resolve_context(args)
@@ -302,11 +306,13 @@ def main():
         def mword(stat):
             w = STAT_WORD.get(stat, stat.lower())
             return w if w in ABBR else w + "s"
-        parts = [f"{nm} ({disp} {mword(stat)})" for nm, disp, stat in swing[:6]]
+        parts = [f"{nm} ({disp} {mword(stat)})" for nm, disp, stat in swing[:4]]
         cnt = len(swing)
+        extra = cnt - len(parts)
+        listed = (", ".join(parts) + f", and {extra} more") if extra else oxford(parts)
         stories.append(("Milestone night looming.", (
             f"{NUMWORD.get(cnt, str(cnt))} hitter{'s' if cnt != 1 else ''} "
-            f"sit{'' if cnt != 1 else 's'} one swing from a career round number — {oxford(parts)}.")))
+            f"sit{'' if cnt != 1 else 's'} one swing from a career round number — {listed}.")))
     elif chases:
         nm, rem, stat, disp = chases[0]
         stories.append(("Milestone watch.",
@@ -322,6 +328,11 @@ def main():
         stories.append(("New blood.", (
             f"Maple Tree has never faced {ctx['opponent']} in any era of the franchise. "
             "First impressions count.")))
+    # injected stories (e.g. injury report) ride near the top, just under the matchup
+    for s in reversed(args.story):
+        lead, _, body = s.partition("|")
+        if body.strip():
+            stories.insert(1 if stories else 0, (lead.strip(), body.strip()))
     stories = stories[:4]
 
     # ---- stat tiles ----
@@ -389,8 +400,22 @@ def main():
 
     col_y = (ty - 28) if tiles else (py - 40)
     section_title(c, 36, col_y, "The storylines", 318)
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    def _story_lines(txt, width=318, font="Helvetica", size=9.5):
+        n, cur = 1, ""
+        for w in txt.split():
+            if stringWidth((cur + " " + w).strip(), font, size) <= width:
+                cur = (cur + " " + w).strip()
+            else:
+                n += 1
+                cur = w
+        return n
+
     sy = col_y - 24
-    for lead, body in stories:
+    for lead, body in stories:  # never let storylines spill into the seed-race table below
+        if sy - (13 + _story_lines(body) * 12.5 + 10) < 286:
+            break
         _txt(c, 36, sy, lead, "Helvetica-Bold", 10, BARK)
         sy = wrap(c, 36, sy - 13, body, 318, "Helvetica", 9.5, 12.5, INK) - 10
 
@@ -482,7 +507,8 @@ def main():
     _txt(c, 322, head_y + 11, meta["current_season"]["label"].upper(), "Helvetica-Bold", 6.5, MUTED, cs=1)
     _txt(c, 572, head_y + 11, "CAREER", "Helvetica-Bold", 6.5, MUTED, align="r")
 
-    top, row_h = head_y - 10, 56
+    top = head_y - 10
+    row_h = min(56, (top - 92) / len(lineup))  # shrink so 11–12-deep orders still fit the page
     for i, slug in enumerate(lineup):
         p, s = prows[slug], srows.get(slug)
         y0 = top - row_h * (i + 1)
@@ -490,7 +516,7 @@ def main():
             c.setFillColor(STRIPE)
             c.rect(36, y0, W - 72, row_h, stroke=0, fill=1)
         _txt(c, 50, y0 + row_h / 2 - 6, str(i + 1), "Helvetica-Bold", 17, BARK, align="c")
-        art_h = 48
+        art_h = row_h - 8
         card = pick_card(slug)
         if card:
             path = prep_card(card["asset"])
