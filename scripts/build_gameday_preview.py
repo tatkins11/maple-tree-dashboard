@@ -195,15 +195,15 @@ def _date_pretty(iso):
     return f"{d.strftime('%A, %B')} {d.day}, {d.year}"
 
 
-def opponent_recent(opponent, season):
-    """Live scouting: opponent's most recent results. Empty list if the DB isn't reachable."""
+def opponent_recent(opponent, season, limit=3):
+    """Live scouting: opponent's results (most recent first). Empty list if DB unreachable."""
     try:
         import sys
         sys.path.insert(0, str(REPO))
         from src.dashboard.data import (DEFAULT_DB_PATH, fetch_league_team_recent_results,
                                         get_connection)
         con = get_connection(Path(DEFAULT_DB_PATH))
-        df = fetch_league_team_recent_results(con, season=season, team_name=opponent, limit=3)
+        df = fetch_league_team_recent_results(con, season=season, team_name=opponent, limit=limit)
         if df is None or df.empty or "team_result_display" not in df.columns:
             return []
         return [str(v) for v in df["team_result_display"].tolist()]
@@ -238,6 +238,7 @@ def main():
     career_stats = load("career_stats.json")
     rivalry = load("rivalry.json")
     cards = load("cards.json")
+    milestones = load("milestones.json")
 
     summer = next((s for s in season if s["name"] == season_name), None)
     srows = {p["slug"]: p for p in (summer["players"] if summer else [])}
@@ -346,7 +347,7 @@ def main():
             (signed(us["run_diff"]) if us else "-", "RUN DIFFERENTIAL", f"{ordinal(rank)} in the league"),
         ]
 
-    recent = opponent_recent(ctx["opponent"], season_name)
+    recent = opponent_recent(ctx["opponent"], season_name, limit=20)
 
     logo = prep_logo()
     out = Path(args.out) if args.out else (
@@ -428,22 +429,32 @@ def main():
         c.rect(370, y0 + h_ - 20, 206, 10, stroke=0, fill=1)
         _txt(c, 380, y0 + h_ - 14, title, "Helvetica-Bold", 8, BARK, cs=1)
 
-    b1y = col_y - 100
-    rail_box(b1y, 96, f"SCOUTING {ctx['opponent'].upper()}")
-    ly = b1y + 62
+    # scouting rail — the opponent's full season slate (box height follows the results)
     scout_lines = []
     if opp_row:
-        scout_lines.append(f"{int(opp_row['wins'])}-{int(opp_row['losses'])}  ·  "
-                           f"{signed(opp_row['run_diff'])} diff  ·  #{opp_row['seed']} seed")
-    scout_lines += recent[:2]
-    scout_lines.append(("Owns the all-time series " + riv["record"] + " vs us.") if riv else "No book on them yet - watch game one.")
-    for line in scout_lines[:4]:
-        _txt(c, 380, ly, line, "Helvetica", 9, INK)
-        ly -= 14
+        scout_lines.append(("record", f"{int(opp_row['wins'])}-{int(opp_row['losses'])}  ·  "
+                           f"{signed(opp_row['run_diff'])} run diff  ·  #{opp_row['seed']} seed"))
+    for r in recent:
+        scout_lines.append(("game", str(r).strip()))
+    scout_lines.append(("note", (f"Series vs us: {riv['record']} all-time." if riv
+                                 else "No book on them yet — steal game one.")))
+    sb_h = 30 + len(scout_lines) * 13.5
+    b1y = col_y - 4 - sb_h
+    rail_box(b1y, sb_h, f"SCOUTING {ctx['opponent'].upper()}")
+    ly = b1y + sb_h - 32
+    for kind, line in scout_lines:
+        if kind == "record":
+            _txt(c, 380, ly, line, "Helvetica-Bold", 8.6, BARK)
+        elif kind == "note":
+            _txt(c, 380, ly, line, "Helvetica-Oblique", 8.4, MAPLE if not riv else MUTED)
+        else:
+            _txt(c, 380, ly, line, "Helvetica", 8.6, INK)
+        ly -= 13.5
 
     if potw:
-        b2y = b1y - 110
-        rail_box(b2y, 96, "REIGNING PLAYER OF THE WEEK")
+        pb_h = 96
+        b2y = b1y - 12 - pb_h
+        rail_box(b2y, pb_h, "REIGNING PLAYER OF THE WEEK")
         _txt(c, 380, b2y + 58, potw["player"], "Helvetica-Bold", 15, BARK)
         _txt(c, 380, b2y + 42, f"{potw['hits']}-for-{potw['ab']}, {potw['hr']} HR, {potw['rbi']} RBI, {potw['r']} R", "Helvetica", 9.5, INK)
         _txt(c, 380, b2y + 28, f"vs {potw['opponents']}  ·  Game Score {potw['game_score']:.1f}"
@@ -452,35 +463,35 @@ def main():
         if m and m["remaining"] <= 3:
             _txt(c, 380, b2y + 12, "Also " + milestone_phrase(potw["player"].split()[0], m["remaining"], m["stat"], m["next_milestone_display"], with_name=False) + ".", "Helvetica-Oblique", 8.5, MAPLE)
 
-    # seed race table
-    st_y = 268
+    # seed race table — the FULL standings, all teams
+    st_y = 264
     section_title(c, 36, st_y, "Race to the #1 seed", W - 72)
+    _txt(c, W - 36, st_y + 1, "Wednesday's opponent in bold", "Helvetica-Oblique", 7, MUTED, align="r")
     cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RF", 426, "r"),
             ("RA", 476, "r"), ("DIFF", 530, "r"), ("LEFT", 574, "r")]
-    hy = st_y - 24
+    hy = st_y - 22
     _txt(c, 76, hy, "TEAM", "Helvetica-Bold", 7, MUTED)
     for label, x, _ in cols:
         _txt(c, x, hy, label, "Helvetica-Bold", 7, MUTED, align="r")
-    ry, row_h = hy - 8, 17
-    for i, r in enumerate(board[:6]):
+    ry = hy - 8
+    row_h = min(17, (ry - 66) / len(board))  # shrink so every team fits above the footer
+    fs = 9.5 if row_h >= 15 else 8.5
+    for i, r in enumerate(board):
         y0 = ry - row_h * (i + 1)
-        highlight = r["is_team"]
-        if highlight:
+        if r["is_team"]:
             c.setFillColor(SAND)
-            c.rect(36, y0 - 4, W - 72, row_h, stroke=0, fill=1)
+            c.rect(36, y0 - 3, W - 72, row_h, stroke=0, fill=1)
             c.setFillColor(MAPLE)
-            c.rect(36, y0 - 4, 3, row_h, stroke=0, fill=1)
+            c.rect(36, y0 - 3, 3, row_h, stroke=0, fill=1)
         bold = r["is_team"] or r["team_name"] == ctx["opponent"]
         f = "Helvetica-Bold" if bold else "Helvetica"
-        _txt(c, 58, y0, str(int(r["seed"])), f, 9, MUTED, align="r")
-        _txt(c, 76, y0, r["team_name"], f, 9.5, BARK if bold else INK)
+        _txt(c, 58, y0, str(int(r["seed"])), f, fs, MUTED, align="r")
+        _txt(c, 76, y0, r["team_name"], f, fs, BARK if bold else INK)
         for key, x in [("wins", 336), ("losses", 376), ("runs_for", 426), ("runs_against", 476)]:
-            _txt(c, x, y0, str(int(r[key])), f, 9.5, align="r")
+            _txt(c, x, y0, str(int(r[key])), f, fs, align="r")
         d = int(r["run_diff"])
-        _txt(c, 530, y0, signed(d), f, 9.5, GREEN if d > 0 else MUTED, align="r")
-        _txt(c, 574, y0, str(int(r["games_remaining"])), f, 9.5, align="r")
-    note_y = ry - row_h * 6 - 18
-    _txt(c, 36, note_y, f"Wednesday's opponent in bold. Seeded by win %, then run differential — every team makes the playoffs.", "Helvetica", 7.5, MUTED)
+        _txt(c, 530, y0, signed(d), f, fs, GREEN if d > 0 else MUTED, align="r")
+        _txt(c, 574, y0, str(int(r["games_remaining"])), f, fs, align="r")
 
     c.setStrokeColor(LINE)
     c.setLineWidth(0.75)
@@ -565,6 +576,80 @@ def main():
     _txt(c, 36, fy - 14, "KEYS TO THE NIGHT", "Helvetica-Bold", 7.5, BARK, cs=1)
     _txt(c, 36, fy - 27, "   ·   ".join(keys) + ".", "Helvetica", 8.5, INK)
     _txt(c, W - 36, fy - 14, "mapletreesoftball.netlify.app/cards", "Helvetica", 7.5, MUTED, align="r")
+    c.showPage()
+
+    # ===== PAGE 3 : THE MILESTONE BOARD =====
+    active = {p["slug"] for p in players if p.get("active")}
+    watch = [m for m in milestones["watch"] if m["slug"] in active]
+    imminent = sum(1 for m in watch if m["remaining"] <= 3)
+    # group by player, nearest chases first (cap the far-off ones)
+    by_player = {}
+    for m in watch:
+        if m["remaining"] <= 20:
+            by_player.setdefault(m["slug"], []).append(m)
+    blocks = []
+    for slug, ms in by_player.items():
+        ms.sort(key=lambda m: (m["remaining"], -m["next_milestone_display"]))
+        blocks.append((prows[slug]["name"], ms[:4]))
+    blocks.sort(key=lambda b: (b[1][0]["remaining"], -len(b[1])))
+
+    def ms_label(m):
+        w = STAT_WORD.get(m["stat"], m["stat"].lower())
+        if w not in ABBR:
+            w += "s"
+        return f"{int(m['next_milestone_display'])} {w}"
+
+    c.setFillColor(PAPER)
+    c.rect(0, 0, W, H, stroke=0, fill=1)
+    c.setFillColor(BARK)
+    c.rect(0, H - 84, W, 84, stroke=0, fill=1)
+    _txt(c, 36, H - 36, f"{meta['current_season']['label'].upper()}  ·  {ctx['week_label'].upper()}", "Helvetica-Bold", 8.5, TAN, cs=2)
+    _txt(c, 36, H - 62, "THE MILESTONE BOARD", "Helvetica-Bold", 26, WHITE, cs=1)
+    _txt(c, W - 36, H - 40, "every career round number the roster is chasing", "Helvetica-Oblique", 9, TAN, align="r")
+    _txt(c, W - 36, H - 58, f"{imminent} within one or two swings of history", "Helvetica-Bold", 10, CREAM, align="r")
+
+    cols_x = [42, 312]
+    top = H - 112
+    floor = 92
+    col, y = 0, top
+    shown = 0
+    for name, ms in blocks:
+        block_h = 17 + len(ms) * 13.6 + 9
+        if y - block_h < floor:
+            col += 1
+            y = top
+            if col > 1:
+                break
+        x = cols_x[col]
+        _txt(c, x, y, name, "Helvetica-Bold", 12.5, BARK)
+        near = ms[0]["remaining"]
+        _txt(c, x + 250, y, ("ON THE DOORSTEP" if near <= 1 else "CLOSING IN" if near <= 3 else f"NEAREST: {near}"),
+             "Helvetica-Bold", 6.5, MAPLE if near <= 3 else MUTED, cs=0.5, align="r")
+        c.setStrokeColor(LINE)
+        c.setLineWidth(0.5)
+        c.line(x, y - 5, x + 250, y - 5)
+        yy = y - 18
+        for m in ms:
+            rem = m["remaining"]
+            hot = rem <= 3
+            tc = MAPLE if hot else INK
+            _txt(c, x + 4, yy, ms_label(m), "Helvetica-Bold" if hot else "Helvetica", 8.8, tc)
+            bx, bw = x + 128, 74
+            c.setFillColor(STRIPE)
+            c.roundRect(bx, yy - 1.5, bw, 5, 2.5, stroke=0, fill=1)
+            c.setFillColor(MAPLE if hot else GREEN)
+            c.roundRect(bx, yy - 1.5, max(3, bw * m["progress_to_next"]), 5, 2.5, stroke=0, fill=1)
+            need = "1 to go!" if rem == 1 else f"{rem} to go"
+            _txt(c, x + 250, yy, need, "Helvetica-Bold" if hot else "Helvetica", 8, tc, align="r")
+            yy -= 13.6
+        shown += 1
+        y = yy - 9
+
+    c.setStrokeColor(LINE)
+    c.setLineWidth(0.75)
+    c.line(36, 64, W - 36, 64)
+    _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  MILESTONE WATCH", "Helvetica-Bold", 8, BARK, cs=1)
+    _txt(c, W - 36, 50, "full ladders at mapletreesoftball.netlify.app/milestones", "Helvetica", 8, MUTED, align="r")
     c.showPage()
     c.save()
 
