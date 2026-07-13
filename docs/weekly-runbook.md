@@ -19,7 +19,9 @@ Every gotcha in here caused a real hiccup once — don't skip the checks.
    Auto-detects the next unplayed game (opponent, DH times, field, week label) from
    schedule.json; storylines, opponent scouting, and milestone watch generate from data;
    lineup rows pick up each hitter's card art. Handles deep orders (11–12 batters) and
-   unknown names show a "CARD TBD" placeholder tile.
+   unknown names show a "CARD TBD" placeholder tile. **3 pages:** ① overview (matchup,
+   storylines, opponent's full season slate, reigning POTW, full standings), ② the lineup,
+   ③ "The Milestone Board" — every active hitter's nearest career milestones.
    - **Roster / injury news** → add `--story "Injury report.|Body text…"` (repeatable). It
      rides just under the matchup line. Use it whenever Brian flags who's in/out (e.g. a
      hurt regular, a returning player). A fit-guard keeps storylines off the standings.
