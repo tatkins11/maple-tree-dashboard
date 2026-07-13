@@ -16,9 +16,14 @@ Every gotcha in here caused a real hiccup once — don't skip the checks.
    ```
    python scripts/build_gameday_preview.py --lineup "Glove,Kives,Tristan,Tim,JJ,Porter,Corey,Joel,Walsh,Duff,Jason"
    ```
-   Auto-detects the next unplayed game (opponent, DH times, field, "Game Week N") from
+   Auto-detects the next unplayed game (opponent, DH times, field, week label) from
    schedule.json; storylines, opponent scouting, and milestone watch generate from data;
-   lineup rows pick up each hitter's card art.
+   lineup rows pick up each hitter's card art. Handles deep orders (11–12 batters) and
+   unknown names show a "CARD TBD" placeholder tile.
+   - **Roster / injury news** → add `--story "Injury report.|Body text…"` (repeatable). It
+     rides just under the matchup line. Use it whenever Brian flags who's in/out (e.g. a
+     hurt regular, a returning player). A fit-guard keeps storylines off the standings.
+   - A player who's OUT simply isn't in the `--lineup`; nothing else needed.
 3. Deliver the PDF from `data/writeups/maple-tree-<season>/`. **Writeup PDFs are local
    deliverables — never committed.**
 4. **Keep this lineup** — it is the batting order for the postgame box scores.
