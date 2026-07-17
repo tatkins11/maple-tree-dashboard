@@ -66,34 +66,47 @@ def _glow_text(card, xy, text, font, fill, glow_color, glow_radius=10, glow_alph
     d2.text(xy, text, font=font, fill=fill, **kw)
 
 
-def _ruby_gem(card, cx, cy, r, value):
-    """Faceted ruby diamond with specular facets + outer glow, value engraved."""
+GEM_TIERS = {
+    #        base            deep            light           lighter         glow             edge
+    "ruby":   ((176, 28, 36), (110, 12, 22), (228, 62, 74), (255, 96, 106), (255, 40, 60), (255, 214, 220)),
+    "gold":   ((214, 158, 30), (146, 98, 10), (238, 190, 66), (255, 222, 110), (255, 190, 40), (255, 240, 190)),
+    "silver": ((162, 168, 182), (104, 110, 124), (204, 210, 222), (238, 242, 250), (210, 224, 255), (250, 252, 255)),
+    "bronze": ((172, 104, 46), (108, 60, 20), (204, 138, 74), (232, 168, 104), (230, 140, 60), (246, 210, 170)),
+}
+
+
+def gem_tier_for(rating) -> str:
+    r = int(rating)
+    return "ruby" if r >= 95 else "gold" if r >= 85 else "silver" if r >= 75 else "bronze"
+
+
+def _gem(card, cx, cy, r, value, tier="ruby"):
+    """Faceted rating gem — tier sets the stone (ruby/gold/silver/bronze)."""
+    base, deep, light, lighter, glow_c, edge = GEM_TIERS[tier]
     glow = Image.new("RGBA", card.size, (0, 0, 0, 0))
     gd = ImageDraw.Draw(glow)
     gd.polygon([(cx, cy - r - 14), (cx + r + 14, cy), (cx, cy + r + 14), (cx - r - 14, cy)],
-               fill=(255, 40, 60, 130))
+               fill=(*glow_c, 130))
     card.alpha_composite(glow.filter(ImageFilter.GaussianBlur(22)))
     d = ImageDraw.Draw(card)
     pts = [(cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy)]
-    d.polygon(pts, fill=RED, outline=(255, 210, 215))
-    # facets: crown triangles brightened/darkened
+    d.polygon(pts, fill=base, outline=edge)
     top, right, bottom, left = pts
     table = [(cx - r * 0.42, cy - r * 0.1), (cx, cy - r * 0.52), (cx + r * 0.42, cy - r * 0.1),
              (cx, cy + r * 0.42)]
-    d.polygon([top, table[0], table[1]], fill=(228, 62, 74))
-    d.polygon([top, table[1], table[2]], fill=(255, 96, 106))
-    d.polygon([left, table[0], table[3]], fill=RED_DEEP)
-    d.polygon([right, table[2], table[3]], fill=(146, 18, 28))
-    d.polygon(table, fill=(198, 34, 46))
-    # specular streaks
-    d.line([cx - r * 0.55, cy - r * 0.4, cx - r * 0.15, cy - r * 0.75], fill=(255, 235, 238), width=6)
-    d.line([cx + r * 0.2, cy - r * 0.68, cx + r * 0.42, cy - r * 0.45], fill=(255, 220, 225), width=4)
-    d.polygon([(cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy)], outline=(255, 214, 220))
+    d.polygon([top, table[0], table[1]], fill=light)
+    d.polygon([top, table[1], table[2]], fill=lighter)
+    d.polygon([left, table[0], table[3]], fill=deep)
+    d.polygon([right, table[2], table[3]], fill=tuple(int(c * 0.82) for c in base))
+    d.polygon(table, fill=tuple(int((b + l) / 2) for b, l in zip(base, light)))
+    d.line([cx - r * 0.55, cy - r * 0.4, cx - r * 0.15, cy - r * 0.75], fill=(255, 252, 248), width=6)
+    d.line([cx + r * 0.2, cy - r * 0.68, cx + r * 0.42, cy - r * 0.45], fill=(255, 248, 242), width=4)
+    d.polygon(pts, outline=edge)
     val_f = _fit(d, str(value), "impact.ttf", r * 1.2, 84, 30)
     vw = _tw(d, str(value), val_f)
     _glow_text(card, (cx - vw / 2, cy - val_f.size * 0.58), str(value), val_f, WHITE,
                (255, 255, 255), glow_radius=6, glow_alpha=120,
-               stroke_width=3, stroke_fill=RED_DEEP)
+               stroke_width=3, stroke_fill=deep)
 
 
 def _sparkles(card, boxes, n, seed):
@@ -185,8 +198,8 @@ def compose_card(art_path, out_path, *, player, gem, caption_lines, nickname=Non
         _glow_text(card, (m, ny + 2), nickname.upper(), nick_f, GOLD_HI, (0, 0, 0),
                    glow_radius=6, glow_alpha=190, stroke_width=2, stroke_fill=(10, 6, 3))
 
-    # ---- ruby gem (top-right) ----
-    _ruby_gem(card, W - 118, 118, 84, gem)
+    # ---- rating gem (top-right; tier follows the rating) ----
+    _gem(card, W - 118, 118, 84, gem, tier=gem_tier_for(gem) if str(gem).isdigit() else "ruby")
     draw = ImageDraw.Draw(card)
 
     # ---- bottom scrim + caption block ----

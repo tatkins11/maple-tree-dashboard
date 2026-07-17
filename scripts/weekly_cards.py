@@ -118,6 +118,17 @@ def ordinal(n):
     return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
+VOLUME_STATS = {"PA", "AB", "Games"}
+
+
+def rating_for(rank: int, stat: str) -> int:
+    """MLB-The-Show-style rating from achievement rareness. 99 is RESERVED for
+    franchise firsts (rank 1); each earlier club member costs 3 points; pure
+    volume milestones (PA/AB/Games) take a 4-point haircut; floor 65."""
+    r = 99 - 3 * (rank - 1) - (4 if stat in VOLUME_STATS else 0)
+    return max(r, 65)
+
+
 def pick_angle(used):
     for key, desc in ANGLES:
         if key not in used:
@@ -206,15 +217,19 @@ def main():
                                    LORE.get(e["slug"], "team spirit"), bool(soul_id), e["player"],
                                    e["milestone"], STAT_WORD.get(e["stat"], e["stat"])),
             "soul_id": soul_id, "rank": rank,
+            "rating": rating_for(rank, e["stat"]),
             "stats": [("AVG", f"{c['avg']:.3f}".lstrip('0')), ("H", int(c["hits"])),
                       ("HR", int(c["hr"])), ("RBI", int(c["rbi"]))],
         })
 
+    from card_frame import gem_tier_for
     print(f"\n{len(plan)} card(s) planned for {date}:")
     for p in plan:
         e = p["event"]
         mode = "SOUL" if p["soul_id"] else "monument (no Soul yet)"
-        print(f"  {e['player']:9} {e['milestone']} {e['stat']:12} angle={p['angle']:18} {mode}")
+        print(f"  {e['player']:9} {e['milestone']} {e['stat']:12} "
+              f"OVR {p['rating']} {gem_tier_for(p['rating']):6} ({ordinal(p['rank'])} ever)  "
+              f"angle={p['angle']:18} {mode}")
     est = len(plan) * 7
     print(f"\nestimated cost: ~{est} credits ({len(plan)} x ~7 cr gpt_image_2/soul 2k)")
     if not args.make:
@@ -256,7 +271,7 @@ def main():
             full_name = full_name.replace(f' {nick} ', " ")
         pretty_date = datetime.fromisoformat(date).strftime("%B %d, %Y").upper()
         compose_card(
-            art_path, tmp_png, player=full_name, nickname=nick, gem=99,
+            art_path, tmp_png, player=full_name, nickname=nick, gem=p["rating"],
             series="MILESTONE",
             caption_lines=[
                 [(f"{ordinal(p['rank']).upper()} PLAYER IN FRANCHISE HISTORY ", "white"),
@@ -274,7 +289,7 @@ def main():
 
         manifest["cards"].append({
             "file": "", "asset": p["asset"], "slug": e["slug"], "kind": "milestone",
-            "generated": True, "rating": 99, "stat": e["stat"], "value": e["milestone"],
+            "generated": True, "rating": p["rating"], "stat": e["stat"], "value": e["milestone"],
             "caption": f"{ordinal(p['rank'])} player in Tappers history to reach "
                        f"{e['milestone']} {word}",
             "flavor": "",
