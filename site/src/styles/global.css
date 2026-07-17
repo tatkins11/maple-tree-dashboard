@@ -75,12 +75,9 @@ a { color: var(--green-800); }
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .brand-leaf {
-  width: 42px;
-  height: 42px;
-  padding: 5px;
-  background: var(--paper);
-  border-radius: 11px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  width: 46px;
+  height: 46px;
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
 }
 .brand-name {
   display: block;
@@ -817,7 +814,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   /* masthead stays a single row, just tighter */
   .masthead { padding-top: 12px; padding-bottom: 9px; gap: 10px; }
   .brand { gap: 9px; }
-  .brand-leaf { width: 32px; height: 32px; padding: 4px; border-radius: 8px; }
+  .brand-leaf { width: 34px; height: 34px; }
   .brand-name { font-size: 20px; }
   .brand-sub { font-size: 8.5px; letter-spacing: 0.14em; }
   .mast-season { display: none; }
