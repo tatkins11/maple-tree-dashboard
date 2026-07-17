@@ -121,12 +121,13 @@ Supabase step.
 upload of the built `site/dist`:
 
 ```powershell
-$env:NETLIFY_AUTH_TOKEN="nfp_…"; python scripts/deploy_site.py
+python scripts/deploy_site.py
 ```
 
-Brian runs this (the token is his and is never stored). One-time alternative:
-`setx NETLIFY_AUTH_TOKEN "nfp_…"` then relaunch — after that Claude can run the
-deploy directly with no token on the command line.
+Brian set `NETLIFY_AUTH_TOKEN` in his user environment (via `setx`, 2026-07-17), so
+the deploy runs directly with no token on the command line — Claude runs this as the
+standard last step of every sync. (If the token is ever rotated: `setx` the new one
+and restart the terminal.)
 
 **Verify live** (don't trust the upload alone):
 ```
@@ -141,8 +142,11 @@ python scripts/build_postgame_recap.py --stories-only \
   --story "Headline.|Deadpan body copy…" \
   --story "…"
 ```
-- 4 pages: recap + POG + ALL milestones · full standings + every league score ·
-  box scores (true batting order) · Card Corner (auto from week-captioned specials).
+- Pages: recap + POG + ALL milestones with franchise ranks ("Nth ever") · full
+  standings + every league score · box scores (true batting order) · **The Milestone
+  Parade** (auto page on 4+ milestone nights, ordinal badges + franchise-first flags)
+  · Card Corner (auto from week-captioned specials). `--no-stars-story` frees a
+  storyline slot when Brian wants several custom narratives.
 - House voice: **comedic but overly serious** — wire-service deadpan ("The bottle
   declined comment", "The fence, undefeated since 2019, was not penalized on the play").
 - Render pages to PNG (pymupdf) and eyeball before delivering. Local deliverable.
