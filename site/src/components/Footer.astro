@@ -24,7 +24,15 @@ import { datePretty } from '../lib/fmt';
       </div>
     </div>
     <div class="foot-meta">
-      Stats through {meta.data_through ? datePretty(meta.data_through) : '—'}
+      <img
+        class="foot-crest"
+        src="/brand/retro-badge.svg"
+        alt="Maple Tree Softball club crest"
+        width="92"
+        height="92"
+        loading="lazy"
+      />
+      <div>Stats through {meta.data_through ? datePretty(meta.data_through) : '—'}</div>
     </div>
   </div>
 </footer>

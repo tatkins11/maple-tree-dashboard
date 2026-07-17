@@ -74,7 +74,14 @@ a { color: var(--green-800); }
 }
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
-.brand-leaf { font-size: 34px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35)); }
+.brand-leaf {
+  width: 42px;
+  height: 42px;
+  padding: 5px;
+  background: var(--paper);
+  border-radius: 11px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
 .brand-name {
   display: block;
   font-family: var(--serif);
@@ -203,7 +210,7 @@ a { color: var(--green-800); }
    -------------------------------------------------------------------------- */
 .hero {
   display: grid;
-  grid-template-columns: 1fr 290px;
+  grid-template-columns: 1fr 190px 290px;
   gap: 22px;
   background:
     radial-gradient(1200px 500px at 85% -20%, rgba(255, 255, 255, 0.10), transparent 60%),
@@ -228,6 +235,27 @@ a { color: var(--green-800); }
 .hero-sub { margin: 0; max-width: 56ch; font-size: 15.5px; color: #e9ddc4; }
 .hero .chip { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.22); color: #eef5ec; }
 .hero .chip-solid { background: #fff; border-color: #fff; color: var(--green-900); }
+
+.hero-tapper {
+  align-self: stretch;
+  justify-self: center;
+  width: 100%;
+  height: 100%;
+  max-height: 232px;
+  object-fit: cover;
+  object-position: 50% 14%;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45);
+  -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 82%, transparent 100%);
+}
+
+.title-crest-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.title-crest { width: 72px; height: 72px; flex: none; opacity: 0.92; }
+
+.foot-crest { width: 92px; height: auto; margin-bottom: 8px; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
+.foot-meta { display: flex; flex-direction: column; align-items: flex-end; }
 
 .hero-next {
   align-self: center;
@@ -789,7 +817,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   /* masthead stays a single row, just tighter */
   .masthead { padding-top: 12px; padding-bottom: 9px; gap: 10px; }
   .brand { gap: 9px; }
-  .brand-leaf { font-size: 26px; }
+  .brand-leaf { width: 32px; height: 32px; padding: 4px; border-radius: 8px; }
   .brand-name { font-size: 20px; }
   .brand-sub { font-size: 8.5px; letter-spacing: 0.14em; }
   .mast-season { display: none; }
@@ -798,6 +826,8 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 
   .hero { grid-template-columns: 1fr; padding: 20px 18px 18px; gap: 14px; }
   .hero-title { font-size: 33px; }
+  .title-crest { width: 54px; height: 54px; }
+  .foot-meta { align-items: flex-start; }
   .hero-sub { font-size: 14px; }
   .hero-next { padding: 13px 15px; }
   .next-opp { font-size: 20px; }
@@ -829,4 +859,9 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   .foot-meta { text-align: left; }
   .foot-left { align-items: flex-start; }
   .foot-logo { width: 84px; }
+}
+
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr 290px; }
+  .hero-tapper { display: none; }
 }
