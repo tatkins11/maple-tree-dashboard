@@ -125,13 +125,43 @@ def pick_angle(used):
     raise SystemExit("All visual angles used! Add new ones to ANGLES in weekly_cards.py.")
 
 
-def build_prompt(angle_desc, motif, lore, has_soul, player):
-    subject = (f"the softball player {player} as the heroic central figure, athletic pose"
-               if has_soul else "NO people, an iconic still-life scene")
-    return (f"Epic unique sports trading-card art, {subject}: {motif}, "
-            f"subtle personal touches woven in: {lore}. Scene rendered {angle_desc}. "
-            "Recreational softball setting, warm palette of espresso brown, maple orange and golden cream accents. "
-            "Absolutely no text, no words, no numbers, no lettering anywhere.")
+# What the COLOSSAL milestone number is built from, per visual angle — the
+# number is always a physical monument in the scene (the set's signature move).
+NUMBER_MATERIAL = {
+    "storm-monument": "molten gold wrapped in crackling lightning",
+    "night-floodlights": "blazing stadium light-tubes showering sparks",
+    "golden-hour": "three-story 3D gold glitter, sun-flared",
+    "neon-retro": "electric neon tubing, buzzing pink-gold",
+    "comic-pop": "chromed steel with halftone shading and action lines",
+    "oil-classic": "gilded carved museum-frame wood",
+    "35mm-film": "vintage theater marquee bulbs, half flickering",
+    "winter-frost": "carved glacial ice, glowing from within",
+    "county-fair": "carnival marquee bulbs and painted fairground wood",
+    "moon-shot": "carved moon rock rim-lit by earthlight",
+    "thunderstorm": "pure plasma lightning frozen mid-strike",
+    "harvest": "ten thousand autumn maple leaves and flowing maple syrup gold",
+    "blueprint": "glowing chalk-white schematic lines lifting off the paper",
+    "stadium-confetti": "compressed championship confetti and fireworks",
+    "misty-dawn": "solid shafts of dawn god-ray light",
+    "desert-highway": "rusted highway-sign steel and buzzing motel neon",
+}
+
+
+def build_prompt(angle_key, angle_desc, motif, lore, has_soul, player, value, stat_word):
+    material = NUMBER_MATERIAL.get(angle_key, "molten gold")
+    subject = (f"the softball player {player} as the heroic central figure mid-action in front of it"
+               if has_soul else "NO people anywhere in the scene")
+    return (
+        "Ultra-premium sports trading card artwork, MLB The Show legendary-card energy: "
+        f"a COLOSSAL three-story-tall number '{value}' built from {material}, standing like a "
+        f"monument in the scene, {subject}. The scene: {motif}, with subtle personal touches "
+        f"woven in: {lore}. Rendered {angle_desc}. Across the lower third, the words "
+        f"'{stat_word.upper()}' written in enormous blazing materialized letters matching the scene, "
+        "dramatic perspective. Hundreds of glowing embers, sparks and light effects, cinematic "
+        "god rays, recreational softball setting, warm espresso brown, maple orange and gold "
+        f"palette. The ONLY text anywhere in the image: the giant number '{value}' and the words "
+        f"'{stat_word.upper()}' — no other text, no watermarks, no lettering."
+    )
 
 
 def main():
@@ -172,8 +202,9 @@ def main():
                    if float(p.get(MS_FIELD[e["stat"]]) or 0) >= e["milestone"])
         plan.append({
             "event": e, "asset": asset, "angle": angle_key,
-            "prompt": build_prompt(angle_desc, MOTIFS.get(e["stat"], MOTIFS["Hits"]),
-                                   LORE.get(e["slug"], "team spirit"), bool(soul_id), e["player"]),
+            "prompt": build_prompt(angle_key, angle_desc, MOTIFS.get(e["stat"], MOTIFS["Hits"]),
+                                   LORE.get(e["slug"], "team spirit"), bool(soul_id), e["player"],
+                                   e["milestone"], STAT_WORD.get(e["stat"], e["stat"])),
             "soul_id": soul_id, "rank": rank,
             "stats": [("AVG", f"{c['avg']:.3f}".lstrip('0')), ("H", int(c["hits"])),
                       ("HR", int(c["hr"])), ("RBI", int(c["rbi"]))],
@@ -218,12 +249,23 @@ def main():
         word = STAT_WORD.get(e["stat"], e["stat"].lower())
         out = CARDS_OUT / f"{p['asset']}.webp"
         tmp_png = ART_DIR / f"{p['asset']}-card.png"
+        full_name = souls.get(e["slug"], {}).get("player", e["player"])
+        nick = None
+        if '"' in full_name:
+            nick = '"' + full_name.split('"')[1] + '"'
+            full_name = full_name.replace(f' {nick} ', " ")
+        pretty_date = datetime.fromisoformat(date).strftime("%B %d, %Y").upper()
         compose_card(
-            art_path, tmp_png, player=e["player"], gem=e["milestone"],
-            banner=f"{e['milestone']} career {word}",
-            sub_banner=f"{ordinal(p['rank'])} in franchise history · "
-                       f"{datetime.fromisoformat(date).strftime('%B %d, %Y')}",
-            stats=p["stats"], variant="milestone",
+            art_path, tmp_png, player=full_name, nickname=nick, gem=99,
+            series="MILESTONE",
+            caption_lines=[
+                [(f"{ordinal(p['rank']).upper()} PLAYER IN FRANCHISE HISTORY ", "white"),
+                 (f"TO {e['milestone']} {word.upper()}", "gold")],
+                [("REACHED ", "white"), (f"VS {e.get('opponent', '').upper()}", "red"),
+                 (f" · {pretty_date}", "white")],
+            ],
+            rank_flag=f"{ordinal(p['rank'])} ever",
+            sparkle_seed=hash(p["asset"]) % 99999,
         )
         from PIL import Image
         img = Image.open(tmp_png).convert("RGB")
