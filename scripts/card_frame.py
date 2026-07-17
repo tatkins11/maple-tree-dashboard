@@ -69,6 +69,7 @@ def _glow_text(card, xy, text, font, fill, glow_color, glow_radius=10, glow_alph
 GEM_TIERS = {
     #        base            deep            light           lighter         glow             edge
     "ruby":   ((176, 28, 36), (110, 12, 22), (228, 62, 74), (255, 96, 106), (255, 40, 60), (255, 214, 220)),
+    "diamond": ((178, 216, 238), (104, 152, 186), (218, 240, 250), (245, 252, 255), (150, 220, 255), (255, 255, 255)),
     "gold":   ((214, 158, 30), (146, 98, 10), (238, 190, 66), (255, 222, 110), (255, 190, 40), (255, 240, 190)),
     "silver": ((162, 168, 182), (104, 110, 124), (204, 210, 222), (238, 242, 250), (210, 224, 255), (250, 252, 255)),
     "bronze": ((172, 104, 46), (108, 60, 20), (204, 138, 74), (232, 168, 104), (230, 140, 60), (246, 210, 170)),
@@ -77,7 +78,9 @@ GEM_TIERS = {
 
 def gem_tier_for(rating) -> str:
     r = int(rating)
-    return "ruby" if r >= 95 else "gold" if r >= 85 else "silver" if r >= 75 else "bronze"
+    # Brian's ladder (2026-07-17): ruby 97+, diamond 85-96, gold 80-84, silver 75-79, bronze <75
+    return ("ruby" if r >= 97 else "diamond" if r >= 85 else "gold" if r >= 80
+            else "silver" if r >= 75 else "bronze")
 
 
 def _gem(card, cx, cy, r, value, tier="ruby"):
