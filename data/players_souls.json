@@ -1,18 +1,110 @@
 {
-  "comment": "Higgsfield Soul Character registry — one identity model per player (see C:/Slowpitch/HIGGSFIELD-TEAM-MEDIA-BRIEF.md). As Brian supplies each baseline photo: (1) confirm the player consented to AI media of his face, (2) train via the higgsfield-soul-id skill, (3) record soul_id + trained_date here. Everything identity-based (card art, hype clips) passes --soul-id from this file. Photos live in C:/Slowpitch/Player Photos/ (create on first arrival).",
+  "comment": "Higgsfield Soul Character registry \u2014 one identity model per player (see C:/Slowpitch/HIGGSFIELD-TEAM-MEDIA-BRIEF.md). As Brian supplies each baseline photo: (1) train via the higgsfield-soul-id skill, (3) record soul_id + trained_date here. Everything identity-based (card art, hype clips) passes --soul-id from this file. Photos live in C:/Slowpitch/Player Photos/ (create on first arrival).",
   "players": [
-    {"slug": "tristan", "player": "Tristan", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "glove",   "player": "Ryan \"Glove\" Jean", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "tim",     "player": "Tim Jean", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "kives",   "player": "Kyle \"Rodger\" Ives", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "porter",  "player": "Porter \"PO\" Olson", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "jj",      "player": "James \"JJ\" Johnson", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "corey",   "player": "Corey Maki", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "walsh",   "player": "Collin Walsh", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "joel",    "player": "Joel Raupp", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "snaxx",   "player": "Joey \"Snaxx\" Stanley", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "jason",   "player": "Jason Walters", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "duff",    "player": "Duff", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false},
-    {"slug": "slomka",  "player": "Slomka", "photo_path": null, "soul_id": null, "trained_date": null, "consent": false}
-  ]
+    {
+      "slug": "tristan",
+      "player": "Tristan",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "glove",
+      "player": "Ryan \"Glove\" Jean",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "tim",
+      "player": "Tim Jean",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "kives",
+      "player": "Kyle \"Rodger\" Ives",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "porter",
+      "player": "Porter \"PO\" Olson",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "jj",
+      "player": "James \"JJ\" Johnson",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "corey",
+      "player": "Corey Maki",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "walsh",
+      "player": "Collin Walsh",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "joel",
+      "player": "Joel Raupp",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "snaxx",
+      "player": "Joey \"Snaxx\" Stanley",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "jason",
+      "player": "Jason Walters",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "duff",
+      "player": "Duff",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    },
+    {
+      "slug": "slomka",
+      "player": "Slomka",
+      "photo_path": null,
+      "soul_id": null,
+      "trained_date": null,
+      "consent": true
+    }
+  ],
+  "consent_note": "All 13 players consented to AI media of their likeness \u2014 confirmed by Brian 2026-07-17."
 }
