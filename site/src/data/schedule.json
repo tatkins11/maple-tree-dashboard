@@ -3,7 +3,7 @@
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
   "slug": "summer-2026",
-  "record": "3-1",
+  "record": "5-1",
   "games": [
    {
     "week_label": "Week 2",
@@ -68,12 +68,12 @@
     "opponent_name": "Zero to Hiro",
     "home_away": "home",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "W",
+    "runs_for": 13.0,
+    "runs_against": 12.0
    },
    {
     "week_label": "Week 4",
@@ -82,12 +82,12 @@
     "opponent_name": "Zero to Hiro",
     "home_away": "away",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "W",
+    "runs_for": 16.0,
+    "runs_against": 11.0
    },
    {
     "week_label": "Week 5",

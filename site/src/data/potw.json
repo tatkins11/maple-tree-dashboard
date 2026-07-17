@@ -50,6 +50,13 @@
    "slug": "porter"
   },
   {
+   "player": "Joel",
+   "canonical_name": "joel",
+   "potw": 1,
+   "best_week": 5.7,
+   "slug": "joel"
+  },
+  {
    "player": "Corey",
    "canonical_name": "corey",
    "potw": 1,
@@ -58,6 +65,25 @@
   }
  ],
  "history": [
+  {
+   "season": "Maple Tree Summer 2026",
+   "game_date": "2026-07-15",
+   "player": "Joel",
+   "canonical_name": "joel",
+   "game_score": 5.7,
+   "games": 2,
+   "ab": 7,
+   "hits": 5,
+   "hr": 1,
+   "rbi": 5,
+   "r": 5,
+   "bb": 0,
+   "tb": 10,
+   "opponents": "Zero to Hiro",
+   "slug": "joel",
+   "label": "Summer 2026",
+   "team_result": "Swept 2-0 (13-12, 16-11)"
+  },
   {
    "season": "Maple Tree Summer 2026",
    "game_date": "2026-07-08",

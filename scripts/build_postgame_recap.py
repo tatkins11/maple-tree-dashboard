@@ -77,6 +77,8 @@ def main():
     ap.add_argument("--out")
     ap.add_argument("--story", action="append", default=[],
                     help='Extra storyline as "Lead.|Body text" — inserted after The stars.')
+    ap.add_argument("--no-stars-story", action="store_true",
+                    help="Skip the auto 'The stars.' storyline (frees room for custom stories)")
     ap.add_argument("--stories-only", action="store_true",
                     help="Use only the --story entries (full editorial control, no auto storylines)")
     ap.add_argument("--feature-cards",
@@ -185,6 +187,20 @@ def main():
     reached = [e for e in milestones["recent"] if e["date"] == date]
     reached.sort(key=lambda e: -ms_score(e))
 
+    # franchise rank: how many players (ever) sit at/above this threshold. Totals only
+    # grow, so the club size IS the new member's ordinal — as long as no two players
+    # cross the same milestone on the same night (then the count ties them, acceptably).
+    career_std = load("career_stats.json")["standard"]
+    MS_FIELD = {"Hits": "hits", "HR": "hr", "RBI": "rbi", "Runs": "r", "Doubles": "2b",
+                "Triples": "3b", "Singles": "1b", "Walks": "bb", "Total Bases": "tb",
+                "PA": "pa", "AB": "ab", "Games": "games"}
+
+    def ms_rank(stat, thr):
+        fld = MS_FIELD.get(stat)
+        if not fld:
+            return None
+        return sum(1 for p in career_std if float(p.get(fld) or 0) >= thr) or None
+
     board = meta["seed_race"]["board"]
     us = next((r for r in board if r["is_team"]), None)
     potw = meta.get("potw")
@@ -205,7 +221,7 @@ def main():
     stories.append(("The result.", (
         f"Maple Tree {outcome_verb} {opponent} {'on the night' if n > 1 else ''}, {scores} — "
         f"{day_rf} run{'s' if day_rf != 1 else ''} on {day_hits} hits at {field}.")))
-    if stars:
+    if stars and not args.no_stars_story:
         body = f"{stars[0]['name']} led the way at {star_line(stars[0])}"
         if len(stars) > 1 and stars[1]["gs"] > 0:
             body += f", and {stars[1]['name']} backed him up with {star_line(stars[1])}"
@@ -359,9 +375,11 @@ def main():
         rail_box(b2y, h2, "MILESTONES REACHED")
         ly = b2y + h2 - 36
         for e in reached:
+            rank = ms_rank(e["stat"], e["milestone"])
+            tag = f" · {ordinal(rank)} ever" if rank else ""
             _txt(c, 380, ly, "•", "Helvetica-Bold", 9, MAPLE)
-            _txt(c, 392, ly, f"{e['player']} — {e['milestone']} career {ms_word(e['stat'], plural=True)}",
-                 "Helvetica", 8.5, INK)
+            _txt(c, 392, ly, f"{e['player']} — {e['milestone']} career {ms_word(e['stat'], plural=True)}{tag}",
+                 "Helvetica", 8.2, INK)
             ly -= 13.5
 
     def page_footer():
@@ -488,7 +506,52 @@ def main():
     _txt(c, W - 36, 54, "mapletreesoftball.netlify.app", "Helvetica", 8, MUTED, align="r")
     c.showPage()
 
-    # ===== PAGE 4 : THE CARD CORNER (when the week minted new special editions) =====
+    # ===== THE MILESTONE PARADE (its own page on big record-book nights) =====
+    if len(reached) >= 4:
+        c.setFillColor(PAPER)
+        c.rect(0, 0, W, H, stroke=0, fill=1)
+        c.setFillColor(BARK)
+        c.rect(0, H - 84, W, 84, stroke=0, fill=1)
+        _txt(c, 36, H - 36, f"{meta['current_season']['label'].upper()}  ·  {week_label.upper() or date_pretty.upper()}",
+             "Helvetica-Bold", 8.5, TAN, cs=2)
+        _txt(c, 36, H - 64, "THE MILESTONE PARADE", "Helvetica-Bold", 26, WHITE, cs=1)
+        _txt(c, W - 36, H - 40, f"{len(reached)} career milestones fell in one night", "Helvetica-Oblique", 9, TAN, align="r")
+        firsts = sum(1 for e in reached if ms_rank(e["stat"], e["milestone"]) == 1)
+        if firsts:
+            _txt(c, W - 36, H - 58, f"including {firsts} franchise first{'s' if firsts != 1 else ''}",
+                 "Helvetica-Bold", 10, CREAM, align="r")
+
+        ry3 = H - 116
+        row_h3 = min(52, (ry3 - 80) / max(len(reached), 1))
+        for i, e in enumerate(reached):
+            y0 = ry3 - row_h3 * (i + 1)
+            rank = ms_rank(e["stat"], e["milestone"])
+            first = rank == 1
+            if i % 2 == 0:
+                c.setFillColor(STRIPE)
+                c.rect(36, y0, W - 72, row_h3, stroke=0, fill=1)
+            badge = MAPLE if first else BARK2
+            c.setFillColor(badge)
+            c.circle(58, y0 + row_h3 / 2, 13, stroke=0, fill=1)
+            _txt(c, 58, y0 + row_h3 / 2 - 3.5, ordinal(rank) if rank else "—", "Helvetica-Bold",
+                 8 if rank and rank < 10 else 7, WHITE, align="c")
+            ty3 = y0 + row_h3 / 2 + 3
+            _txt(c, 84, ty3, f"{e['player']} — {e['milestone']} career {ms_word(e['stat'], plural=True)}",
+                 "Helvetica-Bold", 12, BARK)
+            sub = (f"{ordinal(rank)} player in franchise history" if rank else "franchise record book") \
+                + f"  ·  vs {e.get('opponent') or opponent}"
+            _txt(c, 84, ty3 - 13, sub, "Helvetica", 8.5, MAPLE if first else MUTED)
+            if first:
+                _txt(c, W - 44, y0 + row_h3 / 2 - 3, "FRANCHISE FIRST", "Helvetica-Bold", 8, MAPLE,
+                     cs=1.5, align="r")
+        c.setStrokeColor(LINE)
+        c.setLineWidth(0.75)
+        c.line(36, 64, W - 36, 64)
+        _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE RECORD BOOK GREW TONIGHT", "Helvetica-Bold", 8, BARK, cs=1)
+        _txt(c, W - 36, 50, "full ladders at mapletreesoftball.netlify.app/milestones", "Helvetica", 8, MUTED, align="r")
+        c.showPage()
+
+    # ===== PAGE : THE CARD CORNER (when the week minted new special editions) =====
     if featured:
         c.setFillColor(PAPER)
         c.rect(0, 0, W, H, stroke=0, fill=1)

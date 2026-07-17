@@ -7,7 +7,7 @@
      "rank": 1,
      "player": "Duff",
      "slug": "duff",
-     "value": 78,
+     "value": 80,
      "season": null,
      "date": null,
      "opponent": null
@@ -16,7 +16,7 @@
      "rank": 2,
      "player": "JJ",
      "slug": "jj",
-     "value": 78,
+     "value": 80,
      "season": null,
      "date": null,
      "opponent": null
@@ -25,7 +25,7 @@
      "rank": 3,
      "player": "Corey",
      "slug": "corey",
-     "value": 77,
+     "value": 79,
      "season": null,
      "date": null,
      "opponent": null
@@ -34,7 +34,7 @@
      "rank": 4,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 74,
+     "value": 76,
      "season": null,
      "date": null,
      "opponent": null
@@ -57,7 +57,7 @@
      "rank": 1,
      "player": "JJ",
      "slug": "jj",
-     "value": 268,
+     "value": 276,
      "season": null,
      "date": null,
      "opponent": null
@@ -66,7 +66,7 @@
      "rank": 2,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 265,
+     "value": 273,
      "season": null,
      "date": null,
      "opponent": null
@@ -84,7 +84,7 @@
      "rank": 4,
      "player": "Duff",
      "slug": "duff",
-     "value": 237,
+     "value": 244,
      "season": null,
      "date": null,
      "opponent": null
@@ -93,7 +93,7 @@
      "rank": 5,
      "player": "Corey",
      "slug": "corey",
-     "value": 229,
+     "value": 237,
      "season": null,
      "date": null,
      "opponent": null
@@ -105,6 +105,15 @@
    "rows": [
     {
      "rank": 1,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 246,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
      "player": "Glove",
      "slug": "glove",
      "value": 244,
@@ -113,19 +122,10 @@
      "opponent": null
     },
     {
-     "rank": 2,
-     "player": "JJ",
-     "slug": "jj",
-     "value": 238,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
      "rank": 3,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 236,
+     "value": 244,
      "season": null,
      "date": null,
      "opponent": null
@@ -134,7 +134,7 @@
      "rank": 4,
      "player": "Duff",
      "slug": "duff",
-     "value": 223,
+     "value": 229,
      "season": null,
      "date": null,
      "opponent": null
@@ -143,7 +143,7 @@
      "rank": 5,
      "player": "Corey",
      "slug": "corey",
-     "value": 211,
+     "value": 218,
      "season": null,
      "date": null,
      "opponent": null
@@ -166,7 +166,7 @@
      "rank": 2,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 143,
+     "value": 148,
      "season": null,
      "date": null,
      "opponent": null
@@ -175,7 +175,7 @@
      "rank": 3,
      "player": "JJ",
      "slug": "jj",
-     "value": 131,
+     "value": 136,
      "season": null,
      "date": null,
      "opponent": null
@@ -193,7 +193,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 104,
+     "value": 110,
      "season": null,
      "date": null,
      "opponent": null
@@ -216,7 +216,7 @@
      "rank": 2,
      "player": "JJ",
      "slug": "jj",
-     "value": 85,
+     "value": 90,
      "season": null,
      "date": null,
      "opponent": null
@@ -225,25 +225,25 @@
      "rank": 3,
      "player": "Corey",
      "slug": "corey",
-     "value": 74,
+     "value": 76,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 4,
-     "player": "Duff",
-     "slug": "duff",
-     "value": 71,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 74,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 5,
-     "player": "Kives",
-     "slug": "kives",
-     "value": 71,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 72,
      "season": null,
      "date": null,
      "opponent": null
@@ -255,6 +255,15 @@
    "rows": [
     {
      "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 28,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
      "player": "Glove",
      "slug": "glove",
      "value": 25,
@@ -263,18 +272,9 @@
      "opponent": null
     },
     {
-     "rank": 2,
+     "rank": 3,
      "player": "JJ",
      "slug": "jj",
-     "value": 25,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
-     "rank": 3,
-     "player": "Tristan",
-     "slug": "tristan",
      "value": 25,
      "season": null,
      "date": null,
@@ -314,8 +314,8 @@
     },
     {
      "rank": 2,
-     "player": "Kives",
-     "slug": "kives",
+     "player": "Duff",
+     "slug": "duff",
      "value": 12,
      "season": null,
      "date": null,
@@ -323,9 +323,9 @@
     },
     {
      "rank": 3,
-     "player": "Duff",
-     "slug": "duff",
-     "value": 11,
+     "player": "Kives",
+     "slug": "kives",
+     "value": 12,
      "season": null,
      "date": null,
      "opponent": null
@@ -357,7 +357,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 49,
+     "value": 50,
      "season": null,
      "date": null,
      "opponent": null
@@ -407,7 +407,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 155,
+     "value": 156,
      "season": null,
      "date": null,
      "opponent": null
@@ -434,7 +434,7 @@
      "rank": 4,
      "player": "JJ",
      "slug": "jj",
-     "value": 72,
+     "value": 76,
      "season": null,
      "date": null,
      "opponent": null
@@ -443,7 +443,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 63,
+     "value": 64,
      "season": null,
      "date": null,
      "opponent": null
@@ -455,6 +455,15 @@
    "rows": [
     {
      "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 125,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
      "player": "Glove",
      "slug": "glove",
      "value": 123,
@@ -463,19 +472,10 @@
      "opponent": null
     },
     {
-     "rank": 2,
-     "player": "Tristan",
-     "slug": "tristan",
-     "value": 120,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
      "rank": 3,
      "player": "JJ",
      "slug": "jj",
-     "value": 99,
+     "value": 102,
      "season": null,
      "date": null,
      "opponent": null
@@ -493,7 +493,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 64,
+     "value": 66,
      "season": null,
      "date": null,
      "opponent": null
@@ -557,7 +557,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 329,
+     "value": 340,
      "season": null,
      "date": null,
      "opponent": null
@@ -575,7 +575,7 @@
      "rank": 3,
      "player": "JJ",
      "slug": "jj",
-     "value": 211,
+     "value": 216,
      "season": null,
      "date": null,
      "opponent": null
@@ -593,7 +593,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 167,
+     "value": 173,
      "season": null,
      "date": null,
      "opponent": null
@@ -625,7 +625,7 @@
      "rank": 3,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 0.6059,
+     "value": 0.6066,
      "season": null,
      "date": null,
      "opponent": null
@@ -634,7 +634,7 @@
      "rank": 4,
      "player": "Tim",
      "slug": "tim",
-     "value": 0.5772,
+     "value": 0.5725,
      "season": null,
      "date": null,
      "opponent": null
@@ -675,25 +675,25 @@
      "rank": 3,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 0.6038,
+     "value": 0.6044,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 4,
-     "player": "Tim",
-     "slug": "tim",
-     "value": 0.5923,
+     "player": "JJ",
+     "slug": "jj",
+     "value": 0.587,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 5,
-     "player": "JJ",
-     "slug": "jj",
-     "value": 0.5858,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 0.587,
      "season": null,
      "date": null,
      "opponent": null
@@ -707,7 +707,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 1.3941,
+     "value": 1.3934,
      "season": null,
      "date": null,
      "opponent": null
@@ -716,7 +716,7 @@
      "rank": 2,
      "player": "Tim",
      "slug": "tim",
-     "value": 1.2602,
+     "value": 1.2214,
      "season": null,
      "date": null,
      "opponent": null
@@ -766,7 +766,7 @@
      "rank": 2,
      "player": "Tim",
      "slug": "tim",
-     "value": 1.8525,
+     "value": 1.8083,
      "season": null,
      "date": null,
      "opponent": null
@@ -845,13 +845,13 @@
     },
     {
      "rank": 5,
-     "player": "Duff",
-     "slug": "duff",
+     "player": "Corey",
+     "slug": "corey",
      "value": 12,
      "season": null,
      "date": null,
      "opponent": null,
-     "span": "Jun 30 '21 \u2013 Jun 29 '22"
+     "span": "May 20 '26 \u2013 Jul 15 '26"
     }
    ]
   },
@@ -900,13 +900,13 @@
     },
     {
      "rank": 5,
-     "player": "Kives",
-     "slug": "kives",
-     "value": 17,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 18,
      "season": null,
      "date": null,
      "opponent": null,
-     "span": "Jun 29 '22 \u2013 Jun 25 '25"
+     "span": "Apr 22 '26 \u2013 Jul 15 '26"
     }
    ]
   },

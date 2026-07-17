@@ -306,5 +306,19 @@
   "last_played": "2026-05-20",
   "win_pct": 0.5,
   "record": "1-1"
+ },
+ {
+  "opponent": "Zero to Hiro",
+  "games": 2,
+  "wins": 2,
+  "losses": 0,
+  "ties": 0,
+  "runs_for": 29,
+  "runs_against": 23,
+  "run_diff": 6,
+  "first_played": "2026-07-15",
+  "last_played": "2026-07-15",
+  "win_pct": 1.0,
+  "record": "2-0"
  }
 ]
