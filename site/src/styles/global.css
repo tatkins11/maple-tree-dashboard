@@ -75,8 +75,8 @@ a { color: var(--green-800); }
 
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
 .brand-leaf {
-  width: 46px;
-  height: 46px;
+  width: 64px;
+  height: 64px;
   filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.45));
 }
 .brand-name {
@@ -249,9 +249,9 @@ a { color: var(--green-800); }
 }
 
 .title-crest-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-.title-crest { width: 72px; height: 72px; flex: none; opacity: 0.92; }
+.title-crest { width: 88px; height: 88px; flex: none; opacity: 0.92; }
 
-.foot-crest { width: 92px; height: auto; margin-bottom: 8px; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
+.foot-crest { width: 112px; height: auto; margin-bottom: 8px; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
 .foot-meta { display: flex; flex-direction: column; align-items: flex-end; }
 
 .hero-next {
@@ -638,7 +638,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 .foot-line { margin-top: 2px; }
 .foot-meta { text-align: right; align-self: end; font-variant-numeric: tabular-nums; }
 .foot-left { display: flex; align-items: center; gap: 20px; }
-.foot-logo { width: 104px; height: auto; flex: none; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
+.foot-logo { width: 136px; height: auto; flex: none; filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.45)); }
 .foot-credit { margin-top: 8px; color: #e8dcc3; font-weight: 700; }
 
 /* --------------------------------------------------------------------------
@@ -814,7 +814,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   /* masthead stays a single row, just tighter */
   .masthead { padding-top: 12px; padding-bottom: 9px; gap: 10px; }
   .brand { gap: 9px; }
-  .brand-leaf { width: 34px; height: 34px; }
+  .brand-leaf { width: 44px; height: 44px; }
   .brand-name { font-size: 20px; }
   .brand-sub { font-size: 8.5px; letter-spacing: 0.14em; }
   .mast-season { display: none; }
@@ -823,7 +823,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
 
   .hero { grid-template-columns: 1fr; padding: 20px 18px 18px; gap: 14px; }
   .hero-title { font-size: 33px; }
-  .title-crest { width: 54px; height: 54px; }
+  .title-crest { width: 64px; height: 64px; }
   .foot-meta { align-items: flex-start; }
   .hero-sub { font-size: 14px; }
   .hero-next { padding: 13px 15px; }
@@ -855,7 +855,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   .foot-row { flex-direction: column; }
   .foot-meta { text-align: left; }
   .foot-left { align-items: flex-start; }
-  .foot-logo { width: 84px; }
+  .foot-logo { width: 104px; }
 }
 
 @media (max-width: 980px) {
