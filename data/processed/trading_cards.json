@@ -316,6 +316,126 @@
       "value": 50,
       "caption": "1st player in Tappers history to reach 50 home runs",
       "flavor": "Fifty bombs, and the first man in franchise history to get there. The bat flip was optional. The history was not."
+    },
+    {
+      "file": "",
+      "asset": "tristan-125-r",
+      "slug": "tristan",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 99,
+      "stat": "Runs",
+      "value": 125,
+      "caption": "1st player in Tappers history to reach 125 runs",
+      "flavor": "125 runs and counting \u2014 nobody in franchise history has crossed the plate more. The captain doesn't just lead the team; he leads it home."
+    },
+    {
+      "file": "",
+      "asset": "tristan-75-games",
+      "slug": "tristan",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 86,
+      "stat": "Games",
+      "value": 75,
+      "caption": "4th player in Tappers history to reach 75 games",
+      "flavor": "Seventy-five games in a Maple Tree uniform. Rain, shine, or otherwise, the captain answers the bell."
+    },
+    {
+      "file": "",
+      "asset": "corey-75-1b",
+      "slug": "corey",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 93,
+      "stat": "Singles",
+      "value": 75,
+      "caption": "3rd player in Tappers history to reach 75 singles",
+      "flavor": "Seventy-five singles, each one a quiet act of defiance against the box score. Maki just keeps finding grass."
+    },
+    {
+      "file": "",
+      "asset": "corey-50-rbi",
+      "slug": "corey",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 81,
+      "stat": "RBI",
+      "value": 50,
+      "caption": "7th player in Tappers history to reach 50 RBI",
+      "flavor": "Fifty runs driven in. Maki doesn't ask who's on base \u2014 he just brings them home and asks questions later."
+    },
+    {
+      "file": "",
+      "asset": "jj-75-rbi",
+      "slug": "jj",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 90,
+      "stat": "RBI",
+      "value": 75,
+      "caption": "4th player in Tappers history to reach 75 RBI",
+      "flavor": "Seventy-five RBI from the man who's usually diving on defense. Turns out JJ drives them in almost as often as he leaves his feet."
+    },
+    {
+      "file": "",
+      "asset": "jj-100-r",
+      "slug": "jj",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 93,
+      "stat": "Runs",
+      "value": 100,
+      "caption": "3rd player in Tappers history to reach 100 runs",
+      "flavor": "One hundred runs scored. Get JJ on base and the scoreboard is a formality \u2014 he's cleared for takeoff."
+    },
+    {
+      "file": "",
+      "asset": "jason-50-1b",
+      "slug": "jason",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 78,
+      "stat": "Singles",
+      "value": 50,
+      "caption": "8th player in Tappers history to reach 50 singles",
+      "flavor": "Fifty career singles, unlocked. Walters grinds out base hits like achievements \u2014 one clean knock at a time."
+    },
+    {
+      "file": "",
+      "asset": "porter-200-ab",
+      "slug": "porter",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 77,
+      "stat": "AB",
+      "value": 200,
+      "caption": "7th player in Tappers history to reach 200 at-bats",
+      "flavor": "Two hundred at-bats of blue-collar consistency. PO clocks in, moves the product, and clocks out."
+    },
+    {
+      "file": "",
+      "asset": "snaxx-100-ab",
+      "slug": "snaxx",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 65,
+      "stat": "AB",
+      "value": 100,
+      "caption": "13th player in Tappers history to reach 100 at-bats",
+      "flavor": "One hundred career at-bats for the people's champ. Everybody gets here eventually \u2014 Snaxx just did it with a snack in hand."
+    },
+    {
+      "file": "",
+      "asset": "tim-75-hits",
+      "slug": "tim",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 78,
+      "stat": "Hits",
+      "value": 75,
+      "caption": "8th player in Tappers history to reach 75 hits",
+      "flavor": "Seventy-five career hits, audited and confirmed. The numbers never lie, and Tim's ledger keeps growing."
     }
   ]
 }
