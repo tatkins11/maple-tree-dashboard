@@ -17,7 +17,7 @@
    "soul_id": "e578971e-09a0-4130-9e1a-3e179ac8405b",
    "trained_date": "2026-07-20",
    "consent": true,
-   "status": "queued"
+   "status": "completed"
   },
   {
    "slug": "tim",
@@ -26,7 +26,7 @@
    "soul_id": "ea061e00-b92e-4c16-9b1f-11d6aaa71943",
    "trained_date": "2026-07-20",
    "consent": true,
-   "status": "queued"
+   "status": "completed"
   },
   {
    "slug": "kives",
@@ -35,7 +35,7 @@
    "soul_id": "0e90a8e8-ba03-4a3c-913d-fa625672b6f5",
    "trained_date": "2026-07-20",
    "consent": true,
-   "status": "queued"
+   "status": "completed"
   },
   {
    "slug": "porter",
@@ -44,7 +44,7 @@
    "soul_id": "f95dda68-5356-4862-94b0-f80195ac4eb4",
    "trained_date": "2026-07-20",
    "consent": true,
-   "status": "queued"
+   "status": "completed"
   },
   {
    "slug": "jj",
@@ -53,70 +53,70 @@
    "soul_id": "6aa1452c-1471-438f-988f-7507c7152db4",
    "trained_date": "2026-07-20",
    "consent": true,
-   "status": "queued"
+   "status": "completed"
   },
   {
    "slug": "corey",
    "player": "Corey Maki",
    "photo_path": "C:/Slowpitch/player pics/souls-training/corey/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "ef1c465d-613e-4592-87d2-732327872f23",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "walsh",
    "player": "Collin Walsh",
    "photo_path": "C:/Slowpitch/player pics/souls-training/walsh/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "8de3c3f5-fb2c-4725-ad75-f5353b33234d",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "joel",
    "player": "Joel Raupp",
    "photo_path": "C:/Slowpitch/player pics/souls-training/joel/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "4c4acd01-034a-4f47-a33f-7402598c5c8b",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "snaxx",
    "player": "Joey \"Snaxx\" Stanley",
    "photo_path": "C:/Slowpitch/player pics/souls-training/snaxx/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "8074a04f-6a55-426d-a2df-09fe63e59a51",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "jason",
    "player": "Jason Walters",
    "photo_path": "C:/Slowpitch/player pics/souls-training/jason/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "4f1c80c3-962d-4762-80db-3b5496f21073",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "duff",
    "player": "Duff",
    "photo_path": "C:/Slowpitch/player pics/souls-training/duff/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "185efa13-f674-4140-91bb-b317f212e27b",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   },
   {
    "slug": "slomka",
    "player": "Slomka",
    "photo_path": "C:/Slowpitch/player pics/souls-training/slomka/",
-   "soul_id": null,
-   "trained_date": null,
+   "soul_id": "76fb9d7e-fc5b-4966-a461-24be4e93232c",
+   "trained_date": "2026-07-20",
    "consent": true,
-   "status": "pending_submit"
+   "status": "completed"
   }
  ],
  "consent_note": "All 13 players consented to AI media of their likeness \u2014 confirmed by Brian 2026-07-17."
