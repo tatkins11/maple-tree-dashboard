@@ -40,7 +40,7 @@ PHOTO_DIR = Path("C:/Slowpitch/player pics/souls-training")
 STYLE_REF = Path("C:/Slowpitch/Player Trading Cards/138f1190-05b1-45bb-b638-950715beda72.png")
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from card_frame import gem_tier_for  # noqa: E402
+from card_frame import gem_tier_for, _gem  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
@@ -166,8 +166,12 @@ NUMBER_MATERIAL = {
 }
 
 
+GEM_DESC = {"ruby": "deep blood-red ruby", "diamond": "brilliant icy pale-blue white diamond",
+            "gold": "golden amber topaz", "silver": "cool silver-grey gem", "bronze": "warm bronze-brown gem"}
+
+
 def build_prompt(angle_key, angle_desc, motif, lore, player, nickname, value, stat_word,
-                 rank_ord, rating):
+                 rank_ord, rating, gem_tier):
     """One-shot FULL-CARD design (locked by Brian 2026-07-21 after the Tristan 50 HR
     keeper): the model composes the entire card — art, border, typography — in one
     unified piece, matching the club's original card series via a style reference."""
@@ -186,7 +190,9 @@ def build_prompt(angle_key, angle_desc, motif, lore, player, nickname, value, st
         f"Card text, large and clean, EXACTLY these words and no others: 'MILESTONE MOMENT' "
         f"banner at top, '{player.upper()}' as the name, the giant '{value}', "
         f"'{stat_word.upper()}' beneath it, '{rank_ord.upper()} IN FRANCHISE HISTORY' along "
-        f"the bottom, and a red faceted gem in the top corner containing '{rating}'.{nick} "
+        f"the bottom. In the top corner place a faceted rating gem containing '{rating}' — it "
+        f"MUST be a {GEM_DESC.get(gem_tier, 'red ruby')}, EXACTLY matching the color, cut and "
+        f"material of the FOURTH reference image; do not change its color.{nick} "
         "Maple leaf motifs in the border. Warm espresso brown, maple orange and gold palette. "
         "Rich, flashy, collectible — every word spelled exactly as given."
     )
@@ -236,18 +242,25 @@ def main():
         if '"' in full_name:
             nick = full_name.split('"')[1]
         photo = PHOTO_DIR / e["slug"] / "01.jpg"
+        tier = gem_tier_for(rating)
+        gem_ref = ART_DIR / f"{asset}-gemref.png"
+        ART_DIR.mkdir(parents=True, exist_ok=True)
+        from PIL import Image as _I
+        _g = _I.new("RGBA", (640, 640), (24, 13, 6, 255))
+        _gem(_g, 320, 300, 180, rating, tier)
+        _g.convert("RGB").save(gem_ref)
         plan.append({
             "event": e, "asset": asset, "angle": angle_key,
             "prompt": build_prompt(angle_key, angle_desc, MOTIFS.get(e["stat"], MOTIFS["Hits"]),
                                    LORE.get(e["slug"], "team spirit"), e["player"], nick,
                                    e["milestone"], STAT_WORD.get(e["stat"], e["stat"]),
-                                   ordinal(rank), rating),
-            "photo": photo if photo.exists() else None, "rank": rank, "rating": rating,
+                                   ordinal(rank), rating, tier),
+            "photo": photo if photo.exists() else None, "gem_ref": gem_ref,
+            "rank": rank, "rating": rating,
             "stats": [("AVG", f"{c['avg']:.3f}".lstrip('0')), ("H", int(c["hits"])),
                       ("HR", int(c["hr"])), ("RBI", int(c["rbi"]))],
         })
 
-    from card_frame import gem_tier_for
     print(f"\n{len(plan)} card(s) planned for {date}:")
     for p in plan:
         e = p["event"]
@@ -268,7 +281,7 @@ def main():
         art_path = ART_DIR / f"{p['asset']}-card.png"
         # one-shot full-card: photo ref (likeness) + style ref (series) + badge ref (kit)
         cmd = [HIGGS, "generate", "create", "gpt_image_2", "--prompt", p["prompt"]]
-        for ref in (p["photo"], STYLE_REF, BADGE_REF):
+        for ref in (p["photo"], STYLE_REF, BADGE_REF, p["gem_ref"]):
             if ref and Path(ref).exists():
                 cmd += ["--image", str(ref)]
         cmd += ["--aspect_ratio", "2:3", "--resolution", "2k", "--quality", "high",
