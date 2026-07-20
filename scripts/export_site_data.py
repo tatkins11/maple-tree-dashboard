@@ -667,11 +667,12 @@ def main() -> None:
     if manifest_path.exists():
         CARD_STAT_COLS = {"Hits": "hits", "HR": "hr", "Doubles": "2b", "Triples": "3b",
                           "Runs": "r", "RBI": "rbi", "Total Bases": "tb", "PA": "pa",
-                          "Walks": "bb", "Singles": "1b"}
+                          "Walks": "bb", "Singles": "1b", "Games": "games", "AB": "ab"}
         CARD_STAT_WORDS = {"Hits": "hit", "HR": "home run", "Doubles": "double",
                            "Triples": "triple", "Runs": "run scored", "RBI": "RBI",
                            "Total Bases": "total base", "PA": "plate appearance",
-                           "Walks": "walk", "Singles": "single"}
+                           "Walks": "walk", "Singles": "single", "Games": "game",
+                           "AB": "at-bat"}
         players_by_slug = {p["slug"]: p for p in players_out}
         rank_cache: dict[str, list] = {}
 
@@ -730,7 +731,7 @@ def main() -> None:
                 cum = 0
                 hit_game = None
                 for g in reversed(p["game_log"]):  # oldest -> newest
-                    cum += int(g.get(col) or 0)
+                    cum += 1 if card["stat"] == "Games" else int(g.get(col) or 0)
                     if cum >= target:
                         hit_game = g
                         break
