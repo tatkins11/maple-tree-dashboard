@@ -30,7 +30,7 @@
    ]
   ],
   "number": 1,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -64,7 +64,7 @@
    ]
   ],
   "number": 2,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -98,7 +98,7 @@
    ]
   ],
   "number": 3,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -132,7 +132,7 @@
    ]
   ],
   "number": 4,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -166,7 +166,7 @@
    ]
   ],
   "number": 5,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -200,7 +200,7 @@
    ]
   ],
   "number": 6,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -234,7 +234,7 @@
    ]
   ],
   "number": 7,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -268,7 +268,7 @@
    ]
   ],
   "number": 8,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -302,7 +302,7 @@
    ]
   ],
   "number": 9,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -336,7 +336,7 @@
    ]
   ],
   "number": 10,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -370,7 +370,7 @@
    ]
   ],
   "number": 11,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -404,7 +404,7 @@
    ]
   ],
   "number": 12,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -438,7 +438,7 @@
    ]
   ],
   "number": 13,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -472,7 +472,7 @@
    ]
   ],
   "number": 14,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -506,7 +506,7 @@
    ]
   ],
   "number": 15,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -540,7 +540,7 @@
    ]
   ],
   "number": 16,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Series"
  },
  {
@@ -578,7 +578,7 @@
    ]
   ],
   "number": 17,
-  "total": 24,
+  "total": 25,
   "series": "Live Series"
  },
  {
@@ -616,7 +616,7 @@
    ]
   ],
   "number": 18,
-  "total": 24,
+  "total": 25,
   "series": "Live Series"
  },
  {
@@ -650,7 +650,7 @@
    ]
   ],
   "number": 19,
-  "total": 24,
+  "total": 25,
   "series": "Live Series"
  },
  {
@@ -684,7 +684,7 @@
    ]
   ],
   "number": 20,
-  "total": 24,
+  "total": 25,
   "series": "Live Series"
  },
  {
@@ -718,7 +718,7 @@
    ]
   ],
   "number": 21,
-  "total": 24,
+  "total": 25,
   "series": "Special Edition"
  },
  {
@@ -760,7 +760,7 @@
    ]
   ],
   "number": 22,
-  "total": 24,
+  "total": 25,
   "series": "Player Spotlight"
  },
  {
@@ -802,7 +802,7 @@
    ]
   ],
   "number": 23,
-  "total": 24,
+  "total": 25,
   "series": "Injury Update"
  },
  {
@@ -844,7 +844,41 @@
    ]
   ],
   "number": 24,
-  "total": 24,
+  "total": 25,
   "series": "Milestone Moment"
+ },
+ {
+  "asset": "tristan-50-hr",
+  "img": "/cards/tristan-50-hr.webp",
+  "player": "Tristan",
+  "slug": "tristan",
+  "kind": "milestone",
+  "rating": 99,
+  "stat": "HR",
+  "value": 50,
+  "caption": "1st player in Tappers history to reach 50 home runs",
+  "flavor": "Fifty bombs, and the first man in franchise history to get there. The bat flip was optional. The history was not.",
+  "game_text": "Career home run No. 50 came on Jul 15, 2026 at Zero to Hiro (W 16-11, Summer 2026). Tristan went 3-for-4, 2 2B, 1 HR, 1 RBI, 3 R that night.",
+  "facts": [
+   [
+    "Milestone game",
+    "Jul 15, 2026 at Zero to Hiro"
+   ],
+   [
+    "That night",
+    "3-for-4, 2 2B, 1 HR, 1 RBI, 3 R \u00b7 GS 3.75"
+   ],
+   [
+    "Milestone",
+    "50 career home runs"
+   ],
+   [
+    "Career total now",
+    "50 (#1 all-time)"
+   ]
+  ],
+  "number": 25,
+  "total": 25,
+  "series": "Milestone Series"
  }
 ]
