@@ -1,110 +1,123 @@
 {
-  "comment": "Higgsfield Soul Character registry \u2014 one identity model per player (see C:/Slowpitch/HIGGSFIELD-TEAM-MEDIA-BRIEF.md). As Brian supplies each baseline photo: (1) train via the higgsfield-soul-id skill, (3) record soul_id + trained_date here. Everything identity-based (card art, hype clips) passes --soul-id from this file. Photos live in C:/Slowpitch/Player Photos/ (create on first arrival).",
-  "players": [
-    {
-      "slug": "tristan",
-      "player": "Tristan",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "glove",
-      "player": "Ryan \"Glove\" Jean",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "tim",
-      "player": "Tim Jean",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "kives",
-      "player": "Kyle \"Rodger\" Ives",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "porter",
-      "player": "Porter \"PO\" Olson",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "jj",
-      "player": "James \"JJ\" Johnson",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "corey",
-      "player": "Corey Maki",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "walsh",
-      "player": "Collin Walsh",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "joel",
-      "player": "Joel Raupp",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "snaxx",
-      "player": "Joey \"Snaxx\" Stanley",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "jason",
-      "player": "Jason Walters",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "duff",
-      "player": "Duff",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    },
-    {
-      "slug": "slomka",
-      "player": "Slomka",
-      "photo_path": null,
-      "soul_id": null,
-      "trained_date": null,
-      "consent": true
-    }
-  ],
-  "consent_note": "All 13 players consented to AI media of their likeness \u2014 confirmed by Brian 2026-07-17."
+ "comment": "Higgsfield Soul Character registry \u2014 one identity model per player (see C:/Slowpitch/HIGGSFIELD-TEAM-MEDIA-BRIEF.md). As Brian supplies each baseline photo: (1) train via the higgsfield-soul-id skill, (3) record soul_id + trained_date here. Everything identity-based (card art, hype clips) passes --soul-id from this file. Photos live in C:/Slowpitch/Player Photos/ (create on first arrival).",
+ "players": [
+  {
+   "slug": "tristan",
+   "player": "Tristan",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/tristan/",
+   "soul_id": "76e8c328-2351-4d25-8f0e-8f669048ac9b",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "completed"
+  },
+  {
+   "slug": "glove",
+   "player": "Ryan \"Glove\" Jean",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/glove/",
+   "soul_id": "e578971e-09a0-4130-9e1a-3e179ac8405b",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "queued"
+  },
+  {
+   "slug": "tim",
+   "player": "Tim Jean",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/tim/",
+   "soul_id": "ea061e00-b92e-4c16-9b1f-11d6aaa71943",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "queued"
+  },
+  {
+   "slug": "kives",
+   "player": "Kyle \"Rodger\" Ives",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/kives/",
+   "soul_id": "0e90a8e8-ba03-4a3c-913d-fa625672b6f5",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "queued"
+  },
+  {
+   "slug": "porter",
+   "player": "Porter \"PO\" Olson",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/porter/",
+   "soul_id": "f95dda68-5356-4862-94b0-f80195ac4eb4",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "queued"
+  },
+  {
+   "slug": "jj",
+   "player": "James \"JJ\" Johnson",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/jj/",
+   "soul_id": "6aa1452c-1471-438f-988f-7507c7152db4",
+   "trained_date": "2026-07-20",
+   "consent": true,
+   "status": "queued"
+  },
+  {
+   "slug": "corey",
+   "player": "Corey Maki",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/corey/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "walsh",
+   "player": "Collin Walsh",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/walsh/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "joel",
+   "player": "Joel Raupp",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/joel/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "snaxx",
+   "player": "Joey \"Snaxx\" Stanley",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/snaxx/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "jason",
+   "player": "Jason Walters",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/jason/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "duff",
+   "player": "Duff",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/duff/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  },
+  {
+   "slug": "slomka",
+   "player": "Slomka",
+   "photo_path": "C:/Slowpitch/player pics/souls-training/slomka/",
+   "soul_id": null,
+   "trained_date": null,
+   "consent": true,
+   "status": "pending_submit"
+  }
+ ],
+ "consent_note": "All 13 players consented to AI media of their likeness \u2014 confirmed by Brian 2026-07-17."
 }

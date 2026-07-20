@@ -1,0 +1,13 @@
+{
+  "used_angles": {
+    "tristan-50-hr": "storm-monument"
+  },
+  "cards": [
+    {
+      "asset": "tristan-50-hr",
+      "date": "2026-07-15",
+      "angle": "storm-monument",
+      "soul": true
+    }
+  ]
+}

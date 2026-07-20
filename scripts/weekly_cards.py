@@ -9,13 +9,15 @@ For each milestone reached that week it:
   1. builds a ONE-OF-A-KIND art concept — a visual angle never used on any prior
      card (tracked in data/processed/card_concepts.json) mixed with the player's
      lore and the milestone's motif;
-  2. renders the art with Higgsfield (soul-consistent via text2image_soul_v2 when
-     the player has a trained Soul in data/players_souls.json; otherwise
-     gpt_image_2 "monument style" — no likeness, pure scene);
-  3. composites the club frame + real numbers over it (card_frame.compose_card —
-     Higgsfield NEVER renders text);
-  4. drops the finished card into site/public/cards/ and appends the manifest
+  2. generates the ENTIRE CARD in one shot with gpt_image_2 (locked by Brian
+     2026-07-21 after the Tristan 50-HR keeper): three references — the player's
+     photo (likeness), a club original card (series style), the Tap badge (kit) —
+     with the data-true text (name, number, stat, franchise rank, rating) spelled
+     out in the prompt. No compositor, no Souls: unified design beats overlays.
+     (Souls remain the tool for VIDEO, where photoreal motion needs them.)
+  3. drops the finished card into site/public/cards/ and appends the manifest
      entry to data/processed/trading_cards.json (kind=milestone, generated).
+  Retake rule: if any word renders smudged/wrong, regenerate that card (~7 cr).
 
 Cost discipline: prints the per-card estimate and total before generating;
 art is one gpt_image_2/soul render per card (~7 cr at 2k).
@@ -26,13 +28,19 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import urllib.request
 from pathlib import Path
 
+HIGGS = shutil.which("higgsfield") or str(Path.home() / "AppData/Roaming/npm/higgsfield.cmd")
+BADGE_REF = Path("C:/Slowpitch/Logo/Maple Tree Logo - restored transparent.png")
+PHOTO_DIR = Path("C:/Slowpitch/player pics/souls-training")
+STYLE_REF = Path("C:/Slowpitch/Player Trading Cards/138f1190-05b1-45bb-b638-950715beda72.png")
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from card_frame import compose_card  # noqa: E402
+from card_frame import gem_tier_for  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
@@ -158,20 +166,29 @@ NUMBER_MATERIAL = {
 }
 
 
-def build_prompt(angle_key, angle_desc, motif, lore, has_soul, player, value, stat_word):
+def build_prompt(angle_key, angle_desc, motif, lore, player, nickname, value, stat_word,
+                 rank_ord, rating):
+    """One-shot FULL-CARD design (locked by Brian 2026-07-21 after the Tristan 50 HR
+    keeper): the model composes the entire card — art, border, typography — in one
+    unified piece, matching the club's original card series via a style reference."""
     material = NUMBER_MATERIAL.get(angle_key, "molten gold")
-    subject = (f"the softball player {player} as the heroic central figure mid-action in front of it"
-               if has_soul else "NO people anywhere in the scene")
+    nick = f' His nickname "{nickname}" may appear as a small script accent.' if nickname else ""
     return (
-        "Ultra-premium sports trading card artwork, MLB The Show legendary-card energy: "
-        f"a COLOSSAL three-story-tall number '{value}' built from {material}, standing like a "
-        f"monument in the scene, {subject}. The scene: {motif}, with subtle personal touches "
-        f"woven in: {lore}. Rendered {angle_desc}. Across the lower third, the words "
-        f"'{stat_word.upper()}' written in enormous blazing materialized letters matching the scene, "
-        "dramatic perspective. Hundreds of glowing embers, sparks and light effects, cinematic "
-        "god rays, recreational softball setting, warm espresso brown, maple orange and gold "
-        f"palette. The ONLY text anywhere in the image: the giant number '{value}' and the words "
-        f"'{stat_word.upper()}' — no other text, no watermarks, no lettering."
+        "Design a complete premium sports trading card, matching the exact art style, layout "
+        "language, ornate foil border and finish of the reference trading card (second image): "
+        "dramatic stylized painted-photo look with bold display typography integrated into the "
+        "design. The player is the person from the first reference photo — faithful likeness, "
+        f"heroic rendering — mid-action as the central figure. Concept: {motif}, rendered "
+        f"{angle_desc}, with a giant glowing number '{value}' built from {material} as the "
+        f"design centerpiece behind or beside him. Personal touches woven in: {lore}. "
+        "He wears a navy jersey carrying the circular wood-badge bar logo from the third "
+        "reference image printed on the chest, faithfully reproduced at realistic size. "
+        f"Card text, large and clean, EXACTLY these words and no others: 'MILESTONE MOMENT' "
+        f"banner at top, '{player.upper()}' as the name, the giant '{value}', "
+        f"'{stat_word.upper()}' beneath it, '{rank_ord.upper()} IN FRANCHISE HISTORY' along "
+        f"the bottom, and a red faceted gem in the top corner containing '{rating}'.{nick} "
+        "Maple leaf motifs in the border. Warm espresso brown, maple orange and gold palette. "
+        "Rich, flashy, collectible — every word spelled exactly as given."
     )
 
 
@@ -193,8 +210,10 @@ def main():
     date = args.date or max(e["date"] for e in recent)
     events = [e for e in recent if e["date"] == date]
     if args.only:
-        keep = {s.strip() for s in args.only.split(",")}
-        events = [e for e in events if e["slug"] in keep]
+        # "tristan" keeps all of a player's cards; "tristan:HR" narrows to one stat
+        keep = {s.strip().lower() for s in args.only.split(",")}
+        events = [e for e in events
+                  if e["slug"] in keep or f"{e['slug']}:{e['stat'].lower()}" in keep]
     if not events:
         raise SystemExit(f"No milestones reached on {date}.")
 
@@ -207,17 +226,23 @@ def main():
             continue
         angle_key, angle_desc = pick_angle(used_angles)
         used_angles.add(angle_key)
-        soul_id = souls.get(e["slug"], {}).get("soul_id")
         c = career[e["slug"]]
         rank = sum(1 for p in career.values()
                    if float(p.get(MS_FIELD[e["stat"]]) or 0) >= e["milestone"])
+        rating = rating_for(rank, e["stat"])
+        # display name + nickname from the roster registry
+        full_name = souls.get(e["slug"], {}).get("player", e["player"])
+        nick = None
+        if '"' in full_name:
+            nick = full_name.split('"')[1]
+        photo = PHOTO_DIR / e["slug"] / "01.jpg"
         plan.append({
             "event": e, "asset": asset, "angle": angle_key,
             "prompt": build_prompt(angle_key, angle_desc, MOTIFS.get(e["stat"], MOTIFS["Hits"]),
-                                   LORE.get(e["slug"], "team spirit"), bool(soul_id), e["player"],
-                                   e["milestone"], STAT_WORD.get(e["stat"], e["stat"])),
-            "soul_id": soul_id, "rank": rank,
-            "rating": rating_for(rank, e["stat"]),
+                                   LORE.get(e["slug"], "team spirit"), e["player"], nick,
+                                   e["milestone"], STAT_WORD.get(e["stat"], e["stat"]),
+                                   ordinal(rank), rating),
+            "photo": photo if photo.exists() else None, "rank": rank, "rating": rating,
             "stats": [("AVG", f"{c['avg']:.3f}".lstrip('0')), ("H", int(c["hits"])),
                       ("HR", int(c["hr"])), ("RBI", int(c["rbi"]))],
         })
@@ -226,31 +251,29 @@ def main():
     print(f"\n{len(plan)} card(s) planned for {date}:")
     for p in plan:
         e = p["event"]
-        mode = "SOUL" if p["soul_id"] else "monument (no Soul yet)"
+        mode = "photo-ref one-shot" if p["photo"] else "NO PHOTO — style refs only"
         print(f"  {e['player']:9} {e['milestone']} {e['stat']:12} "
               f"OVR {p['rating']} {gem_tier_for(p['rating']):6} ({ordinal(p['rank'])} ever)  "
               f"angle={p['angle']:18} {mode}")
     est = len(plan) * 7
-    print(f"\nestimated cost: ~{est} credits ({len(plan)} x ~7 cr gpt_image_2/soul 2k)")
+    print(f"\nestimated cost: ~{est} credits ({len(plan)} x ~7 cr one-shot full-card 2k)")
     if not args.make:
         print("\n[dry run] re-run with --make to generate.")
         return
 
-    from datetime import datetime
     made = 0
     for p in plan:
         e = p["event"]
         print(f"\n=== {e['player']} — {e['milestone']} {e['stat']} ({p['angle']}) ===")
-        art_path = ART_DIR / f"{p['asset']}-art.png"
-        if p["soul_id"]:
-            cmd = ["higgsfield", "generate", "create", "text2image_soul_v2",
-                   "--prompt", p["prompt"], "--soul-id", p["soul_id"],
-                   "--aspect_ratio", "3:4", "--quality", "2k", "--wait", "--json"]
-        else:
-            cmd = ["higgsfield", "generate", "create", "gpt_image_2",
-                   "--prompt", p["prompt"], "--aspect_ratio", "3:4",
-                   "--resolution", "2k", "--quality", "high", "--wait", "--json"]
-        r = subprocess.run(cmd, capture_output=True, text=True, timeout=420)
+        art_path = ART_DIR / f"{p['asset']}-card.png"
+        # one-shot full-card: photo ref (likeness) + style ref (series) + badge ref (kit)
+        cmd = [HIGGS, "generate", "create", "gpt_image_2", "--prompt", p["prompt"]]
+        for ref in (p["photo"], STYLE_REF, BADGE_REF):
+            if ref and Path(ref).exists():
+                cmd += ["--image", str(ref)]
+        cmd += ["--aspect_ratio", "2:3", "--resolution", "2k", "--quality", "high",
+                "--wait", "--json"]
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=420, shell=HIGGS.endswith(".cmd"))
         try:
             jobs = json.loads(r.stdout)
             j = jobs[0] if isinstance(jobs, list) else jobs
@@ -263,28 +286,9 @@ def main():
 
         word = STAT_WORD.get(e["stat"], e["stat"].lower())
         out = CARDS_OUT / f"{p['asset']}.webp"
-        tmp_png = ART_DIR / f"{p['asset']}-card.png"
-        full_name = souls.get(e["slug"], {}).get("player", e["player"])
-        nick = None
-        if '"' in full_name:
-            nick = '"' + full_name.split('"')[1] + '"'
-            full_name = full_name.replace(f' {nick} ', " ")
-        pretty_date = datetime.fromisoformat(date).strftime("%B %d, %Y").upper()
-        compose_card(
-            art_path, tmp_png, player=full_name, nickname=nick, gem=p["rating"],
-            series="MILESTONE",
-            caption_lines=[
-                [(f"{ordinal(p['rank']).upper()} PLAYER IN FRANCHISE HISTORY ", "white"),
-                 (f"TO {e['milestone']} {word.upper()}", "gold")],
-                [("REACHED ", "white"), (f"VS {e.get('opponent', '').upper()}", "red"),
-                 (f" · {pretty_date}", "white")],
-            ],
-            rank_flag=f"{ordinal(p['rank'])} ever",
-            sparkle_seed=hash(p["asset"]) % 99999,
-        )
         from PIL import Image
-        img = Image.open(tmp_png).convert("RGB")
-        img.thumbnail((640, 900), Image.LANCZOS)
+        img = Image.open(art_path).convert("RGB")
+        img.thumbnail((640, 960), Image.LANCZOS)
         img.save(out, quality=88, method=6)
 
         manifest["cards"].append({
@@ -296,7 +300,7 @@ def main():
         })
         concepts["used_angles"][p["asset"]] = p["angle"]
         concepts["cards"].append({"asset": p["asset"], "date": date, "angle": p["angle"],
-                                  "soul": bool(p["soul_id"])})
+                                  "recipe": "one-shot"})
         made += 1
         print(f"  card -> {out.name}  (angle: {p['angle']})")
 
