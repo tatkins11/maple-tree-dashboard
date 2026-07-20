@@ -135,6 +135,22 @@ curl -s -o /dev/null -w "%{http_code}" https://mapletreesoftball.netlify.app/
 ```
 plus a check that the home record and any new card webps return 200.
 
+### B7b. Trading cards + Card Release newsletter (when milestones were reached)
+
+- **Mint the week's milestone cards.** Cheapest path when a Higgsfield promo gives
+  free unlimited web generation: rebuild the web-mint kit (per-card prompt + 4 refs:
+  player photo, style card, badge, gem chip), mint in the web UI (use **1k** — the site
+  shows cards at 640px and 2k crashes the browser tab), save keepers to
+  `C:\Slowpitch\Card Art\WEB-MINT-KIT\web-mints\`. Otherwise `weekly_cards.py --make`
+  (~7 cr/card, same 4-ref one-shot recipe). Ratings/gems are data-true (ruby 97+,
+  diamond 85+, gold 80+, silver 75+, bronze <75; 99 = franchise first only).
+- **Process → site:** map files → card_ids, resize to 640px webp into
+  `site/public/cards/`, append manifest entries (rating/rank/caption/flavor), then the
+  normal export → build → deploy. Card flip-backs generate on the site.
+- **Card Release newsletter:** `python scripts/build_card_release.py --date <gameday>`
+  → branded card-drop PDF (masthead, editorial, ruby headliners, full set by tier).
+  Local deliverable; send to the group chat alongside the recap.
+
 ### B8. Postgame recap PDF
 
 ```
