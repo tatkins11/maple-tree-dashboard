@@ -84,32 +84,78 @@ def gem_tier_for(rating) -> str:
 
 
 def _gem(card, cx, cy, r, value, tier="ruby"):
-    """Faceted rating gem — tier sets the stone (ruby/gold/silver/bronze)."""
+    """Premium brilliant-cut rating gem — glossy, 3D, high-shine (tier sets the stone)."""
     base, deep, light, lighter, glow_c, edge = GEM_TIERS[tier]
+    cx, cy, r = float(cx), float(cy), float(r)
+
+    def lerp(a, b, t):
+        t = max(0.0, min(1.0, t))
+        return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
+
+    # bright outer glow so the stone pops off the card
     glow = Image.new("RGBA", card.size, (0, 0, 0, 0))
-    gd = ImageDraw.Draw(glow)
-    gd.polygon([(cx, cy - r - 14), (cx + r + 14, cy), (cx, cy + r + 14), (cx - r - 14, cy)],
-               fill=(*glow_c, 130))
-    card.alpha_composite(glow.filter(ImageFilter.GaussianBlur(22)))
+    ImageDraw.Draw(glow).polygon(
+        [(cx, cy - r - 20), (cx + r + 20, cy), (cx, cy + r + 20), (cx - r - 20, cy)],
+        fill=(*glow_c, 165))
+    card.alpha_composite(glow.filter(ImageFilter.GaussianBlur(26)))
+
+    pts = [(cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy)]  # top, right, bottom, left
+
+    # stone body: smooth vertical gradient — bright crown -> saturated middle -> deep culet
+    stone = Image.new("RGBA", card.size, (0, 0, 0, 0))
+    sd = ImageDraw.Draw(stone)
+    y0 = int(cy - r)
+    for yy in range(y0, int(cy + r) + 1):
+        t = (yy - y0) / (2 * r)
+        hw = r * (1 - abs(yy - cy) / r)
+        col = lerp(lighter, base, t / 0.55) if t < 0.55 else lerp(base, deep, (t - 0.55) / 0.45)
+        sd.line([(cx - hw, yy), (cx + hw, yy)], fill=(*col, 255))
+    card.alpha_composite(stone)
+
+    # brilliant-cut facets, shaded by an upper-left light source
+    table = [(cx - r * 0.40, cy - r * 0.14), (cx, cy - r * 0.50),
+             (cx + r * 0.40, cy - r * 0.14), (cx, cy + r * 0.30)]
+    fac = Image.new("RGBA", card.size, (0, 0, 0, 0))
+    fd = ImageDraw.Draw(fac)
+    fd.polygon([pts[0], table[0], table[1]], fill=(*lighter, 120))                  # crown top-left (bright)
+    fd.polygon([pts[0], table[1], table[2]], fill=(*light, 85))                     # crown top-right
+    fd.polygon([pts[3], table[0], table[3]], fill=(*deep, 90))                      # left pavilion
+    fd.polygon([pts[1], table[2], table[3]], fill=(*deep, 140))                     # right pavilion (dark)
+    fd.polygon([pts[2], table[0], table[3]], fill=(*deep, 70))                      # bottom-left
+    fd.polygon([pts[2], table[2], table[3]], fill=(*lerp(deep, (0, 0, 0), 0.3), 120))  # bottom-right (darkest)
+    card.alpha_composite(fac)
+
     d = ImageDraw.Draw(card)
-    pts = [(cx, cy - r), (cx + r, cy), (cx, cy + r), (cx - r, cy)]
-    d.polygon(pts, fill=base, outline=edge)
-    top, right, bottom, left = pts
-    table = [(cx - r * 0.42, cy - r * 0.1), (cx, cy - r * 0.52), (cx + r * 0.42, cy - r * 0.1),
-             (cx, cy + r * 0.42)]
-    d.polygon([top, table[0], table[1]], fill=light)
-    d.polygon([top, table[1], table[2]], fill=lighter)
-    d.polygon([left, table[0], table[3]], fill=deep)
-    d.polygon([right, table[2], table[3]], fill=tuple(int(c * 0.82) for c in base))
-    d.polygon(table, fill=tuple(int((b + l) / 2) for b, l in zip(base, light)))
-    d.line([cx - r * 0.55, cy - r * 0.4, cx - r * 0.15, cy - r * 0.75], fill=(255, 252, 248), width=6)
-    d.line([cx + r * 0.2, cy - r * 0.68, cx + r * 0.42, cy - r * 0.45], fill=(255, 248, 242), width=4)
-    d.polygon(pts, outline=edge)
+    d.polygon(table, fill=lerp(light, lighter, 0.6))                                # bright table facet
+    for a in pts:                                                                   # crisp facet edges
+        for b in table:
+            d.line([a, b], fill=edge, width=2)
+    for i in range(4):
+        d.line([table[i], table[(i + 1) % 4]], fill=edge, width=2)
+
+    # big soft specular bloom across the crown
+    spec = Image.new("RGBA", card.size, (0, 0, 0, 0))
+    ImageDraw.Draw(spec).ellipse(
+        [cx - r * 0.52, cy - r * 0.72, cx + r * 0.02, cy - r * 0.10], fill=(255, 255, 255, 165))
+    card.alpha_composite(spec.filter(ImageFilter.GaussianBlur(11)))
+
+    # bright rim on the upper-left edges + a sharp glint star
+    hl = Image.new("RGBA", card.size, (0, 0, 0, 0))
+    hd = ImageDraw.Draw(hl)
+    hd.line([pts[3], pts[0]], fill=(255, 255, 255, 210), width=5)
+    gx, gy = cx - r * 0.26, cy - r * 0.40
+    hd.polygon([(gx, gy - 13), (gx + 3.5, gy - 3.5), (gx + 14, gy), (gx + 3.5, gy + 3.5),
+                (gx, gy + 13), (gx - 3.5, gy + 3.5), (gx - 14, gy), (gx - 3.5, gy - 3.5)],
+               fill=(255, 255, 255, 240))
+    card.alpha_composite(hl)
+
+    d.polygon(pts, outline=edge, width=3)                                          # crisp outer edge
+
     val_f = _fit(d, str(value), "impact.ttf", r * 1.2, 84, 30)
     vw = _tw(d, str(value), val_f)
-    _glow_text(card, (cx - vw / 2, cy - val_f.size * 0.58), str(value), val_f, WHITE,
-               (255, 255, 255), glow_radius=6, glow_alpha=120,
-               stroke_width=3, stroke_fill=deep)
+    _glow_text(card, (cx - vw / 2, cy - val_f.size * 0.52), str(value), val_f, WHITE,
+               (255, 255, 255), glow_radius=7, glow_alpha=150,
+               stroke_width=4, stroke_fill=deep)
 
 
 def _sparkles(card, boxes, n, seed):

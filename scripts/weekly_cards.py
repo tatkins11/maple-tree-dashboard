@@ -72,6 +72,23 @@ ANGLES = [
     ("desert-highway", "on a lonely desert highway diamond at sunset, heat shimmer, a water tower on the horizon, cinematic western mood"),
 ]
 
+# Player POSES — each used AT MOST ONCE (logged) so cards don't clone the style
+# reference's stance. Brian 2026-07-21: more variety in poses.
+POSES = [
+    ("mid-swing", "captured at the explosive point of contact, bat blurring through the zone, torso torqued"),
+    ("follow-through", "in a towering follow-through, the bat wrapped behind the shoulder, eyes tracking the ball's flight"),
+    ("bat-flip", "flipping the bat high in the air in celebration, chin up, pure swagger"),
+    ("point-to-sky", "pointing the bat triumphantly toward the sky in salute"),
+    ("loaded-stance", "coiled low in a loaded batting stance, weight back, staring down the pitcher"),
+    ("sliding", "sliding hard into the base in a cloud of dust, one arm outstretched"),
+    ("rounding-bases", "rounding the bases at a dead sprint, dirt kicking up behind him"),
+    ("arms-raised", "both arms thrown skyward in victory, head back, roaring"),
+    ("fielding-leap", "leaping full-extension with the glove, mid-air, robbing a hit"),
+    ("bat-on-shoulders", "standing tall and cool, bat resting across the shoulders behind the neck, unbothered"),
+    ("crouched-ready", "in a low athletic crouch ready to explode, intense narrow-eyed focus"),
+    ("plate-cross", "crossing home plate mid-stride, fist clenched, screaming in celebration"),
+]
+
 # Milestone motifs — what the scene is ABOUT, keyed by stat.
 MOTIFS = {
     "HR": "a mighty home-run moment: a ball rocketing over a distant outfield fence, outfielders watching helplessly",
@@ -141,6 +158,13 @@ def pick_angle(used):
     for key, desc in ANGLES:
         if key not in used:
             return key, desc
+
+
+def pick_pose(used):
+    for key, desc in POSES:
+        if key not in used:
+            return key, desc
+    return POSES[len(used) % len(POSES)]  # cycle if the pool is exhausted
     raise SystemExit("All visual angles used! Add new ones to ANGLES in weekly_cards.py.")
 
 
@@ -171,30 +195,34 @@ GEM_DESC = {"ruby": "deep blood-red ruby", "diamond": "brilliant icy pale-blue w
 
 
 def build_prompt(angle_key, angle_desc, motif, lore, player, nickname, value, stat_word,
-                 rank_ord, rating, gem_tier):
-    """One-shot FULL-CARD design (locked by Brian 2026-07-21 after the Tristan 50 HR
-    keeper): the model composes the entire card — art, border, typography — in one
-    unified piece, matching the club's original card series via a style reference."""
+                 rank_ord, rating, gem_tier, pose_desc="at the peak of glory, mid-action"):
+    """One-shot FULL-CARD design (locked by Brian 2026-07-21). The model composes the whole
+    card — art, border, typography — in one unified piece, matching the club's series via a
+    style reference. Extravagant/flashy by default; each card gets a DISTINCT pose and the
+    style ref is style-only, never a stance to copy (Brian 2026-07-21)."""
     material = NUMBER_MATERIAL.get(angle_key, "molten gold")
     nick = f' His nickname "{nickname}" may appear as a small script accent.' if nickname else ""
     return (
-        "Design a complete premium sports trading card, matching the exact art style, layout "
-        "language, ornate foil border and finish of the reference trading card (second image): "
-        "dramatic stylized painted-photo look with bold display typography integrated into the "
-        "design. The player is the person from the first reference photo — faithful likeness, "
-        f"heroic rendering — mid-action as the central figure. Concept: {motif}, rendered "
-        f"{angle_desc}, with a giant glowing number '{value}' built from {material} as the "
-        f"design centerpiece behind or beside him. Personal touches woven in: {lore}. "
-        "He wears a navy jersey carrying the circular wood-badge bar logo from the third "
-        "reference image printed on the chest, faithfully reproduced at realistic size. "
-        f"Card text, large and clean, EXACTLY these words and no others: 'MILESTONE MOMENT' "
+        "Design a COMPLETE, jaw-dropping premium collectible sports trading card — maximalist, "
+        "flashy and one-of-a-kind — matching the EXACT art style, ornate maple foil border, finish "
+        "and bold display typography of the reference trading card (second image). IMPORTANT: use "
+        "that second reference ONLY for art style, border, finish and type — NOT for the player's "
+        "pose or composition; every card must feel distinct. "
+        "The central figure is the person from the first reference photo — faithful likeness, heroic "
+        f"cinematic rendering — {pose_desc}. Concept: {motif}, rendered {angle_desc}, with a colossal "
+        f"glowing number '{value}' built from {material} ERUPTING as the centerpiece behind and around "
+        "him, throwing off light rays, sparks and prismatic energy; the whole card shimmers with "
+        f"holographic foil, lens flares and floating embers. Personal touches woven in: {lore}. "
+        "He wears a navy jersey carrying the circular wood-badge bar logo from the third reference "
+        "image printed on the chest, faithfully reproduced at realistic size. "
+        f"Card text, large and razor-clean, EXACTLY these words and no others: 'MILESTONE MOMENT' "
         f"banner at top, '{player.upper()}' as the name, the giant '{value}', "
         f"'{stat_word.upper()}' beneath it, '{rank_ord.upper()} IN FRANCHISE HISTORY' along "
         f"the bottom. In the top corner place a faceted rating gem containing '{rating}' — it "
         f"MUST be a {GEM_DESC.get(gem_tier, 'red ruby')}, EXACTLY matching the color, cut and "
         f"material of the FOURTH reference image; do not change its color.{nick} "
-        "Maple leaf motifs in the border. Warm espresso brown, maple orange and gold palette. "
-        "Rich, flashy, collectible — every word spelled exactly as given."
+        "Ornate maple-leaf motifs and foil filigree in the border. Warm espresso brown, maple "
+        "orange and gold palette. Rich, flashy, collectible — every word spelled exactly as given."
     )
 
 
@@ -211,6 +239,7 @@ def main():
     manifest = load(MANIFEST)
     concepts = load(CONCEPT_LOG, {"used_angles": {}, "cards": []})
     used_angles = set(concepts["used_angles"].values())
+    used_poses = set(concepts.get("used_poses", {}).values())
 
     recent = milestones["recent"]
     date = args.date or max(e["date"] for e in recent)
@@ -232,6 +261,8 @@ def main():
             continue
         angle_key, angle_desc = pick_angle(used_angles)
         used_angles.add(angle_key)
+        pose_key, pose_desc = pick_pose(used_poses)
+        used_poses.add(pose_key)
         c = career[e["slug"]]
         rank = sum(1 for p in career.values()
                    if float(p.get(MS_FIELD[e["stat"]]) or 0) >= e["milestone"])
@@ -250,11 +281,11 @@ def main():
         _gem(_g, 320, 300, 180, rating, tier)
         _g.convert("RGB").save(gem_ref)
         plan.append({
-            "event": e, "asset": asset, "angle": angle_key,
+            "event": e, "asset": asset, "angle": angle_key, "pose": pose_key,
             "prompt": build_prompt(angle_key, angle_desc, MOTIFS.get(e["stat"], MOTIFS["Hits"]),
                                    LORE.get(e["slug"], "team spirit"), e["player"], nick,
                                    e["milestone"], STAT_WORD.get(e["stat"], e["stat"]),
-                                   ordinal(rank), rating, tier),
+                                   ordinal(rank), rating, tier, pose_desc),
             "photo": photo if photo.exists() else None, "gem_ref": gem_ref,
             "rank": rank, "rating": rating,
             "stats": [("AVG", f"{c['avg']:.3f}".lstrip('0')), ("H", int(c["hits"])),
@@ -312,6 +343,7 @@ def main():
             "flavor": "",
         })
         concepts["used_angles"][p["asset"]] = p["angle"]
+        concepts.setdefault("used_poses", {})[p["asset"]] = p["pose"]
         concepts["cards"].append({"asset": p["asset"], "date": date, "angle": p["angle"],
                                   "recipe": "one-shot"})
         made += 1
