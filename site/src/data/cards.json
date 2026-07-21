@@ -2,6 +2,7 @@
  {
   "asset": "glove-125-hits",
   "img": "/cards/glove-125-hits.webp",
+  "living": false,
   "player": "Glove",
   "slug": "glove",
   "kind": "milestone",
@@ -36,6 +37,7 @@
  {
   "asset": "glove-25-doubles",
   "img": "/cards/glove-25-doubles.webp",
+  "living": false,
   "player": "Glove",
   "slug": "glove",
   "kind": "milestone",
@@ -70,6 +72,7 @@
  {
   "asset": "glove-20-doubles",
   "img": "/cards/glove-20-doubles.webp",
+  "living": false,
   "player": "Glove",
   "slug": "glove",
   "kind": "milestone",
@@ -104,6 +107,7 @@
  {
   "asset": "glove-15-hr",
   "img": "/cards/glove-15-hr.webp",
+  "living": false,
   "player": "Glove",
   "slug": "glove",
   "kind": "milestone",
@@ -138,6 +142,7 @@
  {
   "asset": "porter-150-tb",
   "img": "/cards/porter-150-tb.webp",
+  "living": false,
   "player": "Porter",
   "slug": "porter",
   "kind": "milestone",
@@ -172,6 +177,7 @@
  {
   "asset": "porter-100-hits",
   "img": "/cards/porter-100-hits.webp",
+  "living": false,
   "player": "Porter",
   "slug": "porter",
   "kind": "milestone",
@@ -206,6 +212,7 @@
  {
   "asset": "kives-150-tb",
   "img": "/cards/kives-150-tb.webp",
+  "living": false,
   "player": "Kives",
   "slug": "kives",
   "kind": "milestone",
@@ -240,6 +247,7 @@
  {
   "asset": "tim-50-runs",
   "img": "/cards/tim-50-runs.webp",
+  "living": false,
   "player": "Tim",
   "slug": "tim",
   "kind": "milestone",
@@ -274,6 +282,7 @@
  {
   "asset": "tim-50-rbi",
   "img": "/cards/tim-50-rbi.webp",
+  "living": false,
   "player": "Tim",
   "slug": "tim",
   "kind": "milestone",
@@ -308,6 +317,7 @@
  {
   "asset": "corey-75-hits",
   "img": "/cards/corey-75-hits.webp",
+  "living": false,
   "player": "Corey",
   "slug": "corey",
   "kind": "milestone",
@@ -342,6 +352,7 @@
  {
   "asset": "corey-50-runs",
   "img": "/cards/corey-50-runs.webp",
+  "living": false,
   "player": "Corey",
   "slug": "corey",
   "kind": "milestone",
@@ -376,6 +387,7 @@
  {
   "asset": "jason-150-pa",
   "img": "/cards/jason-150-pa.webp",
+  "living": false,
   "player": "Jason",
   "slug": "jason",
   "kind": "milestone",
@@ -410,6 +422,7 @@
  {
   "asset": "jason-50-runs",
   "img": "/cards/jason-50-runs.webp",
+  "living": false,
   "player": "Jason",
   "slug": "jason",
   "kind": "milestone",
@@ -444,6 +457,7 @@
  {
   "asset": "snaxx-100-pa",
   "img": "/cards/snaxx-100-pa.webp",
+  "living": false,
   "player": "Joey",
   "slug": "snaxx",
   "kind": "milestone",
@@ -478,6 +492,7 @@
  {
   "asset": "walsh-25-hits",
   "img": "/cards/walsh-25-hits.webp",
+  "living": false,
   "player": "Walsh",
   "slug": "walsh",
   "kind": "milestone",
@@ -512,6 +527,7 @@
  {
   "asset": "joel-first-hr",
   "img": "/cards/joel-first-hr.webp",
+  "living": false,
   "player": "Joel",
   "slug": "joel",
   "kind": "milestone",
@@ -546,6 +562,7 @@
  {
   "asset": "glove-live",
   "img": "/cards/glove-live.webp",
+  "living": false,
   "player": "Glove",
   "slug": "glove",
   "kind": "base",
@@ -584,6 +601,7 @@
  {
   "asset": "jj-live",
   "img": "/cards/jj-live.webp",
+  "living": false,
   "player": "JJ",
   "slug": "jj",
   "kind": "base",
@@ -622,6 +640,7 @@
  {
   "asset": "snaxx-live",
   "img": "/cards/snaxx-live.webp",
+  "living": false,
   "player": "Joey",
   "slug": "snaxx",
   "kind": "base",
@@ -656,6 +675,7 @@
  {
   "asset": "jason-live",
   "img": "/cards/jason-live.webp",
+  "living": false,
   "player": "Jason",
   "slug": "jason",
   "kind": "base",
@@ -690,6 +710,7 @@
  {
   "asset": "snaxx-injured",
   "img": "/cards/snaxx-injured.webp",
+  "living": false,
   "player": "Joey",
   "slug": "snaxx",
   "kind": "special",
@@ -724,6 +745,7 @@
  {
   "asset": "kives-week1-spotlight",
   "img": "/cards/kives-week1-spotlight.webp",
+  "living": false,
   "player": "Kives",
   "slug": "kives",
   "kind": "special",
@@ -766,6 +788,7 @@
  {
   "asset": "kives-fence-injury",
   "img": "/cards/kives-fence-injury.webp",
+  "living": false,
   "player": "Kives",
   "slug": "kives",
   "kind": "special",
@@ -808,6 +831,7 @@
  {
   "asset": "corey-first-ejection",
   "img": "/cards/corey-first-ejection.webp",
+  "living": false,
   "player": "Corey",
   "slug": "corey",
   "kind": "special",
@@ -850,6 +874,7 @@
  {
   "asset": "tristan-50-hr",
   "img": "/cards/tristan-50-hr.webp",
+  "living": true,
   "player": "Tristan",
   "slug": "tristan",
   "kind": "milestone",
@@ -884,6 +909,7 @@
  {
   "asset": "tristan-125-r",
   "img": "/cards/tristan-125-r.webp",
+  "living": true,
   "player": "Tristan",
   "slug": "tristan",
   "kind": "milestone",
@@ -918,6 +944,7 @@
  {
   "asset": "tristan-75-games",
   "img": "/cards/tristan-75-games.webp",
+  "living": true,
   "player": "Tristan",
   "slug": "tristan",
   "kind": "milestone",
@@ -952,6 +979,7 @@
  {
   "asset": "corey-75-1b",
   "img": "/cards/corey-75-1b.webp",
+  "living": true,
   "player": "Corey",
   "slug": "corey",
   "kind": "milestone",
@@ -986,6 +1014,7 @@
  {
   "asset": "corey-50-rbi",
   "img": "/cards/corey-50-rbi.webp",
+  "living": true,
   "player": "Corey",
   "slug": "corey",
   "kind": "milestone",
@@ -1020,6 +1049,7 @@
  {
   "asset": "jj-75-rbi",
   "img": "/cards/jj-75-rbi.webp",
+  "living": true,
   "player": "JJ",
   "slug": "jj",
   "kind": "milestone",
@@ -1054,6 +1084,7 @@
  {
   "asset": "jj-100-r",
   "img": "/cards/jj-100-r.webp",
+  "living": true,
   "player": "JJ",
   "slug": "jj",
   "kind": "milestone",
@@ -1088,6 +1119,7 @@
  {
   "asset": "jason-50-1b",
   "img": "/cards/jason-50-1b.webp",
+  "living": true,
   "player": "Jason",
   "slug": "jason",
   "kind": "milestone",
@@ -1122,6 +1154,7 @@
  {
   "asset": "porter-200-ab",
   "img": "/cards/porter-200-ab.webp",
+  "living": true,
   "player": "Porter",
   "slug": "porter",
   "kind": "milestone",
@@ -1156,6 +1189,7 @@
  {
   "asset": "snaxx-100-ab",
   "img": "/cards/snaxx-100-ab.webp",
+  "living": true,
   "player": "Joey",
   "slug": "snaxx",
   "kind": "milestone",
@@ -1190,6 +1224,7 @@
  {
   "asset": "tim-75-hits",
   "img": "/cards/tim-75-hits.webp",
+  "living": true,
   "player": "Tim",
   "slug": "tim",
   "kind": "milestone",
@@ -1224,6 +1259,7 @@
  {
   "asset": "joel-potw-week4",
   "img": "/cards/joel-potw-week4.webp",
+  "living": true,
   "player": "Joel",
   "slug": "joel",
   "kind": "special",

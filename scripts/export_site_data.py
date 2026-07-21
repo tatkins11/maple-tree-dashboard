@@ -715,6 +715,7 @@ def main() -> None:
 
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         n_cards = len(manifest["cards"])
+        living_dir = OUT_DIR.parents[1] / "public" / "cards" / "living"
         cards_out = []
         for i, card in enumerate(manifest["cards"], 1):
             p = players_by_slug.get(card["slug"])
@@ -774,6 +775,7 @@ def main() -> None:
             cards_out.append({
                 "asset": card["asset"],
                 "img": f"/cards/{card['asset']}.webp",
+                "living": (living_dir / f"{card['asset']}.mp4").exists(),
                 "player": p["name"],
                 "slug": card["slug"],
                 "kind": card["kind"],

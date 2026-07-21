@@ -14,6 +14,21 @@ const alt =
   <div class="tcard-inner">
     <div class="tcard-front">
       <img src={card.img} alt={alt} loading="lazy" decoding="async" />
+      {card.living && (
+        <>
+          <video
+            class="tcard-live"
+            src={`/cards/living/${card.asset}.mp4`}
+            poster={card.img}
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-hidden="true"></video>
+          <span class="tcard-live-badge">● LIVE</span>
+        </>
+      )}
     </div>
     <div class="tcard-back">
       <div class="tb-head">
@@ -47,3 +62,35 @@ const alt =
     </div>
   </div>
 </div>
+
+<script>
+  // Living cards: play the loop only while on screen, fade it over the still.
+  const initLiving = () => {
+    const vids = document.querySelectorAll('video.tcard-live:not([data-obs])');
+    if (!vids.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) {
+            v.play().then(() => v.classList.add('playing')).catch(() => {});
+          } else {
+            v.pause();
+            v.classList.remove('playing');
+          }
+        });
+      },
+      { rootMargin: '200px', threshold: 0.01 },
+    );
+    vids.forEach((v) => {
+      (v as HTMLElement).dataset.obs = '1';
+      const vid = v as HTMLVideoElement;
+      // reveal once the loop can render (autoplay handles playback where allowed)
+      if (vid.readyState >= 2) vid.classList.add('playing');
+      vid.addEventListener('playing', () => vid.classList.add('playing'), { once: true });
+      io.observe(v);
+    });
+  };
+  initLiving();
+  document.addEventListener('astro:page-load', initLiving);
+</script>

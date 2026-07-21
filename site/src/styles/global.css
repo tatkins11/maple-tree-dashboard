@@ -710,6 +710,7 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   -webkit-backface-visibility: hidden;
   border-radius: 12px;
 }
+.tcard-front { position: relative; }
 .tcard-front img {
   display: block;
   width: 100%;
@@ -717,6 +718,33 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   border-radius: 12px;
   box-shadow: 0 4px 16px -6px rgba(24, 12, 4, 0.45);
 }
+.tcard-live {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.tcard-live.playing { opacity: 1; }
+.tcard-live-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  font: 700 9px/1 var(--sans, sans-serif);
+  letter-spacing: 0.06em;
+  color: #fff;
+  background: rgba(180, 30, 40, 0.9);
+  padding: 3px 7px 3px 6px;
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse { 50% { opacity: 0.55; } }
 .tcard:not(.flipped):hover .tcard-inner { transform: translateY(-4px); }
 .tcard-back {
   position: absolute;
