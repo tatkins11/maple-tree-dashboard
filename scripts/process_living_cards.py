@@ -28,6 +28,11 @@ from pathlib import Path
 
 import imageio_ffmpeg
 
+try:  # Windows consoles default to cp1252; our status glyphs need UTF-8
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 REPO = Path(__file__).resolve().parents[1]
 LIVING_OUT = REPO / "site" / "public" / "cards" / "living"
 CARDS_WEBP = REPO / "site" / "public" / "cards"
