@@ -436,6 +436,31 @@
       "value": 75,
       "caption": "8th player in Tappers history to reach 75 hits",
       "flavor": "Seventy-five career hits, audited and confirmed. The numbers never lie, and Tim's ledger keeps growing."
+    },
+    {
+      "file": "",
+      "asset": "joel-potw-week4",
+      "slug": "joel",
+      "kind": "special",
+      "generated": true,
+      "rating": 84,
+      "series": "Player of the Week",
+      "caption": "2026 Summer \u00b7 Week 4 \u00b7 Player of the Week",
+      "flavor": "Mister Raupp went 5-for-7 with a home run and five driven in to sweep Zero to Hiro and claim his first career Player of the Week. Class dismissed.",
+      "facts": [
+        [
+          "Week 4 line",
+          "5-for-7 \u00b7 HR \u00b7 5 RBI \u00b7 5 R"
+        ],
+        [
+          "Honor",
+          "1st career Player of the Week"
+        ],
+        [
+          "Series",
+          "Sweep vs Zero to Hiro, 2-0"
+        ]
+      ]
     }
   ]
 }

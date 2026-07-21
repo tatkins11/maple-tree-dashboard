@@ -92,6 +92,9 @@ def main():
     milestones = load("milestones.json")
     meta = load("meta.json")
 
+    def headline(c):
+        return f"{c['value']} {c['stat']}" if c["kind"] == "milestone" else (c.get("series") or "Special Edition")
+
     picked = []
     if args.date:
         reached = [(e["slug"], e["stat"], e["milestone"]) for e in milestones["recent"]
@@ -188,7 +191,7 @@ def main():
         _txt(c, tx + 40, hy - 25, TIER_LABEL[card["tier"]].split(" — ")[0], "Helvetica-Bold", 9,
              TIER_HEX[card["tier"]], cs=1)
         _txt(c, tx, hy - 52, card["player"], "Helvetica-Bold", 16, BARK)
-        _txt(c, tx, hy - 70, f"{card['value']} {card['stat']}", "Helvetica-Bold", 11, MAPLE)
+        _txt(c, tx, hy - 70, headline(card), "Helvetica-Bold", 11, MAPLE)
         yy2 = wrap(c, tx, hy - 86, card.get("caption", ""), tw, "Helvetica-Oblique", 8.5, 11, MUTED)
         wrap(c, tx, yy2 - 6, card.get("flavor", ""), tw, "Helvetica", 8.7, 11.5, INK)
     footer(1)
@@ -227,8 +230,9 @@ def main():
         tx = 44 + dw + 18
         draw_gem(c, tx + 13, y - 14, 13, card["tier"], card["rating"])
         _txt(c, tx + 34, y - 18, card["player"].upper(), "Helvetica-Bold", 14, BARK)
-        _txt(c, tx, y - 40, f"{card['value']} {card['stat']}   ·   {card.get('caption','')}",
-             "Helvetica-Bold", 9.5, MAPLE)
+        subline = (f"{headline(card)}   ·   {card.get('caption','')}" if card["kind"] == "milestone"
+                   else card.get("caption", ""))
+        _txt(c, tx, y - 40, subline, "Helvetica-Bold", 9.5, MAPLE)
         by = wrap(c, tx, y - 56, card.get("flavor", ""), W - 36 - tx, "Helvetica", 8.8, 11.5, INK)
         if card.get("game_text"):
             wrap(c, tx, by - 4, card["game_text"], W - 36 - tx, "Helvetica-Oblique", 8, 10.5, MUTED)
