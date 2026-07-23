@@ -11,3 +11,9 @@ db/*.sqlite
 db/*.db
 
 *.log
+
+# generated sync audit reports (regenerable artifacts)
+data/audits/
+
+# local Claude Code settings
+.claude/settings.local.json

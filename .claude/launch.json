@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "maple-tree",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "streamlit", "run", "streamlit_app.py", "--server.port", "8501", "--server.headless", "true"],
+      "port": 8501
+    },
+    {
+      "name": "mapletree-site",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "C:/Slowpitch/slowpitch_optimizer/site", "run", "dev"],
+      "port": 4321
+    }
+  ]
+}
