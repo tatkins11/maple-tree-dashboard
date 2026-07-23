@@ -21,7 +21,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.1.0"
+EXTRACT_VERSION = "1.1.1"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
@@ -147,7 +147,11 @@ def per_game_box() -> dict:
                 "team_score": ts, "opponent_score": os_,
                 "box": {"pa": i(pa), "ab": i(ab), "hits": i(hits), "2b": i(d2), "3b": i(d3),
                         "hr": i(hr), "bb": i(bb), "r": i(r), "rbi": i(rbi),
-                        "outs": i(outs) + i(sf)},
+                        # DERIVE outs as (AB - H + SF). The scorebook's stored `outs`
+                        # column is under-populated — it disagrees with AB-H in 76 of 82
+                        # games, every season, always low (one 2021 game stored 1 out on
+                        # 38 PA). Deriving keeps the box self-consistent.
+                        "outs": max(i(ab) - i(hits) + i(sf), 0)},
             })
     finally:
         con.close()
@@ -319,7 +323,9 @@ def main():
     NOTES.append("`innings` is ALWAYS null: GameChanger's per-game innings/linescore was never "
                  "imported (no source carries it — the season CSVs' INN column is fielding innings "
                  "by position, and is empty). Not zero-filled, not guessed.")
-    NOTES.append("`innings_batted_est` is DERIVED, not source: (batting outs + SF) / 3. Use it as "
+    NOTES.append("`innings_batted_est` is DERIVED, not source: (AB - H + SF) / 3. It does NOT use the "
+                 "scorebook's stored `outs` column, which is under-populated (disagrees with AB-H "
+                 "in 76 of 82 games, always low). Use it as "
                  "the early-ending signal — a full game is ~21 outs, so run-rule/time-capped games "
                  "sit well below. `reliable:false` marks boxes with under 9 outs, which are almost "
                  "certainly incomplete scorebook entries rather than 3-inning games — do not read "
@@ -330,6 +336,11 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.1.1": "FIX: per-game `outs` (and therefore innings_batted_est) is now DERIVED "
+                     "as (AB - H + SF). v1.1.0 trusted the scorebook's stored `outs` column, "
+                     "which is under-populated — it disagrees with AB-H in 76 of 82 games and "
+                     "produced impossible estimates (a full 38-PA game read as 0.7 innings). "
+                     "All 82 games now estimate cleanly; zero fall below the reliability floor.",
             "1.1.0": "FIX + new fields. Per-game results now emit for ALL SIX seasons: the "
                      "done-test gated on status=='completed', but every pre-2026 row uses "
                      "'final', which silently nulled 61 real results in v1.0.x. Adds per-game "
