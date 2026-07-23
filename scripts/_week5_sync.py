@@ -69,8 +69,22 @@ G1_TEAM = dict(pa=23, ab=21, h=7, **{"1b": 5, "2b": 1, "3b": 0}, hr=1, rbi=2, r=
 G2_TEAM = dict(pa=37, ab=33, h=19, **{"1b": 13, "2b": 2, "3b": 1}, hr=3, rbi=17, r=17,
                bb=2, so=0, sf=2, fc=2)
 
-# League results not in hand yet — fill in and re-run to score the other games.
-LEAGUE_SCORES: dict[str, tuple[int, int]] = {}
+# Week 5 league results (Brian, 7/23). His sheet lists the AWAY team first; the CSV is
+# home/away, so these are stored as (home_runs, away_runs) against each row's designation.
+# Brew Crew had the bye (no rows). Our two games (g6 2-12 L, g9 17-6 W) match the synced
+# box scores exactly — a clean cross-check.
+LEAGUE_SCORES: dict[str, tuple[int, int]] = {
+    "summer-2026-week-5-g1": (4, 14),    # Zero to Hiro 4, Nuketown 14
+    "summer-2026-week-5-g2": (2, 12),    # Everything hurts 2, Como 12
+    "summer-2026-week-5-g3": (17, 15),   # Nuketown 17, Zero to Hiro 15
+    "summer-2026-week-5-g4": (16, 1),    # Como 16, Everything hurts 1
+    "summer-2026-week-5-g5": (19, 18),   # Slaughtered in 3 19, Mean Beanz 18
+    "summer-2026-week-5-g6": (12, 2),    # Bleacher Bums 12, Maple Tree 2
+    "summer-2026-week-5-g7": (17, 7),    # Sandlot Vibes 17, Wasted Talent 7
+    "summer-2026-week-5-g8": (11, 16),   # Mean Beanz 11, Slaughtered in 3 16
+    "summer-2026-week-5-g9": (17, 6),    # Maple Tree 17, Bleacher Bums 6
+    "summer-2026-week-5-g10": (23, 12),  # Wasted Talent 23, Sandlot Vibes 12
+}
 
 
 def parse_season(path: Path) -> dict[str, dict[str, int]]:
@@ -93,6 +107,25 @@ def check(label, got, want):
     bad = {s: (got[s], want[s]) for s in STATS if got[s] != want[s]}
     assert not bad, f"{label} MISMATCH {bad}"
     print(f"  {label} team totals OK: " + " ".join(f"{s.upper()}{got[s]}" for s in STATS))
+
+
+def write_league():
+    """Score the week's league games. Safe to run on its own (idempotent overwrite)."""
+    if not LEAGUE_SCORES:
+        print(f"SKIPPED {LEAGUE.name}: no league results in hand yet.")
+        return
+    lrows = list(csv.reader(open(LEAGUE, encoding="utf-8-sig")))
+    lh, n = lrows[0], 0
+    for r in lrows[1:]:
+        if r and r[0] in LEAGUE_SCORES:
+            hr_, ar = LEAGUE_SCORES[r[0]]
+            r[10], r[11], r[12], r[13] = "completed", "1", str(hr_), str(ar)
+            n += 1
+    with open(LEAGUE, "w", newline="", encoding="utf-8-sig") as f:
+        w = csv.writer(f)
+        w.writerow(lh)
+        w.writerows([r for r in lrows[1:] if r])
+    print(f"Wrote {LEAGUE.name}: {n}/{len(LEAGUE_SCORES)} league games scored")
 
 
 def main(write=False):
@@ -176,23 +209,7 @@ def main(write=False):
         w.writerows([r for r in trows[1:] if r])
     print(f"Wrote {TEAM.name}: g1=L 2-12, g2=W 17-6")
 
-    if LEAGUE_SCORES:
-        lrows = list(csv.reader(open(LEAGUE, encoding="utf-8-sig")))
-        lh = lrows[0]
-        n = 0
-        for r in lrows[1:]:
-            if r and r[0] in LEAGUE_SCORES:
-                hr_, ar = LEAGUE_SCORES[r[0]]
-                r[10], r[11], r[12], r[13] = "completed", "1", str(hr_), str(ar)
-                n += 1
-        with open(LEAGUE, "w", newline="", encoding="utf-8-sig") as f:
-            w = csv.writer(f)
-            w.writerow(lh)
-            w.writerows([r for r in lrows[1:] if r])
-        print(f"Wrote {LEAGUE.name}: {n} league games scored")
-    else:
-        print(f"SKIPPED {LEAGUE.name}: league results not in hand — "
-              "fill LEAGUE_SCORES and re-run with --write to score the rest of the week.")
+    write_league()
 
     shutil.copyfile(NEW_CSV, OLD_CSV)
     print(f"Copied new season CSV -> {OLD_CSV.name}")
@@ -200,4 +217,15 @@ def main(write=False):
 
 if __name__ == "__main__":
     import sys
-    main(write="--write" in sys.argv)
+    # --league-only: score the rest of the league AFTER the main sync already ran.
+    # The full sync is single-shot (it overwrites OLD_CSV with NEW_CSV, so re-deriving
+    # Game 2 would go negative) — use --league-only when the results arrive later.
+    if "--league-only" in sys.argv:
+        if "--write" not in sys.argv:
+            print("[dry run] league-only; re-run with --write to apply.")
+            for k, (h, a) in LEAGUE_SCORES.items():
+                print(f"  {k}: home {h} - away {a}")
+        else:
+            write_league()
+    else:
+        main(write="--write" in sys.argv)
