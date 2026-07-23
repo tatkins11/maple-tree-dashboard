@@ -20,23 +20,22 @@ import re
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.0.1"
+EXTRACT_VERSION = "1.0.2"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
 OUT = Path("C:/MapleTreeGame/data/imports")
 
 # Park dimensions — confirmed by Brian 2026-07-23. The org plays the Boncosky complex;
-# every field is symmetric ("all around"). Green is the big one at a true 350; Blue, Red
-# and Yellow are the ~300s (approximate, hence the flag — the game should not treat them
-# as surveyed numbers). The brief said "three fields"; there are in fact four.
-_SYM = lambda ft, approx: {"left_ft": ft, "center_ft": ft, "right_ft": ft,
-                           "symmetric": True, "approximate": approx}
+# every field is symmetric ("all around"). Green is the big one at 350; Blue, Red and
+# Yellow are 300. All four are stated figures, not estimates (v1.0.2 dropped the
+# approximate flag after Brian confirmed). The brief said "three fields"; there are four.
+_SYM = lambda ft: {"left_ft": ft, "center_ft": ft, "right_ft": ft, "symmetric": True}
 PARK_DIMS: dict[str, dict | None] = {
-    "Boncosky Green": _SYM(350, False),
-    "Boncosky Blue": _SYM(300, True),
-    "Boncosky Red": _SYM(300, True),
-    "Boncosky Yellow": _SYM(300, True),
+    "Boncosky Green": _SYM(350),
+    "Boncosky Blue": _SYM(300),
+    "Boncosky Red": _SYM(300),
+    "Boncosky Yellow": _SYM(300),
 }
 NOTES: list[str] = []
 
@@ -230,19 +229,19 @@ def main():
               "games_played": park_games[p]} for p in sorted(park_games)]
     (OUT / "parks.json").write_text(
         json.dumps({"note": "Boncosky complex, four fields, all symmetric ('all around'). "
-                            "Green is a true 350; Blue/Red/Yellow are ~300 and carry "
-                            "approximate=true — treat those as estimates, not surveyed numbers. "
-                            "Confirmed by Brian 2026-07-23.",
+                            "Green 350; Blue, Red and Yellow 300. Confirmed by Brian "
+                            "2026-07-23 — these are stated figures, not estimates.",
                     "parks": parks}, indent=2), encoding="utf-8")
 
     if bb_total:
         NOTES.append(f"batted_ball coverage: {bb_covered}/{bb_total} player-seasons had LD/FB/GB/HH "
                      "in source; the rest are null (not tracked that season), never zero-filled.")
     NOTES.append("spray direction (pull/center/oppo) is null everywhere — not tracked in source.")
-    NOTES.append("opponents.json is team-level only; opponent hitters/pitching are null (not tracked).")
-    NOTES.append("parks.json dimensions_ft are POPULATED as of v1.0.1 (Boncosky Green 350 all "
-                 "around; Blue/Red/Yellow ~300, flagged approximate=true). The brief said three "
-                 "fields; there are four.")
+    NOTES.append("opponents.json is team-level BY DESIGN — opponent player/pitching stats are not "
+                 "recorded in any source (GameChanger tracks our team only). hitters/pitching are "
+                 "null permanently; this is not a pending gap.")
+    NOTES.append("parks.json dimensions_ft are populated and confirmed exact (Boncosky Green 350 "
+                 "all around; Blue, Red and Yellow 300). The brief said three fields; there are four.")
     NOTES.append("games_*.json carry score-level real results (runs_for/against, result). Per-game "
                  "batting box lines are a v1.1 enrichment (only recently-tracked games have them).")
 
@@ -251,9 +250,11 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
-            "1.0.1": "parks.json dimensions_ft populated (Boncosky Green 350 all around; "
-                     "Blue/Red/Yellow ~300, approximate=true). Data-fill only — NO shape "
-                     "change from 1.0.0, so 1.0.0 consumers stay compatible.",
+            "1.0.2": "Park dimensions confirmed exact — dropped the `approximate` flag "
+                     "(Green 350, Blue/Red/Yellow 300, all stated figures). Also confirmed: "
+                     "opponent stats are team-level by design, not a pending gap.",
+            "1.0.1": "parks.json dimensions_ft populated. Data-fill only — NO shape change "
+                     "from 1.0.0, so 1.0.0 consumers stay compatible.",
             "1.0.0": "Initial contract: manifest, per-season players/games, rosters, "
                      "opponents, parks.",
         },
