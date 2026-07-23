@@ -21,7 +21,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.1.2"
+EXTRACT_VERSION = "1.1.3"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
@@ -330,6 +330,14 @@ def main():
                  "sit well below. `reliable:false` marks boxes with under 9 outs, which are almost "
                  "certainly incomplete scorebook entries rather than 3-inning games — do not read "
                  "those as slaughters without cross-checking the score margin.")
+    NOTES.append("OUT-ACCOUNTING behind innings_batted_est (what is and isn't counted): "
+                 "SF = an out, COUNTED. FC = batter safe but a runner is retired, so the out total "
+                 "is unchanged — negligible, ignored. GIDP = 2 outs, but the column is populated "
+                 "ONLY for 2021 (0 elsewhere means untracked, NOT zero double plays) — deliberately "
+                 "EXCLUDED so all six seasons use one formula; including it would inflate 2021 "
+                 "alone to an impossible 10.3-inning max. Runners retired on the bases are not "
+                 "tracked at all. Net: the estimate misses some real outs (GIDP, baserunning) and "
+                 "adds some false ones (ROE, untracked per game), which partly cancel.")
     NOTES.append("KNOWN BIAS on innings_batted_est: reached-on-error is not tracked per game, so "
                  "(AB-H+SF) counts those at-bats as outs and the estimate runs slightly HIGH "
                  "(one game reads 8.0 in a 7-inning league). Use it to RANK games short-vs-long — "
@@ -343,6 +351,12 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.1.3": "Docs only. Full out-accounting recorded (per Brian): SF is an out and IS "
+                     "counted; GIDP is 2 outs but is tracked ONLY in 2021, so it is deliberately "
+                     "EXCLUDED — folding it in would inflate that one season against the other "
+                     "five (max jumps to an impossible 10.3 innings) and break cross-season "
+                     "comparability; baserunning outs are untracked; FC is negligible and "
+                     "self-cancelling. Formula stays uniform at (AB-H+SF)/3.",
             "1.1.2": "Docs only, no data change: innings_batted_est now states its known bias. "
                      "(AB-H+SF) counts reached-on-error as an out because ROE is not tracked "
                      "per game, so the estimate runs slightly HIGH — one game reads 8.0 in a "
