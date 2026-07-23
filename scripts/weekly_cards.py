@@ -221,6 +221,9 @@ def build_prompt(angle_key, angle_desc, motif, lore, player, nickname, value, st
         f"the bottom. In the top corner place a faceted rating gem containing '{rating}' — it "
         f"MUST be a {GEM_DESC.get(gem_tier, 'red ruby')}, EXACTLY matching the color, cut and "
         f"material of the FOURTH reference image; do not change its color.{nick} "
+        "EACH of those text elements must appear EXACTLY ONCE on the card — in particular the "
+        "player's name and the giant number appear ONE time each; never repeat the name or the "
+        "number anywhere else in the design. "
         "Ornate maple-leaf motifs and foil filigree in the border. Warm espresso brown, maple "
         "orange and gold palette. Rich, flashy, collectible — every word spelled exactly as given."
     )
