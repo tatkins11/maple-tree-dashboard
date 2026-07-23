@@ -269,7 +269,9 @@ def page_roster(c, S, meta):
         for (lab, cx, al, _), v in zip(cols[12:], (p["avg"], p["obp"], p["slg"])):
             _txt(c, cx, y, r3(v), "Helvetica", 9.5, INK, align=al)
         _txt(c, 570, y, f"{p['ops']:.3f}", "Helvetica-Bold", 9.5, BARK, align="r")
-        bar(c, 44, y - 9, 74, 3.2, min(p["ops"] / 2.0, 1.0), MAPLE)  # compact OPS meter under the name
+        # OPS meter, kept INSIDE the row band (band spans y-7 .. y-7+rh) so it is
+        # never sliced by the next row's shading, and short of the GP column.
+        bar(c, 44, y - 5, 64, 3.2, min(p["ops"] / 2.0, 1.0), MAPLE)
         y -= rh
     t = S["team"]
     c.setFillColor(BARK); c.rect(36, y - 6, W - 72, 22, stroke=0, fill=1)
