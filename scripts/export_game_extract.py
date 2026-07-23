@@ -21,7 +21,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.1.1"
+EXTRACT_VERSION = "1.1.2"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
@@ -330,12 +330,24 @@ def main():
                  "sit well below. `reliable:false` marks boxes with under 9 outs, which are almost "
                  "certainly incomplete scorebook entries rather than 3-inning games — do not read "
                  "those as slaughters without cross-checking the score margin.")
+    NOTES.append("KNOWN BIAS on innings_batted_est: reached-on-error is not tracked per game, so "
+                 "(AB-H+SF) counts those at-bats as outs and the estimate runs slightly HIGH "
+                 "(one game reads 8.0 in a 7-inning league). Use it to RANK games short-vs-long — "
+                 "it is a relative early-ending signal, not a literal inning count. The scorebook's "
+                 "own `outs` column is worse and deliberately unused: for older imports it was "
+                 "never populated (a 2021 game stores 0 outs for 10 of 11 hitters), and where it "
+                 "was populated it counts batter-outs only, excluding fielder's choice and ROE.")
 
     manifest = {
         "extract_version": EXTRACT_VERSION,
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.1.2": "Docs only, no data change: innings_batted_est now states its known bias. "
+                     "(AB-H+SF) counts reached-on-error as an out because ROE is not tracked "
+                     "per game, so the estimate runs slightly HIGH — one game reads 8.0 in a "
+                     "7-inning league. Treat it as a RELATIVE short-vs-long signal, not a "
+                     "literal inning count.",
             "1.1.1": "FIX: per-game `outs` (and therefore innings_batted_est) is now DERIVED "
                      "as (AB - H + SF). v1.1.0 trusted the scorebook's stored `outs` column, "
                      "which is under-populated — it disagrees with AB-H in 76 of 82 games and "
