@@ -46,6 +46,67 @@ def r3(v):
     return f"{float(v):.3f}".lstrip("0") if v else ".000"
 
 
+def _bb_from_csv(path: Path):
+    """Team batted-ball profile from a GameChanger season export, weighted by balls in
+    play (AB - SO + SF). The header repeats names across Batting/Pitching/Fielding —
+    always take the FIRST occurrence, which is the batting block."""
+    import csv as _csv
+    rows = list(_csv.reader(open(path, encoding="utf-8-sig")))
+    if len(rows) < 3:
+        return None
+    idx = {}
+    for i, nm in enumerate(rows[1]):
+        n = (nm or "").strip()
+        if n and n not in idx:
+            idx[n] = i
+    if not {"AB", "SO", "SF", "HHB", "LD%", "FB%", "GB%"} <= set(idx):
+        return None
+    tot = {"batted": 0.0, "hhb": 0.0, "ld": 0.0, "fb": 0.0, "gb": 0.0}
+    for r in rows[2:]:
+        if not r or (r[0] or "").strip().lower() == "totals":
+            continue
+        if not ((r[2] or "").strip() or (r[1] or "").strip()):
+            continue
+
+        def num(k):
+            try:
+                return float((r[idx[k]] or "0").replace(",", "") or 0)
+            except (ValueError, IndexError):
+                return 0.0
+        batted = max(num("AB") - num("SO") + num("SF"), 0.0)
+        if batted <= 0:
+            continue
+        tot["batted"] += batted
+        tot["hhb"] += num("HHB")
+        for k, col in (("ld", "LD%"), ("fb", "FB%"), ("gb", "GB%")):
+            tot[k] += (num(col) / 100.0) * batted
+    b = tot["batted"]
+    if b <= 0:
+        return None
+    return {"batted": b, "hh": tot["hhb"] / b,
+            **{k: tot[k] / b for k in ("ld", "fb", "gb")}}
+
+
+def batted_ball(season_name: str):
+    """(this season, career baseline across every season on file)."""
+    root = REPO / "data" / "raw" / "season_csv"
+    season, agg = None, {"batted": 0.0, "hhb": 0.0, "ld": 0.0, "fb": 0.0, "gb": 0.0}
+    for p in sorted(root.glob("*.csv")):
+        d = _bb_from_csv(p)
+        if not d:
+            continue
+        if p.stem.lower().startswith(season_name.lower()):
+            season = d
+        agg["batted"] += d["batted"]
+        agg["hhb"] += d["hh"] * d["batted"]
+        for k in ("ld", "fb", "gb"):
+            agg[k] += d[k] * d["batted"]
+    b = agg["batted"]
+    career = None if b <= 0 else {"batted": b, "hh": agg["hhb"] / b,
+                                  **{k: agg[k] / b for k in ("ld", "fb", "gb")}}
+    return season, career
+
+
 def band(c, title, sub):
     c.setFillColor(BARK); c.rect(0, H - 96, W, 96, stroke=0, fill=1)
     if LOGO.exists():
@@ -151,6 +212,28 @@ def page_team(c, S, games, meta):
         _txt(c, 545, ry, f"+{int(d)}" if d >= 0 else str(int(d)), "Helvetica-Bold", 9,
              GREEN if d >= 0 else RED, align="r")
         ry -= 15
+
+    # batted-ball profile vs the all-time baseline
+    y5 = 56
+    panel(c, 36, y5, W - 72, 76, "BATTED-BALL PROFILE  ·  small = career baseline, all seasons")
+    bbs, bbc = batted_ball(S["name"])
+    if bbs:
+        cells = [("LD%", "ld", "up"), ("FB%", "fb", None), ("GB%", "gb", "down"), ("HH%", "hh", "up")]
+        cwid = (W - 72 - 28) / len(cells)
+        for i, (lab, k, good) in enumerate(cells):
+            cx = 36 + 14 + i * cwid
+            v = bbs[k] * 100
+            _txt(c, cx, y5 + 42, lab, "Helvetica-Bold", 7.5, MUTED, cs=0.9)
+            _txt(c, cx, y5 + 16, f"{v:.1f}%", "Helvetica-Bold", 20, BARK)
+            if bbc:
+                cv = bbc[k] * 100; d = v - cv
+                _txt(c, cx, y5 + 4, f"career {cv:.1f}%", "Helvetica", 6.8, MUTED)
+                col = MUTED if good is None else (
+                    GREEN if ((d >= 0) if good == "up" else (d <= 0)) else RED)
+                _txt(c, cx + 76, y5 + 4, f"{d:+.1f}", "Helvetica-Bold", 6.8, col)
+    else:
+        _txt(c, 50, y5 + 32, "no batted-ball data on file for this season",
+             "Helvetica-Oblique", 9, MUTED)
     foot(c, "Page 1 of 3  ·  the team")
 
 
