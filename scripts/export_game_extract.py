@@ -17,13 +17,15 @@ from __future__ import annotations
 import csv
 import json
 import re
+import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.0.2"
+EXTRACT_VERSION = "1.1.0"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
+DB = REPO / "db" / "all_seasons_identity.sqlite"
 OUT = Path("C:/MapleTreeGame/data/imports")
 
 # Park dimensions — confirmed by Brian 2026-07-23. The org plays the Boncosky complex;
@@ -120,6 +122,38 @@ def bb_from_csv(path: Path, name2slug: dict) -> dict[str, dict]:
     return out
 
 
+def per_game_box() -> dict:
+    """{(season, date, opponent): [ {team_score, opponent_score, box} ]} — team batting
+    line per game, summed from player_game_batting. Doubleheaders share a key, so the
+    caller disambiguates on score."""
+    if not DB.exists():
+        return {}
+    q = """
+    select g.season, g.game_date, g.opponent_name, g.team_score, g.opponent_score,
+           sum(b.plate_appearances), sum(b.at_bats),
+           sum(b.singles + b.doubles + b.triples + b.home_runs),
+           sum(b.doubles), sum(b.triples), sum(b.home_runs),
+           sum(b.walks), sum(b.runs), sum(b.rbi),
+           sum(b.outs), sum(b.sacrifice_flies)
+    from games g join player_game_batting b on b.game_id = g.game_id
+    group by g.game_id
+    """
+    out: dict = {}
+    con = sqlite3.connect(DB)
+    try:
+        for (season, gdate, opp, ts, os_, pa, ab, hits, d2, d3, hr, bb, r, rbi, outs, sf) in con.execute(q):
+            i = lambda v: int(v or 0)  # noqa: E731
+            out.setdefault((season, gdate, (opp or "").strip()), []).append({
+                "team_score": ts, "opponent_score": os_,
+                "box": {"pa": i(pa), "ab": i(ab), "hits": i(hits), "2b": i(d2), "3b": i(d3),
+                        "hr": i(hr), "bb": i(bb), "r": i(r), "rbi": i(rbi),
+                        "outs": i(outs) + i(sf)},
+            })
+    finally:
+        con.close()
+    return out
+
+
 def csv_for_season(season_name: str) -> Path | None:
     target = f"{season_name} stats".lower().replace("  ", " ")
     for p in RAW.glob("*.csv"):
@@ -137,6 +171,8 @@ def main():
     players_j = load("players.json")
     name2slug = _name_map(players_j)
     sched_by_slug = {s["slug"]: s for s in schedule}
+    boxes = per_game_box()
+    box_hit = box_miss = 0
 
     # prune stale per-season files (idempotent clean overwrite)
     for f in OUT.glob("players_*.json"):
@@ -179,16 +215,50 @@ def main():
         # games
         games = []
         for g in sched_by_slug.get(slug, {}).get("games", []):
-            done = g.get("status") == "completed" and g.get("completed_flag")
+            # A game is done if it is FLAGGED complete and carries runs. Do NOT gate on the
+            # status string: 2026 rows say "completed" but every pre-2026 row says "final",
+            # which silently nulled 61 real results in v1.0.x.
+            rf, ra = g.get("runs_for"), g.get("runs_against")
+            done = bool(g.get("completed_flag")) and rf is not None and ra is not None
+            rf_i = int(rf) if done else None
+            ra_i = int(ra) if done else None
+
+            box = None
+            cands = boxes.get((name, g.get("game_date"), (g.get("opponent_name") or "").strip()), [])
+            if len(cands) == 1:
+                box = cands[0]["box"]
+            elif cands:  # doubleheader — disambiguate on the score
+                for cd in cands:
+                    if cd["team_score"] == rf_i and cd["opponent_score"] == ra_i:
+                        box = cd["box"]
+                        break
+            if done:
+                if box:
+                    box_hit += 1
+                else:
+                    box_miss += 1
+
+            # Innings: GameChanger's real per-game innings were never imported (no linescore
+            # in any source), so that stays null. The DERIVED estimate below is the usable
+            # early-ending signal — a full game is ~21 outs, so a run-rule or time-capped
+            # game lands well under that. Flagged unreliable when the box is clearly partial.
+            est = None
+            if box and box["outs"] > 0:
+                est = {"value": round(box["outs"] / 3.0, 1),
+                       "derived_from": "(batting outs + sacrifice flies) / 3",
+                       "reliable": box["outs"] >= 9}
+
             games.append({
                 "date": g.get("game_date"), "time": g.get("game_time"),
                 "week": g.get("week_label"), "opponent": g.get("opponent_name"),
                 "park": g.get("location_or_field"), "home_away": g.get("home_away"),
                 "is_bye": bool(g.get("is_bye")),
                 "result": g.get("result") if done else None,
-                "runs_for": int(g["runs_for"]) if done and g.get("runs_for") is not None else None,
-                "runs_against": int(g["runs_against"]) if done and g.get("runs_against") is not None else None,
+                "runs_for": rf_i, "runs_against": ra_i,
                 "status": g.get("status"),
+                "box": box,
+                "innings": None,
+                "innings_batted_est": est,
             })
         (OUT / f"games_{slug}.json").write_text(
             json.dumps({"season": slug, "season_name": name, "year": yr, "games": games},
@@ -242,14 +312,29 @@ def main():
                  "null permanently; this is not a pending gap.")
     NOTES.append("parks.json dimensions_ft are populated and confirmed exact (Boncosky Green 350 "
                  "all around; Blue, Red and Yellow 300). The brief said three fields; there are four.")
-    NOTES.append("games_*.json carry score-level real results (runs_for/against, result). Per-game "
-                 "batting box lines are a v1.1 enrichment (only recently-tracked games have them).")
+    NOTES.append(f"games_*.json carry real results for ALL six seasons (v1.1.0 fixed a done-test "
+                 f"that gated on status=='completed' and silently nulled every pre-2026 game, which "
+                 f"uses 'final'). Per-game `box` present for {box_hit} of {box_hit + box_miss} "
+                 f"completed games; null for the rest.")
+    NOTES.append("`innings` is ALWAYS null: GameChanger's per-game innings/linescore was never "
+                 "imported (no source carries it — the season CSVs' INN column is fielding innings "
+                 "by position, and is empty). Not zero-filled, not guessed.")
+    NOTES.append("`innings_batted_est` is DERIVED, not source: (batting outs + SF) / 3. Use it as "
+                 "the early-ending signal — a full game is ~21 outs, so run-rule/time-capped games "
+                 "sit well below. `reliable:false` marks boxes with under 9 outs, which are almost "
+                 "certainly incomplete scorebook entries rather than 3-inning games — do not read "
+                 "those as slaughters without cross-checking the score margin.")
 
     manifest = {
         "extract_version": EXTRACT_VERSION,
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.1.0": "FIX + new fields. Per-game results now emit for ALL SIX seasons: the "
+                     "done-test gated on status=='completed', but every pre-2026 row uses "
+                     "'final', which silently nulled 61 real results in v1.0.x. Adds per-game "
+                     "`box` (team batting line from the club scorebook), `innings` (always null "
+                     "— see notes) and `innings_batted_est` (DERIVED early-ending signal).",
             "1.0.2": "Park dimensions confirmed exact — dropped the `approximate` flag "
                      "(Green 350, Blue/Red/Yellow 300, all stated figures). Also confirmed: "
                      "opponent stats are team-level by design, not a pending gap.",
@@ -274,7 +359,9 @@ def main():
                                      "batted_ball:{ld,fb,gb,hh,balls_in_play}|null, spray:null}]}",
             "rosters.json": "{by_season:{<season>:[{slug, player}]}}",
             "games_<season>.json": "{season, season_name, year, games:[{date,time,week,opponent,park,"
-                                    "home_away,is_bye,result|null,runs_for|null,runs_against|null,status}]}",
+                                    "home_away,is_bye,result|null,runs_for|null,runs_against|null,status,"
+                                    "box:{pa,ab,hits,2b,3b,hr,bb,r,rbi,outs}|null, innings:null, "
+                                    "innings_batted_est:{value,derived_from,reliable}|null}]}",
             "opponents.json": "{note, opponents:[{opponent,games,record,wins,losses,ties,runs_for,"
                               "runs_against,run_diff,first_played,last_played,hitters:null,pitching:null}]}",
             "parks.json": "{note, parks:[{name, dimensions_ft:null, games_played}]}",
@@ -284,6 +371,7 @@ def main():
             "counts": "int",
             "batted_ball rates (ld/fb/gb/hh)": "float 0..1 (share of balls in play), or null when untracked",
             "missing": "null + a manifest note — never zero-filled",
+            "innings": "always null (never captured); use innings_batted_est, which is DERIVED",
         },
         "notes": NOTES,
     }
@@ -293,6 +381,7 @@ def main():
     print(f"  {len(seasons_meta)} seasons | players+games per season | "
           f"{len(opps)} opponents | {len(parks)} parks")
     print(f"  batted-ball coverage: {bb_covered}/{bb_total} player-seasons")
+    print(f"  per-game box lines: {box_hit}/{box_hit + box_miss} completed games")
     for f in sorted(OUT.glob("*.json")):
         print(f"    {f.name}  ({f.stat().st_size} B)")
 
