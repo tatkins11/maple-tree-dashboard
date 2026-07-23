@@ -20,17 +20,24 @@ import re
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.0.0"
+EXTRACT_VERSION = "1.0.1"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
 OUT = Path("C:/MapleTreeGame/data/imports")
 
-# Park dimensions: the org plays the Boncosky complex. The brief notes "two ~300 all
-# around, one 350" but does not map those to the color-named fields, and the schedule
-# actually shows FOUR fields — so dimensions stay null (explicit-missing) until Brian
-# maps them. See manifest notes.
-PARK_DIMS: dict[str, dict | None] = {}
+# Park dimensions — confirmed by Brian 2026-07-23. The org plays the Boncosky complex;
+# every field is symmetric ("all around"). Green is the big one at a true 350; Blue, Red
+# and Yellow are the ~300s (approximate, hence the flag — the game should not treat them
+# as surveyed numbers). The brief said "three fields"; there are in fact four.
+_SYM = lambda ft, approx: {"left_ft": ft, "center_ft": ft, "right_ft": ft,
+                           "symmetric": True, "approximate": approx}
+PARK_DIMS: dict[str, dict | None] = {
+    "Boncosky Green": _SYM(350, False),
+    "Boncosky Blue": _SYM(300, True),
+    "Boncosky Red": _SYM(300, True),
+    "Boncosky Yellow": _SYM(300, True),
+}
 NOTES: list[str] = []
 
 
@@ -222,9 +229,10 @@ def main():
     parks = [{"name": p, "dimensions_ft": PARK_DIMS.get(p),
               "games_played": park_games[p]} for p in sorted(park_games)]
     (OUT / "parks.json").write_text(
-        json.dumps({"note": "Boncosky complex. Brief describes 'two ~300 all around, one 350' "
-                            "but the schedule shows FOUR named fields and no field->dimension "
-                            "mapping was supplied — dimensions_ft is null pending Brian's mapping.",
+        json.dumps({"note": "Boncosky complex, four fields, all symmetric ('all around'). "
+                            "Green is a true 350; Blue/Red/Yellow are ~300 and carry "
+                            "approximate=true — treat those as estimates, not surveyed numbers. "
+                            "Confirmed by Brian 2026-07-23.",
                     "parks": parks}, indent=2), encoding="utf-8")
 
     if bb_total:
@@ -232,14 +240,23 @@ def main():
                      "in source; the rest are null (not tracked that season), never zero-filled.")
     NOTES.append("spray direction (pull/center/oppo) is null everywhere — not tracked in source.")
     NOTES.append("opponents.json is team-level only; opponent hitters/pitching are null (not tracked).")
-    NOTES.append("parks.json dimensions_ft are null pending a field->dimension mapping from Brian "
-                 "(brief says 3 fields, data has 4).")
+    NOTES.append("parks.json dimensions_ft are POPULATED as of v1.0.1 (Boncosky Green 350 all "
+                 "around; Blue/Red/Yellow ~300, flagged approximate=true). The brief said three "
+                 "fields; there are four.")
     NOTES.append("games_*.json carry score-level real results (runs_for/against, result). Per-game "
                  "batting box lines are a v1.1 enrichment (only recently-tracked games have them).")
 
     manifest = {
         "extract_version": EXTRACT_VERSION,
         "generated_at": date.today().isoformat(),
+        # Contract history — changes are versioned here, never silent.
+        "changelog": {
+            "1.0.1": "parks.json dimensions_ft populated (Boncosky Green 350 all around; "
+                     "Blue/Red/Yellow ~300, approximate=true). Data-fill only — NO shape "
+                     "change from 1.0.0, so 1.0.0 consumers stay compatible.",
+            "1.0.0": "Initial contract: manifest, per-season players/games, rosters, "
+                     "opponents, parks.",
+        },
         "source_project": "slowpitch_optimizer",
         "consumer": "Maple Tree: The Game",
         "seasons": seasons_meta,
