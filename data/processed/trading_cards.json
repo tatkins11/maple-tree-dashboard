@@ -21,7 +21,7 @@
       "stat": "Doubles",
       "value": 25,
       "caption": "First player in Tappers history to reach 25 doubles",
-      "flavor": "First man in team history to 25 doubles \u2014 forged, not found. Somewhere in Cary there is an anvil with his name on it."
+      "flavor": "First man in team history to 25 doubles — forged, not found. Somewhere in Cary there is an anvil with his name on it."
     },
     {
       "file": "1e7644f2-b2e8-45b1-bbd2-23abf09883de.png",
@@ -43,7 +43,7 @@
       "stat": "HR",
       "value": 15,
       "caption": "Second player on team with 15 home runs",
-      "flavor": "Fifteen bombs in a Tappers uniform. The center fielder never swings for the fences \u2014 the fences just keep getting in the way."
+      "flavor": "Fifteen bombs in a Tappers uniform. The center fielder never swings for the fences — the fences just keep getting in the way."
     },
     {
       "file": "73d264bf-6e4f-44ac-9ae8-f9287ec77ca9.png",
@@ -54,7 +54,7 @@
       "stat": "Total Bases",
       "value": 150,
       "caption": "4th player in Tappers history to reach 150 total bases",
-      "flavor": "150 total bases, no wasted motion. PO out here under the streetlights making it look like a photoshoot \u2014 because it was."
+      "flavor": "150 total bases, no wasted motion. PO out here under the streetlights making it look like a photoshoot — because it was."
     },
     {
       "file": "6c742992-47f2-4757-acdc-301bcbaae0a3.png",
@@ -65,7 +65,7 @@
       "stat": "Hits",
       "value": 100,
       "caption": "5th player in Tappers history to reach 100 hits",
-      "flavor": "One hundred hits, delivered on schedule. PO moves product and baserunners \u2014 warehouse hours, warehouse rules."
+      "flavor": "One hundred hits, delivered on schedule. PO moves product and baserunners — warehouse hours, warehouse rules."
     },
     {
       "file": "664bd8cf-b12c-4592-bdc9-a5f4ef80114f.png",
@@ -87,7 +87,7 @@
       "stat": "Runs",
       "value": 50,
       "caption": "8th player in Tappers history to reach 50 runs",
-      "flavor": "Fifty times around the bases, achieved with monk-like patience. Tim doesn't chase runs \u2014 he lets them come to him."
+      "flavor": "Fifty times around the bases, achieved with monk-like patience. Tim doesn't chase runs — he lets them come to him."
     },
     {
       "file": "b130c930-56ff-4cd7-993b-d102bdba44e9.png",
@@ -98,7 +98,7 @@
       "stat": "RBI",
       "value": 50,
       "caption": "6th player in Tappers history to reach 50 RBIs",
-      "flavor": "Fifty runs batted in \u2014 and yes, he called it. 99-cent beers on Wednesdays, priceless RBIs year-round."
+      "flavor": "Fifty runs batted in — and yes, he called it. 99-cent beers on Wednesdays, priceless RBIs year-round."
     },
     {
       "file": "288a08b7-7859-479d-b183-8a4d662c2309.png",
@@ -120,7 +120,7 @@
       "stat": "Runs",
       "value": 50,
       "caption": "6th player in Tappers history to reach 50 runs",
-      "flavor": "Fifty trips home and a mud-soaked grin to show for it. Maki scores the way he slides \u2014 fully committed."
+      "flavor": "Fifty trips home and a mud-soaked grin to show for it. Maki scores the way he slides — fully committed."
     },
     {
       "file": "715741f8-1f96-4adf-87c4-47b4fa655523.png",
@@ -142,7 +142,7 @@
       "stat": "Runs",
       "value": 50,
       "caption": "9th player in Tappers history to reach 50 runs",
-      "flavor": "Fifty runs scored \u2014 Walters crosses home like it's the Kentucky Derby, and the scoreboard agrees."
+      "flavor": "Fifty runs scored — Walters crosses home like it's the Kentucky Derby, and the scoreboard agrees."
     },
     {
       "file": "b143d3dd-838f-4b5b-b064-1e2f172a6b3c.png",
@@ -175,7 +175,7 @@
       "stat": "HR",
       "value": 1,
       "caption": "Hit first 2 career home runs in Game 2 win versus the Bullseyes",
-      "flavor": "The Rauppy Dinger finally landed \u2014 then another one, same night. Two career firsts in a one-run win, and the fireworks budget has never recovered."
+      "flavor": "The Rauppy Dinger finally landed — then another one, same night. Two career firsts in a one-run win, and the fireworks budget has never recovered."
     },
     {
       "file": "b061c7d4-d0ab-4bb4-aea8-a44eae967000.png",
@@ -220,12 +220,12 @@
       "kind": "special",
       "generated": true,
       "series": "Special Edition",
-      "caption": "Prayers Up \u00b7 Injured Reserve",
-      "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee \u2014 officially day-to-day, with a very real chance it's season-ending. The clubhouse lights a candle. Get well soon, Snaxx.",
+      "caption": "Prayers Up · Injured Reserve",
+      "flavor": "Down but not out. Joey took a valiant cannonball into a 4-foot pool and came up with a bruised knee — officially day-to-day, with a very real chance it's season-ending. The clubhouse lights a candle. Get well soon, Snaxx.",
       "facts": [
         [
           "Status",
-          "Day-to-day \u00b7 potential season-ending"
+          "Day-to-day · potential season-ending"
         ],
         [
           "Mechanism",
@@ -240,12 +240,12 @@
       "kind": "special",
       "rating": 99,
       "series": "Player Spotlight",
-      "caption": "2026 Summer \u00b7 Week 1 Spotlight",
+      "caption": "2026 Summer · Week 1 Spotlight",
       "flavor": "Sun, sand, and a series sweep. Rodger torched Como for a 6-for-8, home-run, 6-RBI opening week and walked off with Player of the Week honors. The beach never stood a chance.",
       "facts": [
         [
           "Week 1 line",
-          "6-for-8 \u00b7 HR \u00b7 6 RBI \u00b7 4 R"
+          "6-for-8 · HR · 6 RBI · 4 R"
         ],
         [
           "Series",
@@ -264,16 +264,16 @@
       "kind": "special",
       "rating": 99,
       "series": "Injury Update",
-      "caption": "2026 Summer \u00b7 Week 3 \u00b7 Injury Update",
-      "flavor": "Rodger chased one into the outfield fence in Game 2 and the fence won. Carted off in the first inning with a bad ankle \u2014 one at-bat, then the beach chair. Day-to-day, and the whole clubhouse is pulling for him. Get well soon, Rodger.",
+      "caption": "2026 Summer · Week 3 · Injury Update",
+      "flavor": "Rodger chased one into the outfield fence in Game 2 and the fence won. Carted off in the first inning with a bad ankle — one at-bat, then the beach chair. Day-to-day, and the whole clubhouse is pulling for him. Get well soon, Rodger.",
       "facts": [
         [
           "Injury",
-          "Ankle \u2014 ran into the outfield fence"
+          "Ankle — ran into the outfield fence"
         ],
         [
           "When",
-          "Game 2 \u00b7 1st inning \u00b7 carted off"
+          "Game 2 · 1st inning · carted off"
         ],
         [
           "Status",
@@ -288,8 +288,8 @@
       "kind": "special",
       "rating": 99,
       "series": "Milestone Moment",
-      "caption": "2026 Summer \u00b7 Week 3 \u00b7 First Career Ejection",
-      "flavor": "Maki made history \u2014 just not the kind that goes in the scorebook. Game 1 ended early when the umpire spotted a bottle of Hennessy holding down the bench. First career ejection in Tappers history, and the boys have never been prouder. Still our guy.",
+      "caption": "2026 Summer · Week 3 · First Career Ejection",
+      "flavor": "Maki made history — just not the kind that goes in the scorebook. Game 1 ended early when the umpire spotted a bottle of Hennessy holding down the bench. First career ejection in Tappers history, and the boys have never been prouder. Still our guy.",
       "facts": [
         [
           "Milestone",
@@ -301,7 +301,7 @@
         ],
         [
           "Game 1 line",
-          "1-for-3 \u00b7 RBI, before the toss"
+          "1-for-3 · RBI, before the toss"
         ]
       ]
     },
@@ -327,7 +327,7 @@
       "stat": "Runs",
       "value": 125,
       "caption": "1st player in Tappers history to reach 125 runs",
-      "flavor": "125 runs and counting \u2014 nobody in franchise history has crossed the plate more. The captain doesn't just lead the team; he leads it home."
+      "flavor": "125 runs and counting — nobody in franchise history has crossed the plate more. The captain doesn't just lead the team; he leads it home."
     },
     {
       "file": "",
@@ -363,7 +363,7 @@
       "stat": "RBI",
       "value": 50,
       "caption": "7th player in Tappers history to reach 50 RBI",
-      "flavor": "Fifty runs driven in. Maki doesn't ask who's on base \u2014 he just brings them home and asks questions later."
+      "flavor": "Fifty runs driven in. Maki doesn't ask who's on base — he just brings them home and asks questions later."
     },
     {
       "file": "",
@@ -387,7 +387,7 @@
       "stat": "Runs",
       "value": 100,
       "caption": "3rd player in Tappers history to reach 100 runs",
-      "flavor": "One hundred runs scored. Get JJ on base and the scoreboard is a formality \u2014 he's cleared for takeoff."
+      "flavor": "One hundred runs scored. Get JJ on base and the scoreboard is a formality — he's cleared for takeoff."
     },
     {
       "file": "",
@@ -399,7 +399,7 @@
       "stat": "Singles",
       "value": 50,
       "caption": "8th player in Tappers history to reach 50 singles",
-      "flavor": "Fifty career singles, unlocked. Walters grinds out base hits like achievements \u2014 one clean knock at a time."
+      "flavor": "Fifty career singles, unlocked. Walters grinds out base hits like achievements — one clean knock at a time."
     },
     {
       "file": "",
@@ -423,7 +423,7 @@
       "stat": "AB",
       "value": 100,
       "caption": "13th player in Tappers history to reach 100 at-bats",
-      "flavor": "One hundred career at-bats for the people's champ. Everybody gets here eventually \u2014 Snaxx just did it with a snack in hand."
+      "flavor": "One hundred career at-bats for the people's champ. Everybody gets here eventually — Snaxx just did it with a snack in hand."
     },
     {
       "file": "",
@@ -445,12 +445,12 @@
       "generated": true,
       "rating": 84,
       "series": "Player of the Week",
-      "caption": "2026 Summer \u00b7 Week 4 \u00b7 Player of the Week",
+      "caption": "2026 Summer · Week 4 · Player of the Week",
       "flavor": "Mister Raupp went 5-for-7 with a home run and five driven in to sweep Zero to Hiro and claim his first career Player of the Week. Class dismissed.",
       "facts": [
         [
           "Week 4 line",
-          "5-for-7 \u00b7 HR \u00b7 5 RBI \u00b7 5 R"
+          "5-for-7 · HR · 5 RBI · 5 R"
         ],
         [
           "Honor",
@@ -459,6 +459,189 @@
         [
           "Series",
           "Sweep vs Zero to Hiro, 2-0"
+        ]
+      ]
+    },
+    {
+      "file": "",
+      "asset": "duff-100-hits",
+      "slug": "duff",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 84,
+      "stat": "Hits",
+      "value": 100,
+      "caption": "6th player in Tappers history to reach 100 hits",
+      "flavor": "A hundred knocks, zero days off. Duff doesn't chase milestones — he just shows up until they surrender."
+    },
+    {
+      "file": "",
+      "asset": "duff-50-rbi",
+      "slug": "duff",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 78,
+      "stat": "RBI",
+      "value": 50,
+      "caption": "8th player in Tappers history to reach 50 RBI",
+      "flavor": "Fifty driven in, most while the rest of us were still finding our helmets. The duffel holds bats, gloves, and a bottomless supply of clutch."
+    },
+    {
+      "file": "",
+      "asset": "glove-10-walks",
+      "slug": "glove",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 81,
+      "stat": "Walks",
+      "value": 10,
+      "caption": "7th player in Tappers history to reach 10 walks",
+      "flavor": "Ten times he stared down ball four and politely declined to swing. Patience, served chilled."
+    },
+    {
+      "file": "",
+      "asset": "joel-50-hits",
+      "slug": "joel",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 69,
+      "stat": "Hits",
+      "value": 50,
+      "caption": "11th player in Tappers history to reach 50 hits",
+      "flavor": "Fifty career knocks for the teacher — steady as a lesson plan. The chalkboard tally finally rounded off."
+    },
+    {
+      "file": "",
+      "asset": "porter-75-singles",
+      "slug": "porter",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 90,
+      "stat": "Singles",
+      "value": 75,
+      "caption": "4th player in Tappers history to reach 75 singles",
+      "flavor": "Seventy-five singles, each delivered on time and to the correct address. PO doesn't do flashy — he does reliable."
+    },
+    {
+      "file": "",
+      "asset": "walsh-10-doubles",
+      "slug": "walsh",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 72,
+      "stat": "Doubles",
+      "value": 10,
+      "caption": "10th player in Tappers history to reach 10 doubles",
+      "flavor": "Ten doubles and the widest grin at the fair. Walsh rings the strongman bell, then legs out two."
+    },
+    {
+      "file": "",
+      "asset": "tristan-150-hits",
+      "slug": "tristan",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 96,
+      "stat": "Hits",
+      "value": 150,
+      "caption": "2nd player in Tappers history to reach 150 hits",
+      "flavor": "One hundred and fifty knocks and still hunting. The captain treats a base hit like a formality — show up, square it up, do it again."
+    },
+    {
+      "file": "",
+      "asset": "glove-125-runs",
+      "slug": "glove",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 96,
+      "stat": "Runs",
+      "value": 125,
+      "caption": "2nd player in Tappers history to reach 125 runs",
+      "flavor": "A hundred and twenty-five times he has touched home. Getting on is the job; getting all the way around is the art."
+    },
+    {
+      "file": "",
+      "asset": "duff-75-singles",
+      "slug": "duff",
+      "kind": "milestone",
+      "generated": true,
+      "rating": 87,
+      "stat": "Singles",
+      "value": 75,
+      "caption": "5th player in Tappers history to reach 75 singles",
+      "flavor": "Seventy-five singles, punched in and delivered on schedule. Duff does not hit for show — he hits for the shift."
+    },
+    {
+      "file": "",
+      "asset": "harm-10-rbi-game",
+      "slug": "harm",
+      "kind": "special",
+      "generated": true,
+      "rating": 99,
+      "series": "Franchise Record",
+      "caption": "2026 Summer · Week 5 · Franchise Record",
+      "flavor": "Ten driven in on a single night — the most anyone has ever managed in a Tappers uniform. He broke a mark that had stood since Fall 2025, in his first game back, carrying a career line of 0-for-4.",
+      "facts": [
+        [
+          "Week 5, game 2",
+          "3-for-3 · 3 HR · 10 RBI"
+        ],
+        [
+          "Record",
+          "Most RBI in a game (prev. 8 — Glove)"
+        ],
+        [
+          "Career before that night",
+          "0-for-4, zero hits"
+        ]
+      ]
+    },
+    {
+      "file": "",
+      "asset": "harm-potw-week5",
+      "slug": "harm",
+      "kind": "special",
+      "generated": true,
+      "rating": 94,
+      "series": "Player of the Week",
+      "caption": "2026 Summer · Week 5 · Player of the Week",
+      "flavor": "A perfect week at the plate in his first week back: four swings, four hits, three of them over the fence, ten runs driven in. Nobody has ever announced a return quite like it.",
+      "facts": [
+        [
+          "Week 5 line",
+          "4-for-4 · 3 HR · 10 RBI · 3 R"
+        ],
+        [
+          "Honor",
+          "1st career Player of the Week"
+        ],
+        [
+          "Same night",
+          "Franchise single-game RBI record"
+        ]
+      ]
+    },
+    {
+      "file": "",
+      "asset": "harm-3-hr-game",
+      "slug": "harm",
+      "kind": "special",
+      "generated": true,
+      "rating": 90,
+      "series": "Milestone Moment",
+      "caption": "2026 Summer · Week 5 · 3 home runs in a game",
+      "flavor": "Three swings, three balls gone. Only Tristan, Tim and Glove had ever done it in a Tappers uniform — Harm made it four, in his first game back.",
+      "facts": [
+        [
+          "Week 5, game 2",
+          "3 HR in one game"
+        ],
+        [
+          "Club",
+          "4th three-homer game in franchise history"
+        ],
+        [
+          "Same night",
+          "Franchise-record 10 RBI"
         ]
       ]
     }

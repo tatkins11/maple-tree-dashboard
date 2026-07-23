@@ -7,13 +7,22 @@
      "rank": 1,
      "player": "Duff",
      "slug": "duff",
-     "value": 80,
+     "value": 82,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 2,
+     "player": "Corey",
+     "slug": "corey",
+     "value": 81,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
      "player": "JJ",
      "slug": "jj",
      "value": 80,
@@ -22,19 +31,10 @@
      "opponent": null
     },
     {
-     "rank": 3,
-     "player": "Corey",
-     "slug": "corey",
-     "value": 79,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
      "rank": 4,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 76,
+     "value": 78,
      "season": null,
      "date": null,
      "opponent": null
@@ -43,7 +43,7 @@
      "rank": 5,
      "player": "Glove",
      "slug": "glove",
-     "value": 70,
+     "value": 72,
      "season": null,
      "date": null,
      "opponent": null
@@ -55,6 +55,15 @@
    "rows": [
     {
      "rank": 1,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 279,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
      "player": "JJ",
      "slug": "jj",
      "value": 276,
@@ -63,19 +72,10 @@
      "opponent": null
     },
     {
-     "rank": 2,
-     "player": "Tristan",
-     "slug": "tristan",
-     "value": 273,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
      "rank": 3,
      "player": "Glove",
      "slug": "glove",
-     "value": 256,
+     "value": 263,
      "season": null,
      "date": null,
      "opponent": null
@@ -84,7 +84,7 @@
      "rank": 4,
      "player": "Duff",
      "slug": "duff",
-     "value": 244,
+     "value": 249,
      "season": null,
      "date": null,
      "opponent": null
@@ -93,7 +93,7 @@
      "rank": 5,
      "player": "Corey",
      "slug": "corey",
-     "value": 237,
+     "value": 242,
      "season": null,
      "date": null,
      "opponent": null
@@ -105,6 +105,24 @@
    "rows": [
     {
      "rank": 1,
+     "player": "Glove",
+     "slug": "glove",
+     "value": 250,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 2,
+     "player": "Tristan",
+     "slug": "tristan",
+     "value": 250,
+     "season": null,
+     "date": null,
+     "opponent": null
+    },
+    {
+     "rank": 3,
      "player": "JJ",
      "slug": "jj",
      "value": 246,
@@ -113,28 +131,10 @@
      "opponent": null
     },
     {
-     "rank": 2,
-     "player": "Glove",
-     "slug": "glove",
-     "value": 244,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
-     "rank": 3,
-     "player": "Tristan",
-     "slug": "tristan",
-     "value": 244,
-     "season": null,
-     "date": null,
-     "opponent": null
-    },
-    {
      "rank": 4,
      "player": "Duff",
      "slug": "duff",
-     "value": 229,
+     "value": 234,
      "season": null,
      "date": null,
      "opponent": null
@@ -143,7 +143,7 @@
      "rank": 5,
      "player": "Corey",
      "slug": "corey",
-     "value": 218,
+     "value": 223,
      "season": null,
      "date": null,
      "opponent": null
@@ -157,7 +157,7 @@
      "rank": 1,
      "player": "Glove",
      "slug": "glove",
-     "value": 153,
+     "value": 156,
      "season": null,
      "date": null,
      "opponent": null
@@ -166,7 +166,7 @@
      "rank": 2,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 148,
+     "value": 152,
      "season": null,
      "date": null,
      "opponent": null
@@ -193,7 +193,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 110,
+     "value": 111,
      "season": null,
      "date": null,
      "opponent": null
@@ -207,7 +207,7 @@
      "rank": 1,
      "player": "Glove",
      "slug": "glove",
-     "value": 96,
+     "value": 99,
      "season": null,
      "date": null,
      "opponent": null
@@ -225,25 +225,25 @@
      "rank": 3,
      "player": "Corey",
      "slug": "corey",
-     "value": 76,
+     "value": 78,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 4,
-     "player": "Porter",
-     "slug": "porter",
-     "value": 74,
+     "player": "Duff",
+     "slug": "duff",
+     "value": 75,
      "season": null,
      "date": null,
      "opponent": null
     },
     {
      "rank": 5,
-     "player": "Duff",
-     "slug": "duff",
-     "value": 72,
+     "player": "Porter",
+     "slug": "porter",
+     "value": 75,
      "season": null,
      "date": null,
      "opponent": null
@@ -257,7 +257,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 28,
+     "value": 29,
      "season": null,
      "date": null,
      "opponent": null
@@ -316,7 +316,7 @@
      "rank": 2,
      "player": "Duff",
      "slug": "duff",
-     "value": 12,
+     "value": 13,
      "season": null,
      "date": null,
      "opponent": null
@@ -407,7 +407,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 156,
+     "value": 158,
      "season": null,
      "date": null,
      "opponent": null
@@ -416,7 +416,7 @@
      "rank": 2,
      "player": "Glove",
      "slug": "glove",
-     "value": 113,
+     "value": 114,
      "season": null,
      "date": null,
      "opponent": null
@@ -457,7 +457,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 125,
+     "value": 129,
      "season": null,
      "date": null,
      "opponent": null
@@ -466,7 +466,7 @@
      "rank": 2,
      "player": "Glove",
      "slug": "glove",
-     "value": 123,
+     "value": 126,
      "season": null,
      "date": null,
      "opponent": null
@@ -534,7 +534,7 @@
      "rank": 4,
      "player": "Porter",
      "slug": "porter",
-     "value": 12,
+     "value": 13,
      "season": null,
      "date": null,
      "opponent": null
@@ -557,7 +557,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 340,
+     "value": 345,
      "season": null,
      "date": null,
      "opponent": null
@@ -566,7 +566,7 @@
      "rank": 2,
      "player": "Glove",
      "slug": "glove",
-     "value": 259,
+     "value": 262,
      "season": null,
      "date": null,
      "opponent": null
@@ -593,7 +593,7 @@
      "rank": 5,
      "player": "Porter",
      "slug": "porter",
-     "value": 173,
+     "value": 174,
      "season": null,
      "date": null,
      "opponent": null
@@ -607,7 +607,7 @@
      "rank": 1,
      "player": "Glove",
      "slug": "glove",
-     "value": 0.627,
+     "value": 0.624,
      "season": null,
      "date": null,
      "opponent": null
@@ -625,7 +625,7 @@
      "rank": 3,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 0.6066,
+     "value": 0.608,
      "season": null,
      "date": null,
      "opponent": null
@@ -634,7 +634,7 @@
      "rank": 4,
      "player": "Tim",
      "slug": "tim",
-     "value": 0.5725,
+     "value": 0.5662,
      "season": null,
      "date": null,
      "opponent": null
@@ -666,7 +666,7 @@
      "rank": 2,
      "player": "Glove",
      "slug": "glove",
-     "value": 0.6328,
+     "value": 0.6312,
      "season": null,
      "date": null,
      "opponent": null
@@ -675,7 +675,7 @@
      "rank": 3,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 0.6044,
+     "value": 0.6057,
      "season": null,
      "date": null,
      "opponent": null
@@ -693,7 +693,7 @@
      "rank": 5,
      "player": "Tim",
      "slug": "tim",
-     "value": 0.587,
+     "value": 0.5764,
      "season": null,
      "date": null,
      "opponent": null
@@ -707,7 +707,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 1.3934,
+     "value": 1.38,
      "season": null,
      "date": null,
      "opponent": null
@@ -716,7 +716,7 @@
      "rank": 2,
      "player": "Tim",
      "slug": "tim",
-     "value": 1.2214,
+     "value": 1.1912,
      "season": null,
      "date": null,
      "opponent": null
@@ -734,7 +734,7 @@
      "rank": 4,
      "player": "Glove",
      "slug": "glove",
-     "value": 1.0615,
+     "value": 1.048,
      "season": null,
      "date": null,
      "opponent": null
@@ -757,7 +757,7 @@
      "rank": 1,
      "player": "Tristan",
      "slug": "tristan",
-     "value": 1.9978,
+     "value": 1.9857,
      "season": null,
      "date": null,
      "opponent": null
@@ -766,7 +766,7 @@
      "rank": 2,
      "player": "Tim",
      "slug": "tim",
-     "value": 1.8083,
+     "value": 1.7676,
      "season": null,
      "date": null,
      "opponent": null
@@ -784,7 +784,7 @@
      "rank": 4,
      "player": "Glove",
      "slug": "glove",
-     "value": 1.6943,
+     "value": 1.6792,
      "season": null,
      "date": null,
      "opponent": null
@@ -847,11 +847,11 @@
      "rank": 5,
      "player": "Corey",
      "slug": "corey",
-     "value": 12,
+     "value": 14,
      "season": null,
      "date": null,
      "opponent": null,
-     "span": "May 20 '26 \u2013 Jul 15 '26"
+     "span": "May 20 '26 \u2013 Jul 22 '26"
     }
    ]
   },
@@ -890,6 +890,16 @@
     },
     {
      "rank": 4,
+     "player": "Tim",
+     "slug": "tim",
+     "value": 20,
+     "season": null,
+     "date": null,
+     "opponent": null,
+     "span": "Apr 22 '26 \u2013 Jul 22 '26"
+    },
+    {
+     "rank": 5,
      "player": "Joey",
      "slug": "snaxx",
      "value": 18,
@@ -897,16 +907,6 @@
      "date": null,
      "opponent": null,
      "span": "Jul 30 '25 \u2013 May 13 '26"
-    },
-    {
-     "rank": 5,
-     "player": "Tim",
-     "slug": "tim",
-     "value": 18,
-     "season": null,
-     "date": null,
-     "opponent": null,
-     "span": "Apr 22 '26 \u2013 Jul 15 '26"
     }
    ]
   },
@@ -2065,12 +2065,12 @@
     },
     {
      "rank": 5,
-     "player": "Porter",
-     "slug": "porter",
-     "value": 2,
-     "season": "Sluggers 2021",
-     "date": "06/23/21",
-     "opponent": "Refuse To Win"
+     "player": "Harm",
+     "slug": "harm",
+     "value": 3,
+     "season": "Maple Tree Summer 2026",
+     "date": "07/22/26",
+     "opponent": "Bleacher Bums"
     }
    ]
   },
@@ -2079,6 +2079,15 @@
    "rows": [
     {
      "rank": 1,
+     "player": "Harm",
+     "slug": "harm",
+     "value": 10,
+     "season": "Maple Tree Summer 2026",
+     "date": "07/22/26",
+     "opponent": "Bleacher Bums"
+    },
+    {
+     "rank": 2,
      "player": "Glove",
      "slug": "glove",
      "value": 8,
@@ -2087,7 +2096,7 @@
      "opponent": "Yard Goats"
     },
     {
-     "rank": 2,
+     "rank": 3,
      "player": "Glove",
      "slug": "glove",
      "value": 7,
@@ -2096,7 +2105,7 @@
      "opponent": "Wasted Talent"
     },
     {
-     "rank": 3,
+     "rank": 4,
      "player": "Tristan",
      "slug": "tristan",
      "value": 7,
@@ -2105,22 +2114,13 @@
      "opponent": "Wasted Talent"
     },
     {
-     "rank": 4,
+     "rank": 5,
      "player": "Joel",
      "slug": "joel",
      "value": 7,
      "season": "Maple Tree Spring 2026",
      "date": "04/29/26",
      "opponent": "Bullseyes"
-    },
-    {
-     "rank": 5,
-     "player": "JJ",
-     "slug": "jj",
-     "value": 6,
-     "season": "Sluggers 2021",
-     "date": "06/16/21",
-     "opponent": "Biohazard"
     }
    ]
   },

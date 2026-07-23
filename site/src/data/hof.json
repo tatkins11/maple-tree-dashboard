@@ -61,6 +61,26 @@
    "label": "Fall 2025"
   },
   {
+   "player": "Harm",
+   "canonical_name": "harm",
+   "game_date": "2026-07-22",
+   "season": "Maple Tree Summer 2026",
+   "opponent": "Bleacher Bums",
+   "pa": 4,
+   "ab": 3,
+   "hits": 3,
+   "2b": 0,
+   "3b": 0,
+   "hr": 3,
+   "bb": 0,
+   "r": 3,
+   "rbi": 10,
+   "tb": 12,
+   "game_score": 6.8,
+   "slug": "harm",
+   "label": "Summer 2026"
+  },
+  {
    "player": "Tim",
    "canonical_name": "tim",
    "game_date": "2022-07-06",
@@ -179,26 +199,6 @@
    "game_score": 5.7,
    "slug": "porter",
    "label": "Soviet Sluggers Summer 2021"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "game_date": "2025-09-10",
-   "season": "Maple Tree Fall 2025",
-   "opponent": "Wasted Talent",
-   "pa": 5,
-   "ab": 4,
-   "hits": 3,
-   "2b": 0,
-   "3b": 0,
-   "hr": 2,
-   "bb": 1,
-   "r": 4,
-   "rbi": 7,
-   "tb": 9,
-   "game_score": 5.65,
-   "slug": "glove",
-   "label": "Fall 2025"
   }
  ],
  "feats": [
@@ -323,6 +323,20 @@
      "label": "Smoking Bunts Summer 2022"
     },
     {
+     "player": "Harm",
+     "canonical_name": "harm",
+     "game_date": "2026-07-22",
+     "season": "Maple Tree Summer 2026",
+     "opponent": "Bleacher Bums",
+     "pa": 4,
+     "hits": 3,
+     "hr": 3,
+     "rbi": 10,
+     "tb": 12,
+     "slug": "harm",
+     "label": "Summer 2026"
+    },
+    {
      "player": "Tristan",
      "canonical_name": "tristan",
      "game_date": "2022-07-27",
@@ -396,6 +410,20 @@
      "tb": 13,
      "slug": "tim",
      "label": "Smoking Bunts Summer 2022"
+    },
+    {
+     "player": "Harm",
+     "canonical_name": "harm",
+     "game_date": "2026-07-22",
+     "season": "Maple Tree Summer 2026",
+     "opponent": "Bleacher Bums",
+     "pa": 4,
+     "hits": 3,
+     "hr": 3,
+     "rbi": 10,
+     "tb": 12,
+     "slug": "harm",
+     "label": "Summer 2026"
     },
     {
      "player": "Tristan",

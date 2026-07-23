@@ -1,15 +1,15 @@
 {
  "watch": [
   {
-   "player": "Walsh",
-   "canonical_name": "walsh",
+   "player": "Tristan",
+   "canonical_name": "tristan",
    "stat": "Doubles",
-   "current_total": 9,
-   "next_milestone_display": 10,
+   "current_total": 29,
+   "next_milestone_display": 30,
    "remaining": 1,
-   "progress_to_next": 0.9,
-   "club_label": "9 in club",
-   "slug": "walsh"
+   "progress_to_next": 0.967,
+   "club_label": "First to 30",
+   "slug": "tristan"
   },
   {
    "player": "Kives",
@@ -45,26 +45,26 @@
    "slug": "joel"
   },
   {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "Hits",
-   "current_total": 99,
-   "next_milestone_display": 100,
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "HR",
+   "current_total": 4,
+   "next_milestone_display": 5,
    "remaining": 1,
-   "progress_to_next": 0.99,
-   "club_label": "5 in club",
-   "slug": "duff"
+   "progress_to_next": 0.8,
+   "club_label": "6 in club",
+   "slug": "walsh"
   },
   {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "Hits",
-   "current_total": 49,
-   "next_milestone_display": 50,
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "PA",
+   "current_total": 249,
+   "next_milestone_display": 250,
    "remaining": 1,
-   "progress_to_next": 0.98,
-   "club_label": "10 in club",
-   "slug": "joel"
+   "progress_to_next": 0.996,
+   "club_label": "3 in club",
+   "slug": "duff"
   },
   {
    "player": "Kives",
@@ -78,26 +78,15 @@
    "slug": "kives"
   },
   {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "RBI",
-   "current_total": 49,
-   "next_milestone_display": 50,
-   "remaining": 1,
-   "progress_to_next": 0.98,
-   "club_label": "7 in club",
-   "slug": "duff"
-  },
-  {
-   "player": "Porter",
-   "canonical_name": "porter",
+   "player": "Glove",
+   "canonical_name": "glove",
    "stat": "Singles",
-   "current_total": 74,
-   "next_milestone_display": 75,
+   "current_total": 99,
+   "next_milestone_display": 100,
    "remaining": 1,
-   "progress_to_next": 0.987,
-   "club_label": "3 in club",
-   "slug": "porter"
+   "progress_to_next": 0.99,
+   "club_label": "First to 100",
+   "slug": "glove"
   },
   {
    "player": "Porter",
@@ -120,28 +109,6 @@
    "progress_to_next": 0.96,
    "club_label": "1 in club",
    "slug": "jason"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "Walks",
-   "current_total": 9,
-   "next_milestone_display": 10,
-   "remaining": 1,
-   "progress_to_next": 0.9,
-   "club_label": "6 in club",
-   "slug": "glove"
-  },
-  {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Doubles",
-   "current_total": 28,
-   "next_milestone_display": 30,
-   "remaining": 2,
-   "progress_to_next": 0.933,
-   "club_label": "First to 30",
-   "slug": "tristan"
   },
   {
    "player": "Porter",
@@ -190,35 +157,35 @@
   {
    "player": "Walsh",
    "canonical_name": "walsh",
-   "stat": "HR",
-   "current_total": 3,
-   "next_milestone_display": 5,
+   "stat": "Hits",
+   "current_total": 48,
+   "next_milestone_display": 50,
    "remaining": 2,
-   "progress_to_next": 0.6,
-   "club_label": "6 in club",
+   "progress_to_next": 0.96,
+   "club_label": "11 in club",
    "slug": "walsh"
   },
   {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Hits",
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "Total Bases",
    "current_total": 148,
    "next_milestone_display": 150,
    "remaining": 2,
    "progress_to_next": 0.987,
-   "club_label": "1 in club",
-   "slug": "tristan"
+   "club_label": "6 in club",
+   "slug": "duff"
   },
   {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "Runs",
-   "current_total": 123,
-   "next_milestone_display": 125,
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "Triples",
+   "current_total": 13,
+   "next_milestone_display": 15,
    "remaining": 2,
-   "progress_to_next": 0.984,
+   "progress_to_next": 0.867,
    "club_label": "1 in club",
-   "slug": "glove"
+   "slug": "duff"
   },
   {
    "player": "JJ",
@@ -239,7 +206,7 @@
    "next_milestone_display": 10,
    "remaining": 2,
    "progress_to_next": 0.8,
-   "club_label": "6 in club",
+   "club_label": "7 in club",
    "slug": "kives"
   },
   {
@@ -252,6 +219,17 @@
    "progress_to_next": 0.85,
    "club_label": "4 in club",
    "slug": "tim"
+  },
+  {
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "Games",
+   "current_total": 72,
+   "next_milestone_display": 75,
+   "remaining": 3,
+   "progress_to_next": 0.96,
+   "club_label": "4 in club",
+   "slug": "glove"
   },
   {
    "player": "Glove",
@@ -287,17 +265,6 @@
    "slug": "duff"
   },
   {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "Singles",
-   "current_total": 72,
-   "next_milestone_display": 75,
-   "remaining": 3,
-   "progress_to_next": 0.96,
-   "club_label": "3 in club",
-   "slug": "duff"
-  },
-  {
    "player": "Slomka",
    "canonical_name": "slomka",
    "stat": "Singles",
@@ -309,15 +276,15 @@
    "slug": "slomka"
   },
   {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "Triples",
-   "current_total": 12,
-   "next_milestone_display": 15,
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "Total Bases",
+   "current_total": 47,
+   "next_milestone_display": 50,
    "remaining": 3,
-   "progress_to_next": 0.8,
-   "club_label": "1 in club",
-   "slug": "duff"
+   "progress_to_next": 0.94,
+   "club_label": "14 in club",
+   "slug": "snaxx"
   },
   {
    "player": "Kives",
@@ -371,8 +338,19 @@
    "next_milestone_display": 250,
    "remaining": 4,
    "progress_to_next": 0.984,
-   "club_label": "First to 250",
+   "club_label": "2 in club",
    "slug": "jj"
+  },
+  {
+   "player": "Joel",
+   "canonical_name": "joel",
+   "stat": "Doubles",
+   "current_total": 6,
+   "next_milestone_display": 10,
+   "remaining": 4,
+   "progress_to_next": 0.6,
+   "club_label": "10 in club",
+   "slug": "joel"
   },
   {
    "player": "Slomka",
@@ -382,8 +360,19 @@
    "next_milestone_display": 10,
    "remaining": 4,
    "progress_to_next": 0.6,
-   "club_label": "9 in club",
+   "club_label": "10 in club",
    "slug": "slomka"
+  },
+  {
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "Games",
+   "current_total": 71,
+   "next_milestone_display": 75,
+   "remaining": 4,
+   "progress_to_next": 0.947,
+   "club_label": "4 in club",
+   "slug": "jason"
   },
   {
    "player": "Slomka",
@@ -397,26 +386,15 @@
    "slug": "slomka"
   },
   {
-   "player": "Jason",
-   "canonical_name": "jason",
-   "stat": "PA",
-   "current_total": 196,
-   "next_milestone_display": 200,
-   "remaining": 4,
-   "progress_to_next": 0.98,
-   "club_label": "7 in club",
-   "slug": "jason"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "Singles",
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "Hits",
    "current_total": 96,
    "next_milestone_display": 100,
    "remaining": 4,
    "progress_to_next": 0.96,
-   "club_label": "First to 100",
-   "slug": "glove"
+   "club_label": "6 in club",
+   "slug": "corey"
   },
   {
    "player": "Kives",
@@ -426,19 +404,8 @@
    "next_milestone_display": 75,
    "remaining": 4,
    "progress_to_next": 0.947,
-   "club_label": "3 in club",
+   "club_label": "5 in club",
    "slug": "kives"
-  },
-  {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Total Bases",
-   "current_total": 46,
-   "next_milestone_display": 50,
-   "remaining": 4,
-   "progress_to_next": 0.92,
-   "club_label": "14 in club",
-   "slug": "snaxx"
   },
   {
    "player": "Joel",
@@ -448,8 +415,19 @@
    "next_milestone_display": 10,
    "remaining": 4,
    "progress_to_next": 0.6,
-   "club_label": "6 in club",
+   "club_label": "7 in club",
    "slug": "joel"
+  },
+  {
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "Walks",
+   "current_total": 6,
+   "next_milestone_display": 10,
+   "remaining": 4,
+   "progress_to_next": 0.6,
+   "club_label": "7 in club",
+   "slug": "snaxx"
   },
   {
    "player": "Tim",
@@ -459,7 +437,7 @@
    "next_milestone_display": 10,
    "remaining": 4,
    "progress_to_next": 0.6,
-   "club_label": "6 in club",
+   "club_label": "7 in club",
    "slug": "tim"
   },
   {
@@ -485,28 +463,6 @@
    "slug": "jj"
   },
   {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "Doubles",
-   "current_total": 5,
-   "next_milestone_display": 10,
-   "remaining": 5,
-   "progress_to_next": 0.5,
-   "club_label": "9 in club",
-   "slug": "joel"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "Games",
-   "current_total": 70,
-   "next_milestone_display": 75,
-   "remaining": 5,
-   "progress_to_next": 0.933,
-   "club_label": "4 in club",
-   "slug": "glove"
-  },
-  {
    "player": "Jason",
    "canonical_name": "jason",
    "stat": "HR",
@@ -529,15 +485,26 @@
    "slug": "snaxx"
   },
   {
-   "player": "Walsh",
-   "canonical_name": "walsh",
+   "player": "Joey",
+   "canonical_name": "snaxx",
    "stat": "Hits",
    "current_total": 45,
    "next_milestone_display": 50,
    "remaining": 5,
    "progress_to_next": 0.9,
-   "club_label": "10 in club",
-   "slug": "walsh"
+   "club_label": "11 in club",
+   "slug": "snaxx"
+  },
+  {
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "stat": "Total Bases",
+   "current_total": 345,
+   "next_milestone_display": 350,
+   "remaining": 5,
+   "progress_to_next": 0.986,
+   "club_label": "First to 350",
+   "slug": "tristan"
   },
   {
    "player": "Glove",
@@ -606,17 +573,6 @@
    "slug": "slomka"
   },
   {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Walks",
-   "current_total": 5,
-   "next_milestone_display": 10,
-   "remaining": 5,
-   "progress_to_next": 0.5,
-   "club_label": "6 in club",
-   "slug": "snaxx"
-  },
-  {
    "player": "Walsh",
    "canonical_name": "walsh",
    "stat": "Walks",
@@ -624,30 +580,8 @@
    "next_milestone_display": 10,
    "remaining": 5,
    "progress_to_next": 0.5,
-   "club_label": "6 in club",
+   "club_label": "7 in club",
    "slug": "walsh"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "AB",
-   "current_total": 244,
-   "next_milestone_display": 250,
-   "remaining": 6,
-   "progress_to_next": 0.976,
-   "club_label": "First to 250",
-   "slug": "glove"
-  },
-  {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "AB",
-   "current_total": 244,
-   "next_milestone_display": 250,
-   "remaining": 6,
-   "progress_to_next": 0.976,
-   "club_label": "First to 250",
-   "slug": "tristan"
   },
   {
    "player": "Corey",
@@ -661,48 +595,15 @@
    "slug": "corey"
   },
   {
-   "player": "Jason",
-   "canonical_name": "jason",
-   "stat": "Games",
-   "current_total": 69,
-   "next_milestone_display": 75,
-   "remaining": 6,
-   "progress_to_next": 0.92,
-   "club_label": "4 in club",
-   "slug": "jason"
-  },
-  {
-   "player": "Corey",
-   "canonical_name": "corey",
-   "stat": "Hits",
-   "current_total": 94,
-   "next_milestone_display": 100,
-   "remaining": 6,
-   "progress_to_next": 0.94,
-   "club_label": "5 in club",
-   "slug": "corey"
-  },
-  {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Hits",
-   "current_total": 44,
-   "next_milestone_display": 50,
-   "remaining": 6,
-   "progress_to_next": 0.88,
-   "club_label": "10 in club",
-   "slug": "snaxx"
-  },
-  {
-   "player": "Duff",
-   "canonical_name": "duff",
+   "player": "Tim",
+   "canonical_name": "tim",
    "stat": "PA",
-   "current_total": 244,
-   "next_milestone_display": 250,
+   "current_total": 144,
+   "next_milestone_display": 150,
    "remaining": 6,
-   "progress_to_next": 0.976,
-   "club_label": "3 in club",
-   "slug": "duff"
+   "progress_to_next": 0.96,
+   "club_label": "8 in club",
+   "slug": "tim"
   },
   {
    "player": "Duff",
@@ -727,6 +628,28 @@
    "slug": "kives"
   },
   {
+   "player": "Porter",
+   "canonical_name": "porter",
+   "stat": "Games",
+   "current_total": 68,
+   "next_milestone_display": 75,
+   "remaining": 7,
+   "progress_to_next": 0.907,
+   "club_label": "4 in club",
+   "slug": "porter"
+  },
+  {
+   "player": "Joel",
+   "canonical_name": "joel",
+   "stat": "Games",
+   "current_total": 43,
+   "next_milestone_display": 50,
+   "remaining": 7,
+   "progress_to_next": 0.86,
+   "club_label": "8 in club",
+   "slug": "joel"
+  },
+  {
    "player": "Slomka",
    "canonical_name": "slomka",
    "stat": "Runs",
@@ -738,6 +661,28 @@
    "slug": "slomka"
   },
   {
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "Runs",
+   "current_total": 18,
+   "next_milestone_display": 25,
+   "remaining": 7,
+   "progress_to_next": 0.72,
+   "club_label": "12 in club",
+   "slug": "walsh"
+  },
+  {
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "Singles",
+   "current_total": 43,
+   "next_milestone_display": 50,
+   "remaining": 7,
+   "progress_to_next": 0.86,
+   "club_label": "8 in club",
+   "slug": "snaxx"
+  },
+  {
    "player": "Jason",
    "canonical_name": "jason",
    "stat": "Doubles",
@@ -745,7 +690,7 @@
    "next_milestone_display": 10,
    "remaining": 8,
    "progress_to_next": 0.2,
-   "club_label": "9 in club",
+   "club_label": "10 in club",
    "slug": "jason"
   },
   {
@@ -756,7 +701,7 @@
    "next_milestone_display": 10,
    "remaining": 8,
    "progress_to_next": 0.2,
-   "club_label": "9 in club",
+   "club_label": "10 in club",
    "slug": "snaxx"
   },
   {
@@ -771,6 +716,17 @@
    "slug": "kives"
   },
   {
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "PA",
+   "current_total": 242,
+   "next_milestone_display": 250,
+   "remaining": 8,
+   "progress_to_next": 0.968,
+   "club_label": "3 in club",
+   "slug": "corey"
+  },
+  {
    "player": "Joey",
    "canonical_name": "snaxx",
    "stat": "RBI",
@@ -780,28 +736,6 @@
    "progress_to_next": 0.68,
    "club_label": "12 in club",
    "slug": "snaxx"
-  },
-  {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Singles",
-   "current_total": 42,
-   "next_milestone_display": 50,
-   "remaining": 8,
-   "progress_to_next": 0.84,
-   "club_label": "8 in club",
-   "slug": "snaxx"
-  },
-  {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "Total Bases",
-   "current_total": 142,
-   "next_milestone_display": 150,
-   "remaining": 8,
-   "progress_to_next": 0.947,
-   "club_label": "6 in club",
-   "slug": "duff"
   },
   {
    "player": "Tristan",
@@ -815,28 +749,6 @@
    "slug": "tristan"
   },
   {
-   "player": "Porter",
-   "canonical_name": "porter",
-   "stat": "Games",
-   "current_total": 66,
-   "next_milestone_display": 75,
-   "remaining": 9,
-   "progress_to_next": 0.88,
-   "club_label": "4 in club",
-   "slug": "porter"
-  },
-  {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "Games",
-   "current_total": 41,
-   "next_milestone_display": 50,
-   "remaining": 9,
-   "progress_to_next": 0.82,
-   "club_label": "8 in club",
-   "slug": "joel"
-  },
-  {
    "player": "Slomka",
    "canonical_name": "slomka",
    "stat": "RBI",
@@ -859,15 +771,15 @@
    "slug": "porter"
   },
   {
-   "player": "Walsh",
-   "canonical_name": "walsh",
-   "stat": "Runs",
-   "current_total": 16,
-   "next_milestone_display": 25,
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "stat": "Singles",
+   "current_total": 66,
+   "next_milestone_display": 75,
    "remaining": 9,
-   "progress_to_next": 0.64,
-   "club_label": "12 in club",
-   "slug": "walsh"
+   "progress_to_next": 0.88,
+   "club_label": "5 in club",
+   "slug": "tristan"
   },
   {
    "player": "Slomka",
@@ -877,7 +789,7 @@
    "next_milestone_display": 10,
    "remaining": 9,
    "progress_to_next": 0.1,
-   "club_label": "6 in club",
+   "club_label": "7 in club",
    "slug": "slomka"
   },
   {
@@ -890,6 +802,39 @@
    "progress_to_next": 0.667,
    "club_label": "First to 30",
    "slug": "kives"
+  },
+  {
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "Doubles",
+   "current_total": 10,
+   "next_milestone_display": 20,
+   "remaining": 10,
+   "progress_to_next": 0.5,
+   "club_label": "4 in club",
+   "slug": "walsh"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
+   "stat": "Games",
+   "current_total": 40,
+   "next_milestone_display": 50,
+   "remaining": 10,
+   "progress_to_next": 0.8,
+   "club_label": "8 in club",
+   "slug": "tim"
+  },
+  {
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "Games",
+   "current_total": 40,
+   "next_milestone_display": 50,
+   "remaining": 10,
+   "progress_to_next": 0.8,
+   "club_label": "8 in club",
+   "slug": "walsh"
   },
   {
    "player": "Tristan",
@@ -925,15 +870,26 @@
    "slug": "joel"
   },
   {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Total Bases",
-   "current_total": 340,
-   "next_milestone_display": 350,
-   "remaining": 10,
-   "progress_to_next": 0.971,
-   "club_label": "First to 350",
-   "slug": "tristan"
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "Games",
+   "current_total": 39,
+   "next_milestone_display": 50,
+   "remaining": 11,
+   "progress_to_next": 0.78,
+   "club_label": "8 in club",
+   "slug": "snaxx"
+  },
+  {
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "RBI",
+   "current_total": 114,
+   "next_milestone_display": 125,
+   "remaining": 11,
+   "progress_to_next": 0.912,
+   "club_label": "1 in club",
+   "slug": "glove"
   },
   {
    "player": "Porter",
@@ -949,57 +905,24 @@
   {
    "player": "Tim",
    "canonical_name": "tim",
-   "stat": "Games",
-   "current_total": 38,
-   "next_milestone_display": 50,
-   "remaining": 12,
-   "progress_to_next": 0.76,
-   "club_label": "8 in club",
-   "slug": "tim"
-  },
-  {
-   "player": "Walsh",
-   "canonical_name": "walsh",
-   "stat": "Games",
-   "current_total": 38,
-   "next_milestone_display": 50,
-   "remaining": 12,
-   "progress_to_next": 0.76,
-   "club_label": "8 in club",
-   "slug": "walsh"
-  },
-  {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "PA",
-   "current_total": 138,
-   "next_milestone_display": 150,
-   "remaining": 12,
-   "progress_to_next": 0.92,
-   "club_label": "8 in club",
-   "slug": "tim"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
    "stat": "RBI",
-   "current_total": 113,
-   "next_milestone_display": 125,
-   "remaining": 12,
-   "progress_to_next": 0.904,
-   "club_label": "1 in club",
-   "slug": "glove"
-  },
-  {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Singles",
    "current_total": 63,
    "next_milestone_display": 75,
    "remaining": 12,
    "progress_to_next": 0.84,
-   "club_label": "3 in club",
-   "slug": "tristan"
+   "club_label": "4 in club",
+   "slug": "tim"
+  },
+  {
+   "player": "Joel",
+   "canonical_name": "joel",
+   "stat": "Runs",
+   "current_total": 38,
+   "next_milestone_display": 50,
+   "remaining": 12,
+   "progress_to_next": 0.76,
+   "club_label": "9 in club",
+   "slug": "joel"
   },
   {
    "player": "Slomka",
@@ -1013,59 +936,37 @@
    "slug": "slomka"
   },
   {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Games",
-   "current_total": 37,
-   "next_milestone_display": 50,
-   "remaining": 13,
-   "progress_to_next": 0.74,
-   "club_label": "8 in club",
-   "slug": "snaxx"
-  },
-  {
-   "player": "Corey",
-   "canonical_name": "corey",
-   "stat": "PA",
-   "current_total": 237,
-   "next_milestone_display": 250,
-   "remaining": 13,
-   "progress_to_next": 0.948,
-   "club_label": "3 in club",
-   "slug": "corey"
-  },
-  {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "RBI",
-   "current_total": 62,
-   "next_milestone_display": 75,
-   "remaining": 13,
-   "progress_to_next": 0.827,
-   "club_label": "4 in club",
-   "slug": "tim"
-  },
-  {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "Runs",
-   "current_total": 37,
-   "next_milestone_display": 50,
-   "remaining": 13,
-   "progress_to_next": 0.74,
-   "club_label": "9 in club",
-   "slug": "joel"
-  },
-  {
    "player": "Porter",
    "canonical_name": "porter",
    "stat": "Walks",
+   "current_total": 13,
+   "next_milestone_display": 25,
+   "remaining": 12,
+   "progress_to_next": 0.52,
+   "club_label": "1 in club",
+   "slug": "porter"
+  },
+  {
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "Runs",
    "current_total": 12,
    "next_milestone_display": 25,
    "remaining": 13,
    "progress_to_next": 0.48,
-   "club_label": "1 in club",
-   "slug": "porter"
+   "club_label": "12 in club",
+   "slug": "snaxx"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
+   "stat": "AB",
+   "current_total": 136,
+   "next_milestone_display": 150,
+   "remaining": 14,
+   "progress_to_next": 0.907,
+   "club_label": "8 in club",
+   "slug": "tim"
   },
   {
    "player": "JJ",
@@ -1075,28 +976,17 @@
    "next_milestone_display": 150,
    "remaining": 14,
    "progress_to_next": 0.907,
-   "club_label": "1 in club",
+   "club_label": "2 in club",
    "slug": "jj"
-  },
-  {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "Runs",
-   "current_total": 11,
-   "next_milestone_display": 25,
-   "remaining": 14,
-   "progress_to_next": 0.44,
-   "club_label": "12 in club",
-   "slug": "snaxx"
   },
   {
    "player": "Porter",
    "canonical_name": "porter",
    "stat": "Hits",
-   "current_total": 110,
+   "current_total": 111,
    "next_milestone_display": 125,
-   "remaining": 15,
-   "progress_to_next": 0.88,
+   "remaining": 14,
+   "progress_to_next": 0.888,
    "club_label": "3 in club",
    "slug": "porter"
   },
@@ -1108,8 +998,41 @@
    "next_milestone_display": 50,
    "remaining": 15,
    "progress_to_next": 0.7,
-   "club_label": "7 in club",
+   "club_label": "8 in club",
    "slug": "joel"
+  },
+  {
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "RBI",
+   "current_total": 35,
+   "next_milestone_display": 50,
+   "remaining": 15,
+   "progress_to_next": 0.7,
+   "club_label": "8 in club",
+   "slug": "walsh"
+  },
+  {
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "Runs",
+   "current_total": 60,
+   "next_milestone_display": 75,
+   "remaining": 15,
+   "progress_to_next": 0.8,
+   "club_label": "4 in club",
+   "slug": "corey"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
+   "stat": "Singles",
+   "current_total": 35,
+   "next_milestone_display": 50,
+   "remaining": 15,
+   "progress_to_next": 0.7,
+   "club_label": "8 in club",
+   "slug": "tim"
   },
   {
    "player": "Corey",
@@ -1134,92 +1057,92 @@
    "slug": "duff"
   },
   {
-   "player": "Corey",
-   "canonical_name": "corey",
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "Walks",
+   "current_total": 10,
+   "next_milestone_display": 25,
+   "remaining": 15,
+   "progress_to_next": 0.4,
+   "club_label": "1 in club",
+   "slug": "glove"
+  },
+  {
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "AB",
+   "current_total": 234,
+   "next_milestone_display": 250,
+   "remaining": 16,
+   "progress_to_next": 0.936,
+   "club_label": "2 in club",
+   "slug": "duff"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
    "stat": "Runs",
    "current_total": 59,
    "next_milestone_display": 75,
    "remaining": 16,
    "progress_to_next": 0.787,
    "club_label": "4 in club",
-   "slug": "corey"
-  },
-  {
-   "player": "Walsh",
-   "canonical_name": "walsh",
-   "stat": "RBI",
-   "current_total": 33,
-   "next_milestone_display": 50,
-   "remaining": 17,
-   "progress_to_next": 0.66,
-   "club_label": "7 in club",
-   "slug": "walsh"
-  },
-  {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "Runs",
-   "current_total": 58,
-   "next_milestone_display": 75,
-   "remaining": 17,
-   "progress_to_next": 0.773,
-   "club_label": "4 in club",
    "slug": "tim"
   },
   {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "Singles",
-   "current_total": 33,
-   "next_milestone_display": 50,
-   "remaining": 17,
-   "progress_to_next": 0.66,
-   "club_label": "8 in club",
-   "slug": "tim"
-  },
-  {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "Runs",
-   "current_total": 57,
-   "next_milestone_display": 75,
-   "remaining": 18,
-   "progress_to_next": 0.76,
-   "club_label": "4 in club",
-   "slug": "duff"
-  },
-  {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "AB",
-   "current_total": 131,
+   "player": "Joel",
+   "canonical_name": "joel",
+   "stat": "PA",
+   "current_total": 133,
    "next_milestone_display": 150,
-   "remaining": 19,
-   "progress_to_next": 0.873,
+   "remaining": 17,
+   "progress_to_next": 0.887,
    "club_label": "8 in club",
-   "slug": "tim"
+   "slug": "joel"
   },
   {
    "player": "Tristan",
    "canonical_name": "tristan",
    "stat": "RBI",
-   "current_total": 156,
+   "current_total": 158,
    "next_milestone_display": 175,
-   "remaining": 19,
-   "progress_to_next": 0.891,
+   "remaining": 17,
+   "progress_to_next": 0.903,
    "club_label": "First to 175",
    "slug": "tristan"
   },
   {
    "player": "Duff",
    "canonical_name": "duff",
+   "stat": "Runs",
+   "current_total": 58,
+   "next_milestone_display": 75,
+   "remaining": 17,
+   "progress_to_next": 0.773,
+   "club_label": "4 in club",
+   "slug": "duff"
+  },
+  {
+   "player": "Duff",
+   "canonical_name": "duff",
    "stat": "Games",
-   "current_total": 80,
+   "current_total": 82,
    "next_milestone_display": 100,
-   "remaining": 20,
-   "progress_to_next": 0.8,
+   "remaining": 18,
+   "progress_to_next": 0.82,
    "club_label": "First to 100",
    "slug": "duff"
+  },
+  {
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "Games",
+   "current_total": 81,
+   "next_milestone_display": 100,
+   "remaining": 19,
+   "progress_to_next": 0.81,
+   "club_label": "First to 100",
+   "slug": "corey"
   },
   {
    "player": "JJ",
@@ -1244,26 +1167,37 @@
    "slug": "kives"
   },
   {
-   "player": "Duff",
-   "canonical_name": "duff",
-   "stat": "AB",
-   "current_total": 229,
-   "next_milestone_display": 250,
-   "remaining": 21,
-   "progress_to_next": 0.916,
-   "club_label": "First to 250",
-   "slug": "duff"
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "Runs",
+   "current_total": 55,
+   "next_milestone_display": 75,
+   "remaining": 20,
+   "progress_to_next": 0.733,
+   "club_label": "4 in club",
+   "slug": "jason"
   },
   {
-   "player": "Corey",
-   "canonical_name": "corey",
-   "stat": "Games",
-   "current_total": 79,
+   "player": "Walsh",
+   "canonical_name": "walsh",
+   "stat": "Total Bases",
+   "current_total": 80,
    "next_milestone_display": 100,
+   "remaining": 20,
+   "progress_to_next": 0.8,
+   "club_label": "8 in club",
+   "slug": "walsh"
+  },
+  {
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "Hits",
+   "current_total": 54,
+   "next_milestone_display": 75,
    "remaining": 21,
-   "progress_to_next": 0.79,
-   "club_label": "First to 100",
-   "slug": "corey"
+   "progress_to_next": 0.72,
+   "club_label": "8 in club",
+   "slug": "jason"
   },
   {
    "player": "Slomka",
@@ -1273,52 +1207,96 @@
    "next_milestone_display": 50,
    "remaining": 21,
    "progress_to_next": 0.58,
-   "club_label": "10 in club",
+   "club_label": "11 in club",
    "slug": "slomka"
   },
   {
-   "player": "Jason",
-   "canonical_name": "jason",
-   "stat": "Hits",
-   "current_total": 53,
-   "next_milestone_display": 75,
-   "remaining": 22,
-   "progress_to_next": 0.707,
-   "club_label": "8 in club",
-   "slug": "jason"
-  },
-  {
-   "player": "Joel",
-   "canonical_name": "joel",
+   "player": "Tristan",
+   "canonical_name": "tristan",
    "stat": "PA",
-   "current_total": 128,
-   "next_milestone_display": 150,
-   "remaining": 22,
-   "progress_to_next": 0.853,
-   "club_label": "8 in club",
-   "slug": "joel"
+   "current_total": 279,
+   "next_milestone_display": 300,
+   "remaining": 21,
+   "progress_to_next": 0.93,
+   "club_label": "First to 300",
+   "slug": "tristan"
   },
   {
-   "player": "Jason",
-   "canonical_name": "jason",
+   "player": "Tristan",
+   "canonical_name": "tristan",
    "stat": "Runs",
-   "current_total": 53,
-   "next_milestone_display": 75,
-   "remaining": 22,
-   "progress_to_next": 0.707,
-   "club_label": "4 in club",
-   "slug": "jason"
+   "current_total": 129,
+   "next_milestone_display": 150,
+   "remaining": 21,
+   "progress_to_next": 0.86,
+   "club_label": "First to 150",
+   "slug": "tristan"
   },
   {
    "player": "Walsh",
    "canonical_name": "walsh",
    "stat": "Singles",
-   "current_total": 28,
+   "current_total": 29,
    "next_milestone_display": 50,
-   "remaining": 22,
-   "progress_to_next": 0.56,
+   "remaining": 21,
+   "progress_to_next": 0.58,
    "club_label": "8 in club",
    "slug": "walsh"
+  },
+  {
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "stat": "Games",
+   "current_total": 78,
+   "next_milestone_display": 100,
+   "remaining": 22,
+   "progress_to_next": 0.78,
+   "club_label": "First to 100",
+   "slug": "tristan"
+  },
+  {
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "Hits",
+   "current_total": 103,
+   "next_milestone_display": 125,
+   "remaining": 22,
+   "progress_to_next": 0.824,
+   "club_label": "3 in club",
+   "slug": "duff"
+  },
+  {
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "Singles",
+   "current_total": 78,
+   "next_milestone_display": 100,
+   "remaining": 22,
+   "progress_to_next": 0.78,
+   "club_label": "First to 100",
+   "slug": "corey"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
+   "stat": "Hits",
+   "current_total": 77,
+   "next_milestone_display": 100,
+   "remaining": 23,
+   "progress_to_next": 0.77,
+   "club_label": "6 in club",
+   "slug": "tim"
+  },
+  {
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "RBI",
+   "current_total": 52,
+   "next_milestone_display": 75,
+   "remaining": 23,
+   "progress_to_next": 0.693,
+   "club_label": "4 in club",
+   "slug": "duff"
   },
   {
    "player": "Jason",
@@ -1328,7 +1306,7 @@
    "next_milestone_display": 50,
    "remaining": 23,
    "progress_to_next": 0.54,
-   "club_label": "7 in club",
+   "club_label": "8 in club",
    "slug": "jason"
   },
   {
@@ -1339,19 +1317,30 @@
    "next_milestone_display": 125,
    "remaining": 23,
    "progress_to_next": 0.816,
-   "club_label": "1 in club",
+   "club_label": "2 in club",
    "slug": "jj"
   },
   {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Games",
-   "current_total": 76,
-   "next_milestone_display": 100,
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "Singles",
+   "current_total": 52,
+   "next_milestone_display": 75,
+   "remaining": 23,
+   "progress_to_next": 0.693,
+   "club_label": "5 in club",
+   "slug": "jason"
+  },
+  {
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "AB",
+   "current_total": 176,
+   "next_milestone_display": 200,
    "remaining": 24,
-   "progress_to_next": 0.76,
-   "club_label": "First to 100",
-   "slug": "tristan"
+   "progress_to_next": 0.88,
+   "club_label": "7 in club",
+   "slug": "jason"
   },
   {
    "player": "JJ",
@@ -1387,26 +1376,15 @@
    "slug": "corey"
   },
   {
-   "player": "Corey",
-   "canonical_name": "corey",
-   "stat": "Singles",
-   "current_total": 76,
-   "next_milestone_display": 100,
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "Runs",
+   "current_total": 126,
+   "next_milestone_display": 150,
    "remaining": 24,
-   "progress_to_next": 0.76,
-   "club_label": "First to 100",
-   "slug": "corey"
-  },
-  {
-   "player": "Jason",
-   "canonical_name": "jason",
-   "stat": "Singles",
-   "current_total": 51,
-   "next_milestone_display": 75,
-   "remaining": 24,
-   "progress_to_next": 0.68,
-   "club_label": "3 in club",
-   "slug": "jason"
+   "progress_to_next": 0.84,
+   "club_label": "First to 150",
+   "slug": "glove"
   },
   {
    "player": "JJ",
@@ -1420,70 +1398,92 @@
    "slug": "jj"
   },
   {
-   "player": "Tim",
-   "canonical_name": "tim",
+   "player": "Joel",
+   "canonical_name": "joel",
    "stat": "Hits",
+   "current_total": 50,
+   "next_milestone_display": 75,
+   "remaining": 25,
+   "progress_to_next": 0.667,
+   "club_label": "8 in club",
+   "slug": "joel"
+  },
+  {
+   "player": "Duff",
+   "canonical_name": "duff",
+   "stat": "Singles",
    "current_total": 75,
    "next_milestone_display": 100,
    "remaining": 25,
    "progress_to_next": 0.75,
-   "club_label": "5 in club",
-   "slug": "tim"
+   "club_label": "First to 100",
+   "slug": "duff"
   },
   {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "Runs",
-   "current_total": 125,
-   "next_milestone_display": 150,
+   "player": "Porter",
+   "canonical_name": "porter",
+   "stat": "Singles",
+   "current_total": 75,
+   "next_milestone_display": 100,
    "remaining": 25,
-   "progress_to_next": 0.833,
-   "club_label": "First to 150",
-   "slug": "tristan"
+   "progress_to_next": 0.75,
+   "club_label": "First to 100",
+   "slug": "porter"
   },
   {
-   "player": "Tristan",
-   "canonical_name": "tristan",
-   "stat": "PA",
-   "current_total": 273,
-   "next_milestone_display": 300,
-   "remaining": 27,
-   "progress_to_next": 0.91,
-   "club_label": "First to 300",
-   "slug": "tristan"
+   "player": "Joel",
+   "canonical_name": "joel",
+   "stat": "AB",
+   "current_total": 124,
+   "next_milestone_display": 150,
+   "remaining": 26,
+   "progress_to_next": 0.827,
+   "club_label": "8 in club",
+   "slug": "joel"
   },
   {
    "player": "Porter",
    "canonical_name": "porter",
    "stat": "Total Bases",
-   "current_total": 173,
+   "current_total": 174,
    "next_milestone_display": 200,
-   "remaining": 27,
-   "progress_to_next": 0.865,
+   "remaining": 26,
+   "progress_to_next": 0.87,
    "club_label": "4 in club",
+   "slug": "porter"
+  },
+  {
+   "player": "Corey",
+   "canonical_name": "corey",
+   "stat": "AB",
+   "current_total": 223,
+   "next_milestone_display": 250,
+   "remaining": 27,
+   "progress_to_next": 0.892,
+   "club_label": "2 in club",
+   "slug": "corey"
+  },
+  {
+   "player": "Porter",
+   "canonical_name": "porter",
+   "stat": "PA",
+   "current_total": 223,
+   "next_milestone_display": 250,
+   "remaining": 27,
+   "progress_to_next": 0.892,
+   "club_label": "3 in club",
    "slug": "porter"
   },
   {
    "player": "Walsh",
    "canonical_name": "walsh",
-   "stat": "Total Bases",
-   "current_total": 73,
-   "next_milestone_display": 100,
+   "stat": "PA",
+   "current_total": 123,
+   "next_milestone_display": 150,
    "remaining": 27,
-   "progress_to_next": 0.73,
+   "progress_to_next": 0.82,
    "club_label": "8 in club",
    "slug": "walsh"
-  },
-  {
-   "player": "Jason",
-   "canonical_name": "jason",
-   "stat": "AB",
-   "current_total": 171,
-   "next_milestone_display": 200,
-   "remaining": 29,
-   "progress_to_next": 0.855,
-   "club_label": "7 in club",
-   "slug": "jason"
   },
   {
    "player": "Kives",
@@ -1497,42 +1497,20 @@
    "slug": "kives"
   },
   {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "AB",
-   "current_total": 119,
-   "next_milestone_display": 150,
-   "remaining": 31,
-   "progress_to_next": 0.793,
-   "club_label": "8 in club",
-   "slug": "joel"
-  },
-  {
    "player": "Corey",
    "canonical_name": "corey",
-   "stat": "AB",
-   "current_total": 218,
-   "next_milestone_display": 250,
-   "remaining": 32,
-   "progress_to_next": 0.872,
-   "club_label": "First to 250",
+   "stat": "Total Bases",
+   "current_total": 120,
+   "next_milestone_display": 150,
+   "remaining": 30,
+   "progress_to_next": 0.8,
+   "club_label": "6 in club",
    "slug": "corey"
-  },
-  {
-   "player": "Porter",
-   "canonical_name": "porter",
-   "stat": "PA",
-   "current_total": 218,
-   "next_milestone_display": 250,
-   "remaining": 32,
-   "progress_to_next": 0.872,
-   "club_label": "3 in club",
-   "slug": "porter"
   },
   {
    "player": "Walsh",
    "canonical_name": "walsh",
-   "stat": "PA",
+   "stat": "AB",
    "current_total": 118,
    "next_milestone_display": 150,
    "remaining": 32,
@@ -1541,15 +1519,15 @@
    "slug": "walsh"
   },
   {
-   "player": "Corey",
-   "canonical_name": "corey",
+   "player": "Joel",
+   "canonical_name": "joel",
    "stat": "Total Bases",
-   "current_total": 118,
-   "next_milestone_display": 150,
+   "current_total": 68,
+   "next_milestone_display": 100,
    "remaining": 32,
-   "progress_to_next": 0.787,
-   "club_label": "6 in club",
-   "slug": "corey"
+   "progress_to_next": 0.68,
+   "club_label": "8 in club",
+   "slug": "joel"
   },
   {
    "player": "Slomka",
@@ -1574,17 +1552,6 @@
    "slug": "jj"
   },
   {
-   "player": "Joel",
-   "canonical_name": "joel",
-   "stat": "Total Bases",
-   "current_total": 66,
-   "next_milestone_display": 100,
-   "remaining": 34,
-   "progress_to_next": 0.66,
-   "club_label": "8 in club",
-   "slug": "joel"
-  },
-  {
    "player": "Slomka",
    "canonical_name": "slomka",
    "stat": "AB",
@@ -1596,48 +1563,48 @@
    "slug": "slomka"
   },
   {
-   "player": "Walsh",
-   "canonical_name": "walsh",
-   "stat": "AB",
-   "current_total": 113,
-   "next_milestone_display": 150,
-   "remaining": 37,
-   "progress_to_next": 0.753,
-   "club_label": "8 in club",
-   "slug": "walsh"
-  },
-  {
-   "player": "Tim",
-   "canonical_name": "tim",
-   "stat": "Total Bases",
-   "current_total": 160,
-   "next_milestone_display": 200,
-   "remaining": 40,
-   "progress_to_next": 0.8,
-   "club_label": "4 in club",
-   "slug": "tim"
-  },
-  {
    "player": "Joey",
    "canonical_name": "snaxx",
    "stat": "PA",
-   "current_total": 109,
+   "current_total": 114,
    "next_milestone_display": 150,
-   "remaining": 41,
-   "progress_to_next": 0.727,
+   "remaining": 36,
+   "progress_to_next": 0.76,
    "club_label": "8 in club",
    "slug": "snaxx"
   },
   {
    "player": "Glove",
    "canonical_name": "glove",
-   "stat": "Total Bases",
-   "current_total": 259,
+   "stat": "PA",
+   "current_total": 263,
    "next_milestone_display": 300,
-   "remaining": 41,
-   "progress_to_next": 0.863,
+   "remaining": 37,
+   "progress_to_next": 0.877,
+   "club_label": "First to 300",
+   "slug": "glove"
+  },
+  {
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "Total Bases",
+   "current_total": 262,
+   "next_milestone_display": 300,
+   "remaining": 38,
+   "progress_to_next": 0.873,
    "club_label": "1 in club",
    "slug": "glove"
+  },
+  {
+   "player": "Tim",
+   "canonical_name": "tim",
+   "stat": "Total Bases",
+   "current_total": 162,
+   "next_milestone_display": 200,
+   "remaining": 38,
+   "progress_to_next": 0.81,
+   "club_label": "4 in club",
+   "slug": "tim"
   },
   {
    "player": "Kives",
@@ -1647,52 +1614,52 @@
    "next_milestone_display": 250,
    "remaining": 43,
    "progress_to_next": 0.828,
-   "club_label": "First to 250",
+   "club_label": "2 in club",
    "slug": "kives"
+  },
+  {
+   "player": "Joey",
+   "canonical_name": "snaxx",
+   "stat": "AB",
+   "current_total": 107,
+   "next_milestone_display": 150,
+   "remaining": 43,
+   "progress_to_next": 0.713,
+   "club_label": "8 in club",
+   "slug": "snaxx"
+  },
+  {
+   "player": "Porter",
+   "canonical_name": "porter",
+   "stat": "AB",
+   "current_total": 206,
+   "next_milestone_display": 250,
+   "remaining": 44,
+   "progress_to_next": 0.824,
+   "club_label": "2 in club",
+   "slug": "porter"
   },
   {
    "player": "Glove",
    "canonical_name": "glove",
-   "stat": "PA",
-   "current_total": 256,
-   "next_milestone_display": 300,
+   "stat": "Hits",
+   "current_total": 156,
+   "next_milestone_display": 200,
    "remaining": 44,
-   "progress_to_next": 0.853,
-   "club_label": "First to 300",
+   "progress_to_next": 0.78,
+   "club_label": "First to 200",
    "slug": "glove"
   },
   {
    "player": "Jason",
    "canonical_name": "jason",
    "stat": "Total Bases",
-   "current_total": 55,
+   "current_total": 56,
    "next_milestone_display": 100,
-   "remaining": 45,
-   "progress_to_next": 0.55,
+   "remaining": 44,
+   "progress_to_next": 0.56,
    "club_label": "8 in club",
    "slug": "jason"
-  },
-  {
-   "player": "Joey",
-   "canonical_name": "snaxx",
-   "stat": "AB",
-   "current_total": 103,
-   "next_milestone_display": 150,
-   "remaining": 47,
-   "progress_to_next": 0.687,
-   "club_label": "8 in club",
-   "slug": "snaxx"
-  },
-  {
-   "player": "Glove",
-   "canonical_name": "glove",
-   "stat": "Hits",
-   "current_total": 153,
-   "next_milestone_display": 200,
-   "remaining": 47,
-   "progress_to_next": 0.765,
-   "club_label": "First to 200",
-   "slug": "glove"
   },
   {
    "player": "Kives",
@@ -1706,151 +1673,184 @@
    "slug": "kives"
   },
   {
-   "player": "Porter",
-   "canonical_name": "porter",
-   "stat": "AB",
-   "current_total": 202,
-   "next_milestone_display": 250,
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "stat": "Hits",
+   "current_total": 152,
+   "next_milestone_display": 200,
    "remaining": 48,
-   "progress_to_next": 0.808,
-   "club_label": "First to 250",
-   "slug": "porter"
+   "progress_to_next": 0.76,
+   "club_label": "First to 200",
+   "slug": "tristan"
+  },
+  {
+   "player": "Jason",
+   "canonical_name": "jason",
+   "stat": "PA",
+   "current_total": 201,
+   "next_milestone_display": 250,
+   "remaining": 49,
+   "progress_to_next": 0.804,
+   "club_label": "3 in club",
+   "slug": "jason"
+  },
+  {
+   "player": "Glove",
+   "canonical_name": "glove",
+   "stat": "AB",
+   "current_total": 250,
+   "next_milestone_display": 300,
+   "remaining": 50,
+   "progress_to_next": 0.833,
+   "club_label": "First to 300",
+   "slug": "glove"
+  },
+  {
+   "player": "Tristan",
+   "canonical_name": "tristan",
+   "stat": "AB",
+   "current_total": 250,
+   "next_milestone_display": 300,
+   "remaining": 50,
+   "progress_to_next": 0.833,
+   "club_label": "First to 300",
+   "slug": "tristan"
   }
  ],
  "recent": [
   {
-   "player": "Corey",
-   "slug": "corey",
-   "stat": "Singles",
-   "milestone": 75,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
+   "player": "Duff",
+   "slug": "duff",
+   "stat": "Hits",
+   "milestone": 100,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
    "label": "Summer 2026"
   },
   {
-   "player": "Corey",
-   "slug": "corey",
+   "player": "Duff",
+   "slug": "duff",
+   "stat": "Singles",
+   "milestone": 75,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Duff",
+   "slug": "duff",
    "stat": "RBI",
    "milestone": 50,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Glove",
+   "slug": "glove",
+   "stat": "AB",
+   "milestone": 250,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Glove",
+   "slug": "glove",
+   "stat": "Runs",
+   "milestone": 125,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Glove",
+   "slug": "glove",
+   "stat": "Walks",
+   "milestone": 10,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
    "label": "Summer 2026"
   },
   {
    "player": "Jason",
    "slug": "jason",
-   "stat": "Singles",
+   "stat": "PA",
+   "milestone": 200,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Joel",
+   "slug": "joel",
+   "stat": "Hits",
    "milestone": 50,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "JJ",
-   "slug": "jj",
-   "stat": "RBI",
-   "milestone": 75,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "JJ",
-   "slug": "jj",
-   "stat": "Runs",
-   "milestone": 100,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
    "label": "Summer 2026"
   },
   {
    "player": "Porter",
    "slug": "porter",
-   "stat": "AB",
-   "milestone": 200,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
+   "stat": "Singles",
+   "milestone": 75,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
    "label": "Summer 2026"
   },
   {
-   "player": "Joey",
-   "slug": "snaxx",
+   "player": "Tristan",
+   "slug": "tristan",
    "stat": "AB",
-   "milestone": 100,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
+   "milestone": 250,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
    "label": "Summer 2026"
   },
   {
-   "player": "Tim",
-   "slug": "tim",
+   "player": "Tristan",
+   "slug": "tristan",
    "stat": "Hits",
+   "milestone": 150,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Walsh",
+   "slug": "walsh",
+   "stat": "Doubles",
+   "milestone": 10,
+   "date": "2026-07-22",
+   "opponent": "Bleacher Bums",
+   "label": "Summer 2026"
+  },
+  {
+   "player": "Corey",
+   "slug": "corey",
+   "stat": "Singles",
    "milestone": 75,
    "date": "2026-07-15",
    "opponent": "Zero to Hiro",
    "label": "Summer 2026"
   },
   {
-   "player": "Tristan",
-   "slug": "tristan",
-   "stat": "Games",
-   "milestone": 75,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "Tristan",
-   "slug": "tristan",
-   "stat": "HR",
+   "player": "Corey",
+   "slug": "corey",
+   "stat": "RBI",
    "milestone": 50,
    "date": "2026-07-15",
    "opponent": "Zero to Hiro",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "Tristan",
-   "slug": "tristan",
-   "stat": "Runs",
-   "milestone": 125,
-   "date": "2026-07-15",
-   "opponent": "Zero to Hiro",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "Glove",
-   "slug": "glove",
-   "stat": "PA",
-   "milestone": 250,
-   "date": "2026-07-08",
-   "opponent": "Brew Crew",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "Glove",
-   "slug": "glove",
-   "stat": "Hits",
-   "milestone": 150,
-   "date": "2026-07-08",
-   "opponent": "Brew Crew",
    "label": "Summer 2026"
   },
   {
    "player": "Jason",
    "slug": "jason",
-   "stat": "Hits",
+   "stat": "Singles",
    "milestone": 50,
-   "date": "2026-07-08",
-   "opponent": "Brew Crew",
-   "label": "Summer 2026"
-  },
-  {
-   "player": "Kives",
-   "slug": "kives",
-   "stat": "Doubles",
-   "milestone": 20,
-   "date": "2026-07-08",
-   "opponent": "Brew Crew",
+   "date": "2026-07-15",
+   "opponent": "Zero to Hiro",
    "label": "Summer 2026"
   }
  ]

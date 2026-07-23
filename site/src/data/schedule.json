@@ -3,7 +3,7 @@
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
   "slug": "summer-2026",
-  "record": "5-1",
+  "record": "6-2",
   "games": [
    {
     "week_label": "Week 2",
@@ -96,12 +96,12 @@
     "opponent_name": "Bleacher Bums",
     "home_away": "away",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "L",
+    "runs_for": 2.0,
+    "runs_against": 12.0
    },
    {
     "week_label": "Week 5",
@@ -110,12 +110,12 @@
     "opponent_name": "Bleacher Bums",
     "home_away": "home",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "W",
+    "runs_for": 17.0,
+    "runs_against": 6.0
    },
    {
     "week_label": "Week 6",

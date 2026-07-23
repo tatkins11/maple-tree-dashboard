@@ -1,7 +1,7 @@
 {
  "team": "Maple Tree",
- "generated": "2026-07-21T08:50:34",
- "data_through": "2026-07-15",
+ "generated": "2026-07-23T11:00:59",
+ "data_through": "2026-07-22",
  "current_season": {
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
@@ -39,7 +39,7 @@
    "slug": "soviet-sluggers-summer-2021"
   }
  ],
- "record": "5-1",
+ "record": "6-2",
  "seed_race": {
   "headline": "Maple Tree is the #3 seed at 5-1 (+23), 1 game back of Sandlot Vibes for the #1 seed with 6 to play.",
   "team_seed": 3,
@@ -225,22 +225,30 @@
   ]
  },
  "potw": {
-  "player": "Joel",
-  "canonical_name": "joel",
-  "game_date": "2026-07-15",
-  "opponents": "Zero to Hiro",
+  "player": "Harm",
+  "canonical_name": "harm",
+  "game_date": "2026-07-22",
+  "opponents": "Bleacher Bums",
   "games": 2,
-  "game_score": 5.7,
-  "ab": 7,
-  "hits": 5,
-  "hr": 1,
-  "rbi": 5,
-  "r": 5,
-  "bb": 0,
-  "tb": 10,
-  "slug": "joel"
+  "game_score": 7.699999999999999,
+  "ab": 4,
+  "hits": 4,
+  "hr": 3,
+  "rbi": 10,
+  "r": 3,
+  "bb": 1,
+  "tb": 13,
+  "slug": "harm"
  },
  "weekly_results": [
+  {
+   "game_date": "2026-07-22",
+   "result_display": "Split 1-1 (2-12, 17-6)",
+   "wins": 1,
+   "losses": 1,
+   "runs_for": 19,
+   "runs_against": 18
+  },
   {
    "game_date": "2026-07-15",
    "result_display": "Swept 2-0 (13-12, 16-11)",
@@ -267,19 +275,19 @@
   }
  ],
  "milestones": [
+  "Tristan needs 5 more doubles to break the single-season Doubles record (10, Tim)",
+  "Glove is 1 from 100 career singles",
+  "Tristan is 1 from 30 career doubles",
   "Jason is 1 from 25 career walks",
   "Kives is 1 from 100 career rbi",
-  "Porter is 1 from 75 career singles",
-  "Kives is 1 from 15 career hr",
-  "Porter is 1 from 10 career triples",
-  "Duff is 1 from 100 career hits"
+  "Duff is 1 from 250 career pa"
  ],
  "next_game": {
-  "week_label": "Week 5",
-  "date_display": "Wed 07/22/26",
-  "time_display": "8:30 PM",
-  "opponent_display": "Bleacher Bums",
-  "home_away_display": "Away",
+  "week_label": "Week 6",
+  "date_display": "Wed 07/29/26",
+  "time_display": "6:30 PM",
+  "opponent_display": "Sandlot Vibes",
+  "home_away_display": "Home",
   "location_or_field": "Boncosky Green"
  }
 }

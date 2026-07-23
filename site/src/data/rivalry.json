@@ -126,6 +126,20 @@
   "record": "0-3"
  },
  {
+  "opponent": "Bleacher Bums",
+  "games": 2,
+  "wins": 1,
+  "losses": 1,
+  "ties": 0,
+  "runs_for": 19,
+  "runs_against": 18,
+  "run_diff": 1,
+  "first_played": "2026-07-22",
+  "last_played": "2026-07-22",
+  "win_pct": 0.5,
+  "record": "1-1"
+ },
+ {
   "opponent": "Brew Crew",
   "games": 2,
   "wins": 1,
