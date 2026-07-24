@@ -1,0 +1,160 @@
+{
+  "_note": "Real innings scraped from the GameChanger linescore (web.gc.com), keyed by season slug and matched on our/their runs. innings=null means that game has no inning-by-inning linescore in GameChanger (entered as a final score) - NOT zero innings. Seasons absent here are simply not scraped yet; the extract falls back to innings_batted_est for those.",
+  "_scraped": "2026-07-23",
+  "soviet-sluggers-summer-2021": [
+    {
+      "gc_id": "baff2012",
+      "us": 6,
+      "them": 12,
+      "innings": null,
+      "why_null": "single-column linescore - entered as a final score only"
+    },
+    {
+      "gc_id": "b5d1deb3",
+      "us": 10,
+      "them": 6,
+      "innings": 7
+    },
+    {
+      "gc_id": "4bf2038e",
+      "us": 17,
+      "them": 7,
+      "innings": 6
+    },
+    {
+      "gc_id": "a9d6929a",
+      "us": 17,
+      "them": 19,
+      "innings": 7
+    },
+    {
+      "gc_id": "697c763e",
+      "us": 14,
+      "them": 21,
+      "innings": 7
+    },
+    {
+      "gc_id": "f3fccd96",
+      "us": 6,
+      "them": 9,
+      "innings": 7
+    },
+    {
+      "gc_id": "0d0a0d4a",
+      "us": 18,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "3aa262db",
+      "us": 15,
+      "them": 3,
+      "innings": 5
+    },
+    {
+      "gc_id": "ceb3af7b",
+      "us": 18,
+      "them": 9,
+      "innings": 7
+    },
+    {
+      "gc_id": "8daeebdd",
+      "us": 23,
+      "them": 26,
+      "innings": 7
+    },
+    {
+      "gc_id": "f214cf7e",
+      "us": 3,
+      "them": 12,
+      "innings": 7
+    },
+    {
+      "gc_id": "3299096d",
+      "us": 1,
+      "them": 13,
+      "innings": 5
+    },
+    {
+      "gc_id": "4ce42cf1",
+      "us": 5,
+      "them": 15,
+      "innings": 6
+    },
+    {
+      "gc_id": "8e3c4401",
+      "us": 9,
+      "them": 20,
+      "innings": 7
+    },
+    {
+      "gc_id": "20612c66",
+      "us": 11,
+      "them": 15,
+      "innings": 9
+    },
+    {
+      "gc_id": "36ef4bca",
+      "us": 0,
+      "them": 15,
+      "innings": 5
+    },
+    {
+      "gc_id": "cef64b0e",
+      "us": 19,
+      "them": 9,
+      "innings": 6
+    },
+    {
+      "gc_id": "0514f9dd",
+      "us": null,
+      "them": null,
+      "innings": null,
+      "why_null": "no linescore rendered - likely a bye/unplayed event"
+    }
+  ],
+  "fall-2025": [
+    {
+      "gc_id": "fe7215ac",
+      "us": 10,
+      "them": 15,
+      "opponent": "Bullseyes",
+      "innings": 7
+    },
+    {
+      "gc_id": "a269826b",
+      "us": 24,
+      "them": 14,
+      "opponent": "Bullseyes",
+      "innings": 5
+    },
+    {
+      "gc_id": "11089143",
+      "us": 3,
+      "them": 13,
+      "opponent": "Yard goats",
+      "innings": 5
+    },
+    {
+      "gc_id": "0e57b110",
+      "us": 2,
+      "them": 11,
+      "opponent": "Yard goats",
+      "innings": 5
+    },
+    {
+      "gc_id": "88f40475",
+      "us": 10,
+      "them": 26,
+      "opponent": "No dice",
+      "innings": 5
+    },
+    {
+      "gc_id": "80ec0978",
+      "us": 19,
+      "them": 27,
+      "opponent": "No dice",
+      "innings": 7
+    }
+  ]
+}

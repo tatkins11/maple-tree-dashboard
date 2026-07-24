@@ -21,12 +21,13 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.2.0"
+EXTRACT_VERSION = "1.2.1"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
 DB = REPO / "db" / "all_seasons_identity.sqlite"
 BOXGAMES = REPO / "data" / "processed" / "game_boxscore_games.csv"
+GC_INNINGS = REPO / "data" / "processed" / "gc_innings" / "scraped.json"
 OUT = Path("C:/MapleTreeGame/data/imports")
 
 # Park dimensions — confirmed by Brian 2026-07-23. The org plays the Boncosky complex;
@@ -123,6 +124,23 @@ def bb_from_csv(path: Path, name2slug: dict) -> dict[str, dict]:
     return out
 
 
+def scraped_innings() -> dict:
+    """{(season_slug, runs_for, runs_against): innings} scraped from GameChanger's
+    linescore. Historical backfill; games with no inning-by-inning linescore are absent
+    (never zero-filled). Same-score games in one season are matched in listed order."""
+    out = {}
+    if not GC_INNINGS.exists():
+        return out
+    raw = json.loads(GC_INNINGS.read_text(encoding="utf-8"))
+    for season, games in raw.items():
+        if season.startswith("_") or not isinstance(games, list):
+            continue
+        for g in games:
+            if g.get("innings") and g.get("us") is not None:
+                out.setdefault((season, int(g["us"]), int(g["them"])), []).append(float(g["innings"]))
+    return out
+
+
 def real_innings() -> dict:
     """{(date, opponent, team_score): innings} — REAL innings read off the GameChanger
     linescore at sync time. Blank until a week is captured; historical games pending backfill."""
@@ -195,6 +213,7 @@ def main():
     sched_by_slug = {s["slug"]: s for s in schedule}
     boxes = per_game_box()
     innings_real = real_innings()
+    innings_gc = scraped_innings()
     box_hit = box_miss = inn_known = 0
 
     # prune stale per-season files (idempotent clean overwrite)
@@ -266,6 +285,10 @@ def main():
             # early-ending signal — a full game is ~21 outs, so a run-rule or time-capped
             # game lands well under that. Flagged unreliable when the box is clearly partial.
             inn_val = innings_real.get((g.get("game_date"), (g.get("opponent_name") or "").strip(), rf_i))
+            if inn_val is None and rf_i is not None and ra_i is not None:
+                pool = innings_gc.get((slug, rf_i, ra_i))
+                if pool:
+                    inn_val = pool.pop(0)          # consume so duplicate scores map 1:1
             if inn_val is not None:
                 inn_known += 1
             est = None
@@ -375,6 +398,11 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.2.1": "Historical innings BACKFILL from the GameChanger linescore (2021 + part of "
+                     "Fall 2025). Correction to 1.1.3's claim that pre-2026 games lack linescores: "
+                     "that was generalized from ONE game. Nearly all DO have them — 16 of 18 in "
+                     "2021. Remaining seasons are unscraped, not unavailable; they fall back to "
+                     "innings_batted_est.",
             "1.2.0": "`innings` is now REAL where captured, not permanently null. GameChanger's "
                      "linescore is in the weekly box-score screenshots and is now recorded at sync "
                      "time (new `innings` column on game_boxscore_games.csv). Week 5 backfilled "
