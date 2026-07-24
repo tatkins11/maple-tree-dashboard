@@ -21,7 +21,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.2.1"
+EXTRACT_VERSION = "1.2.2"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
@@ -127,7 +127,12 @@ def bb_from_csv(path: Path, name2slug: dict) -> dict[str, dict]:
 def scraped_innings() -> dict:
     """{(season_slug, runs_for, runs_against): innings} scraped from GameChanger's
     linescore. Historical backfill; games with no inning-by-inning linescore are absent
-    (never zero-filled). Same-score games in one season are matched in listed order."""
+    (never zero-filled). Same-score games in one season are matched in listed order.
+
+    `_overrides` covers the handful of games where our scorebook and GameChanger's
+    linescore disagree on the final, so the score key can't match. Those are listed by
+    hand and ONLY where the opponent independently confirms the pairing — a disagreement
+    we can't confirm stays null rather than getting force-matched."""
     out = {}
     if not GC_INNINGS.exists():
         return out
@@ -138,6 +143,11 @@ def scraped_innings() -> dict:
         for g in games:
             if g.get("innings") and g.get("us") is not None:
                 out.setdefault((season, int(g["us"]), int(g["them"])), []).append(float(g["innings"]))
+    for key, ov in (raw.get("_overrides") or {}).items():
+        if key.startswith("_"):
+            continue
+        season, us, them = key.split("|")
+        out.setdefault((season, int(us), int(them)), []).append(float(ov["innings"]))
     return out
 
 
@@ -366,10 +376,22 @@ def main():
                  f"uses 'final'). Per-game `box` present for {box_hit} of {box_hit + box_miss} "
                  f"completed games; null for the rest.")
     NOTES.append(f"`innings` is REAL where present ({inn_known} of {box_hit + box_miss} completed "
-                 "games) — read off the GameChanger linescore in the weekly box-score screenshots "
-                 "and captured at sync time. Null means not yet backfilled, NOT zero innings. Where "
+                 "games) — read off the GameChanger linescore, captured at sync time for the current "
+                 "week and scraped from web.gc.com for every prior season. The backfill is COMPLETE: "
+                 "all six seasons have been visited game by game. Null now means GameChanger itself "
+                 "has no usable linescore for that game, NOT zero innings and NOT 'pending'. Where "
                  "null, use innings_batted_est. (The season CSVs' INN column is fielding innings by "
                  "position and is empty — it is not this.)")
+    NOTES.append("The 4 remaining null `innings`: two 2021 games (2021-05-26 vs Balls Deep, "
+                 "2021-07-21 vs Ringers) were entered as final scores with no inning-by-inning "
+                 "line; two 2025-07-23 games vs No Dice (6-16 and 0-20) could not be confidently "
+                 "paired — our scorebook and GameChanger disagree on the finals and GameChanger "
+                 "lists every 2025 opponent as 'TBD', so there is no second key to confirm on. "
+                 "They are left null rather than force-matched.")
+    NOTES.append("LEAGUE MAXIMUM IS 8 INNINGS (confirmed by Brian). GameChanger renders a spare "
+                 "trailing column on some linescores (away blank or 0, home 'X'); it is a rendering "
+                 "artifact, not a played inning, and is trimmed during the scrape. Anything reading "
+                 "9+ innings from this data is a bug.")
     NOTES.append("`innings_batted_est` is DERIVED, not source: (AB - H + SF) / 3. It does NOT use the "
                  "scorebook's stored `outs` column, which is under-populated (disagrees with AB-H "
                  "in 76 of 82 games, always low). Use it as "
@@ -398,6 +420,15 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.2.2": "Innings backfill COMPLETE — all six seasons scraped from the GameChanger "
+                     "linescore (84 games visited, 79 with a real linescore). Two rules applied "
+                     "during the scrape: (a) trailing all-empty inning columns are TRIMMED — "
+                     "GameChanger renders a spare column (away blank/0, home 'X') on some games, "
+                     "which had produced one bogus 9-inning game; Brian confirms the league max is "
+                     "8 and the team has never played 9; (b) games showing 0-0 with no linescore "
+                     "are recorded as null innings (unplayed/forfeit), never as 1. Also noted: "
+                     "GameChanger's linescore for 2026-07-22 vs Bleacher Bums totals 11 for the "
+                     "opponent; the verified final was 12, and the extract keys to our data.",
             "1.2.1": "Historical innings BACKFILL from the GameChanger linescore (2021 + part of "
                      "Fall 2025). Correction to 1.1.3's claim that pre-2026 games lack linescores: "
                      "that was generalized from ONE game. Nearly all DO have them — 16 of 18 in "
@@ -465,7 +496,7 @@ def main():
             "counts": "int",
             "batted_ball rates (ld/fb/gb/hh)": "float 0..1 (share of balls in play), or null when untracked",
             "missing": "null + a manifest note — never zero-filled",
-            "innings": "always null (never captured); use innings_batted_est, which is DERIVED",
+            "innings": "REAL innings played, from the GameChanger linescore; null = no linescore on GameChanger (see notes). Max is 8 — the league never plays 9",
         },
         "notes": NOTES,
     }

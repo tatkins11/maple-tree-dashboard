@@ -1,6 +1,6 @@
 {
-  "_note": "Real innings scraped from the GameChanger linescore (web.gc.com), keyed by season slug and matched on our/their runs. innings=null means that game has no inning-by-inning linescore in GameChanger (entered as a final score) - NOT zero innings. Seasons absent here are simply not scraped yet; the extract falls back to innings_batted_est for those.",
-  "_scraped": "2026-07-23",
+  "_note": "Real innings scraped from the GameChanger linescore (web.gc.com), keyed by season slug and matched on our/their runs. innings=null means that game has no inning-by-inning linescore in GameChanger (entered as a final score) - NOT zero innings. Trailing all-empty inning columns are trimmed: GameChanger renders a spare column (away blank/0, home 'X') on some games. League maximum is 8 innings - Brian confirmed the team has never played 9.",
+  "_scraped": "2026-07-24",
   "soviet-sluggers-summer-2021": [
     {
       "gc_id": "baff2012",
@@ -91,7 +91,8 @@
       "gc_id": "20612c66",
       "us": 11,
       "them": 15,
-      "innings": 9
+      "innings": 8,
+      "note": "linescore rendered an empty 9th (away 0, home X); all runs land in 8. League max is 8."
     },
     {
       "gc_id": "36ef4bca",
@@ -155,6 +156,391 @@
       "them": 27,
       "opponent": "No dice",
       "innings": 7
+    },
+    {
+      "gc_id": "3e78ff2b",
+      "us": 8,
+      "them": 13,
+      "innings": 7
+    },
+    {
+      "gc_id": "acf50724",
+      "us": 22,
+      "them": 19,
+      "innings": 7
+    },
+    {
+      "gc_id": "f4a38845",
+      "us": 16,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "b5e10505",
+      "us": 8,
+      "them": 20,
+      "innings": 6
+    },
+    {
+      "gc_id": "64d5709b",
+      "us": 11,
+      "them": 18,
+      "innings": 5
+    },
+    {
+      "gc_id": "7db825f4",
+      "us": 21,
+      "them": 29,
+      "innings": 6
+    },
+    {
+      "gc_id": "8a34bf91",
+      "us": 13,
+      "them": 14,
+      "innings": 7
+    },
+    {
+      "gc_id": "fac16f1c",
+      "us": 0,
+      "them": 0,
+      "innings": null,
+      "note": "no inning-by-inning linescore on GameChanger"
     }
-  ]
+  ],
+  "spring-2026": [
+    {
+      "gc_id": "ccd4e00f",
+      "us": 7,
+      "them": 17,
+      "innings": 5
+    },
+    {
+      "gc_id": "9d95c9bc",
+      "us": 17,
+      "them": 18,
+      "innings": 7
+    },
+    {
+      "gc_id": "6fd5b5e9",
+      "us": 5,
+      "them": 16,
+      "innings": 6
+    },
+    {
+      "gc_id": "4aef8ba1",
+      "us": 25,
+      "them": 24,
+      "innings": 7
+    },
+    {
+      "gc_id": "373c25b5",
+      "us": 16,
+      "them": 17,
+      "innings": 7
+    },
+    {
+      "gc_id": "22d1bcd5",
+      "us": 4,
+      "them": 16,
+      "innings": 4
+    },
+    {
+      "gc_id": "9b79c4a6",
+      "us": 23,
+      "them": 9,
+      "innings": 5
+    },
+    {
+      "gc_id": "7735c377",
+      "us": 14,
+      "them": 23,
+      "innings": 7
+    },
+    {
+      "gc_id": "c36430c8",
+      "us": 10,
+      "them": 20,
+      "innings": 6
+    },
+    {
+      "gc_id": "00fe773e",
+      "us": 5,
+      "them": 17,
+      "innings": 4
+    },
+    {
+      "gc_id": "79da3717",
+      "us": 9,
+      "them": 11,
+      "innings": 6
+    },
+    {
+      "gc_id": "61fdf070",
+      "us": 8,
+      "them": 17,
+      "innings": 7
+    },
+    {
+      "gc_id": "a70e33da",
+      "us": 8,
+      "them": 18,
+      "innings": 6
+    }
+  ],
+  "smoking-bunts-summer-2022": [
+    {
+      "gc_id": "40f6518e",
+      "us": 17,
+      "them": 2,
+      "innings": 5
+    },
+    {
+      "gc_id": "05c2084c",
+      "us": 15,
+      "them": 5,
+      "innings": 6
+    },
+    {
+      "gc_id": "44a0c64c",
+      "us": 3,
+      "them": 15,
+      "innings": 5
+    },
+    {
+      "gc_id": "7f98d409",
+      "us": 5,
+      "them": 18,
+      "innings": 6
+    },
+    {
+      "gc_id": "2bbf4d3a",
+      "us": 13,
+      "them": 7,
+      "innings": 7
+    },
+    {
+      "gc_id": "6f4f60d1",
+      "us": 19,
+      "them": 6,
+      "innings": 5
+    },
+    {
+      "gc_id": "105895ec",
+      "us": 10,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "c00eec40",
+      "us": 3,
+      "them": 15,
+      "innings": 5
+    },
+    {
+      "gc_id": "3629c5ce",
+      "us": 13,
+      "them": 19,
+      "innings": 7
+    },
+    {
+      "gc_id": "eca77e33",
+      "us": 6,
+      "them": 19,
+      "innings": 5
+    },
+    {
+      "gc_id": "2f544efd",
+      "us": 16,
+      "them": 5,
+      "innings": 6
+    },
+    {
+      "gc_id": "3c1af483",
+      "us": 22,
+      "them": 19,
+      "innings": 6
+    },
+    {
+      "gc_id": "339b5451",
+      "us": 22,
+      "them": 24,
+      "innings": 7
+    },
+    {
+      "gc_id": "3c9f4c54",
+      "us": 21,
+      "them": 8,
+      "innings": 5
+    },
+    {
+      "gc_id": "d4340b17",
+      "us": 11,
+      "them": 9,
+      "innings": 6
+    },
+    {
+      "gc_id": "c941eb88",
+      "us": 17,
+      "them": 6,
+      "innings": 6
+    },
+    {
+      "gc_id": "8220f840",
+      "us": 3,
+      "them": 12,
+      "innings": 6
+    }
+  ],
+  "tappers-summer-2025": [
+    {
+      "gc_id": "0d180d51",
+      "us": 0,
+      "them": 0,
+      "innings": null,
+      "note": "0-0 on GameChanger; no linescore recorded"
+    },
+    {
+      "gc_id": "18f1efbf",
+      "us": 9,
+      "them": 12,
+      "innings": 7
+    },
+    {
+      "gc_id": "b3767787",
+      "us": 4,
+      "them": 16,
+      "innings": 5
+    },
+    {
+      "gc_id": "91295190",
+      "us": 2,
+      "them": 18,
+      "innings": 5
+    },
+    {
+      "gc_id": "335878a6",
+      "us": 3,
+      "them": 17,
+      "innings": 5
+    },
+    {
+      "gc_id": "22b262c7",
+      "us": 14,
+      "them": 0,
+      "innings": 4
+    },
+    {
+      "gc_id": "58ee38fb",
+      "us": 10,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "d2cd9c8c",
+      "us": 11,
+      "them": 22,
+      "innings": 6
+    },
+    {
+      "gc_id": "6bb6b67e",
+      "us": 9,
+      "them": 19,
+      "innings": 6
+    },
+    {
+      "gc_id": "b1c300eb",
+      "us": 6,
+      "them": 0,
+      "innings": 5
+    },
+    {
+      "gc_id": "3042bb34",
+      "us": 0,
+      "them": 0,
+      "innings": null,
+      "note": "0-0 on GameChanger; no linescore recorded"
+    },
+    {
+      "gc_id": "22859649",
+      "us": 16,
+      "them": 7,
+      "innings": 7
+    },
+    {
+      "gc_id": "07a2ea16",
+      "us": 10,
+      "them": 18,
+      "innings": 7
+    },
+    {
+      "gc_id": "e42f6e0f",
+      "us": 7,
+      "them": 17,
+      "innings": 4
+    }
+  ],
+  "summer-2026": [
+    {
+      "gc_id": "2460f093",
+      "us": 12,
+      "them": 2,
+      "innings": 6
+    },
+    {
+      "gc_id": "8c26dfa8",
+      "us": 18,
+      "them": 9,
+      "innings": 6
+    },
+    {
+      "gc_id": "8c8c5f27",
+      "us": 10,
+      "them": 5,
+      "innings": 7
+    },
+    {
+      "gc_id": "790722bf",
+      "us": 4,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "4fd701c3",
+      "us": 13,
+      "them": 12,
+      "innings": 7
+    },
+    {
+      "gc_id": "cada81c0",
+      "us": 16,
+      "them": 11,
+      "innings": 7
+    },
+    {
+      "gc_id": "0de207e2",
+      "us": 2,
+      "them": 12,
+      "innings": 4,
+      "note": "GameChanger linescore totals 11 for Bleacher Bums; verified final was 12 (keyed to our data)"
+    },
+    {
+      "gc_id": "4ac34054",
+      "us": 17,
+      "them": 6,
+      "innings": 6
+    }
+  ],
+  "_overrides": {
+    "_why": "Games where OUR recorded score and GameChanger's linescore disagree, so the score-key match fails. Listed only where the opponent independently confirms the pairing. Keyed 'season|our_runs|their_runs' -> innings.",
+    "spring-2026|5|15": {
+      "innings": 6,
+      "gc_id": "6fd5b5e9",
+      "note": "2026-04-29 vs Bullseyes. GameChanger linescore totals 16 for Bullseyes, our scorebook has 15. Opponent confirms the pairing."
+    },
+    "spring-2026|5|17": {
+      "innings": 7,
+      "gc_id": "61fdf070",
+      "note": "2026-06-03 vs No Dice. GameChanger has us at 8, our scorebook has 5. Opponent confirms the pairing (the season's other 5-17 is vs cacheouts and matched exactly)."
+    }
+  }
 }

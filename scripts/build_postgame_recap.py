@@ -111,10 +111,23 @@ def main():
         wanted = [a.strip() for a in args.feature_cards.split(",") if a.strip()]
         featured = [c for c in cards if c["asset"] in wanted]
     else:
-        featured = [c for c in cards
+        # The week's drop is BOTH: event/special cards captioned for this week, AND every
+        # milestone card whose milestone actually fell tonight. Matching only on a "Week N"
+        # caption missed the entire milestone batch, since those are captioned by rank.
+        reached_keys = {(e["slug"], e["stat"], e["milestone"])
+                        for e in milestones["recent"] if e["date"] == date}
+        specials = [c for c in cards
                     if c["kind"] == "special" and week_label
                     and week_label.lower() in (c.get("caption") or "").lower()]
-    featured = featured[:2]
+        miles = sorted([c for c in cards
+                        if c["kind"] == "milestone"
+                        and (c.get("slug"), c.get("stat"), c.get("value")) in reached_keys],
+                       key=lambda x: -(x.get("rating") or 0))
+        seen, featured = set(), []
+        for card_ in specials + miles:          # specials headline, milestones follow
+            if card_["asset"] not in seen:
+                seen.add(card_["asset"])
+                featured.append(card_)
 
     from datetime import datetime
     d = datetime.fromisoformat(date)
@@ -563,8 +576,9 @@ def main():
         _txt(c, W - 36, H - 58, "fresh drops from the clubhouse printer", "Helvetica-Oblique", 9, TAN, align="r")
 
         cw = 236
-        xs = [(W - cw) / 2] if len(featured) == 1 else [45, W - 45 - cw]
-        for x0, card in zip(xs, featured):
+        hero = featured[:2]          # marquee treatment, full write-up
+        xs = [(W - cw) / 2] if len(hero) == 1 else [45, W - 45 - cw]
+        for x0, card in zip(xs, hero):
             path = prep_card_hd(card["asset"])
             img = Image.open(path)
             ch = cw * (img.size[1] / img.size[0])
@@ -595,6 +609,43 @@ def main():
         _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  TRADING CARDS", "Helvetica-Bold", 8, BARK, cs=1)
         _txt(c, W - 36, 50, "flip every card at mapletreesoftball.netlify.app/cards", "Helvetica", 8, MUTED, align="r")
         c.showPage()
+
+        # ===== THE FULL DROP: every other card minted this week, as a grid =====
+        rest, GCW, COLS, PER = featured[2:], 112, 4, 12
+        gap = (W - 72 - COLS * GCW) / (COLS - 1)
+        for pi in range(0, len(rest), PER):
+            chunk = rest[pi:pi + PER]
+            c.setFillColor(PAPER)
+            c.rect(0, 0, W, H, stroke=0, fill=1)
+            c.setFillColor(BARK)
+            c.rect(0, H - 72, W, 72, stroke=0, fill=1)
+            more = f"  ·  {pi // PER + 2}" if len(rest) > PER else ""
+            _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
+                 f"{week_label.upper() or date_pretty.upper()}  ·  THE FULL DROP{more}",
+                 "Helvetica-Bold", 8.5, TAN, cs=2)
+            _txt(c, 36, H - 58, "EVERY NEW CARD THIS WEEK", "Helvetica-Bold", 24, WHITE, cs=1)
+            _txt(c, W - 36, H - 58, f"{len(featured)} cards minted", "Helvetica-Oblique", 9, TAN, align="r")
+            for i, card in enumerate(chunk):
+                x0 = 36 + (i % COLS) * (GCW + gap)
+                path = prep_card_hd(card["asset"])
+                im = Image.open(path)
+                gch = GCW * (im.size[1] / im.size[0])
+                y0 = (H - 100) - (i // COLS) * (gch + 38) - gch
+                c.drawImage(str(path), x0, y0, width=GCW, height=gch, mask="auto")
+                c.setStrokeColor(LINE)
+                c.setLineWidth(0.8)
+                c.roundRect(x0 - 4, y0 - 4, GCW + 8, gch + 8, 7, stroke=1, fill=0)
+                _txt(c, x0, y0 - 17, card["player"], "Helvetica-Bold", 9, BARK)
+                sub = (f"{card.get('value')} {card.get('stat')}" if card.get("kind") == "milestone"
+                       else (card.get("series") or "Special Edition"))
+                _txt(c, x0, y0 - 28, str(sub), "Helvetica", 7.5, MUTED)
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.75)
+            c.line(36, 64, W - 36, 64)
+            _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  TRADING CARDS", "Helvetica-Bold", 8, BARK, cs=1)
+            _txt(c, W - 36, 50, "flip every card at mapletreesoftball.netlify.app/cards",
+                 "Helvetica", 8, MUTED, align="r")
+            c.showPage()
 
     c.save()
 
