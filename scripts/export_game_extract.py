@@ -21,11 +21,12 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.1.3"
+EXTRACT_VERSION = "1.2.0"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
 DB = REPO / "db" / "all_seasons_identity.sqlite"
+BOXGAMES = REPO / "data" / "processed" / "game_boxscore_games.csv"
 OUT = Path("C:/MapleTreeGame/data/imports")
 
 # Park dimensions — confirmed by Brian 2026-07-23. The org plays the Boncosky complex;
@@ -122,6 +123,23 @@ def bb_from_csv(path: Path, name2slug: dict) -> dict[str, dict]:
     return out
 
 
+def real_innings() -> dict:
+    """{(date, opponent, team_score): innings} — REAL innings read off the GameChanger
+    linescore at sync time. Blank until a week is captured; historical games pending backfill."""
+    out = {}
+    if not BOXGAMES.exists():
+        return out
+    for r in csv.DictReader(open(BOXGAMES, encoding="utf-8-sig")):
+        v = (r.get("innings") or "").strip()
+        if not v:
+            continue
+        try:
+            out[(r["game_date"], (r["opponent_name"] or "").strip(), int(r["team_score"]))] = float(v)
+        except (ValueError, KeyError):
+            continue
+    return out
+
+
 def per_game_box() -> dict:
     """{(season, date, opponent): [ {team_score, opponent_score, box} ]} — team batting
     line per game, summed from player_game_batting. Doubleheaders share a key, so the
@@ -176,7 +194,8 @@ def main():
     name2slug = _name_map(players_j)
     sched_by_slug = {s["slug"]: s for s in schedule}
     boxes = per_game_box()
-    box_hit = box_miss = 0
+    innings_real = real_innings()
+    box_hit = box_miss = inn_known = 0
 
     # prune stale per-season files (idempotent clean overwrite)
     for f in OUT.glob("players_*.json"):
@@ -246,6 +265,9 @@ def main():
             # in any source), so that stays null. The DERIVED estimate below is the usable
             # early-ending signal — a full game is ~21 outs, so a run-rule or time-capped
             # game lands well under that. Flagged unreliable when the box is clearly partial.
+            inn_val = innings_real.get((g.get("game_date"), (g.get("opponent_name") or "").strip(), rf_i))
+            if inn_val is not None:
+                inn_known += 1
             est = None
             if box and box["outs"] > 0:
                 est = {"value": round(box["outs"] / 3.0, 1),
@@ -261,7 +283,7 @@ def main():
                 "runs_for": rf_i, "runs_against": ra_i,
                 "status": g.get("status"),
                 "box": box,
-                "innings": None,
+                "innings": inn_val,
                 "innings_batted_est": est,
             })
         (OUT / f"games_{slug}.json").write_text(
@@ -320,9 +342,11 @@ def main():
                  f"that gated on status=='completed' and silently nulled every pre-2026 game, which "
                  f"uses 'final'). Per-game `box` present for {box_hit} of {box_hit + box_miss} "
                  f"completed games; null for the rest.")
-    NOTES.append("`innings` is ALWAYS null: GameChanger's per-game innings/linescore was never "
-                 "imported (no source carries it — the season CSVs' INN column is fielding innings "
-                 "by position, and is empty). Not zero-filled, not guessed.")
+    NOTES.append(f"`innings` is REAL where present ({inn_known} of {box_hit + box_miss} completed "
+                 "games) — read off the GameChanger linescore in the weekly box-score screenshots "
+                 "and captured at sync time. Null means not yet backfilled, NOT zero innings. Where "
+                 "null, use innings_batted_est. (The season CSVs' INN column is fielding innings by "
+                 "position and is empty — it is not this.)")
     NOTES.append("`innings_batted_est` is DERIVED, not source: (AB - H + SF) / 3. It does NOT use the "
                  "scorebook's stored `outs` column, which is under-populated (disagrees with AB-H "
                  "in 76 of 82 games, always low). Use it as "
@@ -351,6 +375,11 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.2.0": "`innings` is now REAL where captured, not permanently null. GameChanger's "
+                     "linescore is in the weekly box-score screenshots and is now recorded at sync "
+                     "time (new `innings` column on game_boxscore_games.csv). Week 5 backfilled "
+                     "from its linescores (5 and 6). Historical games stay null pending backfill; "
+                     "innings_batted_est remains the fallback signal.",
             "1.1.3": "Docs only. Full out-accounting recorded (per Brian): SF is an out and IS "
                      "counted; GIDP is 2 outs but is tracked ONLY in 2021, so it is deliberately "
                      "EXCLUDED — folding it in would inflate that one season against the other "
@@ -419,6 +448,7 @@ def main():
           f"{len(opps)} opponents | {len(parks)} parks")
     print(f"  batted-ball coverage: {bb_covered}/{bb_total} player-seasons")
     print(f"  per-game box lines: {box_hit}/{box_hit + box_miss} completed games")
+    print(f"  REAL innings (from linescore): {inn_known}/{box_hit + box_miss}")
     for f in sorted(OUT.glob("*.json")):
         print(f"    {f.name}  ({f.stat().st_size} B)")
 
