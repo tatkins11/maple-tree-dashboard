@@ -17,3 +17,6 @@ data/audits/
 
 # local Claude Code settings
 .claude/settings.local.json
+
+# Generated write-up PDFs — regenerable from scripts/build_*_pdf.py, never committed.
+data/writeups/**/*.pdf
