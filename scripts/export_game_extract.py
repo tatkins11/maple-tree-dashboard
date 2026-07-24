@@ -21,7 +21,7 @@ import sqlite3
 from datetime import date
 from pathlib import Path
 
-EXTRACT_VERSION = "1.2.2"
+EXTRACT_VERSION = "1.2.3"
 REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "site" / "src" / "data"
 RAW = REPO / "data" / "raw" / "season_csv"
@@ -388,10 +388,14 @@ def main():
                  "paired — our scorebook and GameChanger disagree on the finals and GameChanger "
                  "lists every 2025 opponent as 'TBD', so there is no second key to confirm on. "
                  "They are left null rather than force-matched.")
-    NOTES.append("LEAGUE MAXIMUM IS 8 INNINGS (confirmed by Brian). GameChanger renders a spare "
-                 "trailing column on some linescores (away blank or 0, home 'X'); it is a rendering "
-                 "artifact, not a played inning, and is trimmed during the scrape. Anything reading "
-                 "9+ innings from this data is a bug.")
+    NOTES.append("`innings` IS THE RAW LINESCORE COLUMN COUNT. Do NOT trim trailing columns. A final "
+                 "column of away='0' / home='X' is a REAL inning — the visitors batted and were "
+                 "retired scoreless and the home side did not need to bat. v1.2.2 trimmed those as "
+                 "artifacts and lost a real inning from 7 games; v1.2.3 re-scraped all 84 raw. "
+                 "LEAGUE MAXIMUM IS 8 INNINGS (confirmed by Brian), and exactly one game renders a "
+                 "9th: 2021 game 20612c66, where the home side shows 'X' while LOSING 11-15, which "
+                 "is impossible. That one is held at 8 by explicit override. Anything else reading "
+                 "9+ innings is a bug.")
     NOTES.append("`innings_batted_est` is DERIVED, not source: (AB - H + SF) / 3. It does NOT use the "
                  "scorebook's stored `outs` column, which is under-populated (disagrees with AB-H "
                  "in 76 of 82 games, always low). Use it as "
@@ -420,6 +424,18 @@ def main():
         "generated_at": date.today().isoformat(),
         # Contract history — changes are versioned here, never silent.
         "changelog": {
+            "1.2.3": "CORRECTION to v1.2.2's trailing-column trim, which was wrong and cost 7 games "
+                     "a real inning. A final linescore column of away='0' / home='X' is a REAL "
+                     "inning: the visitors batted and were retired scoreless, and the home side "
+                     "did not need to bat. v1.2.2 read that as a rendering artifact and trimmed it. "
+                     "Confirmed against ground truth — the 2026-07-22 Bleacher Bums game was read "
+                     "off the linescore at sync time as 5 innings, and the trim had turned it into "
+                     "4. All 84 games were re-scraped raw; INNINGS IS NOW THE RAW COLUMN COUNT. "
+                     "The one genuine artifact is 2021 game 20612c66, which renders 9 columns while "
+                     "the home side, LOSING 11-15, shows 'X' (a trailing team must bat, so that "
+                     "column is fake); Brian confirms the league has never played 9 innings, and it "
+                     "is held at 8 by explicit override. Also: the 2026-07-22 opponent score is 12 "
+                     "(re-confirmed by Brian); GameChanger's own linescore totals 11 and is wrong.",
             "1.2.2": "Innings backfill COMPLETE — all six seasons scraped from the GameChanger "
                      "linescore (84 games visited, 79 with a real linescore). Two rules applied "
                      "during the scrape: (a) trailing all-empty inning columns are TRIMMED — "

@@ -1,6 +1,6 @@
 {
-  "_note": "Real innings scraped from the GameChanger linescore (web.gc.com), keyed by season slug and matched on our/their runs. innings=null means that game has no inning-by-inning linescore in GameChanger (entered as a final score) - NOT zero innings. Trailing all-empty inning columns are trimmed: GameChanger renders a spare column (away blank/0, home 'X') on some games. League maximum is 8 innings - Brian confirmed the team has never played 9.",
-  "_scraped": "2026-07-24",
+  "_note": "Real innings from the GameChanger linescore (web.gc.com), keyed by season slug and matched on our/their runs. INNINGS = THE RAW NUMBER OF COLUMNS IN THE LINESCORE. Do not 'trim' trailing columns: a final column of away='0' / home='X' is a REAL inning (the visitors batted and were retired scoreless; the home side did not need to bat). v1.2.2 trimmed those and lost a real inning from 7 games. The ONLY known artifact is 2021 game 20612c66, which renders 9 columns; Brian confirms the league has never played 9, so it is held at 8 as an explicit override. innings=null means GameChanger has no linescore at all.",
+  "_scraped": "2026-07-24 (full raw re-scrape of all 84 games)",
   "soviet-sluggers-summer-2021": [
     {
       "gc_id": "baff2012",
@@ -272,7 +272,8 @@
       "gc_id": "79da3717",
       "us": 9,
       "them": 11,
-      "innings": 6
+      "innings": 7,
+      "note": "corrected: raw linescore has 7 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     },
     {
       "gc_id": "61fdf070",
@@ -310,7 +311,8 @@
       "gc_id": "7f98d409",
       "us": 5,
       "them": 18,
-      "innings": 6
+      "innings": 7,
+      "note": "corrected: raw linescore has 7 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     },
     {
       "gc_id": "2bbf4d3a",
@@ -376,7 +378,8 @@
       "gc_id": "d4340b17",
       "us": 11,
       "them": 9,
-      "innings": 6
+      "innings": 7,
+      "note": "corrected: raw linescore has 7 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     },
     {
       "gc_id": "c941eb88",
@@ -388,7 +391,8 @@
       "gc_id": "8220f840",
       "us": 3,
       "them": 12,
-      "innings": 6
+      "innings": 7,
+      "note": "corrected: raw linescore has 7 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     }
   ],
   "tappers-summer-2025": [
@@ -476,7 +480,8 @@
       "gc_id": "e42f6e0f",
       "us": 7,
       "them": 17,
-      "innings": 4
+      "innings": 5,
+      "note": "corrected: raw linescore has 5 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     }
   ],
   "summer-2026": [
@@ -490,7 +495,8 @@
       "gc_id": "8c26dfa8",
       "us": 18,
       "them": 9,
-      "innings": 6
+      "innings": 7,
+      "note": "corrected: raw linescore has 7 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     },
     {
       "gc_id": "8c8c5f27",
@@ -520,8 +526,8 @@
       "gc_id": "0de207e2",
       "us": 2,
       "them": 12,
-      "innings": 4,
-      "note": "GameChanger linescore totals 11 for Bleacher Bums; verified final was 12 (keyed to our data)"
+      "innings": 5,
+      "note": "corrected: raw linescore has 5 columns; the v1.2.2 trim wrongly dropped the final half-inning (away batted and was retired scoreless, home shown as X)"
     },
     {
       "gc_id": "4ac34054",
