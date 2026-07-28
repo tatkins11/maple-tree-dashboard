@@ -441,6 +441,7 @@ def main():
     sb_h = 30 + len(scout_lines) * 13.5
     b1y = col_y - 4 - sb_h
     rail_box(b1y, sb_h, f"SCOUTING {ctx['opponent'].upper()}")
+    rail_bottom = b1y
     ly = b1y + sb_h - 32
     for kind, line in scout_lines:
         if kind == "record":
@@ -454,6 +455,7 @@ def main():
     if potw:
         pb_h = 96
         b2y = b1y - 12 - pb_h
+        rail_bottom = b2y
         rail_box(b2y, pb_h, "REIGNING PLAYER OF THE WEEK")
         _txt(c, 380, b2y + 58, potw["player"], "Helvetica-Bold", 15, BARK)
         _txt(c, 380, b2y + 42, f"{potw['hits']}-for-{potw['ab']}, {potw['hr']} HR, {potw['rbi']} RBI, {potw['r']} R", "Helvetica", 9.5, INK)
@@ -463,8 +465,12 @@ def main():
         if m and m["remaining"] <= 3:
             _txt(c, 380, b2y + 12, "Also " + milestone_phrase(potw["player"].split()[0], m["remaining"], m["stat"], m["next_milestone_display"], with_name=False) + ".", "Helvetica-Oblique", 8.5, MAPLE)
 
-    # seed race table — the FULL standings, all teams
-    st_y = 264
+    # seed race table — the FULL standings, all teams.
+    # Starts below the right-hand rail, which GROWS with the opponent's game slate: a team
+    # deep into its season pushes the scouting + POTW boxes down. A fixed start collided
+    # with them (Sandlot Vibes at 8 games logged was the first opponent long enough to do
+    # it). row_h below shrinks to keep every team above the footer, so a lower start is safe.
+    st_y = min(264, rail_bottom - 22)
     section_title(c, 36, st_y, "Race to the #1 seed", W - 72)
     _txt(c, W - 36, st_y + 1, "Wednesday's opponent in bold", "Helvetica-Oblique", 7, MUTED, align="r")
     cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RF", 426, "r"),
