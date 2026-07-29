@@ -9,6 +9,27 @@ from src.models.lineup import SimulationLineupRow
 from src.models.records import LeagueRulesRecord
 
 
+@dataclass(frozen=True)
+class BaserunningModel:
+    """How aggressively runners take extra bases.
+
+    Values are calibrated so the engine reproduces the club's OWN observed
+    scoring rate — 0.3142 runs per plate appearance across 2,928 PA and all six
+    seasons on record. They are a fit to that aggregate, not measured from
+    play-by-play, which this project does not have. The RATIOS between them come
+    from how the game is actually played here (a runner on second scores on a
+    single more readily than a runner on first takes third), and a single
+    aggression scalar was tuned to hit the observed rate.
+    """
+
+    score_from_second_on_single: float = 0.715
+    first_to_third_on_single: float = 0.520
+    score_from_first_on_double: float = 0.650
+    sac_fly_scores_from_third: float = 0.585
+
+
+ADVANCEMENT = BaserunningModel()
+
 EVENT_ORDER = [
     "single",
     "double",
@@ -223,6 +244,8 @@ def _simulate_inning(
             event=event,
             bases=bases,
             batter_id=batter.player_id,
+            rng=rng,
+            outs_before_event=outs,
         )
         _apply_batter_box_score_event(batter_stats, event)
         batter_stats.rbi += batter_rbi
@@ -308,19 +331,41 @@ def _apply_event(
     event: str,
     bases: list[int | None],
     batter_id: int,
+    rng: random.Random | None = None,
+    outs_before_event: int = 0,
 ) -> tuple[int, list[int | None], int, list[int | None]]:
     first, second, third = bases
     outs = 0
 
+    def roll(p: float) -> bool:
+        # No rng passed (older callers/tests) => fall back to station-to-station.
+        return rng is not None and rng.random() < p
+
     if event == "single":
+        # A runner on second scores on a single far more often than not in this
+        # league: no leadoffs, but 300-350 ft outfields and rec-league arms. The
+        # old model advanced everyone exactly one base and NEVER scored a runner
+        # from second, which is why the engine converted baserunners into runs
+        # ~11% worse than the club actually has over six seasons.
         scored_runner_ids = [third] if third else []
-        third, second, first = second, first, batter_id
-        return len(scored_runner_ids), scored_runner_ids, outs, [first, second, third]
+        if second and roll(ADVANCEMENT.score_from_second_on_single):
+            scored_runner_ids.append(second)
+            second = None
+        new_third = second
+        new_second = first
+        if first and new_third is None and roll(ADVANCEMENT.first_to_third_on_single):
+            new_third, new_second = first, None
+        return (len(scored_runner_ids), scored_runner_ids, outs,
+                [batter_id, new_second, new_third])
 
     if event == "double":
         scored_runner_ids = [runner_id for runner_id in [third, second] if runner_id]
-        third, second, first = first, batter_id, None
-        return len(scored_runner_ids), scored_runner_ids, outs, [first, second, third]
+        new_third = first
+        if first and roll(ADVANCEMENT.score_from_first_on_double):
+            scored_runner_ids.append(first)
+            new_third = None
+        return (len(scored_runner_ids), scored_runner_ids, outs,
+                [None, batter_id, new_third])
 
     if event == "triple":
         scored_runner_ids = [runner_id for runner_id in [first, second, third] if runner_id]
@@ -358,6 +403,15 @@ def _apply_event(
 
     if event == "strikeout":
         return 0, [], 1, [first, second, third]
+
+    # Generic out. A ball in play with a runner on third and fewer than two out
+    # scores him a fair share of the time — the sacrifice fly. The engine had no
+    # such path at all, so every run had to come from a hit, a walk-forced run or
+    # an error; that is the second reason it under-produced runs against the
+    # club's own record. Outs are counted the same either way (Brian: "a SF
+    # counts as an out"), so this adds runs without inventing extra innings.
+    if third is not None and outs_before_event < 2 and roll(ADVANCEMENT.sac_fly_scores_from_third):
+        return 1, [third], 1, [first, second, None]
 
     return 0, [], 1, [first, second, third]
 

@@ -52,7 +52,12 @@ def test_optimizer_returns_full_valid_lineup_with_fixed_dhh(tmp_path: Path) -> N
     best = result.best_lineup
     assert len(best.ordered_player_names) == 4
     assert set(best.ordered_player_names) == {"Tristan", "Glove", "Duff", "Corey"}
-    assert best.dhh_slot in {2, 3, 4}
+    # The DHH can bat anywhere; no league rule confines him to the middle. This
+    # used to assert slots 2-4, which was an expectation about what the optimizer
+    # would PREFER rather than a constraint. Once runners started taking extra
+    # bases the optimizer began leading off its best bat in a four-man order —
+    # a legitimate answer, since a short order maximises his trips to the plate.
+    assert 1 <= best.dhh_slot <= len(best.ordered_player_names)
     assert best.ordered_player_names[best.dhh_slot - 1] == "Tristan"
     assert best.summary.average_runs > 0
     assert result.evaluated_lineups >= 1

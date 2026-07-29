@@ -118,9 +118,9 @@ def page_verdict(c, d):
     txt(c, 320 + c.stringWidth(f"#{rank}", "Helvetica-Bold", 34) + 10, H - 152,
         f"of {d['n_lineups']} lineups", "Helvetica", 11, MUTED)
     txt(c, 320, H - 172, "in franchise history", "Helvetica-Bold", 8.5, MUTED, cs=1.4)
-    wrap(c, 320, H - 192, "Only two lineups have ever projected higher and both were ten-man "
-         "orders from 2022. This is the best twelve-deep lineup the club has ever fielded.",
-         W - 356, "Helvetica", 8.6, INK, 11)
+    wrap(c, 320, H - 192, "The three ahead of it all batted ten. This is comfortably the best "
+         "twelve-deep lineup the club has ever fielded, and it is level with the best ten-man "
+         "order of this season.", W - 356, "Helvetica", 8.6, INK, 11)
 
     # verdict
     y = H - 262
@@ -130,11 +130,11 @@ def page_verdict(c, d):
     txt(c, 50, y - 22, "Your read is right — this is the best group of bats we have run out.",
         "Helvetica-Bold", 12.5, BARK)
     ny = wrap(c, 50, y - 42, "Six hitters project above a .550 on-base rate and the top four alone "
-              "account for roughly half the offence. Two 2022 lineups edge it on paper, but both "
-              "batted ten; carrying twelve and still landing within a quarter run of the all-time "
-              "mark is the real result here. Against a league average of "
+              "account for roughly half the offence. Three lineups edge it on paper and every one "
+              "of them batted ten; carrying twelve and still landing within a third of a run of the "
+              "all-time mark is the real result here. Against a league average of "
               f"{d['league_rs_per_team_game']:.1f} runs a team, this order projects "
-              f"{xr - d['league_rs_per_team_game']:+.1f}.",
+              f"{xr - d['league_rs_per_team_game']:+.1f} — and that gap is the whole story of the season.",
               W - 100, "Helvetica", 9.2, INK, 11.5)
     wrap(c, 50, ny - 4, "One caveat that has not gone away: Harm has 11 career plate appearances. "
          "He now projects sensibly, but he is the least certain line on the card.",
@@ -199,7 +199,7 @@ def page_verdict(c, d):
         f"{b['p90']:.0f} or more —", "Helvetica-Oblique", 8, MUTED)
     txt(c, 36, BASE_Y - 37, "slowpitch scoring is wide, so tonight's actual total will say very "
         "little about whether the lineup was right.", "Helvetica-Oblique", 8, MUTED)
-    footer(c, "Monte Carlo over projected per-plate-appearance rates · 7 innings · 3-HR cap")
+    footer(c, "7 full innings · calibrated to 0.314 runs/PA, our own rate over 2,928 PA")
 
 
 # --------------------------------------------------------------- page 2
@@ -316,9 +316,13 @@ def page_production(c, d):
     y -= 24
     lo, hi = d["order_worst"]["mean"], d["order_best"]["mean"]
     card(c, 36, y - 70, W - 72, 68, PAPER)
-    txt(c, 52, y - 26, f"{hi - d['base']['mean']:.2f}", "Helvetica-Bold", 24, GREEN)
-    txt(c, 52, y - 41, "runs from optimal — the order", "Helvetica", 8.4, MUTED)
-    txt(c, 52, y - 52, "is already effectively right", "Helvetica", 8.4, MUTED)
+    # The sampler searches 400 of 479 million orderings at lower precision, so it
+    # can land a hair BELOW the full-precision run of the real order. Clamp at 0
+    # rather than print a negative "distance from optimal", which reads as an error.
+    gap = max(hi - d["base"]["mean"], 0.0)
+    txt(c, 52, y - 26, f"{gap:.2f}", "Helvetica-Bold", 24, GREEN)
+    txt(c, 52, y - 41, "runs from the best order found —", "Helvetica", 8.4, MUTED)
+    txt(c, 52, y - 52, "yours is already it", "Helvetica", 8.4, MUTED)
     wrap(c, 216, y - 22, "Four hundred random reshuffles of these same twelve names span only "
          f"{hi - lo:.2f} runs end to end, and yours sits within a quarter run of the best one found. "
          "Everybody bats and innings are long, so sequencing carries far less weight here than in "

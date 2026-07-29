@@ -266,25 +266,52 @@ def test_bases_loaded_walk_credits_one_run_and_one_rbi() -> None:
     assert bases == [4, 1, 2]
 
 
-def test_gidp_and_other_out_do_not_credit_rbi() -> None:
+def test_gidp_does_not_credit_rbi() -> None:
     gidp_lineup = [
         _make_lineup_row("Single1", 1, p_single=1.0),
         _make_lineup_row("GIDP", 2, p_grounded_into_double_play=1.0),
         _make_lineup_row("Out3", 3, p_out=1.0),
         _make_lineup_row("Out4", 4, p_out=1.0),
     ]
-    other_out_lineup = [
-        _make_lineup_row("Single1", 1, p_single=1.0),
-        _make_lineup_row("Single2", 2, p_single=1.0),
-        _make_lineup_row("Single3", 3, p_single=1.0),
-        _make_lineup_row("OutBatter", 4, p_out=1.0),
-    ]
 
     gidp_result = simulate_game(gidp_lineup, LeagueRulesRecord(innings_per_game=1))
-    other_out_result = simulate_game(other_out_lineup, LeagueRulesRecord(innings_per_game=1))
 
     assert gidp_result.player_stats[2].rbi == 0
-    assert other_out_result.player_stats[4].rbi == 0
+
+
+def test_generic_out_scores_from_third_as_a_sacrifice_fly() -> None:
+    """A ball in play with a runner on third and fewer than two out scores him
+    a fair share of the time. The engine used to have no path from an out to a
+    run at all, which is one of the two reasons it under-produced runs against
+    the club's own record. The out is still recorded either way."""
+    runs, scored, outs, bases = _apply_event(
+        "other_out", [None, None, 9], batter_id=4,
+        rng=_AlwaysAdvance(), outs_before_event=0,
+    )
+
+    assert runs == 1
+    assert scored == [9]
+    assert outs == 1
+    assert bases == [None, None, None]
+
+
+def test_no_sacrifice_fly_with_two_out() -> None:
+    runs, scored, outs, bases = _apply_event(
+        "other_out", [None, None, 9], batter_id=4,
+        rng=_AlwaysAdvance(), outs_before_event=2,
+    )
+
+    assert runs == 0
+    assert scored == []
+    assert outs == 1
+    assert bases == [None, None, 9]
+
+
+class _AlwaysAdvance:
+    """rng stub whose every roll succeeds, so advancement is deterministic."""
+
+    def random(self) -> float:
+        return 0.0
 
 
 def test_build_simulation_lineup_joins_order_and_availability(tmp_path: Path) -> None:
