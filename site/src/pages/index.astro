@@ -3,7 +3,11 @@ import Base from '../layouts/Base.astro';
 import TableSort from '../components/TableSort.astro';
 import meta from '../data/meta.json';
 import seasonStats from '../data/season_stats.json';
-import { rate, int, gs, gb, diff, dateShort } from '../lib/fmt';
+import { rate, int, gs, gb, diff, dec1, dateShort } from '../lib/fmt';
+
+/** Runs per game. Null (not 0) when a team has no games yet — preseason must read "—". */
+const perGame = (runs: number | null | undefined, games: number | null | undefined) =>
+  runs == null || !games ? null : Number(runs) / Number(games);
 
 const race = meta.seed_race;
 const board: any[] = race.board;
@@ -94,8 +98,10 @@ const leaderCards = [
               <th class="num">L</th>
               <th class="num">Pct</th>
               <th class="num">GB</th>
-              <th class="num">RF</th>
+              <th class="num">RS</th>
               <th class="num">RA</th>
+              <th class="num">RS/G</th>
+              <th class="num">RA/G</th>
               <th class="num">RD</th>
               <th class="num">Left</th>
             </tr>
@@ -114,6 +120,12 @@ const leaderCards = [
                   <td class="num" data-v={String(r.games_back ?? 0)}>{gb(r.games_back)}</td>
                   <td class="num">{int(r.runs_for)}</td>
                   <td class="num">{int(r.runs_against)}</td>
+                  <td class="num" data-v={String(perGame(r.runs_for, r.games) ?? 0)}>
+                    {dec1(perGame(r.runs_for, r.games))}
+                  </td>
+                  <td class="num" data-v={String(perGame(r.runs_against, r.games) ?? 0)}>
+                    {dec1(perGame(r.runs_against, r.games))}
+                  </td>
                   <td class="num" data-v={String(r.run_diff ?? 0)}>{diff(r.run_diff)}</td>
                   <td class="num">{int(r.games_remaining)}</td>
                 </tr>
@@ -123,8 +135,8 @@ const leaderCards = [
         </table>
       </div>
       <p class="table-note">
-        Seeded by win %, then run differential. GB = games behind the top seed · RF/RA = runs
-        for/against · Left = games remaining.
+        Seeded by win %, then run differential. GB = games behind the top seed · RS/RA = runs
+        scored/against, per game alongside · Left = games remaining.
       </p>
     </section>
 
