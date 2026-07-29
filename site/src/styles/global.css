@@ -886,7 +886,14 @@ th.sortable[data-dir='desc']::after { content: '▼'; color: var(--maple); }
   .foot-logo { width: 104px; }
 }
 
-@media (max-width: 980px) {
+/* Tablet only. Must set a min-width: this block sits AFTER the max-width:900px block,
+   so without a floor it also matched on phones and — equal specificity, later in the
+   file — overrode the 1-column collapse. That reinstated a 290px fixed column at 375px
+   and pushed the whole page to 447px, so every phone scrolled sideways. */
+@media (min-width: 901px) and (max-width: 980px) {
   .hero { grid-template-columns: 1fr 290px; }
+}
+
+@media (max-width: 980px) {
   .hero-tapper { display: none; }
 }
