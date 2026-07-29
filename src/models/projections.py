@@ -20,6 +20,9 @@ class ProjectionConfig:
     """
 
     current_season_prior_pa: float = 120.0
+    # PA of confidence granted to the roster mean when a hitter has little record
+    # of his own. Keeps a handful of plate appearances from projecting as fact.
+    population_prior_pa: float = 25.0
     default_injury_multiplier: float = 0.35
     recency_weights: tuple[float, ...] = (1.0, 0.7, 0.5)
     recency_floor: float = 0.35
@@ -164,7 +167,17 @@ def build_hitter_projections(
                 config=active_config,
             )
             baseline = weighted_summary.weighted if weighted_summary.weighted.plate_appearances > 0 else career
-            base_weight = _safe_divide(current.plate_appearances, current.plate_appearances + effective_prior_pa)
+            # The regression constant is how many PA of confidence we grant the prior.
+            # It CANNOT exceed the PA the prior actually holds: a five-PA baseline does
+            # not carry 120 PA of evidence. Without this cap a player whose whole history
+            # is a couple of games has his current season crushed by an older, even
+            # smaller sample — Harm's 6 PA were being weighted at 4.8% against 5 PA from
+            # 2021, so a 4-for-4 with 3 HR projected out to a .255 on-base rate.
+            prior_pa = float(baseline.plate_appearances or 0.0)
+            capped_prior_pa = min(effective_prior_pa, prior_pa) if prior_pa > 0 else 0.0
+            base_weight = _safe_divide(
+                current.plate_appearances, current.plate_appearances + capped_prior_pa
+            )
             current_weight = _apply_consistency_and_trend_adjustments(
                 base_weight=base_weight,
                 consistency_score=weighted_summary.consistency_score,
@@ -244,7 +257,69 @@ def build_hitter_projections(
             )
         )
 
-    return sorted(projections, key=lambda item: item.player_name.lower())
+    return sorted(
+        _regress_thin_samples_to_population(projections, active_config),
+        key=lambda item: item.player_name.lower(),
+    )
+
+
+# Event rates that get pulled toward the roster mean. Derived fields (on-base,
+# total bases, out rate) are recomputed from these afterwards so they stay
+# internally consistent.
+_POPULATION_RATE_FIELDS = (
+    "p_single", "p_double", "p_triple", "p_home_run", "p_walk",
+    "p_reached_on_error", "p_fielder_choice", "p_grounded_into_double_play",
+    "projected_strikeout_rate", "projected_run_rate", "projected_rbi_rate",
+)
+
+
+def _regress_thin_samples_to_population(
+    projections: list[HitterProjectionRecord],
+    config: ProjectionConfig,
+) -> list[HitterProjectionRecord]:
+    """Shrink every hitter toward the PA-weighted roster mean.
+
+    Capping the prior (above) stops an ancient five-PA sample from burying a
+    current one, but on its own it leaves a player whose entire record is 11 PA
+    projecting at his raw pooled rate — noise in the other direction. This adds
+    the missing population prior: a player is pulled toward the roster mean in
+    proportion to how little history he has.
+
+    With K_pop = 25 PA the effect is confined to where it belongs — an 11-PA
+    hitter is pulled ~69% of the way to the mean, a 250-PA regular ~9%.
+    """
+    k_pop = config.population_prior_pa
+    if k_pop <= 0 or not projections:
+        return projections
+
+    total_pa = sum(float(p.career_plate_appearances or 0.0) for p in projections)
+    if total_pa <= 0:
+        return projections
+    mean = {
+        f: sum(getattr(p, f) * float(p.career_plate_appearances or 0.0) for p in projections) / total_pa
+        for f in _POPULATION_RATE_FIELDS
+    }
+
+    out: list[HitterProjectionRecord] = []
+    for p in projections:
+        pa = float(p.career_plate_appearances or 0.0)
+        w = pa / (pa + k_pop)  # weight on the player's own record
+        vals = {f: (w * getattr(p, f)) + ((1.0 - w) * mean[f]) for f in _POPULATION_RATE_FIELDS}
+        on_base = (vals["p_single"] + vals["p_double"] + vals["p_triple"] + vals["p_home_run"]
+                   + vals["p_walk"] + vals["p_reached_on_error"] + vals["p_fielder_choice"])
+        non_out = sum([vals["p_single"], vals["p_double"], vals["p_triple"], vals["p_home_run"],
+                       vals["p_walk"], vals["p_reached_on_error"], vals["p_fielder_choice"],
+                       vals["p_grounded_into_double_play"]])
+        out.append(p.model_copy(update={
+            **vals,
+            "projected_on_base_rate": on_base,
+            "projected_total_base_rate": (vals["p_single"] + 2 * vals["p_double"]
+                                          + 3 * vals["p_triple"] + 4 * vals["p_home_run"]),
+            "projected_extra_base_hit_rate": vals["p_double"] + vals["p_triple"] + vals["p_home_run"],
+            "p_out": max(0.0, 1.0 - non_out),
+            "population_prior_weight": round(1.0 - w, 4),
+        }))
+    return out
 
 
 def build_hitter_projection_table(projections: Iterable[HitterProjectionRecord]) -> pd.DataFrame:

@@ -100,59 +100,76 @@ def bar(c, x, y, w, h, frac, col, track=HexColor("#e6e1d2")):
 def page_verdict(c, d):
     header(c, "SUMMER 2026  ·  WEEK 6  ·  JULY 29", "IS THIS THE BEST LINEUP?",
            "vs Sandlot Vibes", "12 deep  ·  Boncosky Green")
-    lo, hi = d["base"]["mean"], d["sensitivity_team_avg"]["mean"]
+    xr = d["base"]["mean"]
+    rank = d["rank_modeled"]
 
     # headline band
     card(c, 36, H - 236, W - 72, 108, CREAM)
     txt(c, 52, H - 152, "PROJECTED RUNS TONIGHT", "Helvetica-Bold", 8.5, MUTED, cs=1.6)
-    big = f"{lo:.1f} – {hi:.1f}"
-    txt(c, 52, H - 196, big, "Helvetica-Bold", 42, BARK)
-    bx = 52 + c.stringWidth(big, "Helvetica-Bold", 42) + 10  # sit clear of the numerals
-    txt(c, bx, H - 196, "runs", "Helvetica", 13, MUTED)
+    big = f"{xr:.1f}"
+    txt(c, 52, H - 196, big, "Helvetica-Bold", 46, BARK)
+    bx = 52 + c.stringWidth(big, "Helvetica-Bold", 46) + 10
+    txt(c, bx, H - 196, "runs", "Helvetica", 14, MUTED)
     txt(c, 52, H - 214, f"{d['sims']:,} simulated games", "Helvetica-Oblique", 8, MUTED)
 
     c.setStrokeColor(LINE)
     c.line(300, H - 226, 300, H - 140)
-    txt(c, 320, H - 152, "WHY A RANGE AND NOT A NUMBER", "Helvetica-Bold", 8.5, MUTED, cs=1.4)
-    wrap(c, 320, H - 168, "The whole answer hinges on one hitter. Harm has 11 career plate "
-         "appearances. The model regresses his 4-for-4, 3-HR night against an 0-for-4 from "
-         "2021 and lands on a .255 on-base rate. That is the model saying it knows nothing, "
-         "not that Harm is bad.", W - 356, "Helvetica", 8.6, INK, 11)
-
-    # the two readings
-    y = H - 262
-    section(c, 36, y, "The two honest readings", W - 72)
-    y -= 30
-    for label, val, rank, note, col in [
-        ("Model as written", lo, d["rank_modeled"],
-         "Trusts a 5-PA line from 2021 as Harm's baseline. Conservative to the point of wrong.", MUTED),
-        ("Harm as an average bat in this lineup", hi, d["rank_lifted"],
-         "Replaces the noise with the profile of a typical hitter in tonight's order.", MAPLE),
-    ]:
-        card(c, 36, y - 52, W - 72, 50, PAPER)
-        txt(c, 50, y - 22, label, "Helvetica-Bold", 11, BARK)
-        txt(c, 50, y - 38, note, "Helvetica", 8.2, MUTED)
-        txt(c, W - 210, y - 26, f"{val:.2f}", "Helvetica-Bold", 20, col, align="r")
-        txt(c, W - 200, y - 26, "xR", "Helvetica", 9, MUTED)
-        txt(c, W - 50, y - 22, f"#{rank}", "Helvetica-Bold", 17, BARK, align="r")
-        txt(c, W - 50, y - 38, f"of {d['n_lineups']} lineups", "Helvetica", 7.5, MUTED, align="r")
-        y -= 62
+    txt(c, 320, H - 152, f"#{rank}", "Helvetica-Bold", 34, MAPLE)
+    txt(c, 320 + c.stringWidth(f"#{rank}", "Helvetica-Bold", 34) + 10, H - 152,
+        f"of {d['n_lineups']} lineups", "Helvetica", 11, MUTED)
+    txt(c, 320, H - 172, "in franchise history", "Helvetica-Bold", 8.5, MUTED, cs=1.4)
+    wrap(c, 320, H - 192, "Only two lineups have ever projected higher and both were ten-man "
+         "orders from 2022. This is the best twelve-deep lineup the club has ever fielded.",
+         W - 356, "Helvetica", 8.6, INK, 11)
 
     # verdict
-    y -= 4
+    y = H - 262
     section(c, 36, y, "The verdict", W - 72)
     y -= 26
-    card(c, 36, y - 96, W - 72, 94, CREAM)
-    txt(c, 50, y - 22, "Best group of bats we have fielded. Not the highest-scoring lineup.",
+    card(c, 36, y - 110, W - 72, 108, CREAM)
+    txt(c, 50, y - 22, "Your read is right — this is the best group of bats we have run out.",
         "Helvetica-Bold", 12.5, BARK)
-    ny = wrap(c, 50, y - 42, "Give Harm an average profile and this order ranks 6th out of 83 lineups "
-              "in franchise history — top 7 percent. But three of the five ahead of it are ten- and "
-              "eleven-man orders, and that is the catch: batting twelve is what costs it the top spot, "
-              "not the quality of the twelve. Seven innings hands a team a fixed pile of plate "
-              "appearances. Every name you add divides that pile further.",
+    ny = wrap(c, 50, y - 42, "Six hitters project above a .550 on-base rate and the top four alone "
+              "account for roughly half the offence. Two 2022 lineups edge it on paper, but both "
+              "batted ten; carrying twelve and still landing within a quarter run of the all-time "
+              "mark is the real result here. Against a league average of "
+              f"{d['league_rs_per_team_game']:.1f} runs a team, this order projects "
+              f"{xr - d['league_rs_per_team_game']:+.1f}.",
               W - 100, "Helvetica", 9.2, INK, 11.5)
-    txt(c, 50, ny - 2, f"League average tonight is {d['league_rs_per_team_game']:.1f} runs per team. "
-        f"Either reading clears it.", "Helvetica-Oblique", 9, MAPLE)
+    wrap(c, 50, ny - 4, "One caveat that has not gone away: Harm has 11 career plate appearances. "
+         "He now projects sensibly, but he is the least certain line on the card.",
+         W - 100, "Helvetica-Oblique", 8.6, MAPLE, 11)
+
+    # all-time leaderboard — what actually sits ahead of tonight, and how close
+    y -= 130
+    section(c, 36, y, "The highest-projecting lineups this club has ever fielded", W - 72)
+    y -= 20
+    txt(c, 46, y, "LINEUP", "Helvetica-Bold", 7, MUTED)
+    txt(c, 400, y, "DEPTH", "Helvetica-Bold", 7, MUTED, align="r")
+    txt(c, 470, y, "xRUNS", "Helvetica-Bold", 7, MUTED, align="r")
+    y -= 5
+    board = []
+    for hrow in d["historical"][:4]:
+        board.append((f"{hrow['date']}  vs {hrow['opponent']}", hrow["n"], hrow["xr"], False))
+    board.append(("2026-07-29  vs Sandlot Vibes  (tonight)", 12, xr, True))
+    board.sort(key=lambda r: -r[2])
+    for i, (label, depth, val, is_us) in enumerate(board):
+        y0 = y - 21
+        if is_us:
+            c.setFillColor(CREAM)
+            c.rect(36, y0, W - 72, 21, stroke=0, fill=1)
+            c.setFillColor(MAPLE)
+            c.rect(36, y0, 3, 21, stroke=0, fill=1)
+        elif i % 2 == 0:
+            c.setFillColor(STRIPE)
+            c.rect(36, y0, W - 72, 21, stroke=0, fill=1)
+        f = "Helvetica-Bold" if is_us else "Helvetica"
+        txt(c, 48, y0 + 7, label, f, 9, BARK if is_us else INK)
+        txt(c, 400, y0 + 7, str(depth), f, 9, BARK if is_us else INK, align="r")
+        txt(c, 470, y0 + 7, f"{val:.2f}", "Helvetica-Bold", 9.5, MAPLE if is_us else BARK, align="r")
+        if is_us:
+            txt(c, 490, y0 + 7, "deepest order on the board", "Helvetica-Oblique", 7.5, MAPLE)
+        y -= 21
 
     # Range of outcomes: percentile strip over a histogram of every simulated game.
     # Everything below is pinned to absolute y so it cannot drift into the footer
@@ -209,7 +226,7 @@ def page_card(c, d):
         if p["dhh"]:
             tags.append("designated HR hitter (exempt from the 3-HR cap)")
         if p["car_pa"] < 40:
-            tags.append(f"only {p['car_pa']:.0f} career PA — model has no read")
+            tags.append(f"only {p['car_pa']:.0f} career PA — least certain line on the card")
         if tags:
             txt(c, 74, y0 + rh / 2 - 11, "  ·  ".join(tags), "Helvetica-Oblique", 7.6,
                 MAPLE if p["car_pa"] < 40 else MUTED)
@@ -228,100 +245,85 @@ def page_card(c, d):
     y -= 10
     txt(c, 36, y, "OBP, TB/PA, HR% and BB% are PROJECTIONS, not what a player has done this season. "
         "Each blends 2026 against a recency-weighted career baseline;", "Helvetica-Oblique", 8, MUTED)
-    txt(c, 36, y - 11, "with a month of games in, roughly three quarters of every line above is career "
-        "history. The confidence bar is career plate appearances against a 250-PA full bar.",
+    txt(c, 36, y - 11, "with a month of games in, most of every line above is career history. Thin "
+        "records are pulled toward the roster mean, so a hitter with a handful of PA cannot",
         "Helvetica-Oblique", 8, MUTED)
-    footer(c, "Projection blend: current PA / (current PA + 120) against a recency-weighted prior")
+    txt(c, 36, y - 22, "project as a star or a scrub on noise alone. The confidence bar is career plate "
+        "appearances against a 250-PA full bar.", "Helvetica-Oblique", 8, MUTED)
+    footer(c, "Blend: season vs recency-weighted prior (prior capped at its own PA), then shrunk "
+              "toward the roster mean by 25 PA")
 
 
 # --------------------------------------------------------------- page 3
-def page_drivers(c, d):
-    header(c, "SUMMER 2026  ·  WEEK 6", "WHAT ACTUALLY MOVES IT",
-           "Two findings", "one of them counterintuitive")
+def page_production(c, d):
+    header(c, "SUMMER 2026  ·  WEEK 6", "WHERE THE RUNS COME FROM",
+           "Tonight's twelve", "expected production by slot")
+    sl = d["slots_lifted"]
+    prod = {i: sl[str(i)]["r"] + sl[str(i)]["rbi"] for i in range(1, 13)}
+    tot = sum(prod.values())
+    peak = max(prod.values())
 
-    y = H - 138
-    section(c, 36, y, "1. The batting order barely matters", W - 72)
-    y -= 26
-    lo, hi = d["order_worst"]["mean"], d["order_best"]["mean"]
-    card(c, 36, y - 74, W - 72, 72, PAPER)
-    txt(c, 52, y - 26, f"{hi - lo:.2f}", "Helvetica-Bold", 26, BARK)
-    txt(c, 52, y - 42, "runs between the best and worst", "Helvetica", 8.4, MUTED)
-    txt(c, 52, y - 54, "of 400 randomly sampled orderings", "Helvetica", 8.4, MUTED)
-    wrap(c, 210, y - 22, "Shuffling these same twelve names into a deliberately terrible sequence "
-         "costs about six tenths of a run. Tonight's order is already within a quarter run of the "
-         "best arrangement the sampler found. In slowpitch everybody bats and innings are long, so "
-         "sequencing has far less leverage than it does in baseball. Who is in the order is the "
-         "decision that matters. The order itself is nearly free.",
-         W - 262, "Helvetica", 9, INK, 11.5)
-    y -= 92
-
-    section(c, 36, y, "2. Every extra bat costs about seven tenths of a run", W - 72)
-    y -= 26
-    dc = d["depth_curve"]
-    card(c, 36, y - 116, W - 72, 114, PAPER)
-    bx, bw = 300, 210
-    mx = max(dc.values())
-    yy = y - 26
-    for n in ["9", "10", "11", "12"]:
-        v = dc[n]
-        is_tonight = n == "12"
-        txt(c, 62, yy - 3, f"bat {n}", "Helvetica-Bold" if is_tonight else "Helvetica", 9.5,
-            BARK if is_tonight else INK)
-        bar(c, 108, yy - 5, 146, 8, v / mx, MAPLE if is_tonight else HexColor("#a8a290"))
-        txt(c, 288, yy - 3, f"{v:.2f}", "Helvetica-Bold" if is_tonight else "Helvetica", 9.5,
-            MAPLE if is_tonight else INK, align="r")  # right-aligned clear of the 254 bar end
-        if is_tonight:
-            txt(c, 294, yy - 3, "← tonight", "Helvetica-Bold", 7.5, MAPLE)
-        yy -= 22
-    wrap(c, 362, y - 22, "Seven innings fixes how many plate appearances a team gets. Adding a name "
-         "does not create new trips to the plate — it moves them from the hitters at the top to the "
-         "hitters at the bottom. Going twelve deep instead of nine costs roughly two runs a game. "
-         "That is the price of everyone playing, and it is a price worth paying in a rec league. "
-         "It is just worth knowing the number.",
-         W - 36 - 362, "Helvetica", 8.6, INK, 10.8)
-    y -= 134
-
-    section(c, 36, y, "The lineups ahead of tonight's", W - 72)
-    y -= 22
-    txt(c, 36, y, "LINEUP", "Helvetica-Bold", 7, MUTED)
-    for lbl, x in [("DEPTH", 400), ("xRUNS", 470)]:
-        txt(c, x, y, lbl, "Helvetica-Bold", 7, MUTED, align="r")
-    txt(c, W - 36, y, "NOTE", "Helvetica-Bold", 7, MUTED, align="r")
-    y -= 6
-    top = d["historical"][:5]
-    for i, hrow in enumerate(top):
-        y0 = y - 20
-        if i % 2 == 0:
-            c.setFillColor(STRIPE)
-            c.rect(36, y0, W - 72, 20, stroke=0, fill=1)
-        txt(c, 46, y0 + 6, f"{hrow['date']}  vs {hrow['opponent']}", "Helvetica", 9, INK)
-        txt(c, 400, y0 + 6, f"{hrow['n']}", "Helvetica", 9, INK, align="r")
-        txt(c, 470, y0 + 6, f"{hrow['xr']:.2f}", "Helvetica-Bold", 9.5, BARK, align="r")
-        txt(c, W - 36, y0 + 6, "shorter order" if hrow["n"] < 12 else "", "Helvetica-Oblique",
-            7.5, MUTED, align="r")
-        y -= 20
-    y0 = y - 22
-    c.setFillColor(CREAM)
-    c.rect(36, y0, W - 72, 22, stroke=0, fill=1)
-    c.setFillColor(MAPLE)
-    c.rect(36, y0, 3, 22, stroke=0, fill=1)
-    txt(c, 46, y0 + 7, "2026-07-29  vs Sandlot Vibes  (tonight)", "Helvetica-Bold", 9, BARK)
-    txt(c, 400, y0 + 7, "12", "Helvetica-Bold", 9, BARK, align="r")
-    txt(c, 470, y0 + 7, f"{d['sensitivity_team_avg']['mean']:.2f}", "Helvetica-Bold", 9.5, MAPLE, align="r")
-    txt(c, W - 36, y0 + 7, "deepest order on the list", "Helvetica-Oblique", 7.5, MAPLE, align="r")
-    y -= 44
-
-    section(c, 36, y, "What to hold against it", W - 72)
+    y = H - 136
+    section(c, 36, y, "Expected production by lineup spot", W - 72)
     y -= 20
-    for line in [
-        "Every historical lineup is scored with each player's CURRENT projection, so this compares "
-        "who was in the order and where — not how good those players were at the time.",
-        "Sandlot Vibes are 7-1 and score 17.6 a game in an 11.6-run league. Nothing here models "
-        "the opponent; it is our run production against a neutral defence.",
-        "Harm is one hot week with no track record. If he is closer to the 2021 line than to last "
-        "Wednesday, the honest number is the bottom of the range, not the top.",
-    ]:
-        y = wrap(c, 46, y, "·  " + line, W - 92, "Helvetica", 8.5, MUTED, 10.5) - 4
+    txt(c, 74, y, "HITTER", "Helvetica-Bold", 7, MUTED)
+    for lbl, x in [("PA", 250), ("HITS", 292), ("HR", 330), ("RUNS", 374), ("RBI", 414)]:
+        txt(c, x, y, lbl, "Helvetica-Bold", 7, MUTED, align="r")
+    txt(c, 470, y, "R + RBI", "Helvetica-Bold", 7, MUTED, align="r")
+    txt(c, W - 36, y, "SHARE", "Helvetica-Bold", 7, MUTED, align="r")
+    y -= 4
+    rh = 25
+    for i in range(1, 13):
+        r = sl[str(i)]
+        y0 = y - rh
+        if i % 2 == 1:
+            c.setFillColor(STRIPE)
+            c.rect(36, y0, W - 72, rh, stroke=0, fill=1)
+        nm = r["name"] if r["name"] != "Jj" else "JJ"
+        txt(c, 52, y0 + 9, str(i), "Helvetica-Bold", 11, BARK, align="c")
+        txt(c, 74, y0 + 9, nm, "Helvetica-Bold", 10.5, BARK)
+        txt(c, 250, y0 + 9, f"{r['pa']:.2f}", "Helvetica", 9, INK, align="r")
+        txt(c, 292, y0 + 9, f"{r['h']:.2f}", "Helvetica", 9, INK, align="r")
+        txt(c, 330, y0 + 9, f"{r['hr']:.2f}", "Helvetica", 9, INK, align="r")
+        txt(c, 374, y0 + 9, f"{r['r']:.2f}", "Helvetica", 9, INK, align="r")
+        txt(c, 414, y0 + 9, f"{r['rbi']:.2f}", "Helvetica", 9, INK, align="r")
+        txt(c, 470, y0 + 9, f"{prod[i]:.2f}", "Helvetica-Bold", 9.5, BARK, align="r")
+        bar(c, 486, y0 + 8, W - 36 - 486, 5, prod[i] / peak, MAPLE if i <= 4 else HexColor("#a8a290"))
+        y -= rh
+    y -= 8
+    txt(c, 36, y, "Averages per game across 40,000 simulations of this exact order. R + RBI "
+        "double-counts a solo home run on purpose — it is a", "Helvetica-Oblique", 7.6, MUTED)
+    txt(c, 36, y - 10, "share-of-the-offence measure, not a run total.", "Helvetica-Oblique", 7.6, MUTED)
+
+    y -= 34
+    section(c, 36, y, "What the shape tells you", W - 72)
+    y -= 26
+    top4 = sum(prod[i] for i in range(1, 5))
+    card(c, 36, y - 86, 250, 84, CREAM)
+    txt(c, 52, y - 30, f"{top4 / tot * 100:.0f}%", "Helvetica-Bold", 34, BARK)
+    txt(c, 52, y - 46, "of all run production comes", "Helvetica", 8.6, MUTED)
+    txt(c, 52, y - 57, "from the first four spots", "Helvetica", 8.6, MUTED)
+    txt(c, 52, y - 74, f"Glove, Tristan, Harm and Tim", "Helvetica-Oblique", 8.4, MAPLE)
+    card(c, 300, y - 86, W - 36 - 300, 84, CREAM)
+    txt(c, 316, y - 30, f"{sl['1']['pa'] - sl['12']['pa']:.1f}", "Helvetica-Bold", 34, BARK)
+    txt(c, 316, y - 46, "extra trips to the plate for the", "Helvetica", 8.6, MUTED)
+    txt(c, 316, y - 57, "leadoff man over the twelve hole", "Helvetica", 8.6, MUTED)
+    txt(c, 316, y - 74, f"{sl['1']['pa']:.2f} PA batting first vs {sl['12']['pa']:.2f} batting last",
+        "Helvetica-Oblique", 8.4, MAPLE)
+    y -= 104
+
+    section(c, 36, y, "Is this the right order for these twelve?", W - 72)
+    y -= 24
+    lo, hi = d["order_worst"]["mean"], d["order_best"]["mean"]
+    card(c, 36, y - 70, W - 72, 68, PAPER)
+    txt(c, 52, y - 26, f"{hi - d['base']['mean']:.2f}", "Helvetica-Bold", 24, GREEN)
+    txt(c, 52, y - 41, "runs from optimal — the order", "Helvetica", 8.4, MUTED)
+    txt(c, 52, y - 52, "is already effectively right", "Helvetica", 8.4, MUTED)
+    wrap(c, 216, y - 22, "Four hundred random reshuffles of these same twelve names span only "
+         f"{hi - lo:.2f} runs end to end, and yours sits within a quarter run of the best one found. "
+         "Everybody bats and innings are long, so sequencing carries far less weight here than in "
+         "baseball. The order is settled — the lineup is what it is, and it is a good one.",
+         W - 268, "Helvetica", 8.8, INK, 11)
     footer(c, "Engine: src/models/simulator.py · projections: src/models/projections.py")
 
 
@@ -330,7 +332,7 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     c = pdfcanvas.Canvas(str(OUT), pagesize=letter)
     c.setTitle("Maple Tree — Week 6 Lineup Analysis")
-    for fn in (page_verdict, page_card, page_drivers):
+    for fn in (page_verdict, page_card, page_production):
         c.setFillColor(SAND)
         c.rect(0, 0, W, H, stroke=0, fill=1)
         fn(c, d)
