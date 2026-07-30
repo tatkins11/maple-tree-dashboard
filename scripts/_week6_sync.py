@@ -1,7 +1,6 @@
 """Week 6 (2026-07-29) data sync — a SPLIT WITH THE FIRST-PLACE TEAM.
 
 Game 1 (6:30, home): Maple Tree 12, Sandlot Vibes 13 (L) — 19 hits, lost by one.
-                     EIGHT innings; time expired with us due up, hence the X.
 Game 2 (7:30, away): Maple Tree 13, Sandlot Vibes 10 (W) — 21 hits, beat the #1 seed.
 
 Sandlot Vibes came in 7-1 and league-best at 17.6 runs a game. We held them to 13 and
@@ -67,9 +66,10 @@ G1_TEAM = dict(pa=41, ab=38, h=19, **{"1b": 15, "2b": 2, "3b": 1}, hr=1, rbi=12,
 G2_TEAM = dict(pa=41, ab=40, h=21, **{"1b": 14, "2b": 5, "3b": 0}, hr=2, rbi=13, r=13,
                bb=0, so=0, sf=1, fc=3)
 
-# Real innings off each linescore. Game 1 ran EIGHT — the league maximum — and ended
-# with us due up in the bottom half (time cap), which is why GameChanger prints an X.
-INNINGS = {G1_KEY: 8, G2_KEY: 7}
+# Real innings off each linescore. Both games ran the regulation seven — I first read
+# Game 1 as eight by miscounting the R/H/E columns as a spare inning; Brian corrected it.
+# Both rows reconcile at seven (SNDL 4+6+0+0+3+0+0=13, MPLT 0+0+6+2+3+0+1=12).
+INNINGS = {G1_KEY: 7, G2_KEY: 7}
 
 # Week 6 league results (Brian, 7/30). His paste lists the AWAY team first; the CSV
 # stores home_runs/away_runs, so each entry below is (home, away) for THAT row's

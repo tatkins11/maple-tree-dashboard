@@ -101,6 +101,46 @@ def main() -> None:
     # tiebreaker is not frozen at today's value.
     margin = {n: (s["rf"] - s["ra"]) / max(s["w"] + s["l"], 1) for n, s in base.items()}
 
+    # ---- playoff bracket (Brian's sheet, all games Wed 8/19) ------------------
+    # Every club makes it. Seeds 1-5 sit out the 6:30 round.
+    #   R1   G1 #8v#9 · G2 #7v#10 · G3 #6v#11
+    #   R2   G5 #1 vs W(G1) · G4 #4v#5      |  G6 #2 vs W(G2) · G7 #3 vs W(G3)
+    #   SF   G8 W(G5) vs W(G4)              |  G9 W(G6) vs W(G7)
+    #   F    G10 W(G8) vs W(G9)
+    # So #1 and #2 are in opposite halves and can only meet in the final, while #3
+    # rides with #2 and #4/#5 ride with #1. Strength for bracket matchups is the
+    # club's CURRENT Pythagorean — a team's ability does not change based on which
+    # branch of the regular season it took.
+    pw = {(x, y): win_prob(base, x, y) for x in base for y in base if x != y}
+
+    def advance(a: dict, b: dict) -> dict:
+        """Winner distribution of a matchup between two entrant distributions."""
+        out: dict = {}
+        for t, pt in a.items():
+            for o, po in b.items():
+                if t == o:
+                    continue
+                m = pt * po
+                out[t] = out.get(t, 0.0) + m * pw[(t, o)]
+                out[o] = out.get(o, 0.0) + m * pw[(o, t)]
+        return out
+
+    def run_bracket(order: list) -> tuple[dict, dict]:
+        S = {i + 1: {order[i]: 1.0} for i in range(len(order))}
+        g1, g2, g3 = advance(S[8], S[9]), advance(S[7], S[10]), advance(S[6], S[11])
+        g5, g4 = advance(S[1], g1), advance(S[4], S[5])
+        g6, g7 = advance(S[2], g2), advance(S[3], g3)
+        g8, g9 = advance(g5, g4), advance(g6, g7)
+        final_entrants: dict = {}
+        for d in (g8, g9):
+            for t, v in d.items():
+                final_entrants[t] = final_entrants.get(t, 0.0) + v
+        return advance(g8, g9), final_entrants
+
+    champ_mass = {n: 0.0 for n in base}
+    final_mass = {n: 0.0 for n in base}
+    bye_mass = {n: 0.0 for n in base}
+
     top_mass = {n: 0.0 for n in base}
     top_possible = {n: False for n in base}
     top3_mass = {n: 0.0 for n in base}
@@ -122,7 +162,14 @@ def main() -> None:
         top_possible[order[0]] = True
         for n in order[:3]:
             top3_mass[n] += p
+        for n in order[:5]:
+            bye_mass[n] += p          # seeds 1-5 skip the play-in round
         us_seed_mass[order.index(US) + 1] = us_seed_mass.get(order.index(US) + 1, 0.0) + p
+        champs, finalists = run_bracket(order)
+        for n, v in champs.items():
+            champ_mass[n] += p * v
+        for n, v in finalists.items():
+            final_mass[n] += p * v
 
     total = sum(top_mass.values())
     rows = []
@@ -138,6 +185,9 @@ def main() -> None:
             "games_left": left, "max_wins": s["w"] + left,
             "p_top_seed": top_mass[n] / total,
             "p_top_three": top3_mass[n] / total,
+            "p_first_round_bye": bye_mass[n] / total,
+            "p_reach_final": final_mass[n] / total,
+            "p_champion": champ_mass[n] / total,
             "alive_for_top_seed": top_possible[n],
             "is_team": n == US,
         })
@@ -157,6 +207,13 @@ def main() -> None:
                    "as certain. Games are assumed independent. Seeding is win "
                    "percentage, then run differential." % (n_games, PYTHAG_EXP)),
         "teams": rows,
+        "bracket_note": ("Every club makes the playoffs — all ten games are Wednesday 8/19. "
+                         "Seeds 1-5 skip the 6:30 play-in round. The bracket puts #1 and #2 "
+                         "in opposite halves, so they can only meet in the final; #3 rides "
+                         "with #2, and #4 and #5 open against each other with the winner "
+                         "drawing #1. That makes the drop from #3 to #4 the most expensive "
+                         "step on the board, and the drop from #5 to #6 the one that costs "
+                         "a bye."),
         "our_seed_odds": [{"seed": k, "p": v / total} for k, v in sorted(us_seed_mass.items())],
         "remaining": [{"week": w, "home": h, "away": a,
                        "home_win_prob": probs[i], "involves_us": US in (h, a)}

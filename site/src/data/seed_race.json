@@ -20,6 +20,9 @@
    "max_wins": 11,
    "p_top_seed": 0.7984305154604876,
    "p_top_three": 0.9951854307776432,
+   "p_first_round_bye": 1.0000000000000162,
+   "p_reach_final": 0.5666051209723258,
+   "p_champion": 0.40084685135553705,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 1
@@ -39,6 +42,9 @@
    "max_wins": 10,
    "p_top_seed": 0.20150266746003884,
    "p_top_three": 0.9997874804343111,
+   "p_first_round_bye": 1.0000000000000162,
+   "p_reach_final": 0.38104831944546996,
+   "p_champion": 0.16726622176681824,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 2
@@ -58,6 +64,9 @@
    "max_wins": 9,
    "p_top_seed": 6.331291543744704e-05,
    "p_top_three": 0.33650008923917707,
+   "p_first_round_bye": 0.9908514713047712,
+   "p_reach_final": 0.2221594795896602,
+   "p_champion": 0.10502512470575469,
    "alive_for_top_seed": true,
    "is_team": true,
    "seed": 3
@@ -77,6 +86,9 @@
    "max_wins": 9,
    "p_top_seed": 3.5041640360390565e-06,
    "p_top_three": 0.2729576994786309,
+   "p_first_round_bye": 0.8597037310306541,
+   "p_reach_final": 0.21002414454199442,
+   "p_champion": 0.08812808713912676,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 4
@@ -96,6 +108,9 @@
    "max_wins": 8,
    "p_top_seed": 0.0,
    "p_top_three": 0.3798257715272863,
+   "p_first_round_bye": 0.9363282649116496,
+   "p_reach_final": 0.2542580284441413,
+   "p_champion": 0.1146102859429211,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 5
@@ -115,6 +130,9 @@
    "max_wins": 8,
    "p_top_seed": 0.0,
    "p_top_three": 0.0157435285429442,
+   "p_first_round_bye": 0.1410442918575372,
+   "p_reach_final": 0.11852909492363675,
+   "p_champion": 0.04189988361886824,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 6
@@ -134,6 +152,9 @@
    "max_wins": 7,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
+   "p_first_round_bye": 0.07207224089540794,
+   "p_reach_final": 0.10679555196825366,
+   "p_champion": 0.036657043449023596,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 7
@@ -153,6 +174,9 @@
    "max_wins": 6,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.08803098842846425,
+   "p_champion": 0.03194440304361868,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 8
@@ -172,6 +196,9 @@
    "max_wins": 6,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.024851857938417633,
+   "p_champion": 0.006905799419340477,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 9
@@ -191,6 +218,9 @@
    "max_wins": 6,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.02745314799444791,
+   "p_champion": 0.006702784238786684,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 10
@@ -210,11 +240,15 @@
    "max_wins": 2,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.00024426575314340275,
+   "p_champion": 1.3515320188331415e-05,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 11
   }
  ],
+ "bracket_note": "Every club makes the playoffs \u2014 all ten games are Wednesday 8/19. Seeds 1-5 skip the 6:30 play-in round. The bracket puts #1 and #2 in opposite halves, so they can only meet in the final; #3 rides with #2, and #4 and #5 open against each other with the winner drawing #1. That makes the drop from #3 to #4 the most expensive step on the board, and the drop from #5 to #6 the one that costs a bye.",
  "our_seed_odds": [
   {
    "seed": 1,

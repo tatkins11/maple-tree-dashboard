@@ -23,6 +23,7 @@ from pathlib import Path
 
 from PIL import Image
 from reportlab.lib.pagesizes import letter
+from reportlab.lib.colors import HexColor
 from reportlab.pdfgen import canvas as pdfcanvas
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # for the shared kit
@@ -644,6 +645,128 @@ def main():
             c.line(36, 64, W - 36, 64)
             _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  TRADING CARDS", "Helvetica-Bold", 8, BARK, cs=1)
             _txt(c, W - 36, 50, "flip every card at mapletreesoftball.netlify.app/cards",
+                 "Helvetica", 8, MUTED, align="r")
+            c.showPage()
+
+    # ===== THE SEED RACE: where the season can still end up =====================
+    race_path = REPO / "site" / "src" / "data" / "seed_race.json"
+    if race_path.exists():
+        import json as _json
+        race = _json.loads(race_path.read_text(encoding="utf-8"))
+        rteams = race["teams"]
+        rus = next((t for t in rteams if t["is_team"]), None)
+        if rus:
+            def _pct(v):
+                if v <= 0:
+                    return "-"
+                return "<0.1%" if v < 0.001 else f"{v * 100:.1f}%"
+
+            c.setFillColor(PAPER)
+            c.rect(0, 0, W, H, stroke=0, fill=1)
+            c.setFillColor(BARK)
+            c.rect(0, H - 96, W, 96, stroke=0, fill=1)
+            _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
+                 f"{(week_label or date_pretty).upper()}  ·  WHAT IS LEFT",
+                 "Helvetica-Bold", 8.5, TAN, cs=2)
+            _txt(c, 36, H - 66, "THE SEED RACE", "Helvetica-Bold", 26, WHITE, cs=1)
+            _txt(c, W - 36, H - 40, f"{race['games_remaining']} games remain",
+                 "Helvetica-Bold", 11, WHITE, align="r")
+            _txt(c, W - 36, H - 58, f"all {race['branches']:,} outcomes counted",
+                 "Helvetica-Oblique", 8.5, TAN, align="r")
+
+            # headline tiles
+            ty = H - 200
+            tiles = [("CHANCE TO WIN IT ALL", _pct(rus["p_champion"]), MAPLE),
+                     ("FIRST-ROUND BYE", _pct(rus["p_first_round_bye"]), BARK),
+                     ("REACH THE FINAL", _pct(rus["p_reach_final"]), BARK)]
+            tw = (W - 72 - 24) / 3
+            for i, (lbl, val, col) in enumerate(tiles):
+                x0 = 36 + i * (tw + 12)
+                c.setFillColor(CREAM)
+                c.setStrokeColor(LINE)
+                c.setLineWidth(0.8)
+                c.roundRect(x0, ty, tw, 78, 7, stroke=1, fill=1)
+                _txt(c, x0 + 14, ty + 56, lbl, "Helvetica-Bold", 7.5, MUTED, cs=1.4)
+                _txt(c, x0 + 14, ty + 22, val, "Helvetica-Bold", 30, col)
+
+            # what the seed buys
+            y = ty - 24
+            section_title(c, 36, y, "What the seed actually buys", W - 72)
+            y -= 22
+            y = wrap(c, 36, y, "Every club makes the playoffs and all ten games are Wednesday, "
+                     "19 August, so this was never a race to get in. Seeds one through five skip "
+                     "the 6:30 play-in round, and that bye is already all but banked. What is "
+                     "still live is which half of the bracket Maple Tree land in.",
+                     W - 72, "Helvetica", 9.5, 12.5, INK)
+            y -= 6
+            halves = [("TOP HALF  ·  #1, #4, #5",
+                       "#4 and #5 open against each other and the winner draws the top seed in "
+                       "the semi-final. Landing here means going through the best team in the "
+                       "league just to reach the final."),
+                      ("BOTTOM HALF  ·  #2, #3",
+                       "#3 rides with #2 and cannot meet #1 before the final. That makes the step "
+                       "from #3 to #4 the most expensive one left on the board — worth more than "
+                       "the step from #2 to #3.")]
+            hw = (W - 72 - 14) / 2
+            for i, (head, body) in enumerate(halves):
+                x0 = 36 + i * (hw + 14)
+                c.setFillColor(SAND)
+                c.setStrokeColor(LINE)
+                c.roundRect(x0, y - 74, hw, 72, 6, stroke=1, fill=1)
+                _txt(c, x0 + 12, y - 22, head, "Helvetica-Bold", 8.5, BARK, cs=1)
+                wrap(c, x0 + 12, y - 38, body, hw - 24, "Helvetica", 8.3, 10.5, INK)
+            y -= 92
+
+            # where we finish
+            section_title(c, 36, y, "Where Maple Tree finish", W - 72)
+            y -= 20
+            odds = [o for o in race["our_seed_odds"] if o["p"] > 0.001]
+            peak = max((o["p"] for o in odds), default=1.0)
+            best = max(odds, key=lambda o: o["p"]) if odds else None
+            for o in odds:
+                _txt(c, 52, y - 9, f"#{o['seed']}", "Helvetica-Bold", 10,
+                     MAPLE if best and o["seed"] == best["seed"] else BARK, align="r")
+                c.setFillColor(HexColor("#e6e1d2"))
+                c.roundRect(62, y - 12, 300, 9, 4.5, stroke=0, fill=1)
+                fw = max(o["p"] / peak * 300, 1.5)
+                c.setFillColor(MAPLE if best and o["seed"] == best["seed"] else HexColor("#a8a290"))
+                c.roundRect(62, y - 12, fw, 9, 4.5, stroke=0, fill=1)
+                _txt(c, 400, y - 9, _pct(o["p"]), "Helvetica-Bold", 9.5, BARK, align="r")
+                y -= 17
+            y -= 8
+
+            # the board
+            section_title(c, 36, y, "Title odds across the league", W - 72)
+            y -= 20
+            for lbl, x in [("W", 300), ("L", 330), ("BYE", 400), ("FINAL", 462), ("TITLE", 530)]:
+                _txt(c, x, y, lbl, "Helvetica-Bold", 7, MUTED, align="r")
+            _txt(c, 52, y, "TEAM", "Helvetica-Bold", 7, MUTED)
+            y -= 4
+            for i, t in enumerate(rteams):
+                y0 = y - 17
+                if t["is_team"]:
+                    c.setFillColor(CREAM)
+                    c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                    c.setFillColor(MAPLE)
+                    c.rect(36, y0, 3, 17, stroke=0, fill=1)
+                elif i % 2 == 0:
+                    c.setFillColor(STRIPE)
+                    c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                f = "Helvetica-Bold" if t["is_team"] else "Helvetica"
+                _txt(c, 52, y0 + 5, t["team"], f, 9, BARK if t["is_team"] else INK)
+                _txt(c, 300, y0 + 5, str(int(t["wins"])), f, 9, INK, align="r")
+                _txt(c, 330, y0 + 5, str(int(t["losses"])), f, 9, INK, align="r")
+                _txt(c, 400, y0 + 5, _pct(t["p_first_round_bye"]), f, 9, INK, align="r")
+                _txt(c, 462, y0 + 5, _pct(t["p_reach_final"]), f, 9, INK, align="r")
+                _txt(c, 530, y0 + 5, _pct(t["p_champion"]), "Helvetica-Bold", 9.5,
+                     MAPLE if t["is_team"] else BARK, align="r")
+                y -= 17
+
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.75)
+            c.line(36, 64, W - 36, 64)
+            _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE SEED RACE", "Helvetica-Bold", 8, BARK, cs=1)
+            _txt(c, W - 36, 50, "full breakdown at mapletreesoftball.netlify.app/seed-race",
                  "Helvetica", 8, MUTED, align="r")
             c.showPage()
 

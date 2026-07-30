@@ -39,16 +39,46 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
     </div>
     <div class="race-hero-split">
       <div class="rh-stat">
-        <div class="rh-v">{pct(us.p_top_seed)}</div>
-        <div class="rh-l">chance at the top seed</div>
+        <div class="rh-v rh-hot">{pct(us.p_champion)}</div>
+        <div class="rh-l">chance to win the whole thing</div>
       </div>
       <div class="rh-stat">
-        <div class="rh-v">{pct(us.p_top_three)}</div>
-        <div class="rh-l">chance of finishing top three</div>
+        <div class="rh-v">{pct(us.p_first_round_bye)}</div>
+        <div class="rh-l">chance of a first-round bye</div>
       </div>
       <div class="rh-stat">
-        <div class="rh-v">{int(us.max_wins)}</div>
-        <div class="rh-l">wins if we run the table</div>
+        <div class="rh-v">{pct(us.p_reach_final)}</div>
+        <div class="rh-l">chance of reaching the final</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- what seeding actually buys -->
+  <section class="race-block">
+    <h2 class="sec-title">What the seed actually buys</h2>
+    <p class="sec-sub">
+      Every club makes the playoffs and all ten games are Wednesday 19 August, so this was
+      never a race to get in. Seeds 1 through 5 skip the 6:30 play-in round — and at
+      {pct(us.p_first_round_bye)} that bye is effectively already ours. What is still live is
+      which half of the bracket we land in.
+    </p>
+    <div class="bracket-halves">
+      <div class="bh">
+        <div class="bh-head">Top half</div>
+        <div class="bh-seeds">#1 · #4 · #5 <span class="bh-plus">+ the 8/9 winner</span></div>
+        <p class="bh-note">
+          #4 and #5 open against each other and the winner draws #1 in the semi-final.
+          Landing here means going through the best team in the league to reach the final.
+        </p>
+      </div>
+      <div class="bh">
+        <div class="bh-head">Bottom half</div>
+        <div class="bh-seeds">#2 · #3 <span class="bh-plus">+ the 7/10 and 6/11 winners</span></div>
+        <p class="bh-note">
+          #3 rides with #2 and cannot meet #1 before the final. That is why the step from
+          #3 to #4 is the most expensive one left on the board — bigger than the step from
+          #2 to #3.
+        </p>
       </div>
     </div>
   </section>
@@ -140,8 +170,9 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
             <th class="num">RA/G</th>
             <th class="num">Left</th>
             <th class="num">Max</th>
-            <th class="num">#1 odds</th>
-            <th class="num">Top 3</th>
+            <th class="num">Bye</th>
+            <th class="num">Final</th>
+            <th class="num">Title</th>
           </tr>
         </thead>
         <tbody>
@@ -161,8 +192,9 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
                 <td class="num" data-v={String(t.ra_per_game)}>{dec1(t.ra_per_game)}</td>
                 <td class="num">{int(t.games_left)}</td>
                 <td class="num">{int(t.max_wins)}</td>
-                <td class="num" data-v={String(t.p_top_seed)}>{pct(t.p_top_seed)}</td>
-                <td class="num" data-v={String(t.p_top_three)}>{pct(t.p_top_three)}</td>
+                <td class="num" data-v={String(t.p_first_round_bye)}>{pct(t.p_first_round_bye)}</td>
+                <td class="num" data-v={String(t.p_reach_final)}>{pct(t.p_reach_final)}</td>
+                <td class="num tit" data-v={String(t.p_champion)}>{pct(t.p_champion)}</td>
               </tr>
             ))
           }
@@ -196,6 +228,7 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
     </div>
   </section>
 
+  <p class="table-note">{race.bracket_note}</p>
   <p class="table-note">{race.method}</p>
 
   <TableSort />
@@ -224,6 +257,7 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
   .rh-rec { font-size: 13px; color: var(--muted, #77705f); margin-top: 4px; }
   .race-hero-split { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
   .rh-v { font-size: 27px; font-weight: 800; line-height: 1.1; }
+  .rh-v.rh-hot { color: var(--maple, #c2410c); }
   .rh-l { font-size: 11.5px; color: var(--muted, #77705f); margin-top: 4px; }
 
   .race-callout {
@@ -248,6 +282,23 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
   .sb-fill.sb-best { background: var(--maple, #c2410c); }
   .sb-val { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; }
 
+  td.tit { font-weight: 700; }
+
+  .bracket-halves { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bh {
+    background: var(--card, #f8f7f2);
+    border: 1px solid var(--line, #d8d3c2);
+    border-radius: 11px;
+    padding: 14px 16px;
+  }
+  .bh-head {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted, #77705f);
+  }
+  .bh-seeds { font-size: 19px; font-weight: 800; margin: 5px 0 2px; }
+  .bh-plus { font-size: 12px; font-weight: 500; color: var(--muted, #77705f); }
+  .bh-note { font-size: 12.8px; line-height: 1.5; margin: 6px 0 0; color: var(--ink, #20261f); }
+
   tr.is-out td { opacity: 0.62; }
   .out-tag {
     display: inline-block;
@@ -266,5 +317,6 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
     .race-hero { grid-template-columns: 1fr; gap: 16px; }
     .rh-seed { font-size: 50px; }
     .race-hero-split { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .bracket-halves { grid-template-columns: 1fr; }
   }
 </style>
