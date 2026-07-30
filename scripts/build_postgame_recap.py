@@ -820,10 +820,12 @@ def main():
                         _txt(c, xx, top - 143, _pct(vv), "Helvetica-Bold", 10, col)
                 y = top - 168
                 y = wrap(c, 36, y, "The bye is only at risk if we lose both. Win one and it is "
-                         "locked. Lose both and there is a real chance we slide to sixth and have "
-                         "to play the 6:30 game; sweep and we reach third or better nine times out "
-                         "of ten, which is the half of the bracket that avoids Wasted Talent until "
-                         "the final.", W - 72, "Helvetica-Oblique", 8.8, 11, MAPLE)
+                         "locked. Sweep the doubleheader and we land the second seed in ninety-four "
+                         "outcomes out of a hundred, with a floor of third — the half of the bracket "
+                         "that cannot meet Wasted Talent before the final. Split and the bye holds "
+                         "but second is effectively gone, because Sandlot Vibes finish against the "
+                         "only winless club in the league.",
+                         W - 72, "Helvetica-Oblique", 8.8, 11, MAPLE)
                 y -= 10
 
             # where we finish

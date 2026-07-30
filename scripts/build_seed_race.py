@@ -44,6 +44,16 @@ PYTHAG_EXP = 1.5
 # modelled odds — this override applies only where Maple Tree are involved.
 OUR_GAME_WIN_PROB = 0.50
 
+# Explicit matchup overrides, {(favourite, underdog): favourite's win probability}.
+# The generic clamp floors every underdog at 5%, which is too kind to a club that is
+# 0-10 with a -136 run differential. Brian's call (7/30): Sandlot Vibes should be 99%
+# a game against Everything hurts. It matters more than it looks — those two games are
+# the only thing standing between Sandlot and a clean sweep, and a Sandlot sweep is
+# what closes off our route to the second seed.
+MATCHUP_OVERRIDES: dict[tuple[str, str], float] = {
+    ("Sandlot Vibes", "Everything hurts"): 0.99,
+}
+
 
 def load():
     played, remaining = [], []
@@ -184,6 +194,10 @@ def main() -> None:
     for _, h, a in remaining:
         if US in (h, a):
             probs.append(OUR_GAME_WIN_PROB if h == US else 1.0 - OUR_GAME_WIN_PROB)
+        elif (h, a) in MATCHUP_OVERRIDES:
+            probs.append(MATCHUP_OVERRIDES[(h, a)])
+        elif (a, h) in MATCHUP_OVERRIDES:
+            probs.append(1.0 - MATCHUP_OVERRIDES[(a, h)])
         else:
             probs.append(win_prob(base, h, a))
     our_idx = [i for i, (_, h, a) in enumerate(remaining) if US in (h, a)]
