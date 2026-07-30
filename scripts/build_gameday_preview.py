@@ -473,7 +473,7 @@ def main():
     st_y = min(264, rail_bottom - 22)
     section_title(c, 36, st_y, "Race to the #1 seed", W - 72)
     _txt(c, W - 36, st_y + 1, "Wednesday's opponent in bold", "Helvetica-Oblique", 7, MUTED, align="r")
-    cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RF", 426, "r"),
+    cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RS", 426, "r"),
             ("RA", 476, "r"), ("DIFF", 530, "r"), ("LEFT", 574, "r")]
     hy = st_y - 22
     _txt(c, 76, hy, "TEAM", "Helvetica-Bold", 7, MUTED)

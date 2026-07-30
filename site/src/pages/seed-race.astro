@@ -1,0 +1,270 @@
+---
+import Base from '../layouts/Base.astro';
+import TableSort from '../components/TableSort.astro';
+import race from '../data/seed_race.json';
+import { rate, int, dec1, diff } from '../lib/fmt';
+
+const teams: any[] = race.teams;
+const us: any = teams.find((t) => t.is_team);
+const leader: any = teams[0];
+const ourGames: any[] = race.remaining.filter((g: any) => g.involves_us);
+const ourOdds: any[] = (race.our_seed_odds as any[]).filter((o) => o.p > 0.001);
+const bestSeed = ourOdds.length ? ourOdds.reduce((a, b) => (b.p > a.p ? b : a)) : null;
+
+/** Odds as a percent, but never round a live chance down to a flat "0%". */
+const pct = (p: number) => {
+  if (p <= 0) return '—';
+  if (p < 0.001) return '<0.1%';
+  return `${(p * 100).toFixed(1)}%`;
+};
+const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
+---
+
+<Base
+  title="Race for the #1 Seed — Maple Tree Softball"
+  description="Every remaining Summer 2026 outcome enumerated exactly: who can still take the top seed, what Maple Tree needs, and the games that decide it."
+>
+  <h1 class="page-title">Race for the #1 Seed</h1>
+  <p class="page-sub">
+    Every one of the {race.branches.toLocaleString()} ways the rest of the season can play out,
+    counted exactly — not sampled. {race.games_remaining} games left.
+  </p>
+
+  <!-- the headline -->
+  <section class="race-hero">
+    <div class="race-hero-main">
+      <div class="rh-kicker">Maple Tree sit</div>
+      <div class="rh-seed">#{us.seed}</div>
+      <div class="rh-rec">{int(us.wins)}-{int(us.losses)} · {diff(us.run_diff)} run diff</div>
+    </div>
+    <div class="race-hero-split">
+      <div class="rh-stat">
+        <div class="rh-v">{pct(us.p_top_seed)}</div>
+        <div class="rh-l">chance at the top seed</div>
+      </div>
+      <div class="rh-stat">
+        <div class="rh-v">{pct(us.p_top_three)}</div>
+        <div class="rh-l">chance of finishing top three</div>
+      </div>
+      <div class="rh-stat">
+        <div class="rh-v">{int(us.max_wins)}</div>
+        <div class="rh-l">wins if we run the table</div>
+      </div>
+    </div>
+  </section>
+
+  {
+    aliveButLongshot && (
+      <p class="race-callout">
+        <strong>Alive, but only just.</strong> A branch exists where Maple Tree finish on top —
+        win both against {leader.team}, and have {teams[1].team} drop both to a winless club. It
+        happens in fewer than one run of the season in a thousand. The realistic fight is for
+        seeding behind the leaders, and it is genuinely close.
+      </p>
+    )
+  }
+
+  <!-- what our own two games do -->
+  <section class="race-block">
+    <h2 class="sec-title">Our last two games</h2>
+    <p class="sec-sub">
+      Both against {ourGames.length ? (ourGames[0].home === 'Maple Tree' ? ourGames[0].away : ourGames[0].home) : '—'} —
+      the team directly ahead of us. Nobody else in the league finishes against a tougher opponent.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Week</th><th>Matchup</th><th class="num">Our win odds</th></tr>
+        </thead>
+        <tbody>
+          {
+            ourGames.map((g: any) => {
+              const home = g.home === 'Maple Tree';
+              const p = home ? g.home_win_prob : 1 - g.home_win_prob;
+              return (
+                <tr>
+                  <td>{g.week}</td>
+                  <td>{home ? `vs ${g.away}` : `at ${g.home}`}</td>
+                  <td class="num">{pct(p)}</td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- where we actually land -->
+  <section class="race-block">
+    <h2 class="sec-title">Where Maple Tree finish</h2>
+    <p class="sec-sub">
+      Share of all {race.branches.toLocaleString()} outcomes that end with us on each seed.
+      {bestSeed && ` Most likely: #${bestSeed.seed}.`}
+    </p>
+    <div class="seed-bars">
+      {
+        ourOdds.map((o: any) => (
+          <div class="seed-bar-row">
+            <span class="sb-seed">#{o.seed}</span>
+            <span class="sb-track">
+              <span
+                class:list={['sb-fill', { 'sb-best': bestSeed && o.seed === bestSeed.seed }]}
+                style={`width:${Math.max(o.p * 100, 0.6)}%`}
+              />
+            </span>
+            <span class="sb-val">{pct(o.p)}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- full board -->
+  <section class="race-block">
+    <h2 class="sec-title">The full board</h2>
+    <p class="sec-sub">
+      Sorted by current seed. <strong>Max</strong> is the best record still reachable;
+      once that cannot beat the leaders, a team is out.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl" data-sortable>
+        <thead>
+          <tr>
+            <th class="num rank" data-nosort>Seed</th>
+            <th>Team</th>
+            <th class="num">W</th>
+            <th class="num">L</th>
+            <th class="num">Pct</th>
+            <th class="num">RS/G</th>
+            <th class="num">RA/G</th>
+            <th class="num">Left</th>
+            <th class="num">Max</th>
+            <th class="num">#1 odds</th>
+            <th class="num">Top 3</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            teams.map((t: any) => (
+              <tr class:list={[{ 'is-us': t.is_team, 'is-out': !t.alive_for_top_seed }]}>
+                <td class="num rank">{t.seed}</td>
+                <td>
+                  {t.team}
+                  {t.is_team ? ' 🍁' : ''}
+                  {!t.alive_for_top_seed && <span class="out-tag">out of the #1 race</span>}
+                </td>
+                <td class="num">{int(t.wins)}</td>
+                <td class="num">{int(t.losses)}</td>
+                <td class="num" data-v={String(t.win_pct)}>{rate(t.win_pct)}</td>
+                <td class="num" data-v={String(t.rs_per_game)}>{dec1(t.rs_per_game)}</td>
+                <td class="num" data-v={String(t.ra_per_game)}>{dec1(t.ra_per_game)}</td>
+                <td class="num">{int(t.games_left)}</td>
+                <td class="num">{int(t.max_wins)}</td>
+                <td class="num" data-v={String(t.p_top_seed)}>{pct(t.p_top_seed)}</td>
+                <td class="num" data-v={String(t.p_top_three)}>{pct(t.p_top_three)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- everything still to play -->
+  <section class="race-block">
+    <h2 class="sec-title">Every game left in the league</h2>
+    <p class="sec-sub">Odds are for the home side. Ours are highlighted.</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Week</th><th>Home</th><th>Away</th><th class="num">Home win odds</th></tr>
+        </thead>
+        <tbody>
+          {
+            race.remaining.map((g: any) => (
+              <tr class:list={[{ 'is-us': g.involves_us }]}>
+                <td>{g.week}</td>
+                <td>{g.home}</td>
+                <td>{g.away}</td>
+                <td class="num">{pct(g.home_win_prob)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="table-note">{race.method}</p>
+
+  <TableSort />
+</Base>
+
+<style>
+  .race-hero {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 22px;
+    align-items: center;
+    background: var(--card, #f8f7f2);
+    border: 1px solid var(--line, #d8d3c2);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 20px;
+  }
+  .rh-kicker {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted, #77705f);
+  }
+  .rh-seed { font-size: 62px; font-weight: 800; line-height: 1; color: var(--maple, #c2410c); }
+  .rh-rec { font-size: 13px; color: var(--muted, #77705f); margin-top: 4px; }
+  .race-hero-split { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .rh-v { font-size: 27px; font-weight: 800; line-height: 1.1; }
+  .rh-l { font-size: 11.5px; color: var(--muted, #77705f); margin-top: 4px; }
+
+  .race-callout {
+    border-left: 3px solid var(--maple, #c2410c);
+    background: rgba(194, 65, 12, 0.06);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 26px;
+  }
+
+  .race-block { margin-bottom: 30px; }
+  .sec-title { font-size: 19px; margin: 0 0 4px; }
+  .sec-sub { font-size: 13.5px; color: var(--muted, #77705f); margin: 0 0 12px; line-height: 1.5; }
+
+  .seed-bars { display: flex; flex-direction: column; gap: 7px; }
+  .seed-bar-row { display: grid; grid-template-columns: 42px 1fr 62px; align-items: center; gap: 10px; }
+  .sb-seed { font-weight: 700; font-size: 14px; }
+  .sb-track { background: rgba(0, 0, 0, 0.07); border-radius: 99px; height: 15px; overflow: hidden; }
+  .sb-fill { display: block; height: 100%; background: #a8a290; border-radius: 99px; }
+  .sb-fill.sb-best { background: var(--maple, #c2410c); }
+  .sb-val { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; }
+
+  tr.is-out td { opacity: 0.62; }
+  .out-tag {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted, #77705f);
+    border: 1px solid var(--line, #d8d3c2);
+    border-radius: 99px;
+    padding: 1px 7px;
+    vertical-align: middle;
+  }
+
+  @media (max-width: 720px) {
+    .race-hero { grid-template-columns: 1fr; gap: 16px; }
+    .rh-seed { font-size: 50px; }
+    .race-hero-split { grid-template-columns: 1fr 1fr; gap: 14px; }
+  }
+</style>

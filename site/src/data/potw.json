@@ -10,7 +10,7 @@
   {
    "player": "Glove",
    "canonical_name": "glove",
-   "potw": 7,
+   "potw": 8,
    "best_week": 10.9,
    "slug": "glove"
   },
@@ -72,6 +72,25 @@
   }
  ],
  "history": [
+  {
+   "season": "Maple Tree Summer 2026",
+   "game_date": "2026-07-29",
+   "player": "Glove",
+   "canonical_name": "glove",
+   "game_score": 4.8,
+   "games": 2,
+   "ab": 8,
+   "hits": 6,
+   "hr": 1,
+   "rbi": 2,
+   "r": 5,
+   "bb": 0,
+   "tb": 9,
+   "opponents": "Sandlot Vibes",
+   "slug": "glove",
+   "label": "Summer 2026",
+   "team_result": "Split 1-1 (12-13, 13-10)"
+  },
   {
    "season": "Maple Tree Summer 2026",
    "game_date": "2026-07-22",

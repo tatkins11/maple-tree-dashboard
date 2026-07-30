@@ -3,7 +3,7 @@
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
   "slug": "summer-2026",
-  "record": "6-2",
+  "record": "7-3",
   "games": [
    {
     "week_label": "Week 2",
@@ -124,12 +124,12 @@
     "opponent_name": "Sandlot Vibes",
     "home_away": "home",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "L",
+    "runs_for": 12.0,
+    "runs_against": 13.0
    },
    {
     "week_label": "Week 6",
@@ -138,12 +138,12 @@
     "opponent_name": "Sandlot Vibes",
     "home_away": "away",
     "location_or_field": "Boncosky Green",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "W",
+    "runs_for": 13.0,
+    "runs_against": 10.0
    },
    {
     "week_label": "Week 7",

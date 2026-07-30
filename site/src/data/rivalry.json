@@ -266,6 +266,20 @@
   "record": "1-1"
  },
  {
+  "opponent": "Sandlot Vibes",
+  "games": 2,
+  "wins": 1,
+  "losses": 1,
+  "ties": 0,
+  "runs_for": 25,
+  "runs_against": 23,
+  "run_diff": 2,
+  "first_played": "2026-07-29",
+  "last_played": "2026-07-29",
+  "win_pct": 0.5,
+  "record": "1-1"
+ },
+ {
   "opponent": "Soft Ballz",
   "games": 2,
   "wins": 0,

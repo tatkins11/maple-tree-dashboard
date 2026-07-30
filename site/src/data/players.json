@@ -8,32 +8,32 @@
    "player": "Duff",
    "canonical_name": "duff",
    "seasons_played": 6,
-   "games": 82,
-   "pa": 249,
-   "ab": 234,
-   "hits": 103,
-   "1b": 75,
+   "games": 84,
+   "pa": 255,
+   "ab": 240,
+   "hits": 106,
+   "1b": 78,
    "2b": 13,
    "3b": 13,
    "hr": 2,
    "bb": 10,
-   "r": 58,
-   "rbi": 52,
-   "tb": 148,
+   "r": 59,
+   "rbi": 54,
+   "tb": 151,
    "gidp": 3,
    "sf": 5,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.44017094017094016,
-   "obp": 0.4538152610441767,
-   "slg": 0.6324786324786325,
-   "ops": 1.086293893522809,
-   "woba": 0.4216,
-   "wrc_plus": 82.0,
-   "iso": 0.1923,
-   "bb_rate": 0.0402,
-   "xbh_rate": 0.1124,
-   "gs_avg": 0.73
+   "avg": 0.44166666666666665,
+   "obp": 0.4549019607843137,
+   "slg": 0.6291666666666667,
+   "ops": 1.0840686274509803,
+   "woba": 0.4207,
+   "wrc_plus": 81.9,
+   "iso": 0.1875,
+   "bb_rate": 0.0392,
+   "xbh_rate": 0.1098,
+   "gs_avg": 0.72
   },
   "seasons": [
    {
@@ -185,33 +185,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Duff",
     "canonical_name": "duff",
-    "games": 8,
-    "pa": 25,
-    "ab": 23,
-    "hits": 9,
-    "1b": 6,
+    "games": 10,
+    "pa": 31,
+    "ab": 29,
+    "hits": 12,
+    "1b": 9,
     "2b": 1,
     "3b": 2,
     "hr": 0,
     "bb": 0,
-    "r": 5,
-    "rbi": 7,
-    "tb": 14,
-    "avg": 0.3913043478,
-    "obp": 0.36,
-    "slg": 0.6086956522,
-    "ops": 0.9686956522,
+    "r": 6,
+    "rbi": 9,
+    "tb": 17,
+    "avg": 0.4137931034,
+    "obp": 0.3870967742,
+    "slg": 0.5862068966,
+    "ops": 0.9733036707,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.3926,
-    "wrc_plus": 78.0,
-    "iso": 0.2174,
+    "woba": 0.3902,
+    "wrc_plus": 77.6,
+    "iso": 0.1724,
     "bb_rate": 0.0,
-    "xbh_rate": 0.12,
-    "gs_avg": 0.62
+    "xbh_rate": 0.0968,
+    "gs_avg": 0.64
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 0,
+    "1b": 0,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 0,
+    "tb": 0,
+    "game_score": -0.75,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 3,
+    "1b": 3,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 2,
+    "tb": 3,
+    "game_score": 2.1,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -1862,44 +1902,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.391304347826087,
-       "pct": 20
+       "value": 0.41379310344827586,
+       "pct": 31
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.36,
-       "pct": 13
+       "value": 0.3870967741935484,
+       "pct": 19
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.6086956521739131,
-       "pct": 43
+       "value": 0.5862068965517241,
+       "pct": 41
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 0.9686956521739131,
-       "pct": 27
+       "value": 0.9733036707452725,
+       "pct": 29
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.2174,
-       "pct": 56
+       "value": 0.1724,
+       "pct": 46
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.3926,
-       "pct": 32
+       "value": 0.3902,
+       "pct": 34
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 78.0,
-       "pct": 35
+       "value": 77.6,
+       "pct": 32
       },
       {
        "key": "bb_rate",
@@ -1910,38 +1950,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.12,
-       "pct": 49
+       "value": 0.0968,
+       "pct": 43
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 0.62,
-       "pct": 25
+       "value": 0.64,
+       "pct": 31
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.4583,
-       "pct": 72
+       "value": 0.5,
+       "pct": 79
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.375,
-       "pct": 83
+       "value": 0.4333,
+       "pct": 94
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.2917,
-       "pct": 20
+       "value": 0.3,
+       "pct": 24
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.3333,
-       "pct": 48
+       "value": 0.2667,
+       "pct": 29
       }
      ]
     },
@@ -1959,7 +1999,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.3783783783783784,
-       "pct": 17
+       "pct": 14
       },
       {
        "key": "slg",
@@ -1971,13 +2011,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.8026208026208026,
-       "pct": 17
+       "pct": 15
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1212,
-       "pct": 29
+       "pct": 28
       },
       {
        "key": "woba",
@@ -2001,7 +2041,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0541,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "gs",
@@ -2013,13 +2053,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3125,
-       "pct": 30
+       "pct": 29
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 54
+       "pct": 53
       },
       {
        "key": "fb_rate",
@@ -2043,7 +2083,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5238095238095238,
-       "pct": 60
+       "pct": 61
       },
       {
        "key": "obp",
@@ -2055,19 +2095,19 @@
        "key": "slg",
        "label": "SLG",
        "value": 0.7380952380952381,
-       "pct": 57
+       "pct": 55
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 1.2912867274569404,
-       "pct": 58
+       "pct": 60
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.2143,
-       "pct": 54
+       "pct": 57
       },
       {
        "key": "woba",
@@ -2091,25 +2131,25 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1489,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.11,
-       "pct": 62
+       "pct": 60
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4419,
-       "pct": 71
+       "pct": 68
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3256,
-       "pct": 67
+       "pct": 65
       },
       {
        "key": "fb_rate",
@@ -2121,7 +2161,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3023,
-       "pct": 36
+       "pct": 38
       }
      ]
     },
@@ -2157,7 +2197,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0968,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "woba",
@@ -2181,7 +2221,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0606,
-       "pct": 29
+       "pct": 28
       },
       {
        "key": "gs",
@@ -2193,19 +2233,19 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3214,
-       "pct": 32
+       "pct": 31
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 31
+       "pct": 32
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3929,
-       "pct": 59
+       "pct": 62
       },
       {
        "key": "gb_rate",
@@ -2223,13 +2263,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.45098039215686275,
-       "pct": 42
+       "pct": 45
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.4423076923076923,
-       "pct": 30
+       "pct": 33
       },
       {
        "key": "slg",
@@ -2247,13 +2287,13 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.2549,
-       "pct": 59
+       "pct": 60
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.4129,
-       "pct": 37
+       "pct": 40
       },
       {
        "key": "wrc_plus",
@@ -2271,25 +2311,25 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1346,
-       "pct": 56
+       "pct": 59
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.81,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3269,
-       "pct": 34
+       "pct": 32
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 31
+       "pct": 32
       },
       {
        "key": "fb_rate",
@@ -2301,7 +2341,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     },
@@ -2319,13 +2359,13 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5454545454545454,
-       "pct": 63
+       "pct": 64
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.7592592592592593,
-       "pct": 61
+       "pct": 58
       },
       {
        "key": "ops",
@@ -2337,13 +2377,13 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.2037,
-       "pct": 50
+       "pct": 51
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.509,
-       "pct": 59
+       "pct": 57
       },
       {
        "key": "wrc_plus",
@@ -2361,7 +2401,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1273,
-       "pct": 51
+       "pct": 53
       },
       {
        "key": "gs",
@@ -2373,7 +2413,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2727,
-       "pct": 19
+       "pct": 21
       },
       {
        "key": "ld_rate",
@@ -2403,86 +2443,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.44017094017094016,
+      "value": 0.44166666666666665,
       "pct": 41
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.4538152610441767,
+      "value": 0.4549019607843137,
       "pct": 41
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.6324786324786325,
+      "value": 0.6291666666666667,
       "pct": 41
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.086293893522809,
-      "pct": 41
+      "value": 1.0840686274509803,
+      "pct": 34
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.1923,
-      "pct": 44
+      "value": 0.1875,
+      "pct": 47
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.4216,
+      "value": 0.4207,
       "pct": 38
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 82.0,
+      "value": 81.9,
       "pct": 38
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0402,
+      "value": 0.0392,
       "pct": 31
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.1124,
-      "pct": 44
+      "value": 0.1098,
+      "pct": 31
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 0.73,
-      "pct": 50
+      "value": 0.72,
+      "pct": 38
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.3462,
-      "pct": 44
+      "value": 0.3542,
+      "pct": 38
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.291,
-      "pct": 38
+      "value": 0.3004,
+      "pct": 56
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.4104,
-      "pct": 62
+      "value": 0.4085,
+      "pct": 56
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.2985,
-      "pct": 19
+      "value": 0.2911,
+      "pct": 25
      }
     ]
    }
@@ -2566,34 +2606,12 @@
    {
     "scope": "Career",
     "label": "Games",
-    "value": 82,
+    "value": 84,
     "context": null
    }
   ],
   "milestones": {
    "next": [
-    {
-     "player": "Duff",
-     "canonical_name": "duff",
-     "stat": "PA",
-     "current_total": 249,
-     "next_milestone_display": 250,
-     "remaining": 1,
-     "progress_to_next": 0.996,
-     "club_label": "3 in club",
-     "slug": "duff"
-    },
-    {
-     "player": "Duff",
-     "canonical_name": "duff",
-     "stat": "Total Bases",
-     "current_total": 148,
-     "next_milestone_display": 150,
-     "remaining": 2,
-     "progress_to_next": 0.987,
-     "club_label": "6 in club",
-     "slug": "duff"
-    },
     {
      "player": "Duff",
      "canonical_name": "duff",
@@ -2626,9 +2644,49 @@
      "progress_to_next": 0.65,
      "club_label": "4 in club",
      "slug": "duff"
+    },
+    {
+     "player": "Duff",
+     "canonical_name": "duff",
+     "stat": "AB",
+     "current_total": 240,
+     "next_milestone_display": 250,
+     "remaining": 10,
+     "progress_to_next": 0.96,
+     "club_label": "3 in club",
+     "slug": "duff"
+    },
+    {
+     "player": "Duff",
+     "canonical_name": "duff",
+     "stat": "Walks",
+     "current_total": 10,
+     "next_milestone_display": 25,
+     "remaining": 15,
+     "progress_to_next": 0.4,
+     "club_label": "1 in club",
+     "slug": "duff"
     }
    ],
    "reached": [
+    {
+     "player": "Duff",
+     "slug": "duff",
+     "stat": "PA",
+     "milestone": 250,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
+    {
+     "player": "Duff",
+     "slug": "duff",
+     "stat": "Total Bases",
+     "milestone": 150,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Duff",
      "slug": "duff",
@@ -2893,31 +2951,31 @@
    "player": "Corey",
    "canonical_name": "corey",
    "seasons_played": 6,
-   "games": 81,
-   "pa": 242,
-   "ab": 223,
-   "hits": 96,
-   "1b": 78,
+   "games": 83,
+   "pa": 248,
+   "ab": 229,
+   "hits": 99,
+   "1b": 81,
    "2b": 14,
    "3b": 2,
    "hr": 2,
    "bb": 10,
-   "r": 60,
-   "rbi": 51,
-   "tb": 120,
-   "gidp": 3,
+   "r": 61,
+   "rbi": 53,
+   "tb": 123,
+   "gidp": 4,
    "sf": 9,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.4304932735426009,
-   "obp": 0.4380165289256198,
-   "slg": 0.5381165919282511,
-   "ops": 0.9761331208538709,
+   "avg": 0.43231441048034935,
+   "obp": 0.43951612903225806,
+   "slg": 0.537117903930131,
+   "ops": 0.976634032962389,
    "woba": 0.3832,
-   "wrc_plus": 74.5,
-   "iso": 0.1076,
-   "bb_rate": 0.0413,
-   "xbh_rate": 0.0744,
+   "wrc_plus": 74.6,
+   "iso": 0.1048,
+   "bb_rate": 0.0403,
+   "xbh_rate": 0.0726,
    "gs_avg": 0.63
   },
   "seasons": [
@@ -3070,33 +3128,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Corey",
     "canonical_name": "corey",
-    "games": 7,
-    "pa": 23,
-    "ab": 20,
-    "hits": 8,
-    "1b": 7,
+    "games": 9,
+    "pa": 29,
+    "ab": 26,
+    "hits": 11,
+    "1b": 10,
     "2b": 1,
     "3b": 0,
     "hr": 0,
     "bb": 0,
-    "r": 3,
-    "rbi": 7,
-    "tb": 9,
-    "avg": 0.4,
-    "obp": 0.347826087,
-    "slg": 0.45,
-    "ops": 0.797826087,
+    "r": 4,
+    "rbi": 9,
+    "tb": 12,
+    "avg": 0.4230769231,
+    "obp": 0.3793103448,
+    "slg": 0.4615384615,
+    "ops": 0.8408488064,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.3234,
-    "wrc_plus": 64.2,
-    "iso": 0.05,
+    "woba": 0.3352,
+    "wrc_plus": 66.7,
+    "iso": 0.0385,
     "bb_rate": 0.0,
-    "xbh_rate": 0.0435,
-    "gs_avg": 0.49
+    "xbh_rate": 0.0345,
+    "gs_avg": 0.53
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 0,
+    "tb": 1,
+    "game_score": 0.0,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 2,
+    "1b": 2,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 2,
+    "tb": 2,
+    "game_score": 1.35,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -4727,44 +4825,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.4,
-       "pct": 26
+       "value": 0.4230769230769231,
+       "pct": 33
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.34782608695652173,
-       "pct": 8
+       "value": 0.3793103448275862,
+       "pct": 15
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.45,
-       "pct": 17
+       "value": 0.46153846153846156,
+       "pct": 21
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 0.7978260869565217,
-       "pct": 15
+       "value": 0.8408488063660478,
+       "pct": 18
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.05,
-       "pct": 21
+       "value": 0.0385,
+       "pct": 16
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.3234,
-       "pct": 13
+       "value": 0.3352,
+       "pct": 16
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 64.2,
-       "pct": 13
+       "value": 66.7,
+       "pct": 16
       },
       {
        "key": "bb_rate",
@@ -4775,38 +4873,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.0435,
-       "pct": 21
+       "value": 0.0345,
+       "pct": 16
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 0.49,
-       "pct": 19
+       "value": 0.53,
+       "pct": 22
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.3043,
-       "pct": 28
+       "value": 0.3448,
+       "pct": 37
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.2609,
-       "pct": 35
+       "value": 0.3103,
+       "pct": 49
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.4783,
-       "pct": 83
+       "value": 0.4483,
+       "pct": 74
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.2609,
-       "pct": 24
+       "value": 0.2414,
+       "pct": 18
       }
      ]
     },
@@ -4824,7 +4922,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5405405405405406,
-       "pct": 61
+       "pct": 62
       },
       {
        "key": "slg",
@@ -4842,7 +4940,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.1471,
-       "pct": 41
+       "pct": 38
       },
       {
        "key": "woba",
@@ -4860,19 +4958,19 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0811,
-       "pct": 72
+       "pct": 74
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1081,
-       "pct": 44
+       "pct": 47
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.79,
-       "pct": 41
+       "pct": 43
       },
       {
        "key": "hh_rate",
@@ -4884,7 +4982,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1765,
-       "pct": 8
+       "pct": 7
       },
       {
        "key": "fb_rate",
@@ -4908,13 +5006,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.40540540540540543,
-       "pct": 29
+       "pct": 27
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.45454545454545453,
-       "pct": 35
+       "pct": 38
       },
       {
        "key": "slg",
@@ -4932,7 +5030,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0811,
-       "pct": 26
+       "pct": 25
       },
       {
        "key": "woba",
@@ -4944,7 +5042,7 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 65.5,
-       "pct": 16
+       "pct": 15
       },
       {
        "key": "bb_rate",
@@ -4956,7 +5054,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0682,
-       "pct": 35
+       "pct": 32
       },
       {
        "key": "gs",
@@ -4968,19 +5066,19 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4444,
-       "pct": 71
+       "pct": 68
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 31
+       "pct": 32
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3889,
-       "pct": 57
+       "pct": 60
       },
       {
        "key": "gb_rate",
@@ -5022,7 +5120,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.125,
-       "pct": 32
+       "pct": 30
       },
       {
        "key": "woba",
@@ -5046,7 +5144,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0625,
-       "pct": 32
+       "pct": 30
       },
       {
        "key": "gs",
@@ -5058,7 +5156,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 35
+       "pct": 34
       },
       {
        "key": "ld_rate",
@@ -5070,13 +5168,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4,
-       "pct": 61
+       "pct": 64
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 77
+       "pct": 76
       }
      ]
     },
@@ -5088,13 +5186,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.45454545454545453,
-       "pct": 43
+       "pct": 46
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.44,
-       "pct": 27
+       "pct": 31
       },
       {
        "key": "slg",
@@ -5118,7 +5216,7 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.3255,
-       "pct": 16
+       "pct": 15
       },
       {
        "key": "wrc_plus",
@@ -5130,7 +5228,7 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.04,
-       "pct": 48
+       "pct": 50
       },
       {
        "key": "xbh_rate",
@@ -5148,25 +5246,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.25,
-       "pct": 13
+       "pct": 15
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1875,
-       "pct": 12
+       "pct": 10
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4167,
-       "pct": 68
+       "pct": 69
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3958,
-       "pct": 74
+       "pct": 73
       }
      ]
     },
@@ -5184,7 +5282,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.4642857142857143,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "slg",
@@ -5196,25 +5294,25 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.0892857142857144,
-       "pct": 43
+       "pct": 45
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1607,
-       "pct": 44
+       "pct": 41
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.4333,
-       "pct": 44
+       "pct": 46
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 85.7,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "bb_rate",
@@ -5226,13 +5324,13 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1071,
-       "pct": 43
+       "pct": 46
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.87,
-       "pct": 47
+       "pct": 49
       },
       {
        "key": "hh_rate",
@@ -5256,7 +5354,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3922,
-       "pct": 73
+       "pct": 71
       }
      ]
     }
@@ -5268,56 +5366,56 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.4304932735426009,
+      "value": 0.43231441048034935,
       "pct": 34
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.4380165289256198,
+      "value": 0.43951612903225806,
       "pct": 22
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.5381165919282511,
-      "pct": 16
+      "value": 0.537117903930131,
+      "pct": 22
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 0.9761331208538709,
+      "value": 0.976634032962389,
       "pct": 22
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.1076,
+      "value": 0.1048,
       "pct": 12
      },
      {
       "key": "woba",
       "label": "wOBA",
       "value": 0.3832,
-      "pct": 19
+      "pct": 25
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 74.5,
-      "pct": 19
+      "value": 74.6,
+      "pct": 25
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0413,
-      "pct": 38
+      "value": 0.0403,
+      "pct": 44
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.0744,
-      "pct": 19
+      "value": 0.0726,
+      "pct": 25
      },
      {
       "key": "gs",
@@ -5328,26 +5426,26 @@
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.2756,
-      "pct": 19
+      "value": 0.2814,
+      "pct": 25
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.1882,
+      "value": 0.1963,
       "pct": 6
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.411,
-      "pct": 75
+      "value": 0.409,
+      "pct": 69
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.4008,
-      "pct": 88
+      "value": 0.3947,
+      "pct": 81
      }
     ]
    }
@@ -5440,6 +5538,28 @@
     {
      "player": "Corey",
      "canonical_name": "corey",
+     "stat": "Hits",
+     "current_total": 99,
+     "next_milestone_display": 100,
+     "remaining": 1,
+     "progress_to_next": 0.99,
+     "club_label": "6 in club",
+     "slug": "corey"
+    },
+    {
+     "player": "Corey",
+     "canonical_name": "corey",
+     "stat": "PA",
+     "current_total": 248,
+     "next_milestone_display": 250,
+     "remaining": 2,
+     "progress_to_next": 0.992,
+     "club_label": "4 in club",
+     "slug": "corey"
+    },
+    {
+     "player": "Corey",
+     "canonical_name": "corey",
      "stat": "HR",
      "current_total": 2,
      "next_milestone_display": 5,
@@ -5462,34 +5582,12 @@
     {
      "player": "Corey",
      "canonical_name": "corey",
-     "stat": "Hits",
-     "current_total": 96,
-     "next_milestone_display": 100,
-     "remaining": 4,
-     "progress_to_next": 0.96,
-     "club_label": "6 in club",
-     "slug": "corey"
-    },
-    {
-     "player": "Corey",
-     "canonical_name": "corey",
      "stat": "Doubles",
      "current_total": 14,
      "next_milestone_display": 20,
      "remaining": 6,
      "progress_to_next": 0.7,
      "club_label": "4 in club",
-     "slug": "corey"
-    },
-    {
-     "player": "Corey",
-     "canonical_name": "corey",
-     "stat": "PA",
-     "current_total": 242,
-     "next_milestone_display": 250,
-     "remaining": 8,
-     "progress_to_next": 0.968,
-     "club_label": "3 in club",
      "slug": "corey"
     }
    ],
@@ -5731,32 +5829,32 @@
    "player": "Jj",
    "canonical_name": "jj",
    "seasons_played": 6,
-   "games": 80,
-   "pa": 276,
-   "ab": 246,
-   "hits": 136,
-   "1b": 90,
+   "games": 82,
+   "pa": 284,
+   "ab": 254,
+   "hits": 137,
+   "1b": 91,
    "2b": 25,
    "3b": 8,
    "hr": 13,
    "bb": 26,
-   "r": 102,
-   "rbi": 76,
-   "tb": 216,
+   "r": 104,
+   "rbi": 78,
+   "tb": 217,
    "gidp": 2,
    "sf": 4,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.5528455284552846,
-   "obp": 0.5869565217391305,
-   "slg": 0.8780487804878049,
-   "ops": 1.4650053022269354,
-   "woba": 0.5632,
-   "wrc_plus": 109.5,
-   "iso": 0.3252,
-   "bb_rate": 0.0942,
-   "xbh_rate": 0.1667,
-   "gs_avg": 1.41
+   "avg": 0.5393700787401575,
+   "obp": 0.573943661971831,
+   "slg": 0.8543307086614174,
+   "ops": 1.4282743706332484,
+   "woba": 0.5512,
+   "wrc_plus": 107.3,
+   "iso": 0.315,
+   "bb_rate": 0.0915,
+   "xbh_rate": 0.162,
+   "gs_avg": 1.37
   },
   "seasons": [
    {
@@ -5908,33 +6006,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Jj",
     "canonical_name": "jj",
-    "games": 6,
-    "pa": 22,
-    "ab": 20,
-    "hits": 11,
-    "1b": 8,
+    "games": 8,
+    "pa": 30,
+    "ab": 28,
+    "hits": 12,
+    "1b": 9,
     "2b": 2,
     "3b": 1,
     "hr": 0,
     "bb": 1,
-    "r": 8,
-    "rbi": 10,
-    "tb": 15,
-    "avg": 0.55,
-    "obp": 0.5454545455,
-    "slg": 0.75,
-    "ops": 1.2954545455,
+    "r": 10,
+    "rbi": 12,
+    "tb": 16,
+    "avg": 0.4285714286,
+    "obp": 0.4333333333,
+    "slg": 0.5714285714,
+    "ops": 1.0047619048,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.5089,
-    "wrc_plus": 101.1,
-    "iso": 0.2,
-    "bb_rate": 0.0455,
-    "xbh_rate": 0.1364,
-    "gs_avg": 1.44
+    "woba": 0.4057,
+    "wrc_plus": 80.7,
+    "iso": 0.1429,
+    "bb_rate": 0.0333,
+    "xbh_rate": 0.1,
+    "gs_avg": 1.03
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 2,
+    "rbi": 2,
+    "tb": 1,
+    "game_score": 0.55,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 0,
+    "1b": 0,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 0,
+    "tb": 0,
+    "game_score": -1.0,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-15",
     "season": "Maple Tree Summer 2026",
@@ -7545,86 +7683,86 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.55,
-       "pct": 67
+       "value": 0.42857142857142855,
+       "pct": 35
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.5454545454545454,
-       "pct": 63
+       "value": 0.43333333333333335,
+       "pct": 24
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.75,
-       "pct": 58
+       "value": 0.5714285714285714,
+       "pct": 39
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.2954545454545454,
-       "pct": 60
+       "value": 1.0047619047619047,
+       "pct": 39
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.2,
-       "pct": 49
+       "value": 0.1429,
+       "pct": 37
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.5089,
-       "pct": 57
+       "value": 0.4057,
+       "pct": 38
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 101.1,
-       "pct": 60
+       "value": 80.7,
+       "pct": 40
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.0455,
-       "pct": 54
+       "value": 0.0333,
+       "pct": 41
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.1364,
-       "pct": 59
+       "value": 0.1,
+       "pct": 43
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 1.44,
-       "pct": 71
+       "value": 1.03,
+       "pct": 54
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.2857,
-       "pct": 24
+       "value": 0.2414,
+       "pct": 12
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.2857,
-       "pct": 44
+       "value": 0.2414,
+       "pct": 29
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.7143,
+       "value": 0.6897,
        "pct": 98
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.0,
-       "pct": 1
+       "value": 0.069,
+       "pct": 2
       }
      ]
     },
@@ -7642,7 +7780,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5333333333333333,
-       "pct": 60
+       "pct": 61
       },
       {
        "key": "slg",
@@ -7654,25 +7792,25 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.3583333333333334,
-       "pct": 70
+       "pct": 67
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.35,
-       "pct": 73
+       "pct": 76
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.5277,
-       "pct": 66
+       "pct": 65
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 103.5,
-       "pct": 63
+       "pct": 62
       },
       {
        "key": "bb_rate",
@@ -7684,25 +7822,25 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1556,
-       "pct": 65
+       "pct": 66
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.21,
-       "pct": 66
+       "pct": 68
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5556,
-       "pct": 88
+       "pct": 84
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3889,
-       "pct": 89
+       "pct": 88
       },
       {
        "key": "fb_rate",
@@ -7714,7 +7852,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 48
+       "pct": 50
       }
      ]
     },
@@ -7726,7 +7864,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6222222222222222,
-       "pct": 88
+       "pct": 86
       },
       {
        "key": "obp",
@@ -7756,13 +7894,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.5907,
-       "pct": 75
+       "pct": 76
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 107.7,
-       "pct": 71
+       "pct": 68
       },
       {
        "key": "bb_rate",
@@ -7786,7 +7924,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3902,
-       "pct": 53
+       "pct": 51
       },
       {
        "key": "ld_rate",
@@ -7798,13 +7936,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3171,
-       "pct": 26
+       "pct": 27
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3659,
-       "pct": 62
+       "pct": 60
       }
      ]
     },
@@ -7816,7 +7954,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6285714285714286,
-       "pct": 90
+       "pct": 89
       },
       {
        "key": "obp",
@@ -7834,7 +7972,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.6095238095238096,
-       "pct": 79
+       "pct": 80
       },
       {
        "key": "iso",
@@ -7864,31 +8002,31 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1282,
-       "pct": 53
+       "pct": 54
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.37,
-       "pct": 71
+       "pct": 72
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4706,
-       "pct": 78
+       "pct": 76
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3529,
-       "pct": 79
+       "pct": 77
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3824,
-       "pct": 55
+       "pct": 57
       },
       {
        "key": "gb_rate",
@@ -7906,7 +8044,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5306122448979592,
-       "pct": 64
+       "pct": 65
       },
       {
        "key": "obp",
@@ -7918,7 +8056,7 @@
        "key": "slg",
        "label": "SLG",
        "value": 0.9795918367346939,
-       "pct": 79
+       "pct": 80
       },
       {
        "key": "ops",
@@ -7942,7 +8080,7 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 105.0,
-       "pct": 65
+       "pct": 63
       },
       {
        "key": "bb_rate",
@@ -7960,31 +8098,31 @@
        "key": "gs",
        "label": "GS/G",
        "value": 1.47,
-       "pct": 74
+       "pct": 72
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4583,
-       "pct": 72
+       "pct": 69
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 54
+       "pct": 53
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.3958,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 33
+       "pct": 35
       }
      ]
     },
@@ -7996,13 +8134,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5263157894736842,
-       "pct": 61
+       "pct": 62
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5166666666666667,
-       "pct": 55
+       "pct": 57
       },
       {
        "key": "slg",
@@ -8014,7 +8152,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.3412280701754387,
-       "pct": 67
+       "pct": 65
       },
       {
        "key": "iso",
@@ -8026,13 +8164,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.5325,
-       "pct": 68
+       "pct": 65
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 105.4,
-       "pct": 69
+       "pct": 66
       },
       {
        "key": "bb_rate",
@@ -8056,7 +8194,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2456,
-       "pct": 10
+       "pct": 12
       },
       {
        "key": "ld_rate",
@@ -8068,13 +8206,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4727,
-       "pct": 82
+       "pct": 83
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3273,
-       "pct": 45
+       "pct": 48
       }
      ]
     }
@@ -8086,86 +8224,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.5528455284552846,
-      "pct": 72
+      "value": 0.5393700787401575,
+      "pct": 66
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.5869565217391305,
-      "pct": 84
+      "value": 0.573943661971831,
+      "pct": 78
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.8780487804878049,
-      "pct": 72
+      "value": 0.8543307086614174,
+      "pct": 66
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.4650053022269354,
+      "value": 1.4282743706332484,
       "pct": 72
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.3252,
+      "value": 0.315,
       "pct": 69
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.5632,
-      "pct": 75
+      "value": 0.5512,
+      "pct": 69
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 109.5,
+      "value": 107.3,
       "pct": 75
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0942,
+      "value": 0.0915,
       "pct": 88
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.1667,
-      "pct": 75
+      "value": 0.162,
+      "pct": 62
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 1.41,
+      "value": 1.37,
       "pct": 69
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.3966,
-      "pct": 56
+      "value": 0.3878,
+      "pct": 62
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3013,
-      "pct": 62
+      "value": 0.2955,
+      "pct": 44
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.4091,
-      "pct": 62
+      "value": 0.4161,
+      "pct": 75
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.2897,
-      "pct": 19
+      "value": 0.2884,
+      "pct": 12
      }
     ]
    }
@@ -8280,18 +8418,7 @@
      "next_milestone_display": 10,
      "remaining": 2,
      "progress_to_next": 0.8,
-     "club_label": "3 in club",
-     "slug": "jj"
-    },
-    {
-     "player": "JJ",
-     "canonical_name": "jj",
-     "stat": "AB",
-     "current_total": 246,
-     "next_milestone_display": 250,
-     "remaining": 4,
-     "progress_to_next": 0.984,
-     "club_label": "2 in club",
+     "club_label": "4 in club",
      "slug": "jj"
     },
     {
@@ -8302,22 +8429,42 @@
      "next_milestone_display": 30,
      "remaining": 5,
      "progress_to_next": 0.833,
-     "club_label": "First to 30",
+     "club_label": "1 in club",
      "slug": "jj"
     },
     {
      "player": "JJ",
      "canonical_name": "jj",
      "stat": "Singles",
-     "current_total": 90,
+     "current_total": 91,
      "next_milestone_display": 100,
-     "remaining": 10,
-     "progress_to_next": 0.9,
-     "club_label": "First to 100",
+     "remaining": 9,
+     "progress_to_next": 0.91,
+     "club_label": "1 in club",
+     "slug": "jj"
+    },
+    {
+     "player": "JJ",
+     "canonical_name": "jj",
+     "stat": "Hits",
+     "current_total": 137,
+     "next_milestone_display": 150,
+     "remaining": 13,
+     "progress_to_next": 0.913,
+     "club_label": "2 in club",
      "slug": "jj"
     }
    ],
    "reached": [
+    {
+     "player": "JJ",
+     "slug": "jj",
+     "stat": "AB",
+     "milestone": 250,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "JJ",
      "slug": "jj",
@@ -8672,32 +8819,32 @@
    "player": "Tristan",
    "canonical_name": "tristan",
    "seasons_played": 6,
-   "games": 78,
-   "pa": 279,
-   "ab": 250,
-   "hits": 152,
-   "1b": 66,
-   "2b": 29,
+   "games": 80,
+   "pa": 287,
+   "ab": 257,
+   "hits": 157,
+   "1b": 70,
+   "2b": 30,
    "3b": 7,
    "hr": 50,
    "bb": 17,
-   "r": 129,
-   "rbi": 158,
-   "tb": 345,
+   "r": 133,
+   "rbi": 160,
+   "tb": 351,
    "gidp": 2,
-   "sf": 12,
+   "sf": 13,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.608,
-   "obp": 0.6057347670250897,
-   "slg": 1.38,
-   "ops": 1.9857347670250896,
-   "woba": 0.7643,
-   "wrc_plus": 148.6,
-   "iso": 0.772,
-   "bb_rate": 0.0609,
-   "xbh_rate": 0.3082,
-   "gs_avg": 2.26
+   "avg": 0.6108949416342413,
+   "obp": 0.6062717770034843,
+   "slg": 1.3657587548638133,
+   "ops": 1.9720305318672975,
+   "woba": 0.7593,
+   "wrc_plus": 147.7,
+   "iso": 0.7549,
+   "bb_rate": 0.0592,
+   "xbh_rate": 0.3031,
+   "gs_avg": 2.25
   },
   "seasons": [
    {
@@ -8849,33 +8996,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Tristan",
     "canonical_name": "tristan",
-    "games": 8,
-    "pa": 31,
-    "ab": 30,
-    "hits": 19,
-    "1b": 11,
-    "2b": 6,
+    "games": 10,
+    "pa": 39,
+    "ab": 37,
+    "hits": 24,
+    "1b": 15,
+    "2b": 7,
     "3b": 1,
     "hr": 1,
     "bb": 0,
-    "r": 17,
-    "rbi": 11,
-    "tb": 30,
-    "avg": 0.6333333333,
-    "obp": 0.6129032258,
-    "slg": 1.0,
-    "ops": 1.6129032258,
+    "r": 21,
+    "rbi": 13,
+    "tb": 36,
+    "avg": 0.6486486486,
+    "obp": 0.6153846154,
+    "slg": 0.972972973,
+    "ops": 1.5883575884,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.663,
-    "wrc_plus": 131.7,
-    "iso": 0.3667,
+    "woba": 0.6458,
+    "wrc_plus": 128.5,
+    "iso": 0.3243,
     "bb_rate": 0.0,
-    "xbh_rate": 0.2581,
-    "gs_avg": 2.03
+    "xbh_rate": 0.2308,
+    "gs_avg": 1.99
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 3,
+    "1b": 3,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 3,
+    "rbi": 1,
+    "tb": 3,
+    "game_score": 2.05,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 3,
+    "hits": 2,
+    "1b": 1,
+    "2b": 1,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 1,
+    "tb": 3,
+    "game_score": 1.55,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -10446,44 +10633,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.6333333333333333,
-       "pct": 92
+       "value": 0.6486486486486487,
+       "pct": 95
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.6129032258064516,
-       "pct": 82
+       "value": 0.6153846153846154,
+       "pct": 83
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 1.0,
-       "pct": 80
+       "value": 0.972972972972973,
+       "pct": 79
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.6129032258064515,
-       "pct": 80
+       "value": 1.5883575883575884,
+       "pct": 76
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.3667,
-       "pct": 76
+       "value": 0.3243,
+       "pct": 72
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.663,
-       "pct": 84
+       "value": 0.6458,
+       "pct": 79
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 131.7,
-       "pct": 84
+       "value": 128.5,
+       "pct": 81
       },
       {
        "key": "bb_rate",
@@ -10494,38 +10681,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.2581,
-       "pct": 87
+       "value": 0.2308,
+       "pct": 81
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 2.03,
-       "pct": 88
+       "value": 1.99,
+       "pct": 90
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.5161,
-       "pct": 79
+       "value": 0.5641,
+       "pct": 87
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.4194,
-       "pct": 95
+       "value": 0.4615,
+       "pct": 99
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.4194,
-       "pct": 70
+       "value": 0.3846,
+       "pct": 58
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.1613,
-       "pct": 7
+       "value": 0.1538,
+       "pct": 6
       }
      ]
     },
@@ -10537,7 +10724,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6410256410256411,
-       "pct": 94
+       "pct": 93
       },
       {
        "key": "obp",
@@ -10603,13 +10790,13 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.45,
-       "pct": 74
+       "pct": 76
       },
       {
        "key": "gb_rate",
@@ -10669,7 +10856,7 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0392,
-       "pct": 44
+       "pct": 47
       },
       {
        "key": "xbh_rate",
@@ -10693,7 +10880,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -10705,7 +10892,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 33
+       "pct": 35
       }
      ]
     },
@@ -10723,7 +10910,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.4642857142857143,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "slg",
@@ -10735,31 +10922,31 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.0729813664596275,
-       "pct": 40
+       "pct": 43
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1304,
-       "pct": 32
+       "pct": 31
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.4415,
-       "pct": 46
+       "pct": 47
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 92.5,
-       "pct": 53
+       "pct": 51
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0714,
-       "pct": 62
+       "pct": 63
       },
       {
        "key": "xbh_rate",
@@ -10777,13 +10964,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3846,
-       "pct": 50
+       "pct": 49
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3462,
-       "pct": 78
+       "pct": 76
       },
       {
        "key": "fb_rate",
@@ -10795,7 +10982,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3077,
-       "pct": 40
+       "pct": 42
       }
      ]
     },
@@ -10807,13 +10994,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5294117647058824,
-       "pct": 62
+       "pct": 64
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.532258064516129,
-       "pct": 58
+       "pct": 60
       },
       {
        "key": "slg",
@@ -10867,13 +11054,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5714,
-       "pct": 91
+       "pct": 90
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4035,
-       "pct": 90
+       "pct": 89
       },
       {
        "key": "fb_rate",
@@ -10897,7 +11084,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6206896551724138,
-       "pct": 86
+       "pct": 85
       },
       {
        "key": "obp",
@@ -10957,7 +11144,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3898,
-       "pct": 51
+       "pct": 50
       },
       {
        "key": "ld_rate",
@@ -10987,85 +11174,85 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.608,
+      "value": 0.6108949416342413,
       "pct": 91
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.6057347670250897,
+      "value": 0.6062717770034843,
       "pct": 91
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 1.38,
+      "value": 1.3657587548638133,
       "pct": 97
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.9857347670250896,
+      "value": 1.9720305318672975,
       "pct": 97
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.772,
+      "value": 0.7549,
       "pct": 99
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.7643,
-      "pct": 99
+      "value": 0.7593,
+      "pct": 94
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 148.6,
-      "pct": 99
+      "value": 147.7,
+      "pct": 94
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0609,
+      "value": 0.0592,
       "pct": 81
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.3082,
+      "value": 0.3031,
       "pct": 94
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 2.26,
+      "value": 2.25,
       "pct": 94
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.5269,
-      "pct": 94
+      "value": 0.5336,
+      "pct": 99
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3505,
+      "value": 0.3587,
       "pct": 99
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.4483,
-      "pct": 88
+      "value": 0.4424,
+      "pct": 94
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.2012,
+      "value": 0.1989,
       "pct": 1
      }
     ]
@@ -11150,13 +11337,13 @@
    {
     "scope": "Career",
     "label": "PA",
-    "value": 279,
+    "value": 287,
     "context": null
    },
    {
     "scope": "Career",
     "label": "Doubles",
-    "value": 29,
+    "value": 30,
     "context": null
    },
    {
@@ -11168,31 +11355,31 @@
    {
     "scope": "Career",
     "label": "RBI",
-    "value": 158,
+    "value": 160,
     "context": null
    },
    {
     "scope": "Career",
     "label": "Runs",
-    "value": 129,
+    "value": 133,
     "context": null
    },
    {
     "scope": "Career",
     "label": "Total Bases",
-    "value": 345,
+    "value": 351,
     "context": null
    },
    {
     "scope": "Career",
     "label": "SLG",
-    "value": 1.38,
+    "value": 1.3658,
     "context": null
    },
    {
     "scope": "Career",
     "label": "OPS",
-    "value": 1.9857,
+    "value": 1.972,
     "context": null
    },
    {
@@ -11267,34 +11454,23 @@
     {
      "player": "Tristan",
      "canonical_name": "tristan",
-     "stat": "Doubles",
-     "current_total": 29,
-     "next_milestone_display": 30,
-     "remaining": 1,
-     "progress_to_next": 0.967,
-     "club_label": "First to 30",
-     "slug": "tristan"
-    },
-    {
-     "player": "Tristan",
-     "canonical_name": "tristan",
      "stat": "Triples",
      "current_total": 7,
      "next_milestone_display": 10,
      "remaining": 3,
      "progress_to_next": 0.7,
-     "club_label": "3 in club",
+     "club_label": "4 in club",
      "slug": "tristan"
     },
     {
      "player": "Tristan",
      "canonical_name": "tristan",
-     "stat": "Total Bases",
-     "current_total": 345,
-     "next_milestone_display": 350,
+     "stat": "Singles",
+     "current_total": 70,
+     "next_milestone_display": 75,
      "remaining": 5,
-     "progress_to_next": 0.986,
-     "club_label": "First to 350",
+     "progress_to_next": 0.933,
+     "club_label": "5 in club",
      "slug": "tristan"
     },
     {
@@ -11311,16 +11487,45 @@
     {
      "player": "Tristan",
      "canonical_name": "tristan",
-     "stat": "Singles",
-     "current_total": 66,
-     "next_milestone_display": 75,
-     "remaining": 9,
-     "progress_to_next": 0.88,
-     "club_label": "5 in club",
+     "stat": "Doubles",
+     "current_total": 30,
+     "next_milestone_display": 40,
+     "remaining": 10,
+     "progress_to_next": 0.75,
+     "club_label": "First to 40",
+     "slug": "tristan"
+    },
+    {
+     "player": "Tristan",
+     "canonical_name": "tristan",
+     "stat": "HR",
+     "current_total": 50,
+     "next_milestone_display": 60,
+     "remaining": 10,
+     "progress_to_next": 0.833,
+     "club_label": "First to 60",
      "slug": "tristan"
     }
    ],
    "reached": [
+    {
+     "player": "Tristan",
+     "slug": "tristan",
+     "stat": "Doubles",
+     "milestone": 30,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
+    {
+     "player": "Tristan",
+     "slug": "tristan",
+     "stat": "Total Bases",
+     "milestone": 350,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Tristan",
      "slug": "tristan",
@@ -11783,32 +11988,32 @@
    "player": "Glove",
    "canonical_name": "glove",
    "seasons_played": 6,
-   "games": 72,
-   "pa": 263,
-   "ab": 250,
-   "hits": 156,
-   "1b": 99,
+   "games": 74,
+   "pa": 271,
+   "ab": 258,
+   "hits": 162,
+   "1b": 104,
    "2b": 25,
    "3b": 15,
-   "hr": 17,
+   "hr": 18,
    "bb": 10,
-   "r": 126,
-   "rbi": 114,
-   "tb": 262,
+   "r": 131,
+   "rbi": 116,
+   "tb": 271,
    "gidp": 1,
    "sf": 3,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.624,
-   "obp": 0.6311787072243346,
-   "slg": 1.048,
-   "ops": 1.6791787072243345,
-   "woba": 0.6579,
-   "wrc_plus": 127.9,
-   "iso": 0.424,
-   "bb_rate": 0.038,
-   "xbh_rate": 0.2167,
-   "gs_avg": 1.96
+   "avg": 0.627906976744186,
+   "obp": 0.6346863468634686,
+   "slg": 1.050387596899225,
+   "ops": 1.6850739437626934,
+   "woba": 0.6602,
+   "wrc_plus": 128.5,
+   "iso": 0.4225,
+   "bb_rate": 0.0369,
+   "xbh_rate": 0.214,
+   "gs_avg": 1.97
   },
   "seasons": [
    {
@@ -11960,33 +12165,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Glove",
     "canonical_name": "glove",
-    "games": 6,
-    "pa": 24,
-    "ab": 22,
-    "hits": 13,
-    "1b": 11,
+    "games": 8,
+    "pa": 32,
+    "ab": 30,
+    "hits": 19,
+    "1b": 16,
     "2b": 1,
     "3b": 1,
-    "hr": 0,
+    "hr": 1,
     "bb": 2,
-    "r": 10,
-    "rbi": 3,
-    "tb": 16,
-    "avg": 0.5909090909,
-    "obp": 0.625,
-    "slg": 0.7272727273,
-    "ops": 1.3522727273,
+    "r": 15,
+    "rbi": 5,
+    "tb": 25,
+    "avg": 0.6333333333,
+    "obp": 0.65625,
+    "slg": 0.8333333333,
+    "ops": 1.4895833333,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.5304,
-    "wrc_plus": 105.4,
-    "iso": 0.1364,
-    "bb_rate": 0.0833,
-    "xbh_rate": 0.0833,
-    "gs_avg": 1.44
+    "woba": 0.5837,
+    "wrc_plus": 116.1,
+    "iso": 0.2,
+    "bb_rate": 0.0625,
+    "xbh_rate": 0.0938,
+    "gs_avg": 1.68
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 4,
+    "1b": 3,
+    "2b": 0,
+    "3b": 0,
+    "hr": 1,
+    "bb": 0,
+    "r": 3,
+    "rbi": 1,
+    "tb": 7,
+    "game_score": 3.7,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 2,
+    "1b": 2,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 2,
+    "rbi": 1,
+    "tb": 2,
+    "game_score": 1.1,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -13437,86 +13682,86 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.5909090909090909,
-       "pct": 78
+       "value": 0.6333333333333333,
+       "pct": 90
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.625,
-       "pct": 86
+       "value": 0.65625,
+       "pct": 92
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.7272727272727273,
-       "pct": 54
+       "value": 0.8333333333333334,
+       "pct": 70
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.3522727272727273,
-       "pct": 68
+       "value": 1.4895833333333335,
+       "pct": 71
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.1364,
-       "pct": 37
+       "value": 0.2,
+       "pct": 49
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.5304,
-       "pct": 66
+       "value": 0.5837,
+       "pct": 74
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 105.4,
-       "pct": 69
+       "value": 116.1,
+       "pct": 74
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.0833,
-       "pct": 75
+       "value": 0.0625,
+       "pct": 61
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.0833,
-       "pct": 38
+       "value": 0.0938,
+       "pct": 41
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 1.44,
-       "pct": 71
+       "value": 1.68,
+       "pct": 75
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.5455,
-       "pct": 85
+       "value": 0.6,
+       "pct": 93
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.3182,
-       "pct": 61
+       "value": 0.3333,
+       "pct": 70
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.3182,
-       "pct": 27
+       "value": 0.2667,
+       "pct": 15
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.3636,
-       "pct": 61
+       "value": 0.4,
+       "pct": 76
       }
      ]
     },
@@ -13528,13 +13773,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5952380952380952,
-       "pct": 80
+       "pct": 79
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6046511627906976,
-       "pct": 80
+       "pct": 79
       },
       {
        "key": "slg",
@@ -13558,13 +13803,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.6572,
-       "pct": 79
+       "pct": 81
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 128.9,
-       "pct": 79
+       "pct": 81
       },
       {
        "key": "bb_rate",
@@ -13576,7 +13821,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.2326,
-       "pct": 81
+       "pct": 82
       },
       {
        "key": "gs",
@@ -13588,13 +13833,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5952,
-       "pct": 93
+       "pct": 91
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4048,
-       "pct": 92
+       "pct": 90
       },
       {
        "key": "fb_rate",
@@ -13606,7 +13851,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.381,
-       "pct": 67
+       "pct": 65
       }
      ]
     },
@@ -13618,13 +13863,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.627906976744186,
-       "pct": 89
+       "pct": 88
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6326530612244898,
-       "pct": 88
+       "pct": 87
       },
       {
        "key": "slg",
@@ -13654,19 +13899,19 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 131.2,
-       "pct": 84
+       "pct": 85
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0816,
-       "pct": 72
+       "pct": 74
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.2449,
-       "pct": 82
+       "pct": 84
       },
       {
        "key": "gs",
@@ -13684,7 +13929,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3182,
-       "pct": 61
+       "pct": 60
       },
       {
        "key": "fb_rate",
@@ -13696,7 +13941,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3864,
-       "pct": 71
+       "pct": 69
       }
      ]
     },
@@ -13708,13 +13953,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6410256410256411,
-       "pct": 94
+       "pct": 93
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.65,
-       "pct": 92
+       "pct": 90
       },
       {
        "key": "slg",
@@ -13726,7 +13971,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.5987179487179488,
-       "pct": 76
+       "pct": 77
       },
       {
        "key": "iso",
@@ -13756,25 +14001,25 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.225,
-       "pct": 77
+       "pct": 79
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.48,
-       "pct": 76
+       "pct": 75
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4103,
-       "pct": 60
+       "pct": 59
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3846,
-       "pct": 87
+       "pct": 85
       },
       {
        "key": "fb_rate",
@@ -13786,7 +14031,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2564,
-       "pct": 23
+       "pct": 24
       }
      ]
     },
@@ -13816,7 +14061,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.6,
-       "pct": 77
+       "pct": 79
       },
       {
        "key": "iso",
@@ -13834,7 +14079,7 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 109.7,
-       "pct": 72
+       "pct": 71
       },
       {
        "key": "bb_rate",
@@ -13864,7 +14109,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.449,
-       "pct": 99
+       "pct": 98
       },
       {
        "key": "fb_rate",
@@ -13876,7 +14121,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3061,
-       "pct": 39
+       "pct": 40
       }
      ]
     },
@@ -13888,13 +14133,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6111111111111112,
-       "pct": 82
+       "pct": 80
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6140350877192983,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "slg",
@@ -13930,7 +14175,7 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0351,
-       "pct": 40
+       "pct": 44
       },
       {
        "key": "xbh_rate",
@@ -13948,7 +14193,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2727,
-       "pct": 19
+       "pct": 21
       },
       {
        "key": "ld_rate",
@@ -13966,7 +14211,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2453,
-       "pct": 18
+       "pct": 19
       }
      ]
     }
@@ -13978,86 +14223,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.624,
+      "value": 0.627906976744186,
       "pct": 97
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.6311787072243346,
+      "value": 0.6346863468634686,
       "pct": 97
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 1.048,
+      "value": 1.050387596899225,
       "pct": 84
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.6791787072243345,
+      "value": 1.6850739437626934,
       "pct": 84
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.424,
-      "pct": 81
+      "value": 0.4225,
+      "pct": 88
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.6579,
+      "value": 0.6602,
       "pct": 88
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 127.9,
-      "pct": 81
+      "value": 128.5,
+      "pct": 88
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.038,
+      "value": 0.0369,
       "pct": 19
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.2167,
+      "value": 0.214,
       "pct": 81
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 1.96,
+      "value": 1.97,
       "pct": 94
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.502,
+      "value": 0.5097,
       "pct": 94
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3484,
+      "value": 0.3492,
       "pct": 88
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.3309,
-      "pct": 12
+      "value": 0.3246,
+      "pct": 19
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.3167,
-      "pct": 31
+      "value": 0.3224,
+      "pct": 44
      }
     ]
    }
@@ -14135,25 +14380,25 @@
     }
    }
   },
-  "potw": 7,
+  "potw": 8,
   "best_week": 10.899999999999999,
   "honors": [
    {
     "scope": "Career",
     "label": "AB",
-    "value": 250,
+    "value": 258,
     "context": null
    },
    {
     "scope": "Career",
     "label": "Hits",
-    "value": 156,
+    "value": 162,
     "context": null
    },
    {
     "scope": "Career",
     "label": "Singles",
-    "value": 99,
+    "value": 104,
     "context": null
    },
    {
@@ -14165,7 +14410,7 @@
    {
     "scope": "Career",
     "label": "AVG",
-    "value": 0.624,
+    "value": 0.6279,
     "context": null
    },
    {
@@ -14186,22 +14431,11 @@
     {
      "player": "Glove",
      "canonical_name": "glove",
-     "stat": "Singles",
-     "current_total": 99,
-     "next_milestone_display": 100,
-     "remaining": 1,
-     "progress_to_next": 0.99,
-     "club_label": "First to 100",
-     "slug": "glove"
-    },
-    {
-     "player": "Glove",
-     "canonical_name": "glove",
      "stat": "Games",
-     "current_total": 72,
+     "current_total": 74,
      "next_milestone_display": 75,
-     "remaining": 3,
-     "progress_to_next": 0.96,
+     "remaining": 1,
+     "progress_to_next": 0.987,
      "club_label": "4 in club",
      "slug": "glove"
     },
@@ -14209,10 +14443,10 @@
      "player": "Glove",
      "canonical_name": "glove",
      "stat": "HR",
-     "current_total": 17,
+     "current_total": 18,
      "next_milestone_display": 20,
-     "remaining": 3,
-     "progress_to_next": 0.85,
+     "remaining": 2,
+     "progress_to_next": 0.9,
      "club_label": "1 in club",
      "slug": "glove"
     },
@@ -14224,7 +14458,7 @@
      "next_milestone_display": 30,
      "remaining": 5,
      "progress_to_next": 0.833,
-     "club_label": "First to 30",
+     "club_label": "1 in club",
      "slug": "glove"
     },
     {
@@ -14237,9 +14471,29 @@
      "progress_to_next": 0.75,
      "club_label": "First to 20",
      "slug": "glove"
+    },
+    {
+     "player": "Glove",
+     "canonical_name": "glove",
+     "stat": "RBI",
+     "current_total": 116,
+     "next_milestone_display": 125,
+     "remaining": 9,
+     "progress_to_next": 0.928,
+     "club_label": "1 in club",
+     "slug": "glove"
     }
    ],
    "reached": [
+    {
+     "player": "Glove",
+     "slug": "glove",
+     "stat": "Singles",
+     "milestone": 100,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Glove",
      "slug": "glove",
@@ -14668,8 +14922,8 @@
    "obp": 0.3880597014925373,
    "slg": 0.3181818181818182,
    "ops": 0.7062415196743554,
-   "woba": 0.2879,
-   "wrc_plus": 56.0,
+   "woba": 0.2882,
+   "wrc_plus": 56.1,
    "iso": 0.0114,
    "bb_rate": 0.1194,
    "xbh_rate": 0.01,
@@ -14843,7 +15097,7 @@
     "ops": 0.6933333333,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.3067,
+    "woba": 0.3062,
     "wrc_plus": 60.9,
     "iso": 0.0,
     "bb_rate": 0.04,
@@ -16289,7 +16543,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.36,
-       "pct": 13
+       "pct": 11
       },
       {
        "key": "slg",
@@ -16307,12 +16561,12 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.3067,
+       "value": 0.3062,
        "pct": 7
       },
       {
@@ -16325,13 +16579,13 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.04,
-       "pct": 48
+       "pct": 50
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -16343,7 +16597,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2609,
-       "pct": 16
+       "pct": 18
       },
       {
        "key": "ld_rate",
@@ -16379,7 +16633,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.37037037037037035,
-       "pct": 15
+       "pct": 12
       },
       {
        "key": "slg",
@@ -16397,7 +16651,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -16421,7 +16675,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -16433,13 +16687,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.32,
-       "pct": 32
+       "pct": 30
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.32,
-       "pct": 65
+       "pct": 63
       },
       {
        "key": "fb_rate",
@@ -16469,25 +16723,25 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5238095238095238,
-       "pct": 57
+       "pct": 58
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.45454545454545453,
-       "pct": 18
+       "pct": 17
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 0.9783549783549783,
-       "pct": 32
+       "pct": 33
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.0606,
-       "pct": 22
+       "pct": 21
       },
       {
        "key": "woba",
@@ -16511,19 +16765,19 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0476,
-       "pct": 22
+       "pct": 21
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.76,
-       "pct": 38
+       "pct": 40
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3448,
-       "pct": 38
+       "pct": 37
       },
       {
        "key": "ld_rate",
@@ -16559,7 +16813,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.4,
-       "pct": 20
+       "pct": 21
       },
       {
        "key": "slg",
@@ -16577,13 +16831,13 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.3273,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "wrc_plus",
@@ -16601,7 +16855,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -16613,13 +16867,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2857,
-       "pct": 24
+       "pct": 25
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2857,
-       "pct": 44
+       "pct": 43
       },
       {
        "key": "fb_rate",
@@ -16667,7 +16921,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -16691,7 +16945,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -16703,7 +16957,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2759,
-       "pct": 24
+       "pct": 25
       },
       {
        "key": "ld_rate",
@@ -16739,7 +16993,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.35294117647058826,
-       "pct": 11
+       "pct": 10
       },
       {
        "key": "slg",
@@ -16757,7 +17011,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -16781,7 +17035,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -16793,7 +17047,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2051,
-       "pct": 6
+       "pct": 7
       },
       {
        "key": "ld_rate",
@@ -16805,7 +17059,7 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4595,
-       "pct": 76
+       "pct": 77
       },
       {
        "key": "gb_rate",
@@ -16853,13 +17107,13 @@
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.2879,
-      "pct": 1
+      "value": 0.2882,
+      "pct": 6
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 56.0,
+      "value": 56.1,
       "pct": 6
      },
      {
@@ -16884,7 +17138,7 @@
       "key": "hh_rate",
       "label": "HH%",
       "value": 0.2767,
-      "pct": 19
+      "pct": 12
      },
      {
       "key": "ld_rate",
@@ -17216,32 +17470,32 @@
    "player": "Kives",
    "canonical_name": "kives",
    "seasons_played": 6,
-   "games": 68,
-   "pa": 220,
-   "ab": 207,
-   "hits": 117,
-   "1b": 71,
+   "games": 70,
+   "pa": 226,
+   "ab": 213,
+   "hits": 119,
+   "1b": 73,
    "2b": 20,
    "3b": 12,
    "hr": 14,
    "bb": 8,
-   "r": 80,
-   "rbi": 99,
-   "tb": 203,
+   "r": 82,
+   "rbi": 100,
+   "tb": 205,
    "gidp": 4,
    "sf": 5,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.5652173913043478,
-   "obp": 0.5681818181818182,
-   "slg": 0.9806763285024155,
-   "ops": 1.5488581466842337,
-   "woba": 0.608,
-   "wrc_plus": 118.2,
-   "iso": 0.4155,
-   "bb_rate": 0.0364,
-   "xbh_rate": 0.2091,
-   "gs_avg": 1.52
+   "avg": 0.5586854460093896,
+   "obp": 0.5619469026548672,
+   "slg": 0.9624413145539906,
+   "ops": 1.5243882172088579,
+   "woba": 0.5989,
+   "wrc_plus": 116.5,
+   "iso": 0.4038,
+   "bb_rate": 0.0354,
+   "xbh_rate": 0.2035,
+   "gs_avg": 1.48
   },
   "seasons": [
    {
@@ -17393,33 +17647,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Kives",
     "canonical_name": "kives",
-    "games": 4,
-    "pa": 13,
-    "ab": 13,
-    "hits": 9,
-    "1b": 5,
+    "games": 6,
+    "pa": 19,
+    "ab": 19,
+    "hits": 11,
+    "1b": 7,
     "2b": 3,
     "3b": 0,
     "hr": 1,
     "bb": 0,
-    "r": 6,
-    "rbi": 6,
-    "tb": 15,
-    "avg": 0.6923076923,
-    "obp": 0.6923076923,
-    "slg": 1.1538461538,
-    "ops": 1.8461538462,
+    "r": 8,
+    "rbi": 7,
+    "tb": 17,
+    "avg": 0.5789473684,
+    "obp": 0.5789473684,
+    "slg": 0.8947368421,
+    "ops": 1.4736842105,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.7787,
-    "wrc_plus": 154.7,
-    "iso": 0.4615,
+    "woba": 0.6124,
+    "wrc_plus": 121.8,
+    "iso": 0.3158,
     "bb_rate": 0.0,
-    "xbh_rate": 0.3077,
-    "gs_avg": 2.0
+    "xbh_rate": 0.2105,
+    "gs_avg": 1.43
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 0,
+    "tb": 1,
+    "game_score": 0.2,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 1,
+    "tb": 1,
+    "game_score": 0.4,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-08",
     "season": "Maple Tree Summer 2026",
@@ -18790,44 +19084,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.6923076923076923,
-       "pct": 99
+       "value": 0.5789473684210527,
+       "pct": 72
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.6923076923076923,
-       "pct": 99
+       "value": 0.5789473684210527,
+       "pct": 72
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 1.1538461538461537,
-       "pct": 87
+       "value": 0.8947368421052632,
+       "pct": 74
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.846153846153846,
-       "pct": 90
+       "value": 1.473684210526316,
+       "pct": 71
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.4615,
-       "pct": 84
+       "value": 0.3158,
+       "pct": 71
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.7787,
-       "pct": 96
+       "value": 0.6124,
+       "pct": 76
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 154.7,
-       "pct": 97
+       "value": 121.8,
+       "pct": 76
       },
       {
        "key": "bb_rate",
@@ -18838,38 +19132,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.3077,
-       "pct": 93
+       "value": 0.2105,
+       "pct": 75
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 2.0,
-       "pct": 88
+       "value": 1.43,
+       "pct": 72
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.6923,
-       "pct": 99
+       "value": 0.6316,
+       "pct": 97
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.6154,
+       "value": 0.5263,
        "pct": 99
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.3846,
-       "pct": 56
+       "value": 0.3684,
+       "pct": 49
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.0,
-       "pct": 1
+       "value": 0.1053,
+       "pct": 4
       }
      ]
     },
@@ -18881,7 +19175,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5365853658536586,
-       "pct": 65
+       "pct": 67
       },
       {
        "key": "obp",
@@ -18929,7 +19223,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.2558,
-       "pct": 84
+       "pct": 85
       },
       {
        "key": "gs",
@@ -18941,19 +19235,19 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.561,
-       "pct": 90
+       "pct": 85
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.439,
-       "pct": 96
+       "pct": 95
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4146,
-       "pct": 65
+       "pct": 67
       },
       {
        "key": "gb_rate",
@@ -18977,7 +19271,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.6326530612244898,
-       "pct": 88
+       "pct": 87
       },
       {
        "key": "slg",
@@ -19031,13 +19325,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4792,
-       "pct": 79
+       "pct": 78
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -19049,7 +19343,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2917,
-       "pct": 33
+       "pct": 35
       }
      ]
     },
@@ -19061,13 +19355,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4411764705882353,
-       "pct": 39
+       "pct": 42
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.45714285714285713,
-       "pct": 38
+       "pct": 40
       },
       {
        "key": "slg",
@@ -19079,13 +19373,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.1336134453781512,
-       "pct": 45
+       "pct": 46
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.2353,
-       "pct": 57
+       "pct": 59
       },
       {
        "key": "woba",
@@ -19097,25 +19391,25 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 106.4,
-       "pct": 69
+       "pct": 66
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0286,
-       "pct": 35
+       "pct": 37
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1143,
-       "pct": 47
+       "pct": 50
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.85,
-       "pct": 44
+       "pct": 46
       },
       {
        "key": "hh_rate",
@@ -19127,7 +19421,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2941,
-       "pct": 46
+       "pct": 44
       },
       {
        "key": "fb_rate",
@@ -19151,37 +19445,37 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5909090909090909,
-       "pct": 78
+       "pct": 76
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5957446808510638,
-       "pct": 76
+       "pct": 74
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.8409090909090909,
-       "pct": 70
+       "pct": 71
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 1.4366537717601546,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.25,
-       "pct": 58
+       "pct": 60
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.5143,
-       "pct": 62
+       "pct": 60
       },
       {
        "key": "wrc_plus",
@@ -19193,25 +19487,25 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0426,
-       "pct": 51
+       "pct": 53
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1277,
-       "pct": 53
+       "pct": 54
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.32,
-       "pct": 68
+       "pct": 70
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4222,
-       "pct": 60
+       "pct": 59
       },
       {
        "key": "ld_rate",
@@ -19229,7 +19523,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 77
+       "pct": 76
       }
      ]
     },
@@ -19247,19 +19541,19 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5151515151515151,
-       "pct": 54
+       "pct": 55
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.7666666666666667,
-       "pct": 62
+       "pct": 60
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 1.2818181818181817,
-       "pct": 57
+       "pct": 58
       },
       {
        "key": "iso",
@@ -19271,13 +19565,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.5135,
-       "pct": 60
+       "pct": 59
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 101.6,
-       "pct": 60
+       "pct": 59
       },
       {
        "key": "bb_rate",
@@ -19295,7 +19589,7 @@
        "key": "gs",
        "label": "GS/G",
        "value": 1.19,
-       "pct": 66
+       "pct": 68
       },
       {
        "key": "hh_rate",
@@ -19319,7 +19613,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4,
-       "pct": 77
+       "pct": 76
       }
      ]
     }
@@ -19331,85 +19625,85 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.5652173913043478,
+      "value": 0.5586854460093896,
       "pct": 78
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.5681818181818182,
+      "value": 0.5619469026548672,
       "pct": 72
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.9806763285024155,
+      "value": 0.9624413145539906,
       "pct": 78
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.5488581466842337,
+      "value": 1.5243882172088579,
       "pct": 78
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.4155,
+      "value": 0.4038,
       "pct": 81
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.608,
-      "pct": 81
+      "value": 0.5989,
+      "pct": 75
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 118.2,
+      "value": 116.5,
       "pct": 75
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0364,
+      "value": 0.0354,
       "pct": 19
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.2091,
-      "pct": 81
+      "value": 0.2035,
+      "pct": 75
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 1.52,
-      "pct": 81
+      "value": 1.48,
+      "pct": 75
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.4597,
-      "pct": 81
+      "value": 0.4608,
+      "pct": 75
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3412,
+      "value": 0.341,
       "pct": 75
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.346,
-      "pct": 25
+      "value": 0.3456,
+      "pct": 19
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.3128,
+      "value": 0.3134,
       "pct": 31
      }
     ]
@@ -19514,12 +19808,12 @@
     {
      "player": "Kives",
      "canonical_name": "kives",
-     "stat": "RBI",
-     "current_total": 99,
-     "next_milestone_display": 100,
-     "remaining": 1,
-     "progress_to_next": 0.99,
-     "club_label": "2 in club",
+     "stat": "Singles",
+     "current_total": 73,
+     "next_milestone_display": 75,
+     "remaining": 2,
+     "progress_to_next": 0.973,
+     "club_label": "5 in club",
      "slug": "kives"
     },
     {
@@ -19547,12 +19841,12 @@
     {
      "player": "Kives",
      "canonical_name": "kives",
-     "stat": "Singles",
-     "current_total": 71,
+     "stat": "Games",
+     "current_total": 70,
      "next_milestone_display": 75,
-     "remaining": 4,
-     "progress_to_next": 0.947,
-     "club_label": "5 in club",
+     "remaining": 5,
+     "progress_to_next": 0.933,
+     "club_label": "4 in club",
      "slug": "kives"
     }
    ],
@@ -19589,6 +19883,15 @@
      "slug": "kives",
      "stat": "AB",
      "milestone": 200,
+     "date": "2026-07-01",
+     "opponent": "Como",
+     "label": "Summer 2026"
+    },
+    {
+     "player": "Kives",
+     "slug": "kives",
+     "stat": "RBI",
+     "milestone": 100,
      "date": "2026-07-01",
      "opponent": "Como",
      "label": "Summer 2026"
@@ -19857,32 +20160,32 @@
    "player": "Porter",
    "canonical_name": "porter",
    "seasons_played": 6,
-   "games": 68,
-   "pa": 223,
-   "ab": 206,
-   "hits": 111,
-   "1b": 75,
-   "2b": 18,
-   "3b": 9,
-   "hr": 9,
+   "games": 70,
+   "pa": 229,
+   "ab": 212,
+   "hits": 115,
+   "1b": 76,
+   "2b": 19,
+   "3b": 10,
+   "hr": 10,
    "bb": 13,
-   "r": 66,
-   "rbi": 64,
-   "tb": 174,
+   "r": 68,
+   "rbi": 67,
+   "tb": 184,
    "gidp": 4,
    "sf": 4,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.5388349514563107,
-   "obp": 0.5560538116591929,
-   "slg": 0.8446601941747572,
-   "ops": 1.40071400583395,
-   "woba": 0.5387,
-   "wrc_plus": 104.7,
-   "iso": 0.3058,
-   "bb_rate": 0.0583,
-   "xbh_rate": 0.1614,
-   "gs_avg": 1.23
+   "avg": 0.5424528301886793,
+   "obp": 0.5589519650655022,
+   "slg": 0.8679245283018868,
+   "ops": 1.426876493367389,
+   "woba": 0.5501,
+   "wrc_plus": 107.0,
+   "iso": 0.3255,
+   "bb_rate": 0.0568,
+   "xbh_rate": 0.1703,
+   "gs_avg": 1.26
   },
   "seasons": [
    {
@@ -20034,33 +20337,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Porter",
     "canonical_name": "porter",
-    "games": 8,
-    "pa": 27,
-    "ab": 26,
-    "hits": 15,
-    "1b": 15,
-    "2b": 0,
-    "3b": 0,
-    "hr": 0,
+    "games": 10,
+    "pa": 33,
+    "ab": 32,
+    "hits": 19,
+    "1b": 16,
+    "2b": 1,
+    "3b": 1,
+    "hr": 1,
     "bb": 1,
-    "r": 6,
-    "rbi": 5,
-    "tb": 15,
-    "avg": 0.5769230769,
-    "obp": 0.5925925926,
-    "slg": 0.5769230769,
-    "ops": 1.1695156695,
+    "r": 8,
+    "rbi": 8,
+    "tb": 25,
+    "avg": 0.59375,
+    "obp": 0.6060606061,
+    "slg": 0.78125,
+    "ops": 1.3873106061,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.4573,
-    "wrc_plus": 90.8,
-    "iso": 0.0,
-    "bb_rate": 0.037,
-    "xbh_rate": 0.0,
-    "gs_avg": 0.92
+    "woba": 0.5544,
+    "wrc_plus": 110.3,
+    "iso": 0.1875,
+    "bb_rate": 0.0303,
+    "xbh_rate": 0.0909,
+    "gs_avg": 1.18
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 2,
+    "1b": 1,
+    "2b": 1,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 1,
+    "tb": 3,
+    "game_score": 1.55,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 2,
+    "1b": 0,
+    "2b": 0,
+    "3b": 1,
+    "hr": 1,
+    "bb": 0,
+    "r": 1,
+    "rbi": 2,
+    "tb": 7,
+    "game_score": 2.85,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -21431,86 +21774,86 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.5769230769230769,
-       "pct": 73
+       "value": 0.59375,
+       "pct": 77
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.5925925925925926,
-       "pct": 74
+       "value": 0.6060606060606061,
+       "pct": 80
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.5769230769230769,
-       "pct": 39
+       "value": 0.78125,
+       "pct": 62
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.1695156695156694,
-       "pct": 51
+       "value": 1.387310606060606,
+       "pct": 68
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.0,
-       "pct": 7
+       "value": 0.1875,
+       "pct": 48
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.4573,
-       "pct": 50
+       "value": 0.5544,
+       "pct": 68
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 90.8,
-       "pct": 46
+       "value": 110.3,
+       "pct": 74
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.037,
-       "pct": 40
+       "value": 0.0303,
+       "pct": 37
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.0,
-       "pct": 7
+       "value": 0.0909,
+       "pct": 35
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 0.92,
-       "pct": 51
+       "value": 1.18,
+       "pct": 66
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.4231,
-       "pct": 63
+       "value": 0.4688,
+       "pct": 75
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.3462,
-       "pct": 78
+       "value": 0.375,
+       "pct": 82
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.3077,
-       "pct": 24
+       "value": 0.3125,
+       "pct": 26
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.3462,
-       "pct": 53
+       "value": 0.3125,
+       "pct": 43
       }
      ]
     },
@@ -21522,13 +21865,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.46153846153846156,
-       "pct": 46
+       "pct": 48
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5,
-       "pct": 51
+       "pct": 52
       },
       {
        "key": "slg",
@@ -21546,7 +21889,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -21564,19 +21907,19 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0714,
-       "pct": 62
+       "pct": 63
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.63,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "hh_rate",
@@ -21612,13 +21955,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.41379310344827586,
-       "pct": 32
+       "pct": 31
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.45161290322580644,
-       "pct": 33
+       "pct": 36
       },
       {
        "key": "slg",
@@ -21630,13 +21973,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.003337041156841,
-       "pct": 36
+       "pct": 38
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1379,
-       "pct": 37
+       "pct": 34
       },
       {
        "key": "woba",
@@ -21654,13 +21997,13 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0645,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.129,
-       "pct": 54
+       "pct": 56
       },
       {
        "key": "gs",
@@ -21672,13 +22015,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.52,
-       "pct": 82
+       "pct": 80
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.44,
-       "pct": 98
+       "pct": 96
       },
       {
        "key": "fb_rate",
@@ -21690,7 +22033,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.28,
-       "pct": 29
+       "pct": 30
       }
      ]
     },
@@ -21708,7 +22051,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.44,
-       "pct": 27
+       "pct": 31
       },
       {
        "key": "slg",
@@ -21720,7 +22063,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.99,
-       "pct": 33
+       "pct": 35
       },
       {
        "key": "iso",
@@ -21732,13 +22075,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.4396,
-       "pct": 46
+       "pct": 47
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 92.1,
-       "pct": 51
+       "pct": 50
       },
       {
        "key": "bb_rate",
@@ -21750,7 +22093,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.12,
-       "pct": 49
+       "pct": 51
       },
       {
        "key": "gs",
@@ -21762,13 +22105,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 66
+       "pct": 63
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -21780,7 +22123,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 48
+       "pct": 50
       }
      ]
     },
@@ -21792,13 +22135,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.62,
-       "pct": 85
+       "pct": 83
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6363636363636364,
-       "pct": 90
+       "pct": 89
       },
       {
        "key": "slg",
@@ -21822,7 +22165,7 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.6507,
-       "pct": 79
+       "pct": 81
       },
       {
        "key": "wrc_plus",
@@ -21834,7 +22177,7 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0727,
-       "pct": 65
+       "pct": 66
       },
       {
        "key": "xbh_rate",
@@ -21852,13 +22195,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5686,
-       "pct": 90
+       "pct": 88
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4118,
-       "pct": 93
+       "pct": 92
       },
       {
        "key": "fb_rate",
@@ -21870,7 +22213,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2549,
-       "pct": 22
+       "pct": 24
       }
      ]
     },
@@ -21882,13 +22225,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6181818181818182,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5964912280701754,
-       "pct": 77
+       "pct": 76
       },
       {
        "key": "slg",
@@ -21912,13 +22255,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.6627,
-       "pct": 81
+       "pct": 82
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 131.2,
-       "pct": 84
+       "pct": 85
       },
       {
        "key": "bb_rate",
@@ -21930,7 +22273,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.2456,
-       "pct": 82
+       "pct": 84
       },
       {
        "key": "gs",
@@ -21942,19 +22285,19 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2632,
-       "pct": 18
+       "pct": 19
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1852,
-       "pct": 10
+       "pct": 8
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.463,
-       "pct": 79
+       "pct": 81
       },
       {
        "key": "gb_rate",
@@ -21972,85 +22315,85 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.5388349514563107,
-      "pct": 66
+      "value": 0.5424528301886793,
+      "pct": 72
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.5560538116591929,
+      "value": 0.5589519650655022,
       "pct": 66
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.8446601941747572,
-      "pct": 66
+      "value": 0.8679245283018868,
+      "pct": 72
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.40071400583395,
+      "value": 1.426876493367389,
       "pct": 66
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.3058,
-      "pct": 62
+      "value": 0.3255,
+      "pct": 75
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.5387,
-      "pct": 62
+      "value": 0.5501,
+      "pct": 69
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 104.7,
+      "value": 107.0,
       "pct": 62
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0583,
+      "value": 0.0568,
       "pct": 81
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.1614,
-      "pct": 56
+      "value": 0.1703,
+      "pct": 69
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 1.23,
-      "pct": 62
+      "value": 1.26,
+      "pct": 69
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.4049,
-      "pct": 69
+      "value": 0.4123,
+      "pct": 62
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.31,
+      "value": 0.3154,
       "pct": 62
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.358,
+      "value": 0.3573,
       "pct": 31
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.332,
+      "value": 0.3273,
       "pct": 56
      }
     ]
@@ -22150,33 +22493,11 @@
     {
      "player": "Porter",
      "canonical_name": "porter",
-     "stat": "HR",
-     "current_total": 9,
-     "next_milestone_display": 10,
-     "remaining": 1,
-     "progress_to_next": 0.9,
-     "club_label": "5 in club",
-     "slug": "porter"
-    },
-    {
-     "player": "Porter",
-     "canonical_name": "porter",
-     "stat": "Triples",
-     "current_total": 9,
-     "next_milestone_display": 10,
-     "remaining": 1,
-     "progress_to_next": 0.9,
-     "club_label": "3 in club",
-     "slug": "porter"
-    },
-    {
-     "player": "Porter",
-     "canonical_name": "porter",
      "stat": "Doubles",
-     "current_total": 18,
+     "current_total": 19,
      "next_milestone_display": 20,
-     "remaining": 2,
-     "progress_to_next": 0.9,
+     "remaining": 1,
+     "progress_to_next": 0.95,
      "club_label": "4 in club",
      "slug": "porter"
     },
@@ -22184,26 +22505,66 @@
      "player": "Porter",
      "canonical_name": "porter",
      "stat": "Games",
-     "current_total": 68,
+     "current_total": 70,
      "next_milestone_display": 75,
-     "remaining": 7,
-     "progress_to_next": 0.907,
+     "remaining": 5,
+     "progress_to_next": 0.933,
      "club_label": "4 in club",
      "slug": "porter"
     },
     {
      "player": "Porter",
      "canonical_name": "porter",
+     "stat": "HR",
+     "current_total": 10,
+     "next_milestone_display": 15,
+     "remaining": 5,
+     "progress_to_next": 0.667,
+     "club_label": "3 in club",
+     "slug": "porter"
+    },
+    {
+     "player": "Porter",
+     "canonical_name": "porter",
+     "stat": "Triples",
+     "current_total": 10,
+     "next_milestone_display": 15,
+     "remaining": 5,
+     "progress_to_next": 0.667,
+     "club_label": "1 in club",
+     "slug": "porter"
+    },
+    {
+     "player": "Porter",
+     "canonical_name": "porter",
      "stat": "Runs",
-     "current_total": 66,
+     "current_total": 68,
      "next_milestone_display": 75,
-     "remaining": 9,
-     "progress_to_next": 0.88,
+     "remaining": 7,
+     "progress_to_next": 0.907,
      "club_label": "4 in club",
      "slug": "porter"
     }
    ],
    "reached": [
+    {
+     "player": "Porter",
+     "slug": "porter",
+     "stat": "Triples",
+     "milestone": 10,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
+    {
+     "player": "Porter",
+     "slug": "porter",
+     "stat": "HR",
+     "milestone": 10,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Porter",
      "slug": "porter",
@@ -22468,32 +22829,32 @@
    "player": "Joel",
    "canonical_name": "joel",
    "seasons_played": 4,
-   "games": 43,
-   "pa": 133,
-   "ab": 124,
-   "hits": 50,
-   "1b": 40,
+   "games": 45,
+   "pa": 139,
+   "ab": 130,
+   "hits": 51,
+   "1b": 41,
    "2b": 6,
    "3b": 0,
    "hr": 4,
    "bb": 6,
-   "r": 38,
-   "rbi": 35,
-   "tb": 68,
+   "r": 39,
+   "rbi": 36,
+   "tb": 69,
    "gidp": 3,
    "sf": 3,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.4032258064516129,
-   "obp": 0.42105263157894735,
-   "slg": 0.5483870967741935,
-   "ops": 0.9694397283531409,
-   "woba": 0.3762,
-   "wrc_plus": 73.1,
-   "iso": 0.1452,
-   "bb_rate": 0.0451,
-   "xbh_rate": 0.0752,
-   "gs_avg": 0.69
+   "avg": 0.3923076923076923,
+   "obp": 0.41007194244604317,
+   "slg": 0.5307692307692308,
+   "ops": 0.9408411732152739,
+   "woba": 0.3671,
+   "wrc_plus": 71.4,
+   "iso": 0.1385,
+   "bb_rate": 0.0432,
+   "xbh_rate": 0.0719,
+   "gs_avg": 0.65
   },
   "seasons": [
    {
@@ -22587,33 +22948,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Joel",
     "canonical_name": "joel",
-    "games": 8,
-    "pa": 25,
-    "ab": 23,
-    "hits": 10,
-    "1b": 6,
+    "games": 10,
+    "pa": 31,
+    "ab": 29,
+    "hits": 11,
+    "1b": 7,
     "2b": 3,
     "3b": 0,
     "hr": 1,
     "bb": 1,
-    "r": 7,
-    "rbi": 7,
-    "tb": 16,
-    "avg": 0.4347826087,
-    "obp": 0.44,
-    "slg": 0.6956521739,
-    "ops": 1.1356521739,
+    "r": 8,
+    "rbi": 8,
+    "tb": 17,
+    "avg": 0.3793103448,
+    "obp": 0.3870967742,
+    "slg": 0.5862068966,
+    "ops": 0.9733036707,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.4601,
-    "wrc_plus": 91.4,
-    "iso": 0.2609,
-    "bb_rate": 0.04,
-    "xbh_rate": 0.16,
-    "gs_avg": 0.88
+    "woba": 0.4025,
+    "wrc_plus": 80.1,
+    "iso": 0.2069,
+    "bb_rate": 0.0323,
+    "xbh_rate": 0.129,
+    "gs_avg": 0.67
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 0,
+    "1b": 0,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 1,
+    "tb": 0,
+    "game_score": -0.55,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 0,
+    "tb": 1,
+    "game_score": 0.2,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -23484,86 +23885,86 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.43478260869565216,
-       "pct": 36
+       "value": 0.3793103448275862,
+       "pct": 18
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.44,
-       "pct": 27
+       "value": 0.3870967741935484,
+       "pct": 19
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.6956521739130435,
-       "pct": 49
+       "value": 0.5862068965517241,
+       "pct": 41
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.1356521739130434,
-       "pct": 46
+       "value": 0.9733036707452725,
+       "pct": 29
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.2609,
-       "pct": 62
+       "value": 0.2069,
+       "pct": 56
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.4601,
-       "pct": 50
+       "value": 0.4025,
+       "pct": 37
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 91.4,
-       "pct": 49
+       "value": 80.1,
+       "pct": 40
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.04,
-       "pct": 48
+       "value": 0.0323,
+       "pct": 41
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.16,
-       "pct": 65
+       "value": 0.129,
+       "pct": 56
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 0.88,
-       "pct": 47
+       "value": 0.67,
+       "pct": 37
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.2083,
-       "pct": 7
+       "value": 0.2,
+       "pct": 6
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.2083,
-       "pct": 22
+       "value": 0.2,
+       "pct": 15
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.75,
+       "value": 0.7333,
        "pct": 99
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.0417,
-       "pct": 2
+       "value": 0.0667,
+       "pct": 1
       }
      ]
     },
@@ -23581,7 +23982,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.45454545454545453,
-       "pct": 35
+       "pct": 38
       },
       {
        "key": "slg",
@@ -23605,13 +24006,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.4326,
-       "pct": 41
+       "pct": 43
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 84.9,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "bb_rate",
@@ -23623,13 +24024,13 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0909,
-       "pct": 40
+       "pct": 35
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.92,
-       "pct": 51
+       "pct": 50
       },
       {
        "key": "hh_rate",
@@ -23689,7 +24090,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.025,
-       "pct": 15
+       "pct": 13
       },
       {
        "key": "woba",
@@ -23713,7 +24114,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0244,
-       "pct": 15
+       "pct": 13
       },
       {
        "key": "gs",
@@ -23725,13 +24126,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4359,
-       "pct": 68
+       "pct": 65
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3077,
-       "pct": 50
+       "pct": 48
       },
       {
        "key": "fb_rate",
@@ -23773,25 +24174,25 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.0160427807486632,
-       "pct": 38
+       "pct": 40
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.0606,
-       "pct": 22
+       "pct": 21
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.4254,
-       "pct": 38
+       "pct": 41
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 89.1,
-       "pct": 44
+       "pct": 46
       },
       {
        "key": "bb_rate",
@@ -23803,25 +24204,25 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0588,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.63,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4375,
-       "pct": 68
+       "pct": 65
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "fb_rate",
@@ -23833,7 +24234,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.375,
-       "pct": 65
+       "pct": 64
       }
      ]
     }
@@ -23845,86 +24246,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.4032258064516129,
+      "value": 0.3923076923076923,
       "pct": 9
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.42105263157894735,
+      "value": 0.41007194244604317,
       "pct": 9
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.5483870967741935,
-      "pct": 22
+      "value": 0.5307692307692308,
+      "pct": 16
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 0.9694397283531409,
+      "value": 0.9408411732152739,
       "pct": 16
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.1452,
-      "pct": 38
+      "value": 0.1385,
+      "pct": 31
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.3762,
-      "pct": 19
+      "value": 0.3671,
+      "pct": 12
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 73.1,
+      "value": 71.4,
       "pct": 12
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0451,
-      "pct": 50
+      "value": 0.0432,
+      "pct": 56
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.0752,
-      "pct": 25
+      "value": 0.0719,
+      "pct": 12
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 0.69,
-      "pct": 25
+      "value": 0.65,
+      "pct": 19
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.375,
-      "pct": 53
+      "value": 0.3651,
+      "pct": 44
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.2917,
-      "pct": 50
+      "value": 0.2857,
+      "pct": 38
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.3833,
-      "pct": 38
+      "value": 0.3968,
+      "pct": 50
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.325,
-      "pct": 44
+      "value": 0.3175,
+      "pct": 38
      }
     ]
    }
@@ -24043,22 +24444,22 @@
     {
      "player": "Joel",
      "canonical_name": "joel",
-     "stat": "Triples",
-     "current_total": 0,
-     "next_milestone_display": 5,
+     "stat": "Games",
+     "current_total": 45,
+     "next_milestone_display": 50,
      "remaining": 5,
-     "progress_to_next": 0.0,
+     "progress_to_next": 0.9,
      "club_label": "8 in club",
      "slug": "joel"
     },
     {
      "player": "Joel",
      "canonical_name": "joel",
-     "stat": "Games",
-     "current_total": 43,
-     "next_milestone_display": 50,
-     "remaining": 7,
-     "progress_to_next": 0.86,
+     "stat": "Triples",
+     "current_total": 0,
+     "next_milestone_display": 5,
+     "remaining": 5,
+     "progress_to_next": 0.0,
      "club_label": "8 in club",
      "slug": "joel"
     }
@@ -24175,31 +24576,31 @@
    "player": "Tim",
    "canonical_name": "tim",
    "seasons_played": 4,
-   "games": 40,
-   "pa": 144,
-   "ab": 136,
-   "hits": 77,
-   "1b": 35,
-   "2b": 17,
+   "games": 42,
+   "pa": 152,
+   "ab": 143,
+   "hits": 82,
+   "1b": 38,
+   "2b": 19,
    "3b": 7,
    "hr": 18,
    "bb": 6,
-   "r": 59,
-   "rbi": 63,
-   "tb": 162,
+   "r": 61,
+   "rbi": 66,
+   "tb": 169,
    "gidp": 0,
-   "sf": 2,
+   "sf": 3,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.5661764705882353,
-   "obp": 0.5763888888888888,
-   "slg": 1.1911764705882353,
-   "ops": 1.7675653594771241,
-   "woba": 0.7051,
-   "wrc_plus": 137.1,
-   "iso": 0.625,
-   "bb_rate": 0.0417,
-   "xbh_rate": 0.2917,
+   "avg": 0.5734265734265734,
+   "obp": 0.5789473684210527,
+   "slg": 1.1818181818181819,
+   "ops": 1.7607655502392345,
+   "woba": 0.7004,
+   "wrc_plus": 136.3,
+   "iso": 0.6084,
+   "bb_rate": 0.0395,
+   "xbh_rate": 0.2895,
    "gs_avg": 1.94
   },
   "seasons": [
@@ -24294,33 +24695,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Tim",
     "canonical_name": "tim",
-    "games": 8,
-    "pa": 30,
-    "ab": 28,
-    "hits": 13,
-    "1b": 11,
-    "2b": 1,
+    "games": 10,
+    "pa": 38,
+    "ab": 35,
+    "hits": 18,
+    "1b": 14,
+    "2b": 3,
     "3b": 0,
     "hr": 1,
     "bb": 1,
-    "r": 9,
-    "rbi": 7,
-    "tb": 17,
-    "avg": 0.4642857143,
-    "obp": 0.4666666667,
-    "slg": 0.6071428571,
-    "ops": 1.0738095238,
+    "r": 11,
+    "rbi": 10,
+    "tb": 24,
+    "avg": 0.5142857143,
+    "obp": 0.5,
+    "slg": 0.6857142857,
+    "ops": 1.1857142857,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.4269,
-    "wrc_plus": 84.8,
-    "iso": 0.1429,
-    "bb_rate": 0.0333,
-    "xbh_rate": 0.0667,
-    "gs_avg": 0.96
+    "woba": 0.4694,
+    "wrc_plus": 93.4,
+    "iso": 0.1714,
+    "bb_rate": 0.0263,
+    "xbh_rate": 0.1053,
+    "gs_avg": 1.15
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 3,
+    "hits": 3,
+    "1b": 1,
+    "2b": 2,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 2,
+    "tb": 5,
+    "game_score": 2.9,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 2,
+    "1b": 2,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 1,
+    "tb": 2,
+    "game_score": 0.9,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -25131,85 +25572,85 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.4642857142857143,
-       "pct": 49
+       "value": 0.5142857142857142,
+       "pct": 60
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.4666666666666667,
-       "pct": 45
+       "value": 0.5,
+       "pct": 52
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.6071428571428571,
-       "pct": 40
+       "value": 0.6857142857142857,
+       "pct": 49
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.0738095238095238,
-       "pct": 42
+       "value": 1.1857142857142857,
+       "pct": 51
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.1429,
-       "pct": 40
+       "value": 0.1714,
+       "pct": 43
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.4269,
-       "pct": 41
+       "value": 0.4694,
+       "pct": 51
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 84.8,
-       "pct": 40
+       "value": 93.4,
+       "pct": 54
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.0333,
-       "pct": 37
+       "value": 0.0263,
+       "pct": 34
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.0667,
-       "pct": 34
+       "value": 0.1053,
+       "pct": 46
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 0.96,
-       "pct": 54
+       "value": 1.15,
+       "pct": 62
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.3793,
-       "pct": 49
+       "value": 0.4595,
+       "pct": 72
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.1724,
-       "pct": 7
+       "value": 0.2162,
+       "pct": 23
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.4138,
-       "pct": 64
+       "value": 0.3784,
+       "pct": 55
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.4138,
+       "value": 0.4054,
        "pct": 80
       }
      ]
@@ -25222,7 +25663,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5853658536585366,
-       "pct": 74
+       "pct": 73
       },
       {
        "key": "obp",
@@ -25282,13 +25723,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.5476,
-       "pct": 85
+       "pct": 81
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3571,
-       "pct": 79
+       "pct": 78
       },
       {
        "key": "fb_rate",
@@ -25300,7 +25741,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.2857,
-       "pct": 30
+       "pct": 32
       }
      ]
     },
@@ -25312,13 +25753,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.5901639344262295,
-       "pct": 76
+       "pct": 74
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6031746031746031,
-       "pct": 79
+       "pct": 77
       },
       {
        "key": "slg",
@@ -25354,7 +25795,7 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0317,
-       "pct": 35
+       "pct": 38
       },
       {
        "key": "xbh_rate",
@@ -25372,13 +25813,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4667,
-       "pct": 76
+       "pct": 74
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.25,
-       "pct": 31
+       "pct": 32
       },
       {
        "key": "fb_rate",
@@ -25390,7 +25831,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3833,
-       "pct": 68
+       "pct": 67
       }
      ]
     },
@@ -25414,7 +25855,7 @@
        "key": "slg",
        "label": "SLG",
        "value": 0.8333333333333334,
-       "pct": 69
+       "pct": 70
       },
       {
        "key": "ops",
@@ -25426,7 +25867,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.1667,
-       "pct": 46
+       "pct": 43
       },
       {
        "key": "woba",
@@ -25450,13 +25891,13 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1429,
-       "pct": 60
+       "pct": 62
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 1.45,
-       "pct": 74
+       "pct": 72
       },
       {
        "key": "hh_rate",
@@ -25480,7 +25921,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     }
@@ -25492,55 +25933,55 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.5661764705882353,
+      "value": 0.5734265734265734,
       "pct": 84
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.5763888888888888,
-      "pct": 78
+      "value": 0.5789473684210527,
+      "pct": 84
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 1.1911764705882353,
+      "value": 1.1818181818181819,
       "pct": 91
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.7675653594771241,
+      "value": 1.7607655502392345,
       "pct": 91
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.625,
-      "pct": 91
+      "value": 0.6084,
+      "pct": 94
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.7051,
-      "pct": 94
+      "value": 0.7004,
+      "pct": 88
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 137.1,
+      "value": 136.3,
       "pct": 94
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0417,
-      "pct": 50
+      "value": 0.0395,
+      "pct": 44
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.2917,
+      "value": 0.2895,
       "pct": 94
      },
      {
@@ -25552,25 +25993,25 @@
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.4526,
-      "pct": 81
+      "value": 0.469,
+      "pct": 88
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.2555,
-      "pct": 31
+      "value": 0.2621,
+      "pct": 38
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.3905,
-      "pct": 50
+      "value": 0.3828,
+      "pct": 44
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.354,
+      "value": 0.3552,
       "pct": 69
      }
     ]
@@ -25682,6 +26123,17 @@
     {
      "player": "Tim",
      "canonical_name": "tim",
+     "stat": "Doubles",
+     "current_total": 19,
+     "next_milestone_display": 20,
+     "remaining": 1,
+     "progress_to_next": 0.95,
+     "club_label": "4 in club",
+     "slug": "tim"
+    },
+    {
+     "player": "Tim",
+     "canonical_name": "tim",
      "stat": "HR",
      "current_total": 18,
      "next_milestone_display": 20,
@@ -25693,23 +26145,12 @@
     {
      "player": "Tim",
      "canonical_name": "tim",
-     "stat": "Doubles",
-     "current_total": 17,
-     "next_milestone_display": 20,
-     "remaining": 3,
-     "progress_to_next": 0.85,
-     "club_label": "4 in club",
-     "slug": "tim"
-    },
-    {
-     "player": "Tim",
-     "canonical_name": "tim",
      "stat": "Triples",
      "current_total": 7,
      "next_milestone_display": 10,
      "remaining": 3,
      "progress_to_next": 0.7,
-     "club_label": "3 in club",
+     "club_label": "4 in club",
      "slug": "tim"
     },
     {
@@ -25726,16 +26167,25 @@
     {
      "player": "Tim",
      "canonical_name": "tim",
-     "stat": "PA",
-     "current_total": 144,
+     "stat": "AB",
+     "current_total": 143,
      "next_milestone_display": 150,
-     "remaining": 6,
-     "progress_to_next": 0.96,
+     "remaining": 7,
+     "progress_to_next": 0.953,
      "club_label": "8 in club",
      "slug": "tim"
     }
    ],
    "reached": [
+    {
+     "player": "Tim",
+     "slug": "tim",
+     "stat": "PA",
+     "milestone": 150,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Tim",
      "slug": "tim",
@@ -25937,32 +26387,32 @@
    "player": "Walsh",
    "canonical_name": "walsh",
    "seasons_played": 5,
-   "games": 40,
-   "pa": 123,
-   "ab": 118,
-   "hits": 48,
-   "1b": 29,
-   "2b": 10,
+   "games": 42,
+   "pa": 129,
+   "ab": 124,
+   "hits": 50,
+   "1b": 30,
+   "2b": 11,
    "3b": 5,
    "hr": 4,
    "bb": 5,
-   "r": 18,
-   "rbi": 35,
-   "tb": 80,
+   "r": 19,
+   "rbi": 36,
+   "tb": 83,
    "gidp": 1,
    "sf": 0,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.4067796610169492,
-   "obp": 0.43089430894308944,
-   "slg": 0.6779661016949152,
-   "ops": 1.1088604106380047,
-   "woba": 0.4484,
-   "wrc_plus": 87.2,
-   "iso": 0.2712,
-   "bb_rate": 0.0407,
-   "xbh_rate": 0.1545,
-   "gs_avg": 0.73
+   "avg": 0.4032258064516129,
+   "obp": 0.4263565891472868,
+   "slg": 0.6693548387096774,
+   "ops": 1.0957114278569642,
+   "woba": 0.4439,
+   "wrc_plus": 86.4,
+   "iso": 0.2661,
+   "bb_rate": 0.0388,
+   "xbh_rate": 0.155,
+   "gs_avg": 0.71
   },
   "seasons": [
    {
@@ -26085,33 +26535,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Walsh",
     "canonical_name": "walsh",
-    "games": 8,
-    "pa": 26,
-    "ab": 26,
-    "hits": 12,
-    "1b": 6,
-    "2b": 3,
+    "games": 10,
+    "pa": 32,
+    "ab": 32,
+    "hits": 14,
+    "1b": 7,
+    "2b": 4,
     "3b": 2,
     "hr": 1,
     "bb": 0,
-    "r": 7,
-    "rbi": 8,
-    "tb": 22,
-    "avg": 0.4615384615,
-    "obp": 0.4615384615,
-    "slg": 0.8461538462,
-    "ops": 1.3076923077,
+    "r": 8,
+    "rbi": 9,
+    "tb": 25,
+    "avg": 0.4375,
+    "obp": 0.4375,
+    "slg": 0.78125,
+    "ops": 1.21875,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.5928,
-    "wrc_plus": 117.8,
-    "iso": 0.3846,
+    "woba": 0.5478,
+    "wrc_plus": 109.0,
+    "iso": 0.3438,
     "bb_rate": 0.0,
-    "xbh_rate": 0.2308,
-    "gs_avg": 1.1
+    "xbh_rate": 0.2188,
+    "gs_avg": 0.96
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 0,
+    "2b": 1,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 1,
+    "tb": 2,
+    "game_score": 0.6,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 1,
+    "rbi": 0,
+    "tb": 1,
+    "game_score": 0.2,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -26942,44 +27432,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.46153846153846156,
-       "pct": 46
+       "value": 0.4375,
+       "pct": 39
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.46153846153846156,
-       "pct": 40
+       "value": 0.4375,
+       "pct": 27
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 0.8461538461538461,
-       "pct": 71
+       "value": 0.78125,
+       "pct": 62
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.3076923076923077,
-       "pct": 64
+       "value": 1.21875,
+       "pct": 54
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.3846,
-       "pct": 76
+       "value": 0.3438,
+       "pct": 75
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.5928,
-       "pct": 75
+       "value": 0.5478,
+       "pct": 66
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 117.8,
-       "pct": 76
+       "value": 109.0,
+       "pct": 71
       },
       {
        "key": "bb_rate",
@@ -26990,38 +27480,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.2308,
-       "pct": 79
+       "value": 0.2188,
+       "pct": 78
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 1.1,
-       "pct": 60
+       "value": 0.96,
+       "pct": 52
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.5385,
-       "pct": 84
+       "value": 0.5625,
+       "pct": 86
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.3077,
-       "pct": 50
+       "value": 0.3125,
+       "pct": 53
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.2692,
-       "pct": 15
+       "value": 0.2813,
+       "pct": 20
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.4231,
-       "pct": 82
+       "value": 0.4063,
+       "pct": 81
       }
      ]
     },
@@ -27033,19 +27523,19 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4,
-       "pct": 26
+       "pct": 25
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.4473684210526316,
-       "pct": 32
+       "pct": 35
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.45714285714285713,
-       "pct": 20
+       "pct": 18
       },
       {
        "key": "ops",
@@ -27057,7 +27547,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0571,
-       "pct": 21
+       "pct": 19
       },
       {
        "key": "woba",
@@ -27075,25 +27565,25 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0789,
-       "pct": 68
+       "pct": 69
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0526,
-       "pct": 24
+       "pct": 22
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.52,
-       "pct": 22
+       "pct": 21
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 66
+       "pct": 63
       },
       {
        "key": "ld_rate",
@@ -27111,7 +27601,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3143,
-       "pct": 42
+       "pct": 45
       }
      ]
     },
@@ -27141,7 +27631,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.1333333333333333,
-       "pct": 44
+       "pct": 46
       },
       {
        "key": "iso",
@@ -27153,13 +27643,13 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.4661,
-       "pct": 51
+       "pct": 50
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 85.0,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "bb_rate",
@@ -27177,19 +27667,19 @@
        "key": "gs",
        "label": "GS/G",
        "value": 0.82,
-       "pct": 44
+       "pct": 46
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4286,
-       "pct": 66
+       "pct": 63
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4286,
-       "pct": 96
+       "pct": 93
       },
       {
        "key": "fb_rate",
@@ -27213,13 +27703,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.44,
-       "pct": 38
+       "pct": 40
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.46153846153846156,
-       "pct": 40
+       "pct": 42
       },
       {
        "key": "slg",
@@ -27231,13 +27721,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.2615384615384615,
-       "pct": 55
+       "pct": 57
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.36,
-       "pct": 74
+       "pct": 76
       },
       {
        "key": "woba",
@@ -27249,13 +27739,13 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 116.6,
-       "pct": 75
+       "pct": 76
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0385,
-       "pct": 44
+       "pct": 47
       },
       {
        "key": "xbh_rate",
@@ -27267,19 +27757,19 @@
        "key": "gs",
        "label": "GS/G",
        "value": 0.81,
-       "pct": 43
+       "pct": 44
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4,
-       "pct": 55
+       "pct": 54
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.32,
-       "pct": 65
+       "pct": 63
       },
       {
        "key": "fb_rate",
@@ -27309,25 +27799,25 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.3888888888888889,
-       "pct": 19
+       "pct": 21
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 0.5882352941176471,
-       "pct": 40
+       "pct": 43
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 0.977124183006536,
-       "pct": 31
+       "pct": 32
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.2353,
-       "pct": 57
+       "pct": 59
       },
       {
        "key": "woba",
@@ -27351,13 +27841,13 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1111,
-       "pct": 46
+       "pct": 49
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.49,
-       "pct": 19
+       "pct": 18
       },
       {
        "key": "hh_rate",
@@ -27381,7 +27871,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4118,
-       "pct": 79
+       "pct": 82
       }
      ]
     }
@@ -27393,86 +27883,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.4067796610169492,
+      "value": 0.4032258064516129,
       "pct": 16
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.43089430894308944,
+      "value": 0.4263565891472868,
       "pct": 16
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.6779661016949152,
+      "value": 0.6693548387096774,
       "pct": 53
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.1088604106380047,
+      "value": 1.0957114278569642,
       "pct": 47
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.2712,
-      "pct": 62
+      "value": 0.2661,
+      "pct": 56
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.4484,
+      "value": 0.4439,
       "pct": 50
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 87.2,
+      "value": 86.4,
       "pct": 56
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0407,
-      "pct": 38
+      "value": 0.0388,
+      "pct": 31
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.1545,
-      "pct": 56
+      "value": 0.155,
+      "pct": 50
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 0.73,
-      "pct": 50
+      "value": 0.71,
+      "pct": 31
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.4188,
-      "pct": 69
+      "value": 0.4309,
+      "pct": 75
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.3162,
-      "pct": 69
+      "value": 0.3171,
+      "pct": 75
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.3589,
+      "value": 0.3577,
       "pct": 31
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.3248,
-      "pct": 38
+      "value": 0.3252,
+      "pct": 44
      }
     ]
    }
@@ -27529,7 +28019,7 @@
      "label": "Tappers Summer 2025"
     },
     "r": {
-     "v": 7,
+     "v": 8,
      "label": "Summer 2026"
     },
     "bb": {
@@ -27537,16 +28027,16 @@
      "label": "Spring 2026"
     },
     "tb": {
-     "v": 22,
+     "v": 25,
      "label": "Summer 2026"
     },
     "avg": {
-     "v": 0.4615384615,
-     "label": "Summer 2026"
+     "v": 0.44,
+     "label": "Tappers Summer 2025"
     },
     "ops": {
-     "v": 1.3076923077,
-     "label": "Summer 2026"
+     "v": 1.2615384615,
+     "label": "Tappers Summer 2025"
     }
    }
   },
@@ -27569,23 +28059,12 @@
     {
      "player": "Walsh",
      "canonical_name": "walsh",
-     "stat": "Hits",
-     "current_total": 48,
-     "next_milestone_display": 50,
-     "remaining": 2,
-     "progress_to_next": 0.96,
-     "club_label": "11 in club",
-     "slug": "walsh"
-    },
-    {
-     "player": "Walsh",
-     "canonical_name": "walsh",
      "stat": "Triples",
      "current_total": 5,
      "next_milestone_display": 10,
      "remaining": 5,
      "progress_to_next": 0.5,
-     "club_label": "3 in club",
+     "club_label": "4 in club",
      "slug": "walsh"
     },
     {
@@ -27603,15 +28082,35 @@
      "player": "Walsh",
      "canonical_name": "walsh",
      "stat": "Runs",
-     "current_total": 18,
+     "current_total": 19,
      "next_milestone_display": 25,
-     "remaining": 7,
-     "progress_to_next": 0.72,
+     "remaining": 6,
+     "progress_to_next": 0.76,
      "club_label": "12 in club",
+     "slug": "walsh"
+    },
+    {
+     "player": "Walsh",
+     "canonical_name": "walsh",
+     "stat": "Games",
+     "current_total": 42,
+     "next_milestone_display": 50,
+     "remaining": 8,
+     "progress_to_next": 0.84,
+     "club_label": "8 in club",
      "slug": "walsh"
     }
    ],
    "reached": [
+    {
+     "player": "Walsh",
+     "slug": "walsh",
+     "stat": "Hits",
+     "milestone": 50,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Walsh",
      "slug": "walsh",
@@ -27743,8 +28242,8 @@
    "obp": 0.4473684210526316,
    "slg": 0.4392523364485981,
    "ops": 0.8866207575012297,
-   "woba": 0.3341,
-   "wrc_plus": 65.0,
+   "woba": 0.3345,
+   "wrc_plus": 65.1,
    "iso": 0.0187,
    "bb_rate": 0.0526,
    "xbh_rate": 0.0175,
@@ -27860,7 +28359,7 @@
     "ops": 0.9,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.3579,
+    "woba": 0.3572,
     "wrc_plus": 71.1,
     "iso": 0.0,
     "bb_rate": 0.1667,
@@ -28660,13 +29159,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4,
-       "pct": 26
+       "pct": 25
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5,
-       "pct": 51
+       "pct": 52
       },
       {
        "key": "slg",
@@ -28684,12 +29183,12 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.3579,
+       "value": 0.3572,
        "pct": 22
       },
       {
@@ -28708,7 +29207,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -28726,7 +29225,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3,
-       "pct": 47
+       "pct": 46
       },
       {
        "key": "fb_rate",
@@ -28774,7 +29273,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -28798,7 +29297,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -28816,7 +29315,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3043,
-       "pct": 48
+       "pct": 46
       },
       {
        "key": "fb_rate",
@@ -28840,13 +29339,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.45,
-       "pct": 40
+       "pct": 43
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.5,
-       "pct": 51
+       "pct": 52
       },
       {
        "key": "slg",
@@ -28858,13 +29357,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.0,
-       "pct": 35
+       "pct": 36
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.05,
-       "pct": 21
+       "pct": 19
       },
       {
        "key": "woba",
@@ -28888,31 +29387,31 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0455,
-       "pct": 22
+       "pct": 21
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.72,
-       "pct": 37
+       "pct": 38
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4103,
-       "pct": 60
+       "pct": 59
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3846,
-       "pct": 87
+       "pct": 85
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4103,
-       "pct": 62
+       "pct": 65
       },
       {
        "key": "gb_rate",
@@ -28954,7 +29453,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -28978,7 +29477,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -28990,7 +29489,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3438,
-       "pct": 38
+       "pct": 37
       },
       {
        "key": "ld_rate",
@@ -29050,13 +29549,13 @@
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.3341,
-      "pct": 6
+      "value": 0.3345,
+      "pct": 12
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 65.0,
+      "value": 65.1,
       "pct": 12
      },
      {
@@ -29093,7 +29592,7 @@
       "key": "fb_rate",
       "label": "FB%",
       "value": 0.4135,
-      "pct": 81
+      "pct": 75
      },
      {
       "key": "gb_rate",
@@ -29216,7 +29715,7 @@
      "next_milestone_display": 50,
      "remaining": 5,
      "progress_to_next": 0.9,
-     "club_label": "11 in club",
+     "club_label": "12 in club",
      "slug": "snaxx"
     },
     {
@@ -29327,8 +29826,8 @@
    "obp": 0.4528301886792453,
    "slg": 0.55,
    "ops": 1.0028301886792454,
-   "woba": 0.3946,
-   "wrc_plus": 76.7,
+   "woba": 0.395,
+   "wrc_plus": 76.9,
    "iso": 0.12,
    "bb_rate": 0.0472,
    "xbh_rate": 0.0755,
@@ -30106,7 +30605,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4318181818181818,
-       "pct": 35
+       "pct": 38
       },
       {
        "key": "obp",
@@ -30124,13 +30623,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.037569573283859,
-       "pct": 39
+       "pct": 42
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1364,
-       "pct": 37
+       "pct": 34
       },
       {
        "key": "woba",
@@ -30148,13 +30647,13 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0816,
-       "pct": 72
+       "pct": 74
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0816,
-       "pct": 37
+       "pct": 34
       },
       {
        "key": "gs",
@@ -30166,13 +30665,13 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4091,
-       "pct": 57
+       "pct": 56
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3182,
-       "pct": 61
+       "pct": 60
       },
       {
        "key": "fb_rate",
@@ -30184,7 +30683,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3864,
-       "pct": 71
+       "pct": 69
       }
      ]
     },
@@ -30196,13 +30695,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.42857142857142855,
-       "pct": 33
+       "pct": 35
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.43859649122807015,
-       "pct": 24
+       "pct": 29
       },
       {
        "key": "slg",
@@ -30214,13 +30713,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.9743107769423558,
-       "pct": 30
+       "pct": 32
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1071,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "woba",
@@ -30232,7 +30731,7 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 77.8,
-       "pct": 34
+       "pct": 35
       },
       {
        "key": "bb_rate",
@@ -30244,37 +30743,37 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0702,
-       "pct": 37
+       "pct": 34
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.68,
-       "pct": 37
+       "pct": 38
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2,
-       "pct": 5
+       "pct": 6
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.2115,
-       "pct": 23
+       "pct": 21
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4615,
-       "pct": 78
+       "pct": 79
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3269,
-       "pct": 44
+       "pct": 47
       }
      ]
     }
@@ -30316,14 +30815,14 @@
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.3946,
+      "value": 0.395,
       "pct": 31
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 76.7,
-      "pct": 25
+      "value": 76.9,
+      "pct": 31
      },
      {
       "key": "bb_rate",
@@ -30341,7 +30840,7 @@
       "key": "gs",
       "label": "GS/G",
       "value": 0.66,
-      "pct": 19
+      "pct": 25
      },
      {
       "key": "hh_rate",
@@ -30353,7 +30852,7 @@
       "key": "ld_rate",
       "label": "LD%",
       "value": 0.2589,
-      "pct": 31
+      "pct": 25
      },
      {
       "key": "fb_rate",
@@ -30562,8 +31061,8 @@
    "obp": 0.5145631067961165,
    "slg": 0.7575757575757576,
    "ops": 1.272138864371874,
-   "woba": 0.4993,
-   "wrc_plus": 97.1,
+   "woba": 0.4997,
+   "wrc_plus": 97.2,
    "iso": 0.2525,
    "bb_rate": 0.0291,
    "xbh_rate": 0.165,
@@ -31261,13 +31760,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4,
-       "pct": 26
+       "pct": 25
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.4358974358974359,
-       "pct": 23
+       "pct": 26
       },
       {
        "key": "slg",
@@ -31279,7 +31778,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.235897435897436,
-       "pct": 54
+       "pct": 55
       },
       {
        "key": "iso",
@@ -31291,19 +31790,19 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.4484,
-       "pct": 47
+       "pct": 49
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 84.7,
-       "pct": 38
+       "pct": 41
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0769,
-       "pct": 66
+       "pct": 68
       },
       {
        "key": "xbh_rate",
@@ -31321,7 +31820,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2647,
-       "pct": 18
+       "pct": 19
       },
       {
        "key": "ld_rate",
@@ -31363,7 +31862,7 @@
        "key": "slg",
        "label": "SLG",
        "value": 0.734375,
-       "pct": 55
+       "pct": 54
       },
       {
        "key": "ops",
@@ -31375,19 +31874,19 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.1719,
-       "pct": 47
+       "pct": 46
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.5167,
-       "pct": 63
+       "pct": 62
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 102.3,
-       "pct": 63
+       "pct": 62
       },
       {
        "key": "bb_rate",
@@ -31399,7 +31898,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1406,
-       "pct": 59
+       "pct": 60
       },
       {
        "key": "gs",
@@ -31423,13 +31922,13 @@
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4167,
-       "pct": 68
+       "pct": 69
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.4167,
-       "pct": 82
+       "pct": 83
       }
      ]
     }
@@ -31471,14 +31970,14 @@
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.4993,
-      "pct": 62
+      "value": 0.4997,
+      "pct": 56
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 97.1,
-      "pct": 62
+      "value": 97.2,
+      "pct": 56
      },
      {
       "key": "bb_rate",
@@ -31745,8 +32244,8 @@
    "obp": 0.47191011235955055,
    "slg": 0.6419753086419753,
    "ops": 1.1138854210015259,
-   "woba": 0.4338,
-   "wrc_plus": 84.3,
+   "woba": 0.4342,
+   "wrc_plus": 84.5,
    "iso": 0.1852,
    "bb_rate": 0.0562,
    "xbh_rate": 0.1124,
@@ -32416,19 +32915,19 @@
        "key": "slg",
        "label": "SLG",
        "value": 0.7551020408163265,
-       "pct": 60
+       "pct": 57
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 1.3127943485086342,
-       "pct": 65
+       "pct": 64
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.2041,
-       "pct": 53
+       "pct": 54
       },
       {
        "key": "woba",
@@ -32440,19 +32939,19 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 91.5,
-       "pct": 50
+       "pct": 49
       },
       {
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0385,
-       "pct": 44
+       "pct": 47
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.1538,
-       "pct": 62
+       "pct": 63
       },
       {
        "key": "gs",
@@ -32470,7 +32969,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3125,
-       "pct": 54
+       "pct": 53
       },
       {
        "key": "fb_rate",
@@ -32500,7 +32999,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.35135135135135137,
-       "pct": 10
+       "pct": 8
       },
       {
        "key": "slg",
@@ -32512,13 +33011,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.8201013513513513,
-       "pct": 18
+       "pct": 17
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1562,
-       "pct": 41
+       "pct": 38
       },
       {
        "key": "woba",
@@ -32536,19 +33035,19 @@
        "key": "bb_rate",
        "label": "BB%",
        "value": 0.0811,
-       "pct": 72
+       "pct": 74
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0541,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.5,
-       "pct": 20
+       "pct": 18
       },
       {
        "key": "hh_rate",
@@ -32572,7 +33071,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3667,
-       "pct": 64
+       "pct": 62
       }
      ]
     }
@@ -32585,13 +33084,13 @@
       "key": "avg",
       "label": "AVG",
       "value": 0.4567901234567901,
-      "pct": 53
+      "pct": 47
      },
      {
       "key": "obp",
       "label": "OBP",
       "value": 0.47191011235955055,
-      "pct": 53
+      "pct": 47
      },
      {
       "key": "slg",
@@ -32614,13 +33113,13 @@
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.4338,
-      "pct": 50
+      "value": 0.4342,
+      "pct": 44
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 84.3,
+      "value": 84.5,
       "pct": 44
      },
      {
@@ -32633,7 +33132,7 @@
       "key": "xbh_rate",
       "label": "XBH%",
       "value": 0.1124,
-      "pct": 44
+      "pct": 50
      },
      {
       "key": "gs",
@@ -32829,32 +33328,32 @@
    "player": "Slomka",
    "canonical_name": "slomka",
    "seasons_played": 4,
-   "games": 23,
-   "pa": 66,
-   "ab": 64,
-   "hits": 29,
-   "1b": 22,
-   "2b": 6,
+   "games": 25,
+   "pa": 72,
+   "ab": 70,
+   "hits": 33,
+   "1b": 25,
+   "2b": 7,
    "3b": 0,
    "hr": 1,
    "bb": 1,
-   "r": 18,
+   "r": 20,
    "rbi": 16,
-   "tb": 38,
+   "tb": 43,
    "gidp": 1,
    "sf": 1,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.453125,
-   "obp": 0.45454545454545453,
-   "slg": 0.59375,
-   "ops": 1.0482954545454546,
-   "woba": 0.4273,
-   "wrc_plus": 83.1,
-   "iso": 0.1406,
-   "bb_rate": 0.0152,
-   "xbh_rate": 0.1061,
-   "gs_avg": 0.71
+   "avg": 0.4714285714285714,
+   "obp": 0.4722222222222222,
+   "slg": 0.6142857142857143,
+   "ops": 1.0865079365079366,
+   "woba": 0.441,
+   "wrc_plus": 85.8,
+   "iso": 0.1429,
+   "bb_rate": 0.0139,
+   "xbh_rate": 0.1111,
+   "gs_avg": 0.74
   },
   "seasons": [
    {
@@ -32948,33 +33447,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Slomka",
     "canonical_name": "slomka",
-    "games": 2,
-    "pa": 7,
-    "ab": 7,
-    "hits": 4,
-    "1b": 2,
-    "2b": 1,
+    "games": 4,
+    "pa": 13,
+    "ab": 13,
+    "hits": 8,
+    "1b": 5,
+    "2b": 2,
     "3b": 0,
     "hr": 1,
     "bb": 0,
-    "r": 2,
+    "r": 4,
     "rbi": 4,
-    "tb": 8,
-    "avg": 0.5714285714,
-    "obp": 0.5714285714,
-    "slg": 1.1428571429,
-    "ops": 1.7142857143,
+    "tb": 13,
+    "avg": 0.6153846154,
+    "obp": 0.6153846154,
+    "slg": 1.0,
+    "ops": 1.6153846154,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 0.7559,
-    "wrc_plus": 150.2,
-    "iso": 0.5714,
+    "woba": 0.689,
+    "wrc_plus": 137.1,
+    "iso": 0.3846,
     "bb_rate": 0.0,
-    "xbh_rate": 0.2857,
-    "gs_avg": 1.88
+    "xbh_rate": 0.2308,
+    "gs_avg": 1.51
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 2,
+    "1b": 2,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 0,
+    "rbi": 0,
+    "tb": 2,
+    "game_score": 0.75,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 3,
+    "ab": 3,
+    "hits": 2,
+    "1b": 1,
+    "2b": 1,
+    "3b": 0,
+    "hr": 0,
+    "bb": 0,
+    "r": 2,
+    "rbi": 0,
+    "tb": 3,
+    "game_score": 1.55,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-15",
     "season": "Maple Tree Summer 2026",
@@ -33445,44 +33984,44 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 0.5714285714285714,
-       "pct": 72
+       "value": 0.6153846153846154,
+       "pct": 81
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.5714285714285714,
-       "pct": 71
+       "value": 0.6153846153846154,
+       "pct": 83
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 1.1428571428571428,
-       "pct": 87
+       "value": 1.0,
+       "pct": 81
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 1.7142857142857142,
-       "pct": 87
+       "value": 1.6153846153846154,
+       "pct": 81
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 0.5714,
-       "pct": 87
+       "value": 0.3846,
+       "pct": 78
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 0.7559,
-       "pct": 96
+       "value": 0.689,
+       "pct": 87
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 150.2,
-       "pct": 96
+       "value": 137.1,
+       "pct": 87
       },
       {
        "key": "bb_rate",
@@ -33493,38 +34032,38 @@
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.2857,
-       "pct": 90
+       "value": 0.2308,
+       "pct": 81
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 1.88,
-       "pct": 84
+       "value": 1.51,
+       "pct": 75
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.4286,
-       "pct": 66
+       "value": 0.6154,
+       "pct": 96
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.2857,
-       "pct": 44
+       "value": 0.3077,
+       "pct": 48
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.2857,
-       "pct": 19
+       "value": 0.2308,
+       "pct": 6
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.4286,
-       "pct": 84
+       "value": 0.4615,
+       "pct": 91
       }
      ]
     },
@@ -33542,7 +34081,7 @@
        "key": "obp",
        "label": "OBP",
        "value": 0.5,
-       "pct": 51
+       "pct": 52
       },
       {
        "key": "slg",
@@ -33554,25 +34093,25 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.0555555555555556,
-       "pct": 40
+       "pct": 43
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.0556,
-       "pct": 21
+       "pct": 19
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.4209,
-       "pct": 38
+       "pct": 41
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 82.6,
-       "pct": 38
+       "pct": 41
       },
       {
        "key": "bb_rate",
@@ -33584,13 +34123,13 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0556,
-       "pct": 28
+       "pct": 26
       },
       {
        "key": "gs",
        "label": "GS/G",
        "value": 0.74,
-       "pct": 38
+       "pct": 40
       },
       {
        "key": "hh_rate",
@@ -33626,7 +34165,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6,
-       "pct": 81
+       "pct": 79
       },
       {
        "key": "obp",
@@ -33680,7 +34219,7 @@
        "key": "gs",
        "label": "GS/G",
        "value": 2.0,
-       "pct": 88
+       "pct": 90
       },
       {
        "key": "hh_rate",
@@ -33692,7 +34231,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -33716,13 +34255,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.38235294117647056,
-       "pct": 18
+       "pct": 20
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.38235294117647056,
-       "pct": 18
+       "pct": 17
       },
       {
        "key": "slg",
@@ -33740,7 +34279,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0294,
-       "pct": 15
+       "pct": 13
       },
       {
        "key": "woba",
@@ -33764,7 +34303,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0294,
-       "pct": 15
+       "pct": 13
       },
       {
        "key": "gs",
@@ -33782,7 +34321,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -33794,7 +34333,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.303,
-       "pct": 38
+       "pct": 39
       }
      ]
     }
@@ -33806,86 +34345,86 @@
      {
       "key": "avg",
       "label": "AVG",
-      "value": 0.453125,
-      "pct": 47
+      "value": 0.4714285714285714,
+      "pct": 53
      },
      {
       "key": "obp",
       "label": "OBP",
-      "value": 0.45454545454545453,
-      "pct": 47
+      "value": 0.4722222222222222,
+      "pct": 53
      },
      {
       "key": "slg",
       "label": "SLG",
-      "value": 0.59375,
+      "value": 0.6142857142857143,
       "pct": 34
      },
      {
       "key": "ops",
       "label": "OPS",
-      "value": 1.0482954545454546,
-      "pct": 34
+      "value": 1.0865079365079366,
+      "pct": 41
      },
      {
       "key": "iso",
       "label": "ISO",
-      "value": 0.1406,
-      "pct": 25
+      "value": 0.1429,
+      "pct": 38
      },
      {
       "key": "woba",
       "label": "wOBA",
-      "value": 0.4273,
-      "pct": 38
+      "value": 0.441,
+      "pct": 50
      },
      {
       "key": "wrc_plus",
       "label": "wRC+",
-      "value": 83.1,
-      "pct": 44
+      "value": 85.8,
+      "pct": 50
      },
      {
       "key": "bb_rate",
       "label": "BB%",
-      "value": 0.0152,
+      "value": 0.0139,
       "pct": 6
      },
      {
       "key": "xbh_rate",
       "label": "XBH%",
-      "value": 0.1061,
+      "value": 0.1111,
       "pct": 38
      },
      {
       "key": "gs",
       "label": "GS/G",
-      "value": 0.71,
-      "pct": 38
+      "value": 0.74,
+      "pct": 44
      },
      {
       "key": "hh_rate",
       "label": "HH%",
-      "value": 0.3438,
-      "pct": 38
+      "value": 0.3857,
+      "pct": 50
      },
      {
       "key": "ld_rate",
       "label": "LD%",
-      "value": 0.2968,
-      "pct": 50
+      "value": 0.3,
+      "pct": 56
      },
      {
       "key": "fb_rate",
       "label": "FB%",
-      "value": 0.2969,
-      "pct": 6
+      "value": 0.2857,
+      "pct": 3
      },
      {
       "key": "gb_rate",
       "label": "GB%",
-      "value": 0.4062,
-      "pct": 88
+      "value": 0.4143,
+      "pct": 94
      }
     ]
    }
@@ -33971,33 +34510,11 @@
     {
      "player": "Slomka",
      "canonical_name": "slomka",
-     "stat": "Games",
-     "current_total": 23,
-     "next_milestone_display": 25,
-     "remaining": 2,
-     "progress_to_next": 0.92,
-     "club_label": "15 in club",
-     "slug": "slomka"
-    },
-    {
-     "player": "Slomka",
-     "canonical_name": "slomka",
-     "stat": "Singles",
-     "current_total": 22,
-     "next_milestone_display": 25,
-     "remaining": 3,
-     "progress_to_next": 0.88,
-     "club_label": "15 in club",
-     "slug": "slomka"
-    },
-    {
-     "player": "Slomka",
-     "canonical_name": "slomka",
      "stat": "Doubles",
-     "current_total": 6,
+     "current_total": 7,
      "next_milestone_display": 10,
-     "remaining": 4,
-     "progress_to_next": 0.6,
+     "remaining": 3,
+     "progress_to_next": 0.7,
      "club_label": "10 in club",
      "slug": "slomka"
     },
@@ -34015,6 +34532,17 @@
     {
      "player": "Slomka",
      "canonical_name": "slomka",
+     "stat": "Runs",
+     "current_total": 20,
+     "next_milestone_display": 25,
+     "remaining": 5,
+     "progress_to_next": 0.8,
+     "club_label": "12 in club",
+     "slug": "slomka"
+    },
+    {
+     "player": "Slomka",
+     "canonical_name": "slomka",
      "stat": "Triples",
      "current_total": 0,
      "next_milestone_display": 5,
@@ -34022,9 +34550,38 @@
      "progress_to_next": 0.0,
      "club_label": "8 in club",
      "slug": "slomka"
+    },
+    {
+     "player": "Slomka",
+     "canonical_name": "slomka",
+     "stat": "Total Bases",
+     "current_total": 43,
+     "next_milestone_display": 50,
+     "remaining": 7,
+     "progress_to_next": 0.86,
+     "club_label": "14 in club",
+     "slug": "slomka"
     }
    ],
    "reached": [
+    {
+     "player": "Slomka",
+     "slug": "slomka",
+     "stat": "Games",
+     "milestone": 25,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
+    {
+     "player": "Slomka",
+     "slug": "slomka",
+     "stat": "Singles",
+     "milestone": 25,
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes",
+     "label": "Summer 2026"
+    },
     {
      "player": "Slomka",
      "slug": "slomka",
@@ -34084,8 +34641,8 @@
    "obp": 0.40625,
    "slg": 0.5625,
    "ops": 0.96875,
-   "woba": 0.3754,
-   "wrc_plus": 73.0,
+   "woba": 0.3758,
+   "wrc_plus": 73.1,
    "iso": 0.1562,
    "bb_rate": 0.0,
    "xbh_rate": 0.0938,
@@ -34354,13 +34911,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.40625,
-       "pct": 30
+       "pct": 29
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.40625,
-       "pct": 21
+       "pct": 23
       },
       {
        "key": "slg",
@@ -34372,13 +34929,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.96875,
-       "pct": 29
+       "pct": 27
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.1562,
-       "pct": 41
+       "pct": 38
       },
       {
        "key": "woba",
@@ -34402,7 +34959,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0938,
-       "pct": 43
+       "pct": 41
       },
       {
        "key": "gs",
@@ -34414,25 +34971,25 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.25,
-       "pct": 13
+       "pct": 15
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.1875,
-       "pct": 12
+       "pct": 10
       },
       {
        "key": "fb_rate",
        "label": "FB%",
        "value": 0.4688,
-       "pct": 79
+       "pct": 81
       },
       {
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3438,
-       "pct": 50
+       "pct": 51
       }
      ]
     }
@@ -34542,8 +35099,8 @@
    "obp": 0.6428571428571429,
    "slg": 1.0769230769230769,
    "ops": 1.7197802197802199,
-   "woba": 0.6724,
-   "wrc_plus": 130.7,
+   "woba": 0.673,
+   "wrc_plus": 130.9,
    "iso": 0.4615,
    "bb_rate": 0.0714,
    "xbh_rate": 0.2143,
@@ -34801,13 +35358,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6,
-       "pct": 81
+       "pct": 79
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6,
-       "pct": 78
+       "pct": 76
       },
       {
        "key": "slg",
@@ -34855,7 +35412,7 @@
        "key": "gs",
        "label": "GS/G",
        "value": 2.0,
-       "pct": 88
+       "pct": 90
       },
       {
        "key": "hh_rate",
@@ -34867,7 +35424,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -34891,7 +35448,7 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.625,
-       "pct": 88
+       "pct": 87
       },
       {
        "key": "obp",
@@ -34909,7 +35466,7 @@
        "key": "ops",
        "label": "OPS",
        "value": 1.6041666666666665,
-       "pct": 78
+       "pct": 79
       },
       {
        "key": "iso",
@@ -34945,19 +35502,19 @@
        "key": "gs",
        "label": "GS/G",
        "value": 1.33,
-       "pct": 69
+       "pct": 71
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4375,
-       "pct": 68
+       "pct": 65
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "fb_rate",
@@ -34969,7 +35526,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     }
@@ -35067,32 +35624,32 @@
    "player": "Harm",
    "canonical_name": "harm",
    "seasons_played": 2,
-   "games": 4,
-   "pa": 11,
-   "ab": 8,
-   "hits": 4,
-   "1b": 1,
-   "2b": 0,
+   "games": 6,
+   "pa": 19,
+   "ab": 14,
+   "hits": 8,
+   "1b": 3,
+   "2b": 1,
    "3b": 0,
-   "hr": 3,
-   "bb": 2,
-   "r": 3,
-   "rbi": 10,
-   "tb": 13,
+   "hr": 4,
+   "bb": 3,
+   "r": 5,
+   "rbi": 16,
+   "tb": 21,
    "gidp": 0,
-   "sf": 1,
+   "sf": 2,
    "hbp": 0,
    "sh": 0,
-   "avg": 0.5,
-   "obp": 0.5454545454545454,
-   "slg": 1.625,
-   "ops": 2.1704545454545454,
-   "woba": 0.7325,
-   "wrc_plus": 142.4,
-   "iso": 1.125,
-   "bb_rate": 0.1818,
-   "xbh_rate": 0.2727,
-   "gs_avg": 1.77
+   "avg": 0.5714285714285714,
+   "obp": 0.5789473684210527,
+   "slg": 1.5,
+   "ops": 2.0789473684210527,
+   "woba": 0.7101,
+   "wrc_plus": 138.2,
+   "iso": 0.9286,
+   "bb_rate": 0.1579,
+   "xbh_rate": 0.2632,
+   "gs_avg": 1.98
   },
   "seasons": [
    {
@@ -35128,33 +35685,73 @@
     "season": "Maple Tree Summer 2026",
     "player": "Harm",
     "canonical_name": "harm",
-    "games": 2,
-    "pa": 6,
-    "ab": 4,
-    "hits": 4,
-    "1b": 1,
-    "2b": 0,
+    "games": 4,
+    "pa": 14,
+    "ab": 10,
+    "hits": 8,
+    "1b": 3,
+    "2b": 1,
     "3b": 0,
-    "hr": 3,
-    "bb": 1,
-    "r": 3,
-    "rbi": 10,
-    "tb": 13,
-    "avg": 1.0,
-    "obp": 0.8333333333,
-    "slg": 3.25,
-    "ops": 4.0833333333,
+    "hr": 4,
+    "bb": 2,
+    "r": 5,
+    "rbi": 16,
+    "tb": 21,
+    "avg": 0.8,
+    "obp": 0.7142857143,
+    "slg": 2.1,
+    "ops": 2.8142857143,
     "label": "Summer 2026",
     "season_slug": "summer-2026",
-    "woba": 1.3037,
-    "wrc_plus": 259.0,
-    "iso": 2.25,
-    "bb_rate": 0.1667,
-    "xbh_rate": 0.5,
-    "gs_avg": 3.85
+    "woba": 0.9624,
+    "wrc_plus": 191.5,
+    "iso": 1.3,
+    "bb_rate": 0.1429,
+    "xbh_rate": 0.3571,
+    "gs_avg": 3.12
    }
   ],
   "game_log": [
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 4,
+    "hits": 3,
+    "1b": 1,
+    "2b": 1,
+    "3b": 0,
+    "hr": 1,
+    "bb": 0,
+    "r": 2,
+    "rbi": 4,
+    "tb": 7,
+    "game_score": 3.75,
+    "label": "Summer 2026",
+    "result": "W 13-10",
+    "ha": "away"
+   },
+   {
+    "game_date": "2026-07-29",
+    "season": "Maple Tree Summer 2026",
+    "opponent": "Sandlot Vibes",
+    "pa": 4,
+    "ab": 2,
+    "hits": 1,
+    "1b": 1,
+    "2b": 0,
+    "3b": 0,
+    "hr": 0,
+    "bb": 1,
+    "r": 0,
+    "rbi": 2,
+    "tb": 1,
+    "game_score": 1.05,
+    "label": "Summer 2026",
+    "result": "L 12-13",
+    "ha": "home"
+   },
    {
     "game_date": "2026-07-22",
     "season": "Maple Tree Summer 2026",
@@ -35245,86 +35842,86 @@
       {
        "key": "avg",
        "label": "AVG",
-       "value": 1.0,
+       "value": 0.8,
        "pct": 99
       },
       {
        "key": "obp",
        "label": "OBP",
-       "value": 0.8333333333333334,
+       "value": 0.7142857142857143,
        "pct": 99
       },
       {
        "key": "slg",
        "label": "SLG",
-       "value": 3.25,
+       "value": 2.1,
        "pct": 99
       },
       {
        "key": "ops",
        "label": "OPS",
-       "value": 4.083333333333333,
+       "value": 2.8142857142857145,
        "pct": 99
       },
       {
        "key": "iso",
        "label": "ISO",
-       "value": 2.25,
+       "value": 1.3,
        "pct": 99
       },
       {
        "key": "woba",
        "label": "wOBA",
-       "value": 1.3037,
+       "value": 0.9624,
        "pct": 99
       },
       {
        "key": "wrc_plus",
        "label": "wRC+",
-       "value": 259.0,
+       "value": 191.5,
        "pct": 99
       },
       {
        "key": "bb_rate",
        "label": "BB%",
-       "value": 0.1667,
-       "pct": 97
+       "value": 0.1429,
+       "pct": 94
       },
       {
        "key": "xbh_rate",
        "label": "XBH%",
-       "value": 0.5,
-       "pct": 99
+       "value": 0.3571,
+       "pct": 96
       },
       {
        "key": "gs",
        "label": "GS/G",
-       "value": 3.85,
+       "value": 3.12,
        "pct": 99
       },
       {
        "key": "hh_rate",
        "label": "HH%",
-       "value": 0.8,
-       "pct": 99
+       "value": 0.5833,
+       "pct": 91
       },
       {
        "key": "ld_rate",
        "label": "LD%",
-       "value": 0.6,
+       "value": 0.5,
        "pct": 99
       },
       {
        "key": "fb_rate",
        "label": "FB%",
-       "value": 0.2,
-       "pct": 3
+       "value": 0.4167,
+       "pct": 69
       },
       {
        "key": "gb_rate",
        "label": "GB%",
-       "value": 0.2,
-       "pct": 10
+       "value": 0.0833,
+       "pct": 3
       }
      ]
     },
@@ -35360,7 +35957,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -35384,7 +35981,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -35414,7 +36011,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     }
@@ -35425,8 +36022,8 @@
    "game": {
     "hits": {
      "v": 3,
-     "date": "2026-07-22",
-     "opponent": "Bleacher Bums"
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes"
     },
     "hr": {
      "v": 3,
@@ -35445,8 +36042,8 @@
     },
     "bb": {
      "v": 1,
-     "date": "2026-07-22",
-     "opponent": "Bleacher Bums"
+     "date": "2026-07-29",
+     "opponent": "Sandlot Vibes"
     },
     "tb": {
      "v": 12,
@@ -35461,27 +36058,27 @@
    },
    "season": {
     "hits": {
-     "v": 4,
+     "v": 8,
      "label": "Summer 2026"
     },
     "hr": {
-     "v": 3,
+     "v": 4,
      "label": "Summer 2026"
     },
     "rbi": {
-     "v": 10,
+     "v": 16,
      "label": "Summer 2026"
     },
     "r": {
-     "v": 3,
+     "v": 5,
      "label": "Summer 2026"
     },
     "bb": {
-     "v": 1,
-     "label": "Soviet Sluggers Summer 2021"
+     "v": 2,
+     "label": "Summer 2026"
     },
     "tb": {
-     "v": 13,
+     "v": 21,
      "label": "Summer 2026"
     },
     "avg": null,
@@ -35532,8 +36129,8 @@
    "obp": 0.25,
    "slg": 0.6666666666666666,
    "ops": 0.9166666666666666,
-   "woba": 0.3296,
-   "wrc_plus": 64.1,
+   "woba": 0.33,
+   "wrc_plus": 64.2,
    "iso": 0.3333,
    "bb_rate": 0.0,
    "xbh_rate": 0.25,
@@ -35646,7 +36243,7 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.3333,
-       "pct": 72
+       "pct": 74
       },
       {
        "key": "woba",
@@ -35658,7 +36255,7 @@
        "key": "wrc_plus",
        "label": "wRC+",
        "value": 66.5,
-       "pct": 16
+       "pct": 15
       },
       {
        "key": "bb_rate",
@@ -35670,7 +36267,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.25,
-       "pct": 84
+       "pct": 85
       },
       {
        "key": "gs",
@@ -35700,7 +36297,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     }
@@ -35790,8 +36387,8 @@
    "obp": 0.25,
    "slg": 0.5,
    "ops": 0.75,
-   "woba": 0.3296,
-   "wrc_plus": 64.1,
+   "woba": 0.33,
+   "wrc_plus": 64.2,
    "iso": 0.25,
    "bb_rate": 0.0,
    "xbh_rate": 0.25,
@@ -35904,13 +36501,13 @@
        "key": "iso",
        "label": "ISO",
        "value": 0.25,
-       "pct": 58
+       "pct": 60
       },
       {
        "key": "woba",
        "label": "wOBA",
        "value": 0.3277,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "wrc_plus",
@@ -35928,7 +36525,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.25,
-       "pct": 84
+       "pct": 85
       },
       {
        "key": "gs",
@@ -35940,7 +36537,7 @@
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.3333,
-       "pct": 35
+       "pct": 34
       },
       {
        "key": "ld_rate",
@@ -35958,7 +36555,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 48
+       "pct": 50
       }
      ]
     }
@@ -36041,8 +36638,8 @@
    "obp": 0.375,
    "slg": 0.42857142857142855,
    "ops": 0.8035714285714286,
-   "woba": 0.2747,
-   "wrc_plus": 53.4,
+   "woba": 0.275,
+   "wrc_plus": 53.5,
    "iso": 0.0,
    "bb_rate": 0.0,
    "xbh_rate": 0.0,
@@ -36131,13 +36728,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.42857142857142855,
-       "pct": 33
+       "pct": 35
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.375,
-       "pct": 16
+       "pct": 13
       },
       {
        "key": "slg",
@@ -36149,13 +36746,13 @@
        "key": "ops",
        "label": "OPS",
        "value": 0.8035714285714286,
-       "pct": 18
+       "pct": 16
       },
       {
        "key": "iso",
        "label": "ISO",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "woba",
@@ -36179,7 +36776,7 @@
        "key": "xbh_rate",
        "label": "XBH%",
        "value": 0.0,
-       "pct": 7
+       "pct": 6
       },
       {
        "key": "gs",
@@ -36197,7 +36794,7 @@
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.375,
-       "pct": 83
+       "pct": 82
       },
       {
        "key": "fb_rate",
@@ -36209,7 +36806,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.25,
-       "pct": 20
+       "pct": 21
       }
      ]
     }
@@ -36306,8 +36903,8 @@
    "obp": 0.6,
    "slg": 1.0,
    "ops": 1.6,
-   "woba": 0.6739,
-   "wrc_plus": 131.0,
+   "woba": 0.6746,
+   "wrc_plus": 131.3,
    "iso": 0.4,
    "bb_rate": 0.0,
    "xbh_rate": 0.4,
@@ -36396,25 +36993,25 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.6,
-       "pct": 81
+       "pct": 79
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.6,
-       "pct": 78
+       "pct": 76
       },
       {
        "key": "slg",
        "label": "SLG",
        "value": 1.0,
-       "pct": 80
+       "pct": 81
       },
       {
        "key": "ops",
        "label": "OPS",
        "value": 1.6,
-       "pct": 77
+       "pct": 79
       },
       {
        "key": "iso",
@@ -36450,19 +37047,19 @@
        "key": "gs",
        "label": "GS/G",
        "value": 1.3,
-       "pct": 68
+       "pct": 69
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.2,
-       "pct": 5
+       "pct": 6
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.3333,
-       "pct": 71
+       "pct": 70
       },
       {
        "key": "fb_rate",
@@ -36474,7 +37071,7 @@
        "key": "gb_rate",
        "label": "GB%",
        "value": 0.3333,
-       "pct": 48
+       "pct": 50
       }
      ]
     }
@@ -36571,8 +37168,8 @@
    "obp": 0.4,
    "slg": 0.8,
    "ops": 1.2000000000000002,
-   "woba": 0.5714,
-   "wrc_plus": 111.1,
+   "woba": 0.5719,
+   "wrc_plus": 111.3,
    "iso": 0.4,
    "bb_rate": 0.0,
    "xbh_rate": 0.4,
@@ -36661,13 +37258,13 @@
        "key": "avg",
        "label": "AVG",
        "value": 0.4,
-       "pct": 26
+       "pct": 25
       },
       {
        "key": "obp",
        "label": "OBP",
        "value": 0.4,
-       "pct": 20
+       "pct": 21
       },
       {
        "key": "slg",
@@ -36691,7 +37288,7 @@
        "key": "woba",
        "label": "wOBA",
        "value": 0.5267,
-       "pct": 65
+       "pct": 63
       },
       {
        "key": "wrc_plus",
@@ -36715,19 +37312,19 @@
        "key": "gs",
        "label": "GS/G",
        "value": 0.93,
-       "pct": 53
+       "pct": 51
       },
       {
        "key": "hh_rate",
        "label": "HH%",
        "value": 0.4,
-       "pct": 55
+       "pct": 54
       },
       {
        "key": "ld_rate",
        "label": "LD%",
        "value": 0.4,
-       "pct": 90
+       "pct": 88
       },
       {
        "key": "fb_rate",

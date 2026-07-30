@@ -418,7 +418,7 @@ def main():
 
     st_y = H - 104
     section_title(c, 36, st_y, f"Standings after {week_label or 'this week'}", W - 72)
-    cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RF", 426, "r"),
+    cols = [("SEED", 58, "r"), ("W", 336, "r"), ("L", 376, "r"), ("RS", 426, "r"),
             ("RA", 476, "r"), ("DIFF", 530, "r"), ("LEFT", 574, "r")]
     hy = st_y - 24
     _txt(c, 76, hy, "TEAM", "Helvetica-Bold", 7, MUTED)
