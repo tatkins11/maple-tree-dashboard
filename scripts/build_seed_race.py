@@ -194,6 +194,17 @@ def main() -> None:
     # Conditional splits on how our own doubleheader goes: 0, 1 or 2 wins.
     scen = {k: {"p": 0.0, "seeds": {}, "bye": 0.0, "final": 0.0, "champ": 0.0}
             for k in (0, 1, 2)}
+    # Joint grid against the club one game ahead of us. The seed race is really a
+    # two-body problem: our result and theirs. Reporting only our own conditional
+    # buries that — "split gives us a 0.08% shot at #2" is true but reads as dead,
+    # when the honest statement is that a split gives us a 32% shot at #2 IF they
+    # drop both, and the long odds live entirely in that if.
+    rival = next((n for n in base if n != US), None)
+    stand = sorted(base, key=lambda n: -(base[n]["w"] / max(base[n]["w"] + base[n]["l"], 1)))
+    ui = stand.index(US)
+    rival = stand[ui - 1] if ui > 0 else stand[1]
+    rival_idx = [i for i, (_, h, a) in enumerate(remaining) if rival in (h, a)]
+    joint = {}
 
     top_mass = {n: 0.0 for n in base}
     top_possible = {n: False for n in base}
@@ -239,6 +250,12 @@ def main() -> None:
             sc["bye"] += p
         sc["final"] += p * finalists.get(US, 0.0)
         sc["champ"] += p * champs.get(US, 0.0)
+
+        rival_wins = sum(1 for i in rival_idx
+                         if (remaining[i][1] == rival) == bool(outcome[i]))
+        cell = joint.setdefault((our_wins, rival_wins), {"p": 0.0, "seeds": {}})
+        cell["p"] += p
+        cell["seeds"][seat] = cell["seeds"].get(seat, 0.0) + p
 
     total = sum(top_mass.values())
     rows = []
@@ -286,6 +303,15 @@ def main() -> None:
                          "a bye."),
         "our_seed_odds": [{"seed": k, "p": v / total} for k, v in sorted(us_seed_mass.items())],
         "our_game_win_prob": OUR_GAME_WIN_PROB,
+        "rival": rival,
+        "rival_games_left": len(rival_idx),
+        "joint": [
+            {"our_wins": ow, "rival_wins": rw,
+             "p": cell["p"] / total,
+             "seeds": [{"seed": sd, "p": v / cell["p"]}
+                       for sd, v in sorted(cell["seeds"].items()) if v / cell["p"] > 0.005],
+             "p_seed_2_or_better": sum(v for sd, v in cell["seeds"].items() if sd <= 2) / cell["p"]}
+            for (ow, rw), cell in sorted(joint.items(), reverse=True) if cell["p"] / total > 1e-6],
         "scenarios": [
             {"wins": k,
              "label": {0: "Lose both", 1: "Split", 2: "Win both"}[k],

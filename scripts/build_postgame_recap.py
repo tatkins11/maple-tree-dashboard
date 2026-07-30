@@ -676,9 +676,9 @@ def main():
 
             # headline tiles
             ty = H - 200
-            tiles = [("CHANCE TO WIN IT ALL", _pct(rus["p_champion"]), MAPLE),
+            tiles = [("CHANCE AT THE #1 SEED", _pct(rus["p_top_seed"]), MAPLE),
                      ("FIRST-ROUND BYE", _pct(rus["p_first_round_bye"]), BARK),
-                     ("REACH THE FINAL", _pct(rus["p_reach_final"]), BARK)]
+                     ("MOST LIKELY FINISH", f"#{max(race['our_seed_odds'], key=lambda o: o['p'])['seed']}", BARK)]
             tw = (W - 72 - 24) / 3
             for i, (lbl, val, col) in enumerate(tiles):
                 x0 = 36 + i * (tw + 12)
@@ -812,10 +812,10 @@ def main():
                     c.setStrokeColor(LINE)
                     c.setLineWidth(0.7)
                     c.line(x0 + 13, top - 120, x0 + cw - 13, top - 120)
+                    top2 = sum(x["p"] for x in sc["seeds"] if x["seed"] <= 2)
                     for j, (lb, vv, col) in enumerate([("BYE", sc["p_bye"], BARK),
-                                                       ("FINAL", sc["p_final"], BARK),
-                                                       ("TITLE", sc["p_champion"], MAPLE)]):
-                        xx = x0 + 13 + j * ((cw - 26) / 3)
+                                                       ("#2 OR BETTER", top2, MAPLE)]):
+                        xx = x0 + 13 + j * ((cw - 26) / 2)
                         _txt(c, xx, top - 128, lb, "Helvetica-Bold", 6.5, MUTED, cs=0.6)
                         _txt(c, xx, top - 143, _pct(vv), "Helvetica-Bold", 10, col)
                 y = top - 168
@@ -953,15 +953,15 @@ def main():
             _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
                  f"{(week_label or date_pretty).upper()}  ·  WHAT IS LEFT",
                  "Helvetica-Bold", 8.5, TAN, cs=2)
-            _txt(c, 36, H - 66, "TITLE ODDS", "Helvetica-Bold", 26, WHITE, cs=1)
-            _txt(c, W - 36, H - 40, "Season and bracket combined", "Helvetica-Bold", 11, WHITE, align="r")
-            _txt(c, W - 36, H - 58, "into a single number", "Helvetica-Oblique", 8.5, TAN, align="r")
+            _txt(c, 36, H - 66, "THE FULL BOARD", "Helvetica-Bold", 26, WHITE, cs=1)
+            _txt(c, W - 36, H - 40, "Top seed and bye odds", "Helvetica-Bold", 11, WHITE, align="r")
+            _txt(c, W - 36, H - 58, "every branch weighted", "Helvetica-Oblique", 8.5, TAN, align="r")
             y = H - 140
 
             # the board
-            section_title(c, 36, y, "Title odds across the league", W - 72)
+            section_title(c, 36, y, "Top seed and bye odds across the league", W - 72)
             y -= 20
-            for lbl, x in [("W", 300), ("L", 330), ("BYE", 400), ("FINAL", 462), ("TITLE", 530)]:
+            for lbl, x in [("W", 300), ("L", 340), ("#1 SEED", 440), ("BYE", 530)]:
                 _txt(c, x, y, lbl, "Helvetica-Bold", 7, MUTED, align="r")
             _txt(c, 52, y, "TEAM", "Helvetica-Bold", 7, MUTED)
             y -= 4
@@ -978,12 +978,59 @@ def main():
                 f = "Helvetica-Bold" if t["is_team"] else "Helvetica"
                 _txt(c, 52, y0 + 5, t["team"], f, 9, BARK if t["is_team"] else INK)
                 _txt(c, 300, y0 + 5, str(int(t["wins"])), f, 9, INK, align="r")
-                _txt(c, 330, y0 + 5, str(int(t["losses"])), f, 9, INK, align="r")
-                _txt(c, 400, y0 + 5, _pct(t["p_first_round_bye"]), f, 9, INK, align="r")
-                _txt(c, 462, y0 + 5, _pct(t["p_reach_final"]), f, 9, INK, align="r")
-                _txt(c, 530, y0 + 5, _pct(t["p_champion"]), "Helvetica-Bold", 9.5,
+                _txt(c, 340, y0 + 5, str(int(t["losses"])), f, 9, INK, align="r")
+                _txt(c, 440, y0 + 5, _pct(t["p_top_seed"]), "Helvetica-Bold", 9.5,
                      MAPLE if t["is_team"] else BARK, align="r")
+                _txt(c, 530, y0 + 5, _pct(t["p_first_round_bye"]), f, 9, INK, align="r")
                 y -= 17
+
+            # ---- the two-body problem: our night and theirs --------------------
+            jt = race.get("joint") or []
+            riv = race.get("rival")
+            if jt and riv:
+                y -= 18
+                section_title(c, 36, y, f"What it takes: our night and {riv}'s", W - 72)
+                y -= 20
+                y = wrap(c, 36, y, "The seed race is really a two-body problem. Our own result only "
+                         "gets us so far — the rest depends on whether the club a game ahead of us "
+                         f"drops anything to a winless side. We hold the head-to-head over {riv}, "
+                         "so a tie goes our way.",
+                         W - 72, "Helvetica", 9, 11.5, MUTED)
+                y -= 4
+                LBL = {0: "lose both", 1: "split", 2: "win both"}
+                _txt(c, 52, y, "MAPLE TREE", "Helvetica-Bold", 7, MUTED)
+                _txt(c, 168, y, riv.upper(), "Helvetica-Bold", 7, MUTED)
+                _txt(c, 330, y, "CHANCE", "Helvetica-Bold", 7, MUTED, align="r")
+                _txt(c, 424, y, "#2 OR BETTER", "Helvetica-Bold", 7, MUTED, align="r")
+                _txt(c, W - 36, y, "LIKELIEST SEED", "Helvetica-Bold", 7, MUTED, align="r")
+                y -= 4
+                for i, j in enumerate(jt):
+                    y0 = y - 17
+                    good = j["p_seed_2_or_better"] > 0.2
+                    if good:
+                        c.setFillColor(CREAM)
+                        c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                        c.setFillColor(MAPLE)
+                        c.rect(36, y0, 3, 17, stroke=0, fill=1)
+                    elif i % 2 == 0:
+                        c.setFillColor(STRIPE)
+                        c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                    f = "Helvetica-Bold" if good else "Helvetica"
+                    _txt(c, 52, y0 + 5, LBL[j["our_wins"]], f, 9, BARK if good else INK)
+                    _txt(c, 168, y0 + 5, LBL[j["rival_wins"]], f, 9, BARK if good else INK)
+                    _txt(c, 330, y0 + 5, _pct(j["p"]), "Helvetica", 9, MUTED, align="r")
+                    _txt(c, 424, y0 + 5, _pct(j["p_seed_2_or_better"]), "Helvetica-Bold", 9.5,
+                         MAPLE if good else MUTED, align="r")
+                    top = max(j["seeds"], key=lambda x: x["p"]) if j["seeds"] else None
+                    _txt(c, W - 36, y0 + 5, f"#{top['seed']}" if top else "-", f, 9,
+                         BARK if good else INK, align="r")
+                    y -= 17
+                y -= 10
+                wrap(c, 36, y, "Two live paths to the second seed, both requiring help: sweep the "
+                     f"doubleheader and have {riv} drop one, or split it and have them drop both. "
+                     "The catch is that their last two are against the only winless club in the "
+                     "league, which is why the unconditional number looks so thin.",
+                     W - 72, "Helvetica-Oblique", 8.8, 11, MAPLE)
 
             c.setStrokeColor(LINE)
             c.setLineWidth(0.75)

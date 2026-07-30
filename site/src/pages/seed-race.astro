@@ -22,6 +22,9 @@ const tb: any[] = (race as any).our_tiebreakers ?? [];
 const held = tb.filter((t) => t.we_hold);
 const lost = tb.filter((t) => !t.we_hold);
 const scen: any[] = (race as any).scenarios ?? [];
+const joint: any[] = (race as any).joint ?? [];
+const rival: string = (race as any).rival ?? '';
+const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' };
 ---
 
 <Base
@@ -43,16 +46,16 @@ const scen: any[] = (race as any).scenarios ?? [];
     </div>
     <div class="race-hero-split">
       <div class="rh-stat">
-        <div class="rh-v rh-hot">{pct(us.p_champion)}</div>
-        <div class="rh-l">chance to win the whole thing</div>
+        <div class="rh-v rh-hot">{pct(us.p_top_seed)}</div>
+        <div class="rh-l">chance at the #1 seed</div>
       </div>
       <div class="rh-stat">
         <div class="rh-v">{pct(us.p_first_round_bye)}</div>
         <div class="rh-l">chance of a first-round bye</div>
       </div>
       <div class="rh-stat">
-        <div class="rh-v">{pct(us.p_reach_final)}</div>
-        <div class="rh-l">chance of reaching the final</div>
+        <div class="rh-v">#{bestSeed ? bestSeed.seed : us.seed}</div>
+        <div class="rh-l">most likely finish</div>
       </div>
     </div>
   </section>
@@ -207,8 +210,12 @@ const scen: any[] = (race as any).scenarios ?? [];
             </div>
             <div class="scen-foot">
               <div><span>Bye</span><strong>{pct(sc.p_bye)}</strong></div>
-              <div><span>Final</span><strong>{pct(sc.p_final)}</strong></div>
-              <div><span>Title</span><strong class="hot">{pct(sc.p_champion)}</strong></div>
+              <div>
+                <span>#2 or better</span>
+                <strong class="hot">
+                  {pct(sc.seeds.filter((x: any) => x.seed <= 2).reduce((a: number, x: any) => a + x.p, 0))}
+                </strong>
+              </div>
             </div>
           </div>
         ))
@@ -248,6 +255,58 @@ const scen: any[] = (race as any).scenarios ?? [];
     </div>
   </section>
 
+  <!-- the two-body problem -->
+  {
+    joint.length > 0 && (
+      <section class="race-block">
+        <h2 class="sec-title">What it takes: our night and {rival}'s</h2>
+        <p class="sec-sub">
+          The seed race is really a two-body problem. Our own result only gets us so far — the
+          rest depends on whether the club a game ahead of us drops anything to a winless side.
+          We hold the head-to-head over {rival}, so a tie goes our way.
+        </p>
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Maple Tree</th>
+                <th>{rival}</th>
+                <th class="num">Chance</th>
+                <th class="num">#2 or better</th>
+                <th class="num">Likeliest seed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                joint.map((j: any) => {
+                  const good = j.p_seed_2_or_better > 0.2;
+                  const top = j.seeds.length
+                    ? j.seeds.reduce((a: any, b: any) => (b.p > a.p ? b : a))
+                    : null;
+                  return (
+                    <tr class:list={[{ 'is-us': good }]}>
+                      <td>{LBL[j.our_wins]}</td>
+                      <td>{LBL[j.rival_wins]}</td>
+                      <td class="num">{pct(j.p)}</td>
+                      <td class:list={['num', { tit: good }]}>{pct(j.p_seed_2_or_better)}</td>
+                      <td class="num">{top ? `#${top.seed}` : '—'}</td>
+                    </tr>
+                  );
+                })
+              }
+            </tbody>
+          </table>
+        </div>
+        <p class="sec-sub" style="margin-top:10px">
+          <strong>Two live paths to the second seed, both requiring help:</strong> sweep the
+          doubleheader and have {rival} drop one, or split it and have them drop both. The catch is
+          that their last two are against the only winless club in the league — which is why the
+          unconditional number looks so thin.
+        </p>
+      </section>
+    )
+  }
+
   <!-- full board -->
   <section class="race-block">
     <h2 class="sec-title">The full board</h2>
@@ -268,9 +327,8 @@ const scen: any[] = (race as any).scenarios ?? [];
             <th class="num">RA/G</th>
             <th class="num">Left</th>
             <th class="num">Max</th>
+            <th class="num">#1 seed</th>
             <th class="num">Bye</th>
-            <th class="num">Final</th>
-            <th class="num">Title</th>
           </tr>
         </thead>
         <tbody>
@@ -290,9 +348,8 @@ const scen: any[] = (race as any).scenarios ?? [];
                 <td class="num" data-v={String(t.ra_per_game)}>{dec1(t.ra_per_game)}</td>
                 <td class="num">{int(t.games_left)}</td>
                 <td class="num">{int(t.max_wins)}</td>
+                <td class="num tit" data-v={String(t.p_top_seed)}>{pct(t.p_top_seed)}</td>
                 <td class="num" data-v={String(t.p_first_round_bye)}>{pct(t.p_first_round_bye)}</td>
-                <td class="num" data-v={String(t.p_reach_final)}>{pct(t.p_reach_final)}</td>
-                <td class="num tit" data-v={String(t.p_champion)}>{pct(t.p_champion)}</td>
               </tr>
             ))
           }
@@ -412,7 +469,7 @@ const scen: any[] = (race as any).scenarios ?? [];
   .scen-best .sr-fill { background: var(--maple, #c2410c); }
   .sr-val { text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; }
   .scen-foot {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
     border-top: 1px solid var(--line, #d8d3c2); padding-top: 9px;
   }
   .scen-foot span {
