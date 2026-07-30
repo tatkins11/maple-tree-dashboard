@@ -21,6 +21,7 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
 const tb: any[] = (race as any).our_tiebreakers ?? [];
 const held = tb.filter((t) => t.we_hold);
 const lost = tb.filter((t) => !t.we_hold);
+const scen: any[] = (race as any).scenarios ?? [];
 ---
 
 <Base
@@ -168,6 +169,58 @@ const lost = tb.filter((t) => !t.we_hold);
         </tbody>
       </table>
     </div>
+  </section>
+
+  <!-- the three ways it goes -->
+  <section class="race-block">
+    <h2 class="sec-title">The three ways our doubleheader goes</h2>
+    <p class="sec-sub">
+      Both our games are coin flips here — Brian's call, and a fairer planning assumption than
+      the model's read of a two-game sample. Everyone else's games keep their modelled odds.
+      Each column below is conditional: given that this is how our night goes, here is where
+      we land.
+    </p>
+    <div class="scen-grid">
+      {
+        scen.map((sc: any) => (
+          <div class:list={['scen', { 'scen-best': sc.wins === 2 }]}>
+            <div class="scen-head">
+              <span class="scen-label">{sc.label}</span>
+              <span class="scen-rec">{sc.final_record}</span>
+            </div>
+            <div class="scen-seed">
+              #{sc.likeliest_seed}
+              <span class="scen-seed-l">most likely seed</span>
+            </div>
+            <div class="scen-rows">
+              {
+                sc.seeds.map((x: any) => (
+                  <div class="scen-row">
+                    <span class="sr-seed">#{x.seed}</span>
+                    <span class="sr-track">
+                      <span class="sr-fill" style={`width:${Math.max(x.p * 100, 1)}%`} />
+                    </span>
+                    <span class="sr-val">{pct(x.p)}</span>
+                  </div>
+                ))
+              }
+            </div>
+            <div class="scen-foot">
+              <div><span>Bye</span><strong>{pct(sc.p_bye)}</strong></div>
+              <div><span>Final</span><strong>{pct(sc.p_final)}</strong></div>
+              <div><span>Title</span><strong class="hot">{pct(sc.p_champion)}</strong></div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <p class="sec-sub" style="margin-top:12px">
+      <strong>The bye is only at risk if we lose both.</strong> Win one and it is locked at 100%.
+      Lose both and there is a {scen.length ? pct(scen[0].seeds.filter((x: any) => x.seed >= 6).reduce((a: number, x: any) => a + x.p, 0)) : '—'} chance
+      we slide to sixth and have to play the 6:30 game. Sweeping gets us to third or better in
+      nine outcomes out of ten — which is the half of the bracket that avoids Wasted Talent
+      until the final.
+    </p>
   </section>
 
   <!-- where we actually land -->
@@ -334,6 +387,40 @@ const lost = tb.filter((t) => !t.we_hold);
     border-radius: 99px; padding: 2px 9px;
   }
   .tb-win { background: rgba(21, 128, 61, 0.12); color: #15803d; }
+
+  .scen-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .scen {
+    border: 1px solid var(--line, #d8d3c2);
+    background: var(--card, #f8f7f2);
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .scen-best { border-color: var(--maple, #c2410c); box-shadow: 0 0 0 1px rgba(194, 65, 12, 0.25); }
+  .scen-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .scen-label { font-weight: 800; font-size: 14px; }
+  .scen-rec { font-size: 12px; color: var(--muted, #77705f); font-variant-numeric: tabular-nums; }
+  .scen-seed { font-size: 34px; font-weight: 800; line-height: 1.1; margin: 6px 0 2px; }
+  .scen-seed-l {
+    display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted, #77705f);
+  }
+  .scen-rows { margin: 10px 0 12px; display: flex; flex-direction: column; gap: 4px; }
+  .scen-row { display: grid; grid-template-columns: 24px 1fr 42px; align-items: center; gap: 7px; }
+  .sr-seed { font-size: 11px; font-weight: 700; color: var(--muted, #77705f); }
+  .sr-track { background: rgba(0, 0, 0, 0.07); border-radius: 99px; height: 8px; overflow: hidden; }
+  .sr-fill { display: block; height: 100%; background: #a8a290; border-radius: 99px; }
+  .scen-best .sr-fill { background: var(--maple, #c2410c); }
+  .sr-val { text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .scen-foot {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    border-top: 1px solid var(--line, #d8d3c2); padding-top: 9px;
+  }
+  .scen-foot span {
+    display: block; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted, #77705f);
+  }
+  .scen-foot strong { font-size: 14px; }
+  .scen-foot .hot { color: var(--maple, #c2410c); }
   .tb-lose { background: rgba(194, 65, 12, 0.12); color: #c2410c; }
 
   .bracket-halves { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -370,5 +457,6 @@ const lost = tb.filter((t) => !t.we_hold);
     .rh-seed { font-size: 50px; }
     .race-hero-split { grid-template-columns: 1fr 1fr; gap: 14px; }
     .bracket-halves { grid-template-columns: 1fr; }
+    .scen-grid { grid-template-columns: 1fr; }
   }
 </style>

@@ -37,6 +37,13 @@ US = "Maple Tree"
 # high-scoring formats and is used only to seed matchup odds, never to rank anyone.
 PYTHAG_EXP = 1.5
 
+# Brian's call (7/30): treat our own two games as coin flips rather than trusting the
+# Pythagorean read, which had us at 30% a game against Wasted Talent. We split with the
+# 8-2 club last week, we have beaten them before, and a two-game sample against one
+# opponent is not worth modelling to a decimal. Everyone ELSE's games keep their
+# modelled odds — this override applies only where Maple Tree are involved.
+OUR_GAME_WIN_PROB = 0.50
+
 
 def load():
     played, remaining = [], []
@@ -134,7 +141,13 @@ def main() -> None:
     n_games = len(remaining)
     print(f"{len(played)} games played, {n_games} remaining -> {2 ** n_games:,} branches")
 
-    probs = [win_prob(base, h, a) for _, h, a in remaining]
+    probs = []
+    for _, h, a in remaining:
+        if US in (h, a):
+            probs.append(OUR_GAME_WIN_PROB if h == US else 1.0 - OUR_GAME_WIN_PROB)
+        else:
+            probs.append(win_prob(base, h, a))
+    our_idx = [i for i, (_, h, a) in enumerate(remaining) if US in (h, a)]
     # Average margin per team, used to move run differential in each branch so the
     # tiebreaker is not frozen at today's value.
     margin = {n: (s["rf"] - s["ra"]) / max(s["w"] + s["l"], 1) for n, s in base.items()}
@@ -178,6 +191,9 @@ def main() -> None:
     champ_mass = {n: 0.0 for n in base}
     final_mass = {n: 0.0 for n in base}
     bye_mass = {n: 0.0 for n in base}
+    # Conditional splits on how our own doubleheader goes: 0, 1 or 2 wins.
+    scen = {k: {"p": 0.0, "seeds": {}, "bye": 0.0, "final": 0.0, "champ": 0.0}
+            for k in (0, 1, 2)}
 
     top_mass = {n: 0.0 for n in base}
     top_possible = {n: False for n in base}
@@ -212,6 +228,17 @@ def main() -> None:
             champ_mass[n] += p * v
         for n, v in finalists.items():
             final_mass[n] += p * v
+
+        our_wins = sum(1 for i in our_idx
+                       if (remaining[i][1] == US) == bool(outcome[i]))
+        sc = scen[our_wins]
+        seat = order.index(US) + 1
+        sc["p"] += p
+        sc["seeds"][seat] = sc["seeds"].get(seat, 0.0) + p
+        if seat <= 5:
+            sc["bye"] += p
+        sc["final"] += p * finalists.get(US, 0.0)
+        sc["champ"] += p * champs.get(US, 0.0)
 
     total = sum(top_mass.values())
     rows = []
@@ -258,6 +285,19 @@ def main() -> None:
                          "step on the board, and the drop from #5 to #6 the one that costs "
                          "a bye."),
         "our_seed_odds": [{"seed": k, "p": v / total} for k, v in sorted(us_seed_mass.items())],
+        "our_game_win_prob": OUR_GAME_WIN_PROB,
+        "scenarios": [
+            {"wins": k,
+             "label": {0: "Lose both", 1: "Split", 2: "Win both"}[k],
+             "final_record": f"{base[US]['w'] + k}-{base[US]['l'] + (2 - k)}",
+             "p_scenario": scen[k]["p"] / total,
+             "p_bye": scen[k]["bye"] / scen[k]["p"] if scen[k]["p"] else 0.0,
+             "p_final": scen[k]["final"] / scen[k]["p"] if scen[k]["p"] else 0.0,
+             "p_champion": scen[k]["champ"] / scen[k]["p"] if scen[k]["p"] else 0.0,
+             "seeds": [{"seed": sd, "p": v / scen[k]["p"]}
+                       for sd, v in sorted(scen[k]["seeds"].items()) if v / scen[k]["p"] > 0.00002],
+             "likeliest_seed": max(scen[k]["seeds"], key=scen[k]["seeds"].get) if scen[k]["seeds"] else None}
+            for k in (0, 1, 2)],
         "remaining": [{"week": w, "home": h, "away": a,
                        "home_win_prob": probs[i], "involves_us": US in (h, a)}
                       for i, (w, h, a) in enumerate(remaining)],
