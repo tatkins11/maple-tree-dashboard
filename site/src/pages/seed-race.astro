@@ -18,6 +18,9 @@ const pct = (p: number) => {
   return `${(p * 100).toFixed(1)}%`;
 };
 const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
+const tb: any[] = (race as any).our_tiebreakers ?? [];
+const held = tb.filter((t) => t.we_hold);
+const lost = tb.filter((t) => !t.we_hold);
 ---
 
 <Base
@@ -93,6 +96,48 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
       </p>
     )
   }
+
+  <!-- tiebreakers -->
+  <section class="race-block">
+    <h2 class="sec-title">The tiebreakers we already own</h2>
+    <p class="sec-sub">
+      A tie is broken by head-to-head record first, then head-to-head run differential, then
+      fewest runs allowed. Overall run differential never enters it — so the +26 on the
+      standings page is not what decides a tie.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th>Opponent</th><th class="num">Series</th><th class="num">Runs</th><th class="num">H2H diff</th><th>Tiebreak</th></tr>
+        </thead>
+        <tbody>
+          {
+            tb.map((t: any) => (
+              <tr>
+                <td>{t.opponent}</td>
+                <td class="num">{t.w}-{t.l}</td>
+                <td class="num">{t.runs_for}-{t.runs_against}</td>
+                <td class="num">{t.h2h_diff > 0 ? `+${t.h2h_diff}` : t.h2h_diff}</td>
+                <td>
+                  <span class:list={['tb-tag', t.we_hold ? 'tb-win' : 'tb-lose']}>
+                    {t.we_hold ? 'Maple Tree' : t.opponent}
+                  </span>
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="sec-sub" style="margin-top:10px">
+      {held.length > 0 && `We win a tie with ${held.map((t) => t.opponent).join(', ')}. `}
+      {lost.length > 0 && (
+        <><strong>We lose one to {lost.map((t) => t.opponent).join(', ')}</strong> — and that is the
+        tie most likely to matter, because Brew Crew have four games left against the bottom of the
+        table while we have two against the top.</>
+      )}
+    </p>
+  </section>
 
   <!-- what our own two games do -->
   <section class="race-block">
@@ -283,6 +328,13 @@ const aliveButLongshot = us.alive_for_top_seed && us.p_top_seed < 0.001;
   .sb-val { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; }
 
   td.tit { font-weight: 700; }
+
+  .tb-tag {
+    display: inline-block; font-size: 10.5px; font-weight: 700;
+    border-radius: 99px; padding: 2px 9px;
+  }
+  .tb-win { background: rgba(21, 128, 61, 0.12); color: #15803d; }
+  .tb-lose { background: rgba(194, 65, 12, 0.12); color: #c2410c; }
 
   .bracket-halves { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .bh {

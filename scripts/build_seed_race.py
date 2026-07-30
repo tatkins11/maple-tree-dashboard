@@ -53,6 +53,17 @@ def load():
     return played, remaining
 
 
+def head_to_head(played):
+    """{(a,b): wins by a over b} and {(a,b): a's run differential vs b}."""
+    w, rd = {}, {}
+    for h, a, hr, ar in played:
+        w[(h, a)] = w.get((h, a), 0) + (1 if hr > ar else 0)
+        w[(a, h)] = w.get((a, h), 0) + (1 if ar > hr else 0)
+        rd[(h, a)] = rd.get((h, a), 0) + (hr - ar)
+        rd[(a, h)] = rd.get((a, h), 0) + (ar - hr)
+    return w, rd
+
+
 def standings(played):
     t = {}
     for h, a, hr, ar in played:
@@ -80,15 +91,42 @@ def win_prob(t, home, away):
     return min(max(p, 0.05), 0.95)
 
 
-def seed_order(final):
-    """Site convention: win pct, then run differential."""
-    return sorted(final, key=lambda n: (-(final[n]["w"] / max(final[n]["w"] + final[n]["l"], 1)),
-                                        -(final[n]["rf"] - final[n]["ra"]), n))
+def seed_order(final, h2h_w, h2h_rd):
+    """League tiebreaker chain, per Brian (7/30):
+         1. win percentage
+         2. head-to-head record among the tied clubs
+         3. head-to-head run differential
+         4. fewest runs allowed
+    NOT overall run differential, which is what an earlier version of this used and
+    which had us losing ties we actually win. Maple Tree hold the head-to-head over
+    Bleacher Bums (+1) and Sandlot Vibes (+2), and lose it to Brew Crew (-2).
+    Multi-way ties are resolved on each club's combined record against the rest of
+    the tied group, which is the standard reading."""
+    pct = lambda n: final[n]["w"] / max(final[n]["w"] + final[n]["l"], 1)  # noqa: E731
+    teams = sorted(final, key=lambda n: (-pct(n), n))
+    out, i = [], 0
+    while i < len(teams):
+        j = i
+        while j + 1 < len(teams) and pct(teams[j + 1]) == pct(teams[i]):
+            j += 1
+        group = teams[i:j + 1]
+        if len(group) > 1:
+            def key(t, grp=group):
+                gw = sum(h2h_w.get((t, o), 0) for o in grp if o != t)
+                gl = sum(h2h_w.get((o, t), 0) for o in grp if o != t)
+                played_ = gw + gl
+                grd = sum(h2h_rd.get((t, o), 0) for o in grp if o != t)
+                return (-(gw / played_ if played_ else 0.5), -grd, final[t]["ra"], t)
+            group.sort(key=key)
+        out.extend(group)
+        i = j + 1
+    return out
 
 
 def main() -> None:
     played, remaining = load()
     base = standings(played)
+    base_h2h_w, base_h2h_rd = head_to_head(played)
     for _, h, a in remaining:
         for n in (h, a):
             base.setdefault(n, {"w": 0, "l": 0, "rf": 0, "ra": 0})
@@ -149,6 +187,7 @@ def main() -> None:
     for outcome in product([1, 0], repeat=n_games):
         p = 1.0
         final = {n: dict(s) for n, s in base.items()}
+        h2h_w, h2h_rd = dict(base_h2h_w), dict(base_h2h_rd)
         for (idx, (_, h, a)), home_won in zip(enumerate(remaining), outcome):
             p *= probs[idx] if home_won else (1 - probs[idx])
             w, lo = (h, a) if home_won else (a, h)
@@ -157,7 +196,10 @@ def main() -> None:
             edge = (abs(margin[w]) + abs(margin[lo])) / 2 or 1.0
             final[w]["rf"] += edge
             final[lo]["ra"] += edge
-        order = seed_order(final)
+            h2h_w[(w, lo)] = h2h_w.get((w, lo), 0) + 1
+            h2h_rd[(w, lo)] = h2h_rd.get((w, lo), 0) + edge
+            h2h_rd[(lo, w)] = h2h_rd.get((lo, w), 0) - edge
+        order = seed_order(final, h2h_w, h2h_rd)
         top_mass[order[0]] += p
         top_possible[order[0]] = True
         for n in order[:3]:
@@ -191,7 +233,7 @@ def main() -> None:
             "alive_for_top_seed": top_possible[n],
             "is_team": n == US,
         })
-    rows.sort(key=lambda r: (-r["win_pct"], -r["run_diff"]))
+    rows.sort(key=lambda r: seed_order(base, base_h2h_w, base_h2h_rd).index(r["team"]))
     for i, r in enumerate(rows, 1):
         r["seed"] = i
 
@@ -205,7 +247,8 @@ def main() -> None:
                    "Pythagorean expectation (exponent %.1f, flattened for a ~12-run "
                    "environment) and are clamped to [5%%, 95%%] so no result is treated "
                    "as certain. Games are assumed independent. Seeding is win "
-                   "percentage, then run differential." % (n_games, PYTHAG_EXP)),
+                   "percentage, then head-to-head record, then head-to-head run differential, "
+                   "then fewest runs allowed." % (n_games, PYTHAG_EXP)),
         "teams": rows,
         "bracket_note": ("Every club makes the playoffs — all ten games are Wednesday 8/19. "
                          "Seeds 1-5 skip the 6:30 play-in round. The bracket puts #1 and #2 "

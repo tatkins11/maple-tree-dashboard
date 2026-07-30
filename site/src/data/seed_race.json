@@ -3,7 +3,7 @@
  "games_played": 50,
  "games_remaining": 16,
  "branches": 65536,
- "method": "Every remaining outcome enumerated exactly \u2014 2^16 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then run differential.",
+ "method": "Every remaining outcome enumerated exactly \u2014 2^16 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then head-to-head record, then head-to-head run differential, then fewest runs allowed.",
  "teams": [
   {
    "team": "Wasted Talent",
@@ -18,11 +18,11 @@
    "ra_per_game": 7.125,
    "games_left": 4,
    "max_wins": 11,
-   "p_top_seed": 0.7984305154604876,
-   "p_top_three": 0.9951854307776432,
-   "p_first_round_bye": 1.0000000000000162,
-   "p_reach_final": 0.5666051209723258,
-   "p_champion": 0.40084685135553705,
+   "p_top_seed": 0.7984305154604885,
+   "p_top_three": 0.9950978609832196,
+   "p_first_round_bye": 0.9999835742040658,
+   "p_reach_final": 0.5664228655105439,
+   "p_champion": 0.4011069933806098,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 1
@@ -40,11 +40,11 @@
    "ra_per_game": 11.4,
    "games_left": 2,
    "max_wins": 10,
-   "p_top_seed": 0.20150266746003884,
-   "p_top_three": 0.9997874804343111,
-   "p_first_round_bye": 1.0000000000000162,
-   "p_reach_final": 0.38104831944546996,
-   "p_champion": 0.16726622176681824,
+   "p_top_seed": 0.1989636184400456,
+   "p_top_three": 0.997976392870983,
+   "p_first_round_bye": 1.0000000000000173,
+   "p_reach_final": 0.38149490098549405,
+   "p_champion": 0.16759451959368016,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 2
@@ -62,11 +62,11 @@
    "ra_per_game": 9.1,
    "games_left": 2,
    "max_wins": 9,
-   "p_top_seed": 6.331291543744704e-05,
-   "p_top_three": 0.33650008923917707,
-   "p_first_round_bye": 0.9908514713047712,
-   "p_reach_final": 0.2221594795896602,
-   "p_champion": 0.10502512470575469,
+   "p_top_seed": 0.0021147212649596874,
+   "p_top_three": 0.21983320863864542,
+   "p_first_round_bye": 0.8893931386574978,
+   "p_reach_final": 0.21768725981477832,
+   "p_champion": 0.10245383686871709,
    "alive_for_top_seed": true,
    "is_team": true,
    "seed": 3
@@ -84,11 +84,11 @@
    "ra_per_game": 9.75,
    "games_left": 4,
    "max_wins": 9,
-   "p_top_seed": 3.5041640360390565e-06,
-   "p_top_three": 0.2729576994786309,
-   "p_first_round_bye": 0.8597037310306541,
-   "p_reach_final": 0.21002414454199442,
-   "p_champion": 0.08812808713912676,
+   "p_top_seed": 0.00049114483450627,
+   "p_top_three": 0.5744477239789136,
+   "p_first_round_bye": 0.8835473915602974,
+   "p_reach_final": 0.2374151525435288,
+   "p_champion": 0.09507367098313249,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 4
@@ -107,35 +107,13 @@
    "games_left": 2,
    "max_wins": 8,
    "p_top_seed": 0.0,
-   "p_top_three": 0.3798257715272863,
-   "p_first_round_bye": 0.9363282649116496,
-   "p_reach_final": 0.2542580284441413,
-   "p_champion": 0.1146102859429211,
+   "p_top_three": 0.18948554030941822,
+   "p_first_round_bye": 0.9125010301779647,
+   "p_reach_final": 0.23228815446150816,
+   "p_champion": 0.10919728628707757,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 5
-  },
-  {
-   "team": "Nuketown",
-   "wins": 4,
-   "losses": 4,
-   "games": 8,
-   "win_pct": 0.5,
-   "runs_for": 104,
-   "runs_against": 102,
-   "run_diff": 2,
-   "rs_per_game": 13.0,
-   "ra_per_game": 12.75,
-   "games_left": 4,
-   "max_wins": 8,
-   "p_top_seed": 0.0,
-   "p_top_three": 0.0157435285429442,
-   "p_first_round_bye": 0.1410442918575372,
-   "p_reach_final": 0.11852909492363675,
-   "p_champion": 0.04189988361886824,
-   "alive_for_top_seed": false,
-   "is_team": false,
-   "seed": 6
   },
   {
    "team": "Slaughtered in 3",
@@ -151,10 +129,32 @@
    "games_left": 2,
    "max_wins": 7,
    "p_top_seed": 0.0,
-   "p_top_three": 0.0,
-   "p_first_round_bye": 0.07207224089540794,
-   "p_reach_final": 0.10679555196825366,
-   "p_champion": 0.036657043449023596,
+   "p_top_three": 0.003100422775478881,
+   "p_first_round_bye": 0.15575877019367562,
+   "p_reach_final": 0.12571353704337387,
+   "p_champion": 0.04296595431521489,
+   "alive_for_top_seed": false,
+   "is_team": false,
+   "seed": 6
+  },
+  {
+   "team": "Nuketown",
+   "wins": 4,
+   "losses": 4,
+   "games": 8,
+   "win_pct": 0.5,
+   "runs_for": 104,
+   "runs_against": 102,
+   "run_diff": 2,
+   "rs_per_game": 13.0,
+   "ra_per_game": 12.75,
+   "games_left": 4,
+   "max_wins": 8,
+   "p_top_seed": 0.0,
+   "p_top_three": 0.020058850443338758,
+   "p_first_round_bye": 0.15881609520654122,
+   "p_reach_final": 0.11377147968137759,
+   "p_champion": 0.03960191387165479,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 7
@@ -175,8 +175,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.08803098842846425,
-   "p_champion": 0.03194440304361868,
+   "p_reach_final": 0.07218670624293763,
+   "p_champion": 0.02827114926660542,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 8
@@ -197,8 +197,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.024851857938417633,
-   "p_champion": 0.006905799419340477,
+   "p_reach_final": 0.025089098939983928,
+   "p_champion": 0.006962020141963934,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 9
@@ -219,8 +219,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.02745314799444791,
-   "p_champion": 0.006702784238786684,
+   "p_reach_final": 0.02768410412253013,
+   "p_champion": 0.0067590372487964095,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 10
@@ -241,8 +241,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.00024426575314340275,
-   "p_champion": 1.3515320188331415e-05,
+   "p_reach_final": 0.00024674065385478196,
+   "p_champion": 1.3618042513740543e-05,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 11
@@ -252,27 +252,27 @@
  "our_seed_odds": [
   {
    "seed": 1,
-   "p": 6.331291543744704e-05
+   "p": 0.0021147212649596874
   },
   {
    "seed": 2,
-   "p": 0.02542326573225692
+   "p": 0.025656950196521422
   },
   {
    "seed": 3,
-   "p": 0.3110135105914861
+   "p": 0.1920615371771638
   },
   {
    "seed": 4,
-   "p": 0.2985564187369304
+   "p": 0.29104986002309446
   },
   {
    "seed": 5,
-   "p": 0.35579496332862504
+   "p": 0.37851006999572856
   },
   {
    "seed": 6,
-   "p": 0.009148528695238642
+   "p": 0.11060686134251081
   }
  ],
  "remaining": [
@@ -388,5 +388,53 @@
    "home_win_prob": 0.2998168695407142,
    "involves_us": true
   }
- ]
+ ],
+ "our_tiebreakers": [
+  {
+   "opponent": "Bleacher Bums",
+   "w": 1,
+   "l": 1,
+   "runs_for": 19,
+   "runs_against": 18,
+   "h2h_diff": 1,
+   "we_hold": true
+  },
+  {
+   "opponent": "Brew Crew",
+   "w": 1,
+   "l": 1,
+   "runs_for": 14,
+   "runs_against": 16,
+   "h2h_diff": -2,
+   "we_hold": false
+  },
+  {
+   "opponent": "Como",
+   "w": 2,
+   "l": 0,
+   "runs_for": 30,
+   "runs_against": 11,
+   "h2h_diff": 19,
+   "we_hold": true
+  },
+  {
+   "opponent": "Sandlot Vibes",
+   "w": 1,
+   "l": 1,
+   "runs_for": 25,
+   "runs_against": 23,
+   "h2h_diff": 2,
+   "we_hold": true
+  },
+  {
+   "opponent": "Zero to Hiro",
+   "w": 2,
+   "l": 0,
+   "runs_for": 29,
+   "runs_against": 23,
+   "h2h_diff": 6,
+   "we_hold": true
+  }
+ ],
+ "tiebreaker_note": "League tiebreaker is head-to-head record, then head-to-head run differential, then fewest runs allowed \u2014 NOT overall run differential. Maple Tree hold it over Bleacher Bums and Sandlot Vibes and lose it to Brew Crew."
 }

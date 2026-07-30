@@ -717,6 +717,64 @@ def main():
                 wrap(c, x0 + 12, y - 38, body, hw - 24, "Helvetica", 8.3, 10.5, INK)
             y -= 92
 
+            # tiebreakers
+            tb = race.get("our_tiebreakers") or []
+            if tb:
+                section_title(c, 36, y, "The tiebreakers we already own", W - 72)
+                y -= 20
+                y = wrap(c, 36, y, "A tie is broken by head-to-head record, then head-to-head run "
+                         "differential, then fewest runs allowed. Overall run differential never "
+                         "enters it, so the +26 on the standings page decides nothing.",
+                         W - 72, "Helvetica", 9, 11.5, MUTED)
+                y -= 4
+                for lbl, x in [("SERIES", 300), ("RUNS", 372), ("H2H DIFF", 444)]:
+                    _txt(c, x, y, lbl, "Helvetica-Bold", 7, MUTED, align="r")
+                _txt(c, 52, y, "OPPONENT", "Helvetica-Bold", 7, MUTED)
+                _txt(c, W - 36, y, "TIEBREAK", "Helvetica-Bold", 7, MUTED, align="r")
+                y -= 4
+                for i, t in enumerate(tb):
+                    y0 = y - 16
+                    if i % 2 == 0:
+                        c.setFillColor(STRIPE)
+                        c.rect(36, y0, W - 72, 16, stroke=0, fill=1)
+                    _txt(c, 52, y0 + 5, t["opponent"], "Helvetica", 9, INK)
+                    _txt(c, 300, y0 + 5, f"{t['w']}-{t['l']}", "Helvetica", 9, INK, align="r")
+                    _txt(c, 372, y0 + 5, f"{t['runs_for']}-{t['runs_against']}", "Helvetica", 9, INK, align="r")
+                    d_ = t["h2h_diff"]
+                    _txt(c, 444, y0 + 5, f"+{d_}" if d_ > 0 else str(d_), "Helvetica-Bold", 9,
+                         GREEN if d_ > 0 else MAPLE, align="r")
+                    _txt(c, W - 36, y0 + 5, "Maple Tree" if t["we_hold"] else t["opponent"],
+                         "Helvetica-Bold", 8.5, GREEN if t["we_hold"] else MAPLE, align="r")
+                    y -= 16
+                y -= 6
+                lost_ = [t["opponent"] for t in tb if not t["we_hold"]]
+                if lost_:
+                    y = wrap(c, 36, y, "The one we lose is to " + ", ".join(lost_) +
+                             " — and it is the tie most likely to matter, because they finish "
+                             "against the bottom of the table while we finish against the top.",
+                             W - 72, "Helvetica-Oblique", 8.6, 11, MAPLE)
+                y -= 8
+
+            # ---- page break: the odds get their own sheet ----------------------
+            c.setStrokeColor(LINE)
+            c.setLineWidth(0.75)
+            c.line(36, 64, W - 36, 64)
+            _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE SEED RACE", "Helvetica-Bold", 8, BARK, cs=1)
+            _txt(c, W - 36, 50, "continued", "Helvetica-Oblique", 8, MUTED, align="r")
+            c.showPage()
+
+            c.setFillColor(PAPER)
+            c.rect(0, 0, W, H, stroke=0, fill=1)
+            c.setFillColor(BARK)
+            c.rect(0, H - 96, W, 96, stroke=0, fill=1)
+            _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
+                 f"{(week_label or date_pretty).upper()}  ·  WHAT IS LEFT",
+                 "Helvetica-Bold", 8.5, TAN, cs=2)
+            _txt(c, 36, H - 66, "HOW IT ENDS", "Helvetica-Bold", 26, WHITE, cs=1)
+            _txt(c, W - 36, H - 40, "Seed and title odds", "Helvetica-Bold", 11, WHITE, align="r")
+            _txt(c, W - 36, H - 58, "every branch weighted", "Helvetica-Oblique", 8.5, TAN, align="r")
+            y = H - 132
+
             # where we finish
             section_title(c, 36, y, "Where Maple Tree finish", W - 72)
             y -= 20
@@ -727,12 +785,12 @@ def main():
                 _txt(c, 52, y - 9, f"#{o['seed']}", "Helvetica-Bold", 10,
                      MAPLE if best and o["seed"] == best["seed"] else BARK, align="r")
                 c.setFillColor(HexColor("#e6e1d2"))
-                c.roundRect(62, y - 12, 300, 9, 4.5, stroke=0, fill=1)
-                fw = max(o["p"] / peak * 300, 1.5)
+                c.roundRect(62, y - 13, 380, 11, 5.5, stroke=0, fill=1)
+                fw = max(o["p"] / peak * 380, 1.5)
                 c.setFillColor(MAPLE if best and o["seed"] == best["seed"] else HexColor("#a8a290"))
-                c.roundRect(62, y - 12, fw, 9, 4.5, stroke=0, fill=1)
-                _txt(c, 400, y - 9, _pct(o["p"]), "Helvetica-Bold", 9.5, BARK, align="r")
-                y -= 17
+                c.roundRect(62, y - 13, fw, 11, 5.5, stroke=0, fill=1)
+                _txt(c, 486, y - 9, _pct(o["p"]), "Helvetica-Bold", 10.5, BARK, align="r")
+                y -= 21
             y -= 8
 
             # the board
@@ -743,24 +801,24 @@ def main():
             _txt(c, 52, y, "TEAM", "Helvetica-Bold", 7, MUTED)
             y -= 4
             for i, t in enumerate(rteams):
-                y0 = y - 17
+                y0 = y - 19
                 if t["is_team"]:
                     c.setFillColor(CREAM)
-                    c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                    c.rect(36, y0, W - 72, 19, stroke=0, fill=1)
                     c.setFillColor(MAPLE)
-                    c.rect(36, y0, 3, 17, stroke=0, fill=1)
+                    c.rect(36, y0, 3, 19, stroke=0, fill=1)
                 elif i % 2 == 0:
                     c.setFillColor(STRIPE)
-                    c.rect(36, y0, W - 72, 17, stroke=0, fill=1)
+                    c.rect(36, y0, W - 72, 19, stroke=0, fill=1)
                 f = "Helvetica-Bold" if t["is_team"] else "Helvetica"
-                _txt(c, 52, y0 + 5, t["team"], f, 9, BARK if t["is_team"] else INK)
-                _txt(c, 300, y0 + 5, str(int(t["wins"])), f, 9, INK, align="r")
-                _txt(c, 330, y0 + 5, str(int(t["losses"])), f, 9, INK, align="r")
-                _txt(c, 400, y0 + 5, _pct(t["p_first_round_bye"]), f, 9, INK, align="r")
-                _txt(c, 462, y0 + 5, _pct(t["p_reach_final"]), f, 9, INK, align="r")
-                _txt(c, 530, y0 + 5, _pct(t["p_champion"]), "Helvetica-Bold", 9.5,
+                _txt(c, 52, y0 + 6, t["team"], f, 9.5, BARK if t["is_team"] else INK)
+                _txt(c, 300, y0 + 6, str(int(t["wins"])), f, 9.5, INK, align="r")
+                _txt(c, 330, y0 + 6, str(int(t["losses"])), f, 9.5, INK, align="r")
+                _txt(c, 400, y0 + 6, _pct(t["p_first_round_bye"]), f, 9.5, INK, align="r")
+                _txt(c, 462, y0 + 6, _pct(t["p_reach_final"]), f, 9.5, INK, align="r")
+                _txt(c, 530, y0 + 6, _pct(t["p_champion"]), "Helvetica-Bold", 10,
                      MAPLE if t["is_team"] else BARK, align="r")
-                y -= 17
+                y -= 19
 
             c.setStrokeColor(LINE)
             c.setLineWidth(0.75)
