@@ -105,14 +105,16 @@ const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' 
   <section class="race-block">
     <h2 class="sec-title">The tiebreakers we already own</h2>
     <p class="sec-sub">
-      A tie is broken by head-to-head record first, then head-to-head run differential, then
-      fewest runs allowed. Overall run differential never enters it — so the +26 on the
-      standings page is not what decides a tie.
+      Two clubs tied: head-to-head record, then fewest runs allowed against that club, then
+      fewest runs allowed overall. Three or more tied: best head-to-head win percentage — and a
+      club must have beaten <em>every</em> other tied club at least once to be ranked on it — then
+      fewest average runs allowed within the group. Overall run differential never enters it, so
+      the +26 on the standings page decides nothing.
     </p>
     <div class="tbl-wrap">
       <table class="tbl">
         <thead>
-          <tr><th>Opponent</th><th class="num">Series</th><th class="num">Runs</th><th class="num">H2H diff</th><th>Tiebreak</th></tr>
+          <tr><th>Opponent</th><th class="num">Series</th><th class="num">Runs</th><th class="num">Runs allowed</th><th>Tiebreak</th></tr>
         </thead>
         <tbody>
           {
@@ -121,7 +123,7 @@ const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' 
                 <td>{t.opponent}</td>
                 <td class="num">{t.w}-{t.l}</td>
                 <td class="num">{t.runs_for}-{t.runs_against}</td>
-                <td class="num">{t.h2h_diff > 0 ? `+${t.h2h_diff}` : t.h2h_diff}</td>
+                <td class="num">{t.runs_against}</td>
                 <td>
                   <span class:list={['tb-tag', t.we_hold ? 'tb-win' : 'tb-lose']}>
                     {t.we_hold ? 'Maple Tree' : t.opponent}

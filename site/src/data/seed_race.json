@@ -3,7 +3,7 @@
  "games_played": 50,
  "games_remaining": 16,
  "branches": 65536,
- "method": "Every remaining outcome enumerated exactly \u2014 2^16 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then head-to-head record, then head-to-head run differential, then fewest runs allowed.",
+ "method": "Every remaining outcome enumerated exactly \u2014 2^16 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then the league tiebreaker chain: head-to-head record, runs allowed against the tied club, then runs allowed overall. Three-way ties additionally require a win over every other tied club to be ranked on head-to-head.",
  "teams": [
   {
    "team": "Wasted Talent",
@@ -18,11 +18,11 @@
    "ra_per_game": 7.125,
    "games_left": 4,
    "max_wins": 11,
-   "p_top_seed": 0.6340193986390226,
-   "p_top_three": 0.9863663072931912,
-   "p_first_round_bye": 0.9999543170330979,
-   "p_reach_final": 0.5674942487996136,
-   "p_champion": 0.4013783162694183,
+   "p_top_seed": 0.6146458065467192,
+   "p_top_three": 0.9857719063909323,
+   "p_first_round_bye": 0.9999543170331037,
+   "p_reach_final": 0.5657397260654855,
+   "p_champion": 0.40026535483475434,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 1
@@ -40,11 +40,11 @@
    "ra_per_game": 11.4,
    "games_left": 2,
    "max_wins": 10,
-   "p_top_seed": 0.35895057056573904,
-   "p_top_three": 0.9961025646287869,
-   "p_first_round_bye": 1.0000000000000024,
-   "p_reach_final": 0.37717579904388665,
-   "p_champion": 0.16637085600399285,
+   "p_top_seed": 0.3619272319197273,
+   "p_top_three": 0.9998040800345096,
+   "p_first_round_bye": 1.0000000000000082,
+   "p_reach_final": 0.3745297827242308,
+   "p_champion": 0.1659035275324016,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 2
@@ -62,11 +62,11 @@
    "ra_per_game": 9.1,
    "games_left": 2,
    "max_wins": 9,
-   "p_top_seed": 0.005881403972478821,
-   "p_top_three": 0.3892471380363769,
-   "p_first_round_bye": 0.9435974432499945,
-   "p_reach_final": 0.22540778677445192,
-   "p_champion": 0.10543065269027653,
+   "p_top_seed": 0.023397509563739233,
+   "p_top_three": 0.5766457643182281,
+   "p_first_round_bye": 0.9462981487036849,
+   "p_reach_final": 0.2405298955619881,
+   "p_champion": 0.11035822420098372,
    "alive_for_top_seed": true,
    "is_team": true,
    "seed": 3
@@ -84,11 +84,11 @@
    "ra_per_game": 9.75,
    "games_left": 4,
    "max_wins": 9,
-   "p_top_seed": 0.0011486268227595665,
-   "p_top_three": 0.46901821440653024,
-   "p_first_round_bye": 0.8816887426925946,
-   "p_reach_final": 0.23118355592433312,
-   "p_champion": 0.09335643753818537,
+   "p_top_seed": 2.9451969814348003e-05,
+   "p_top_three": 0.36027456793257107,
+   "p_first_round_bye": 0.8702076517897671,
+   "p_reach_final": 0.22359360902788014,
+   "p_champion": 0.0907349677639848,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 4
@@ -107,10 +107,10 @@
    "games_left": 2,
    "max_wins": 8,
    "p_top_seed": 0.0,
-   "p_top_three": 0.14726518300138752,
-   "p_first_round_bye": 0.9099055829241008,
-   "p_reach_final": 0.23744740927941435,
-   "p_champion": 0.10943555079324858,
+   "p_top_three": 0.0655736502638873,
+   "p_first_round_bye": 0.9063391826407659,
+   "p_reach_final": 0.23120936066207834,
+   "p_champion": 0.10726105739504034,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 5
@@ -129,10 +129,10 @@
    "games_left": 2,
    "max_wins": 7,
    "p_top_seed": 0.0,
-   "p_top_three": 0.0015810210091885826,
-   "p_first_round_bye": 0.11474711802928379,
-   "p_reach_final": 0.12144011030695408,
-   "p_champion": 0.042217759009794686,
+   "p_top_three": 0.0015810210091885917,
+   "p_first_round_bye": 0.11474711802928446,
+   "p_reach_final": 0.11850368529183655,
+   "p_champion": 0.04139098343278022,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 6
@@ -151,10 +151,10 @@
    "games_left": 4,
    "max_wins": 8,
    "p_top_seed": 0.0,
-   "p_top_three": 0.010419571624498681,
-   "p_first_round_bye": 0.15010679607089022,
-   "p_reach_final": 0.11025823265424958,
-   "p_champion": 0.03901948332415517,
+   "p_top_three": 0.010349010050677558,
+   "p_first_round_bye": 0.16158788697372156,
+   "p_reach_final": 0.11185699087298816,
+   "p_champion": 0.03979122989185333,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 7
@@ -174,9 +174,9 @@
    "max_wins": 6,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
-   "p_first_round_bye": 0.0,
-   "p_reach_final": 0.07657911058696787,
-   "p_champion": 0.029019380643190134,
+   "p_first_round_bye": 0.0008656948296549596,
+   "p_reach_final": 0.0806462647815938,
+   "p_champion": 0.030367300367443915,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 8
@@ -197,8 +197,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.02591695890795388,
-   "p_champion": 0.007080338896686393,
+   "p_reach_final": 0.026334675784263076,
+   "p_champion": 0.007184801165208931,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 9
@@ -219,8 +219,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.026851545847803172,
-   "p_champion": 0.0066775943713217635,
+   "p_reach_final": 0.02680681284513543,
+   "p_champion": 0.0067286394957239756,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 10
@@ -241,8 +241,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.00024524187429473014,
-   "p_champion": 1.3630459691389809e-05,
+   "p_reach_final": 0.0002491963824313003,
+   "p_champion": 1.3913919812085021e-05,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 11
@@ -252,27 +252,27 @@
  "our_seed_odds": [
   {
    "seed": 1,
-   "p": 0.005881403972478821
+   "p": 0.023397509563739233
   },
   {
    "seed": 2,
-   "p": 0.07082144928957919
+   "p": 0.22387064190881445
   },
   {
    "seed": 3,
-   "p": 0.3125442847743126
+   "p": 0.3293776128456591
   },
   {
    "seed": 4,
-   "p": 0.3106490244901414
+   "p": 0.273287582742451
   },
   {
    "seed": 5,
-   "p": 0.24370128072346225
+   "p": 0.09636480164299858
   },
   {
    "seed": 6,
-   "p": 0.05640255674999343
+   "p": 0.053701851296309236
   }
  ],
  "our_game_win_prob": 0.5,
@@ -282,143 +282,135 @@
   {
    "our_wins": 2,
    "rival_wins": 2,
-   "p": 0.22562499999999241,
+   "p": 0.22562499999999372,
    "seeds": [
     {
      "seed": 2,
-     "p": 0.24128836810170037
+     "p": 0.9595537765728255
     },
     {
      "seed": 3,
-     "p": 0.6555964161437013
-    },
-    {
-     "seed": 4,
-     "p": 0.10311521575459542
+     "p": 0.040446223427172634
     }
    ],
-   "p_seed_2_or_better": 0.24128836810170037
+   "p_seed_2_or_better": 0.9595537765728255
   },
   {
    "our_wins": 2,
    "rival_wins": 1,
-   "p": 0.02374999999999923,
+   "p": 0.023749999999999365,
    "seeds": [
     {
      "seed": 1,
-     "p": 0.24128836810170362
+     "p": 0.9595537765728269
     },
     {
      "seed": 2,
-     "p": 0.6555964161437015
-    },
-    {
-     "seed": 3,
-     "p": 0.10311521575459544
+     "p": 0.04044622342717267
     }
    ],
-   "p_seed_2_or_better": 0.896884784245405
+   "p_seed_2_or_better": 0.9999999999999996
   },
   {
    "our_wins": 2,
    "rival_wins": 0,
-   "p": 0.0006249999999999756,
+   "p": 0.0006249999999999792,
    "seeds": [
     {
      "seed": 1,
-     "p": 0.2412883681017016
+     "p": 0.9595537765728268
     },
     {
      "seed": 2,
-     "p": 0.6555964161437062
-    },
-    {
-     "seed": 3,
-     "p": 0.1031152157545961
+     "p": 0.04044622342717291
     }
    ],
-   "p_seed_2_or_better": 0.8968847842454077
+   "p_seed_2_or_better": 0.9999999999999998
   },
   {
    "our_wins": 1,
    "rival_wins": 2,
-   "p": 0.4512499999999839,
+   "p": 0.4512499999999865,
    "seeds": [
     {
+     "seed": 2,
+     "p": 0.012060990456748263
+    },
+    {
      "seed": 3,
-     "p": 0.32047887450600565
+     "p": 0.5985411306778653
     },
     {
      "seed": 4,
-     "p": 0.50179556856153
-    },
-    {
-     "seed": 5,
-     "p": 0.177725556932466
+     "p": 0.389397878865384
     }
    ],
-   "p_seed_2_or_better": 0.0
+   "p_seed_2_or_better": 0.012060990456748263
   },
   {
    "our_wins": 1,
    "rival_wins": 1,
-   "p": 0.04749999999999844,
+   "p": 0.04749999999999871,
    "seeds": [
     {
+     "seed": 2,
+     "p": 0.012060990456748223
+    },
+    {
      "seed": 3,
-     "p": 0.3204788745060044
+     "p": 0.5985411306778675
     },
     {
      "seed": 4,
-     "p": 0.5017955685615308
-    },
-    {
-     "seed": 5,
-     "p": 0.17772555693246525
+     "p": 0.3893978788653861
     }
    ],
-   "p_seed_2_or_better": 0.0
+   "p_seed_2_or_better": 0.012060990456748223
   },
   {
    "our_wins": 1,
    "rival_wins": 0,
-   "p": 0.001249999999999962,
+   "p": 0.0012499999999999692,
    "seeds": [
     {
+     "seed": 1,
+     "p": 0.006709007821700116
+    },
+    {
      "seed": 2,
-     "p": 0.32047887450600304
+     "p": 0.2960203065882992
     },
     {
      "seed": 3,
-     "p": 0.5017955685615243
+     "p": 0.6307125309617848
     },
     {
      "seed": 4,
-     "p": 0.17772555693246528
+     "p": 0.06655815462820784
     }
    ],
-   "p_seed_2_or_better": 0.32047887450600304
+   "p_seed_2_or_better": 0.3027293144099993
   },
   {
    "our_wins": 0,
    "rival_wins": 2,
-   "p": 0.22562499999999241,
+   "p": 0.22562499999999372,
    "seeds": [
     {
      "seed": 3,
-     "p": 0.006583307509240996
+     "p": 0.08376461638249492
     },
     {
      "seed": 4,
-     "p": 0.1475638286771714
+     "p": 0.3159687718602538
     },
     {
      "seed": 5,
-     "p": 0.6202426368136068
+     "p": 0.38545920657200644
     },
     {
      "seed": 6,
-     "p": 0.22561022699998096
+     "p": 0.21480740518524247
     }
    ],
    "p_seed_2_or_better": 0.0
@@ -426,23 +418,23 @@
   {
    "our_wins": 0,
    "rival_wins": 1,
-   "p": 0.02374999999999923,
+   "p": 0.023749999999999365,
    "seeds": [
     {
      "seed": 3,
-     "p": 0.006583307509240996
+     "p": 0.08376461638249479
     },
     {
      "seed": 4,
-     "p": 0.14756382867717213
+     "p": 0.3159687718602553
     },
     {
      "seed": 5,
-     "p": 0.6202426368136039
+     "p": 0.38545920657200655
     },
     {
      "seed": 6,
-     "p": 0.22561022699998057
+     "p": 0.21480740518524183
     }
    ],
    "p_seed_2_or_better": 0.0
@@ -450,23 +442,23 @@
   {
    "our_wins": 0,
    "rival_wins": 0,
-   "p": 0.0006249999999999756,
+   "p": 0.0006249999999999792,
    "seeds": [
     {
      "seed": 3,
-     "p": 0.00658330750924104
+     "p": 0.08376461638249519
     },
     {
      "seed": 4,
-     "p": 0.1475638286771726
+     "p": 0.3159687718602562
     },
     {
      "seed": 5,
-     "p": 0.620242636813608
+     "p": 0.38545920657201044
     },
     {
      "seed": 6,
-     "p": 0.22561022699998187
+     "p": 0.21480740518524327
     }
    ],
    "p_seed_2_or_better": 0.0
@@ -477,26 +469,26 @@
    "wins": 0,
    "label": "Lose both",
    "final_record": "7-5",
-   "p_scenario": 0.24999999999999103,
-   "p_bye": 0.7743897730000177,
-   "p_final": 0.2041741251775225,
-   "p_champion": 0.09845937738182052,
+   "p_scenario": 0.24999999999999248,
+   "p_bye": 0.7851925948147569,
+   "p_final": 0.21347345478263144,
+   "p_champion": 0.10085131732643803,
    "seeds": [
     {
      "seed": 3,
-     "p": 0.00658330750924103
+     "p": 0.08376461638249577
     },
     {
      "seed": 4,
-     "p": 0.14756382867717088
+     "p": 0.3159687718602542
     },
     {
      "seed": 5,
-     "p": 0.6202426368136085
+     "p": 0.38545920657200594
     },
     {
      "seed": 6,
-     "p": 0.22561022699998182
+     "p": 0.2148074051852434
     }
    ],
    "likeliest_seed": 5
@@ -505,57 +497,49 @@
    "wins": 1,
    "label": "Split",
    "final_record": "8-4",
-   "p_scenario": 0.49999999999998446,
+   "p_scenario": 0.49999999999998734,
    "p_bye": 1.0,
-   "p_final": 0.2286597741102247,
-   "p_champion": 0.10465692011248798,
+   "p_final": 0.25297879096234577,
+   "p_champion": 0.11155523518411038,
    "seeds": [
     {
      "seed": 2,
-     "p": 0.0008011971862650082
+     "p": 0.01277088874707705
     },
     {
      "seed": 3,
-     "p": 0.32093216624114085
+     "p": 0.5986215591785725
     },
     {
      "seed": 4,
-     "p": 0.5009853935324552
-    },
-    {
-     "seed": 5,
-     "p": 0.17728124304013385
+     "p": 0.3885907795547874
     }
    ],
-   "likeliest_seed": 4
+   "likeliest_seed": 3
   },
   {
    "wins": 2,
    "label": "Win both",
    "final_record": "9-3",
-   "p_scenario": 0.24999999999999103,
+   "p_scenario": 0.24999999999999248,
    "p_bye": 1.0,
-   "p_final": 0.24013747369981525,
-   "p_champion": 0.11394939315432924,
+   "p_final": 0.24268854554065325,
+   "p_champion": 0.11747110910929998,
    "seeds": [
     {
      "seed": 1,
-     "p": 0.023525615889916127
+     "p": 0.09355649321585122
     },
     {
      "seed": 2,
-     "p": 0.28168340278579795
+     "p": 0.8699407901411268
     },
     {
      "seed": 3,
-     "p": 0.6017294991057635
-    },
-    {
-     "seed": 4,
-     "p": 0.09306148221852258
+     "p": 0.03650271664302339
     }
    ],
-   "likeliest_seed": 3
+   "likeliest_seed": 2
   }
  ],
  "remaining": [
