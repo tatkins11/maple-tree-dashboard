@@ -188,8 +188,8 @@ def main(write=False):
     gb.append(game_row(G1_KEY, "6:30 PM", 12, 13,
               "Imported from GameChanger screenshot. Week 6 Game 1. Nineteen hits and a "
               "one-run loss to the league leaders. Sandlot Vibes scored ten in the first "
-              "two innings; we answered with six in the third and never quite closed it. "
-              "Went the full eight innings — time expired with Maple Tree due up."))
+              "two innings; Maple Tree answered with six in the third and got within one, "
+              "scoring in the seventh, but could not finish it."))
     gb.append(game_row(G2_KEY, "7:30 PM", 13, 10,
               "Imported from GameChanger screenshot. Week 6 Game 2. Twenty-one hits to beat "
               "the first-place team 13-10 and split the night. Glove 4-for-4 with a homer "
