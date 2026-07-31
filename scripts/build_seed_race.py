@@ -179,6 +179,87 @@ def seed_order(final, h2h_w, h2h_ra, h2h_gp):
     return out
 
 
+def massey_ratings(played, cap: float = 15.0):
+    """Least-squares margin rating: solve for per-club strengths that best explain
+    every result, so schedule is adjusted for by construction rather than bolted on.
+
+    Margins are capped because a 25-run win says little more than a 15-run win, and
+    this league produces plenty of both. The ordering is stable across every cap from
+    8 to uncapped, so the choice is not doing hidden work. Ratings read as runs per
+    game better than an average club and are constrained to sum to zero.
+    """
+    import numpy as np
+
+    teams = sorted({t for h, a, _, _ in played for t in (h, a)})
+    idx = {t: i for i, t in enumerate(teams)}
+    rows, y = [], []
+    for h, a, hr, ar in played:
+        r = np.zeros(len(teams) + 1)
+        r[idx[h]], r[idx[a]], r[-1] = 1, -1, 1      # last column = home edge
+        rows.append(r)
+        y.append(max(-cap, min(cap, hr - ar)))
+    A = np.array(rows)
+    y = np.array(y, dtype=float)
+    con = np.zeros((1, len(teams) + 1))
+    con[0, :len(teams)] = 1
+    A = np.vstack([A, con * 50])
+    y = np.append(y, 0.0)
+    sol, *_ = np.linalg.lstsq(A, y, rcond=None)
+    rating = {t: float(sol[idx[t]]) for t in teams}
+    pred = np.array([rating[h] - rating[a] + sol[-1] for h, a, _, _ in played])
+    act = np.array([max(-cap, min(cap, hr - ar)) for _, _, hr, ar in played])
+    r2 = 1 - ((act - pred) ** 2).sum() / ((act - act.mean()) ** 2).sum()
+    return rating, float(sol[-1]), float(r2)
+
+
+def strength_of_schedule(played, remaining, base, probs):
+    """Opponents' projected final win pct, each opponent measured EXCLUDING their
+    games against the club being rated — otherwise a strong team inflates its own
+    schedule rating through its own results."""
+    exp_w = {n: float(s["w"]) for n, s in base.items()}
+    games = {n: s["w"] + s["l"] for n, s in base.items()}
+    for i, (_, h, a) in enumerate(remaining):
+        exp_w[h] += probs[i]
+        exp_w[a] += 1 - probs[i]
+        games[h] += 1
+        games[a] += 1
+
+    sched, rem_sched, pair = {}, {}, {}
+    for h, a, _, _ in played:
+        sched.setdefault(h, []).append(a)
+        sched.setdefault(a, []).append(h)
+        pair[(h, a)] = pair.get((h, a), 0) + 1
+        pair[(a, h)] = pair.get((a, h), 0) + 1
+    for _, h, a in remaining:
+        sched.setdefault(h, []).append(a)
+        sched.setdefault(a, []).append(h)
+        rem_sched.setdefault(h, []).append(a)
+        rem_sched.setdefault(a, []).append(h)
+        pair[(h, a)] = pair.get((h, a), 0) + 1
+        pair[(a, h)] = pair.get((a, h), 0) + 1
+
+    def wins_against(o, t):
+        w = 0.0
+        for h, a, hr, ar in played:
+            if {h, a} == {o, t}:
+                w += 1.0 if ((h == o and hr > ar) or (a == o and ar > hr)) else 0.0
+        for i, (_, h, a) in enumerate(remaining):
+            if {h, a} == {o, t}:
+                w += probs[i] if h == o else 1 - probs[i]
+        return w
+
+    def rate(t, opps):
+        vals = []
+        for o in opps:
+            g = games[o] - pair.get((o, t), 0)
+            vals.append((exp_w[o] - wins_against(o, t)) / g if g else 0.5)
+        return sum(vals) / len(vals) if vals else 0.0
+
+    return ({t: rate(t, opps) for t, opps in sched.items()},
+            {t: rate(t, opps) for t, opps in rem_sched.items()},
+            {t: exp_w[t] / games[t] for t in exp_w})
+
+
 def main() -> None:
     played, remaining = load()
     base = standings(played)
@@ -259,6 +340,21 @@ def main() -> None:
     rival_idx = [i for i, (_, h, a) in enumerate(remaining) if rival in (h, a)]
     joint = {}
 
+    seed_dist = {n: {} for n in base}       # club -> seed -> mass
+    rec_dist = {n: {} for n in base}        # club -> final record -> mass
+    # Rooting leverage. For each game we are NOT playing, track our expected seed
+    # split by who won AND by how our own doubleheader went — several games change
+    # which side we want depending on our own result, so a single marginal number
+    # would give the wrong instruction half the time.
+    other_idx = [i for i in range(n_games) if i not in our_idx]
+    seen_pair, root_games = set(), []
+    for i in other_idx:
+        _, h, a = remaining[i]
+        if frozenset((h, a)) not in seen_pair:
+            seen_pair.add(frozenset((h, a)))
+            root_games.append(i)
+    root_acc = {}
+
     top_mass = {n: 0.0 for n in base}
     top_possible = {n: False for n in base}
     top3_mass = {n: 0.0 for n in base}
@@ -292,7 +388,19 @@ def main() -> None:
             top3_mass[n] += p
         for n in order[:5]:
             bye_mass[n] += p          # seeds 1-5 skip the play-in round
-        us_seed_mass[order.index(US) + 1] = us_seed_mass.get(order.index(US) + 1, 0.0) + p
+        our_seat = order.index(US) + 1
+        us_seed_mass[our_seat] = us_seed_mass.get(our_seat, 0.0) + p
+        for n in base:
+            seed_dist[n][order.index(n) + 1] = seed_dist[n].get(order.index(n) + 1, 0.0) + p
+            rk = f"{final[n]['w']}-{final[n]['l']}"
+            rec_dist[n][rk] = rec_dist[n].get(rk, 0.0) + p
+        ow_now = sum(1 for i in our_idx
+                     if (remaining[i][1] == US) == bool(outcome[i]))
+        for i in root_games:
+            _, h, a = remaining[i]
+            cell = root_acc.setdefault((i, h if outcome[i] else a, ow_now), [0.0, 0.0])
+            cell[0] += p
+            cell[1] += p * our_seat
         champs, finalists = run_bracket(order)
         for n, v in champs.items():
             champ_mass[n] += p * v
@@ -341,6 +449,66 @@ def main() -> None:
     for i, r in enumerate(rows, 1):
         r["seed"] = i
 
+    # ---- schedule-adjusted power ranking + strength of schedule ---------------
+    rating, hfa, r2 = massey_ratings(played)
+    sos_full, sos_rem, proj_pct = strength_of_schedule(played, remaining, base, probs)
+    by_record = sorted(base, key=lambda n: (-(base[n]["w"] / max(base[n]["w"] + base[n]["l"], 1)),
+                                            -(base[n]["rf"] - base[n]["ra"])))
+    rec_rank = {n: i + 1 for i, n in enumerate(by_record)}
+    power_rows = []
+    for i, n in enumerate(sorted(rating, key=lambda x: -rating[x]), 1):
+        s_ = base[n]
+        power_rows.append({
+            "rank": i, "team": n, "wins": s_["w"], "losses": s_["l"],
+            "run_diff": s_["rf"] - s_["ra"], "rating": rating[n],
+            "sos_played": sos_full.get(n, 0.0),
+            "sos_remaining": sos_rem.get(n),
+            "projected_win_pct": proj_pct.get(n, 0.0),
+            "record_rank": rec_rank[n], "move": rec_rank[n] - i,
+            "is_team": n == US,
+        })
+
+    # ---- projected final table: each club's modal seed and record --------------
+    projected_rows = []
+    for n in base:
+        tot_n = sum(seed_dist[n].values()) or 1.0
+        modal_seed = max(seed_dist[n], key=seed_dist[n].get)
+        modal_rec = max(rec_dist[n], key=rec_dist[n].get)
+        projected_rows.append({
+            "team": n, "seed": modal_seed, "seed_confidence": seed_dist[n][modal_seed] / tot_n,
+            "record": modal_rec,
+            "expected_seed": sum(k * v for k, v in seed_dist[n].items()) / tot_n,
+            "spread": [{"seed": k, "p": v / tot_n}
+                       for k, v in sorted(seed_dist[n].items()) if v / tot_n > 0.04],
+            "is_team": n == US,
+        })
+    projected_rows.sort(key=lambda r: r["expected_seed"])
+
+    # ---- who to root for, per game, per scenario -------------------------------
+    LBL = {2: "win_both", 1: "split", 0: "lose_both"}
+    rooting_rows = []
+    for i in root_games:
+        _, h, a = remaining[i]
+        row = {"home": h, "away": a, "week": remaining[i][0], "by_scenario": {}}
+        dirs = []
+        for ow in (2, 1, 0):
+            mh, sh = root_acc.get((i, h, ow), [0.0, 0.0])
+            ma, sa = root_acc.get((i, a, ow), [0.0, 0.0])
+            if not mh or not ma:
+                row["by_scenario"][LBL[ow]] = {"root_for": None, "swing": 0.0}
+                continue
+            eh, ea = sh / mh, sa / ma
+            pick = h if eh < ea else a
+            swing = abs(eh - ea)
+            row["by_scenario"][LBL[ow]] = {
+                "root_for": pick if swing > 0.004 else None, "swing": swing}
+            if swing > 0.004:
+                dirs.append(pick)
+        row["unconditional"] = len(set(dirs)) == 1 and len(dirs) > 1
+        row["max_swing"] = max(v["swing"] for v in row["by_scenario"].values())
+        rooting_rows.append(row)
+    rooting_rows.sort(key=lambda r: -r["max_swing"])
+
     payload = {
         "season": SEASON,
         "games_played": len(played),
@@ -365,6 +533,10 @@ def main() -> None:
                          "a bye."),
         "our_seed_odds": [{"seed": k, "p": v / total} for k, v in sorted(us_seed_mass.items())],
         "our_game_win_prob": OUR_GAME_WIN_PROB,
+        "power_ranking": power_rows,
+        "projected_table": projected_rows,
+        "rooting": rooting_rows,
+        "massey": {"home_edge": hfa, "r2": r2, "cap": 15},
         "rival": rival,
         "rival_games_left": len(rival_idx),
         "joint": [

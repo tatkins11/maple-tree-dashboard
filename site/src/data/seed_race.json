@@ -276,6 +276,580 @@
   }
  ],
  "our_game_win_prob": 0.5,
+ "power_ranking": [
+  {
+   "rank": 1,
+   "team": "Sandlot Vibes",
+   "wins": 8,
+   "losses": 2,
+   "run_diff": 50,
+   "rating": 9.254880369071799,
+   "sos_played": 0.6040391887015867,
+   "sos_remaining": 0.0,
+   "projected_win_pct": 0.8316666666666667,
+   "record_rank": 2,
+   "move": 1,
+   "is_team": false
+  },
+  {
+   "rank": 2,
+   "team": "Wasted Talent",
+   "wins": 7,
+   "losses": 1,
+   "run_diff": 72,
+   "rating": 7.286047632950699,
+   "sos_played": 0.5142156919054909,
+   "sos_remaining": 0.4988832294124295,
+   "projected_win_pct": 0.8079175672017632,
+   "record_rank": 1,
+   "move": -1,
+   "is_team": false
+  },
+  {
+   "rank": 3,
+   "team": "Brew Crew",
+   "wins": 5,
+   "losses": 3,
+   "run_diff": 16,
+   "rating": 4.561509315536959,
+   "sos_played": 0.5636178572948937,
+   "sos_remaining": 0.40184489733000817,
+   "projected_win_pct": 0.6226864233905527,
+   "record_rank": 4,
+   "move": 1,
+   "is_team": false
+  },
+  {
+   "rank": 4,
+   "team": "Maple Tree",
+   "wins": 7,
+   "losses": 3,
+   "run_diff": 26,
+   "rating": 4.488475251484035,
+   "sos_played": 0.6470344882015284,
+   "sos_remaining": 0.869501080642116,
+   "projected_win_pct": 0.6666666666666666,
+   "record_rank": 3,
+   "move": -1,
+   "is_team": true
+  },
+  {
+   "rank": 5,
+   "team": "Bleacher Bums",
+   "wins": 6,
+   "losses": 4,
+   "run_diff": 29,
+   "rating": 2.685852618925867,
+   "sos_played": 0.5153818775327098,
+   "sos_remaining": 0.4,
+   "projected_win_pct": 0.598771997838149,
+   "record_rank": 5,
+   "move": 0,
+   "is_team": false
+  },
+  {
+   "rank": 6,
+   "team": "Nuketown",
+   "wins": 4,
+   "losses": 4,
+   "run_diff": 2,
+   "rating": 2.252517026461465,
+   "sos_played": 0.585331910349305,
+   "sos_remaining": 0.5673757003383748,
+   "projected_win_pct": 0.4908199550774682,
+   "record_rank": 6,
+   "move": 0,
+   "is_team": false
+  },
+  {
+   "rank": 7,
+   "team": "Zero to Hiro",
+   "wins": 4,
+   "losses": 6,
+   "run_diff": 3,
+   "rating": -1.424650591590904,
+   "sos_played": 0.4176149657766694,
+   "sos_remaining": 0.6,
+   "projected_win_pct": 0.401228002161851,
+   "record_rank": 8,
+   "move": 1,
+   "is_team": false
+  },
+  {
+   "rank": 8,
+   "team": "Slaughtered in 3",
+   "wins": 5,
+   "losses": 5,
+   "run_diff": 0,
+   "rating": -2.0726677668171285,
+   "sos_played": 0.4588407094845646,
+   "sos_remaining": 0.4875276926080866,
+   "projected_win_pct": 0.4987864554292705,
+   "record_rank": 7,
+   "move": -1,
+   "is_team": false
+  },
+  {
+   "rank": 9,
+   "team": "Como",
+   "wins": 2,
+   "losses": 6,
+   "run_diff": -28,
+   "rating": -5.635215454523594,
+   "sos_played": 0.3741618711249663,
+   "sos_remaining": 0.42148561337489887,
+   "projected_win_pct": 0.30623511708199264,
+   "record_rank": 9,
+   "move": 0,
+   "is_team": false
+  },
+  {
+   "rank": 10,
+   "team": "Mean Beanz",
+   "wins": 2,
+   "losses": 6,
+   "run_diff": -34,
+   "rating": -7.10620930458581,
+   "sos_played": 0.3955504482228526,
+   "sos_remaining": 0.5326242996616252,
+   "projected_win_pct": 0.27355448181895275,
+   "record_rank": 10,
+   "move": 0,
+   "is_team": false
+  },
+  {
+   "rank": 11,
+   "team": "Everything hurts",
+   "wins": 0,
+   "losses": 10,
+   "run_diff": -136,
+   "rating": -14.290539096913353,
+   "sos_played": 0.42421099140543267,
+   "sos_remaining": 0.8,
+   "projected_win_pct": 0.001666666666666668,
+   "record_rank": 11,
+   "move": 0,
+   "is_team": false
+  }
+ ],
+ "projected_table": [
+  {
+   "team": "Sandlot Vibes",
+   "seed": 2,
+   "seed_confidence": 0.6103518874706858,
+   "record": "10-2",
+   "expected_seed": 1.6104520689215651,
+   "spread": [
+    {
+     "seed": 1,
+     "p": 0.38960194020318456
+    },
+    {
+     "seed": 2,
+     "p": 0.6103518874706858
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Wasted Talent",
+   "seed": 1,
+   "seed_confidence": 0.6056227662291802,
+   "record": "10-2",
+   "expected_seed": 1.6676952540515755,
+   "spread": [
+    {
+     "seed": 1,
+     "p": 0.6056227662291802
+    },
+    {
+     "seed": 2,
+     "p": 0.13669753404311277
+    },
+    {
+     "seed": 3,
+     "p": 0.2434371610922428
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Maple Tree",
+   "seed": 3,
+   "seed_confidence": 0.3301236638998187,
+   "record": "8-4",
+   "expected_seed": 3.3766013393483147,
+   "spread": [
+    {
+     "seed": 2,
+     "p": 0.2413605772604824
+    },
+    {
+     "seed": 3,
+     "p": 0.3301236638998187
+    },
+    {
+     "seed": 4,
+     "p": 0.27367499041154747
+    },
+    {
+     "seed": 5,
+     "p": 0.09636480164300089
+    },
+    {
+     "seed": 6,
+     "p": 0.05370185129630981
+    }
+   ],
+   "is_team": true
+  },
+  {
+   "team": "Brew Crew",
+   "seed": 4,
+   "seed_confidence": 0.37741418441050567,
+   "record": "8-4",
+   "expected_seed": 4.070442647149709,
+   "spread": [
+    {
+     "seed": 3,
+     "p": 0.34889715815668004
+    },
+    {
+     "seed": 4,
+     "p": 0.37741418441050567
+    },
+    {
+     "seed": 5,
+     "p": 0.13230512991808183
+    },
+    {
+     "seed": 6,
+     "p": 0.08985619215498455
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Bleacher Bums",
+   "seed": 5,
+   "seed_confidence": 0.5809757693214453,
+   "record": "7-5",
+   "expected_seed": 4.755385907000067,
+   "spread": [
+    {
+     "seed": 3,
+     "p": 0.06557365026388963
+    },
+    {
+     "seed": 4,
+     "p": 0.2597897630554387
+    },
+    {
+     "seed": 5,
+     "p": 0.5809757693214453
+    },
+    {
+     "seed": 6,
+     "p": 0.04099866413516744
+    },
+    {
+     "seed": 7,
+     "p": 0.052662153224058816
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Slaughtered in 3",
+   "seed": 6,
+   "seed_confidence": 0.5252109062115455,
+   "record": "6-6",
+   "expected_seed": 6.2722435729207024,
+   "spread": [
+    {
+     "seed": 5,
+     "p": 0.09198599477787175
+    },
+    {
+     "seed": 6,
+     "p": 0.5252109062115455
+    },
+    {
+     "seed": 7,
+     "p": 0.31017604642384583
+    },
+    {
+     "seed": 8,
+     "p": 0.04844099921920128
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Nuketown",
+   "seed": 7,
+   "seed_confidence": 0.4967901371232685,
+   "record": "6-6",
+   "expected_seed": 6.496682249036574,
+   "spread": [
+    {
+     "seed": 4,
+     "p": 0.055040683396877
+    },
+    {
+     "seed": 5,
+     "p": 0.09619819352616946
+    },
+    {
+     "seed": 6,
+     "p": 0.23064232181737065
+    },
+    {
+     "seed": 7,
+     "p": 0.4967901371232685
+    },
+    {
+     "seed": 8,
+     "p": 0.09578187343487055
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Zero to Hiro",
+   "seed": 8,
+   "seed_confidence": 0.6693072221772915,
+   "record": "5-7",
+   "expected_seed": 8.004384184334844,
+   "spread": [
+    {
+     "seed": 6,
+     "p": 0.05266215322405902
+    },
+    {
+     "seed": 7,
+     "p": 0.08281237954416816
+    },
+    {
+     "seed": 8,
+     "p": 0.6693072221772915
+    },
+    {
+     "seed": 9,
+     "p": 0.19358714563355583
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Como",
+   "seed": 9,
+   "seed_confidence": 0.521299167230877,
+   "record": "4-8",
+   "expected_seed": 9.087245701106282,
+   "spread": [
+    {
+     "seed": 8,
+     "p": 0.15052907660434448
+    },
+    {
+     "seed": 9,
+     "p": 0.521299167230877
+    },
+    {
+     "seed": 10,
+     "p": 0.30032378938565174
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Mean Beanz",
+   "seed": 10,
+   "seed_confidence": 0.6988491924598592,
+   "record": "3-9",
+   "expected_seed": 9.65886707613038,
+   "spread": [
+    {
+     "seed": 9,
+     "p": 0.2666266208463682
+    },
+    {
+     "seed": 10,
+     "p": 0.6988491924598592
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Everything hurts",
+   "seed": 11,
+   "seed_confidence": 1.0,
+   "record": "0-12",
+   "expected_seed": 11.0,
+   "spread": [
+    {
+     "seed": 11,
+     "p": 1.0
+    }
+   ],
+   "is_team": false
+  }
+ ],
+ "rooting": [
+  {
+   "home": "Sandlot Vibes",
+   "away": "Everything hurts",
+   "week": "Week 1",
+   "by_scenario": {
+    "win_both": {
+     "root_for": "Everything hurts",
+     "swing": 0.990000000000026
+    },
+    "split": {
+     "root_for": "Everything hurts",
+     "swing": 0.006202170559997278
+    },
+    "lose_both": {
+     "root_for": null,
+     "swing": 7.460698725481052e-14
+    }
+   },
+   "unconditional": true,
+   "max_swing": 0.990000000000026
+  },
+  {
+   "home": "Nuketown",
+   "away": "Slaughtered in 3",
+   "week": "Week 1",
+   "by_scenario": {
+    "win_both": {
+     "root_for": null,
+     "swing": 3.1530333899354446e-14
+    },
+    "split": {
+     "root_for": "Slaughtered in 3",
+     "swing": 0.034923189148888145
+    },
+    "lose_both": {
+     "root_for": "Nuketown",
+     "swing": 0.5448193520301521
+    }
+   },
+   "unconditional": false,
+   "max_swing": 0.5448193520301521
+  },
+  {
+   "home": "Zero to Hiro",
+   "away": "Bleacher Bums",
+   "week": "Week 1",
+   "by_scenario": {
+    "win_both": {
+     "root_for": null,
+     "swing": 3.5083047578154947e-14
+    },
+    "split": {
+     "root_for": "Bleacher Bums",
+     "swing": 0.1886587949494989
+    },
+    "lose_both": {
+     "root_for": "Zero to Hiro",
+     "swing": 0.5353581341023812
+    }
+   },
+   "unconditional": false,
+   "max_swing": 0.5353581341023812
+  },
+  {
+   "home": "Como",
+   "away": "Brew Crew",
+   "week": "Week 1",
+   "by_scenario": {
+    "win_both": {
+     "root_for": "Como",
+     "swing": 0.060030876449618464
+    },
+    "split": {
+     "root_for": "Como",
+     "swing": 0.350245740392614
+    },
+    "lose_both": {
+     "root_for": "Como",
+     "swing": 0.3526028074236516
+    }
+   },
+   "unconditional": true,
+   "max_swing": 0.3526028074236516
+  },
+  {
+   "home": "Nuketown",
+   "away": "Brew Crew",
+   "week": "Week 7",
+   "by_scenario": {
+    "win_both": {
+     "root_for": "Nuketown",
+     "swing": 0.07192210129784571
+    },
+    "split": {
+     "root_for": "Nuketown",
+     "swing": 0.332714327825403
+    },
+    "lose_both": {
+     "root_for": "Brew Crew",
+     "swing": 0.18423850892439742
+    }
+   },
+   "unconditional": false,
+   "max_swing": 0.332714327825403
+  },
+  {
+   "home": "Mean Beanz",
+   "away": "Wasted Talent",
+   "week": "Week 1",
+   "by_scenario": {
+    "win_both": {
+     "root_for": "Wasted Talent",
+     "swing": 0.12166909539921056
+    },
+    "split": {
+     "root_for": "Mean Beanz",
+     "swing": 0.12264415652151639
+    },
+    "lose_both": {
+     "root_for": null,
+     "swing": 1.2168044349891716e-13
+    }
+   },
+   "unconditional": false,
+   "max_swing": 0.12264415652151639
+  },
+  {
+   "home": "Como",
+   "away": "Mean Beanz",
+   "week": "Week 7",
+   "by_scenario": {
+    "win_both": {
+     "root_for": null,
+     "swing": 2.886579864025407e-14
+    },
+    "split": {
+     "root_for": null,
+     "swing": 1.176836406102666e-13
+    },
+    "lose_both": {
+     "root_for": null,
+     "swing": 7.993605777301127e-15
+    }
+   },
+   "unconditional": false,
+   "max_swing": 1.176836406102666e-13
+  }
+ ],
+ "massey": {
+  "home_edge": -0.019999999999997877,
+  "r2": 0.7363504209931867,
+  "cap": 15
+ },
  "rival": "Sandlot Vibes",
  "rival_games_left": 2,
  "joint": [

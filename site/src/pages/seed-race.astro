@@ -25,6 +25,9 @@ const scen: any[] = (race as any).scenarios ?? [];
 const joint: any[] = (race as any).joint ?? [];
 const rival: string = (race as any).rival ?? '';
 const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' };
+const power: any[] = (race as any).power_ranking ?? [];
+const projected: any[] = (race as any).projected_table ?? [];
+const rooting: any[] = (race as any).rooting ?? [];
 ---
 
 <Base
@@ -310,6 +313,156 @@ const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' 
     )
   }
 
+  <!-- rooting guide -->
+  <section class="race-block">
+    <h2 class="sec-title">Who to root for in everyone else's games</h2>
+    <p class="sec-sub">
+      For each game we are not playing, the club whose win lowers our expected seed.
+      Several of these <em>invert</em> depending on how our own doubleheader goes, so the
+      column that applies is the one matching our result — a single blanket answer would
+      point the wrong way about half the time.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Matchup</th>
+            <th>If we win both</th>
+            <th>If we split</th>
+            <th>If we lose both</th>
+            <th class="num">Leverage</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            rooting.map((r: any) => (
+              <tr class:list={[{ 'is-dead': r.max_swing < 0.005 }]}>
+                <td>
+                  {r.home} vs {r.away}
+                  {r.unconditional && <span class="uncond-tag">same either way</span>}
+                </td>
+                {['win_both', 'split', 'lose_both'].map((k) => (
+                  <td>
+                    {r.by_scenario[k].root_for ? (
+                      <span class:list={['root-pill', { 'root-us': false }]}>
+                        {r.by_scenario[k].root_for}
+                      </span>
+                    ) : (
+                      <span class="root-none">no effect</span>
+                    )}
+                  </td>
+                ))}
+                <td class="num">{r.max_swing < 0.005 ? '—' : r.max_swing.toFixed(2)}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="sec-sub" style="margin-top:10px">
+      Leverage is how far our expected seed moves between the two results, in seed
+      positions. Two of these flip for the same reason: a third club joining a tie can
+      rescue us, because the three-way rule demands a win over <em>every</em> other tied
+      club and we are often the only side that has one.
+    </p>
+  </section>
+
+  <!-- power ranking -->
+  <section class="race-block">
+    <h2 class="sec-title">Power ranking</h2>
+    <p class="sec-sub">
+      Records flatter some clubs and punish others, so this solves for the per-team
+      strength that best explains all {race.games_played} results at once — schedule is
+      adjusted for by construction, not bolted on. Ratings read as runs per game better
+      than an average club. Blowouts are capped at {race.massey.cap}; the ordering holds
+      across every cap from 8 to uncapped. The fit explains {(race.massey.r2 * 100).toFixed(0)}%
+      of margin, and home advantage came out at {race.massey.home_edge.toFixed(2)} runs — nothing,
+      which is what you would expect when every game is at the same complex.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl" data-sortable>
+        <thead>
+          <tr>
+            <th class="num rank" data-nosort>#</th>
+            <th>Team</th>
+            <th class="num">W</th>
+            <th class="num">L</th>
+            <th class="num">Diff</th>
+            <th class="num">SOS</th>
+            <th class="num">Rating</th>
+            <th>vs record</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            power.map((r: any) => (
+              <tr class:list={[{ 'is-us': r.is_team }]}>
+                <td class="num rank">{r.rank}</td>
+                <td>{r.team}{r.is_team ? ' 🍁' : ''}</td>
+                <td class="num">{int(r.wins)}</td>
+                <td class="num">{int(r.losses)}</td>
+                <td class="num" data-v={String(r.run_diff)}>{diff(r.run_diff)}</td>
+                <td class="num" data-v={String(r.sos_played)}>{r.sos_played.toFixed(3)}</td>
+                <td class="num" data-v={String(r.rating)}>
+                  <strong>{r.rating > 0 ? '+' : ''}{r.rating.toFixed(2)}</strong>
+                </td>
+                <td>
+                  {r.move === 0 ? (
+                    <span class="mv-same">—</span>
+                  ) : (
+                    <span class:list={['mv', r.move > 0 ? 'mv-up' : 'mv-down']}>
+                      {r.move > 0 ? `▲ ${r.move}` : `▼ ${-r.move}`}
+                    </span>
+                  )}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="sec-sub" style="margin-top:10px">
+      SOS is opponents' projected final win percentage, each opponent measured excluding
+      their games against the club being rated. Ours is the toughest in the league.
+    </p>
+  </section>
+
+  <!-- projected final table -->
+  <section class="race-block">
+    <h2 class="sec-title">Projected final table</h2>
+    <p class="sec-sub">
+      Each club's most likely finishing seed and record, with the spread behind it.
+      These are per-club modes, so they need not form a single valid table — two clubs
+      can both be likeliest in the same slot.
+    </p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead>
+          <tr><th class="num rank" data-nosort>Seed</th><th>Team</th><th class="num">Record</th><th class="num">Odds</th><th>Spread</th></tr>
+        </thead>
+        <tbody>
+          {
+            projected.map((r: any) => (
+              <tr class:list={[{ 'is-us': r.is_team }]}>
+                <td class="num rank">{r.seed}</td>
+                <td>{r.team}{r.is_team ? ' 🍁' : ''}</td>
+                <td class="num">{r.record}</td>
+                <td class="num">{pct(r.seed_confidence)}</td>
+                <td class="spread-cell">
+                  {r.spread.map((s: any) => (
+                    <span class:list={['spr', { 'spr-top': s.seed === r.seed }]}>
+                      #{s.seed} {(s.p * 100).toFixed(0)}%
+                    </span>
+                  ))}
+                </td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- full board -->
   <section class="race-block">
     <h2 class="sec-title">The full board</h2>
@@ -430,6 +583,49 @@ const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' 
 
   .race-block { margin-bottom: 30px; }
   .sec-title { font-size: 19px; margin: 0 0 4px; }
+
+  .root-pill {
+    display: inline-block;
+    background: rgba(21, 128, 61, 0.1);
+    border: 1px solid rgba(21, 128, 61, 0.3);
+    color: #14532d;
+    border-radius: 99px;
+    padding: 2px 9px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .root-none { color: var(--muted, #77705f); font-size: 12px; font-style: italic; }
+  tr.is-dead td { opacity: 0.5; }
+  .uncond-tag {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--maple, #c2410c);
+    border: 1px solid rgba(194, 65, 12, 0.35);
+    border-radius: 99px;
+    padding: 1px 7px;
+    vertical-align: middle;
+  }
+  .mv { font-weight: 700; font-size: 12px; }
+  .mv-up { color: #15803d; }
+  .mv-down { color: #b91c1c; }
+  .mv-same { color: var(--muted, #77705f); }
+  .spread-cell { display: flex; flex-wrap: wrap; gap: 4px; }
+  .spr {
+    font-size: 10.5px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    padding: 1px 5px;
+    white-space: nowrap;
+  }
+  .spr-top { background: rgba(194, 65, 12, 0.14); font-weight: 700; }
+
+  @media (max-width: 720px) {
+    :global(.dark) .root-pill { color: #86efac; }
+  }
   .sec-sub { font-size: 13.5px; color: var(--muted, #77705f); margin: 0 0 12px; line-height: 1.5; }
 
   .seed-bars { display: flex; flex-direction: column; gap: 7px; }
