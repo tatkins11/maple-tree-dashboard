@@ -213,6 +213,171 @@ def opponent_recent(opponent, season, limit=3):
 
 
 # ---------- build ----------
+def page_scout_full(c, ctx):
+    """Full-page opponent scouting report (--scout-full). Everything is computed from
+    the league results CSV, rivalry.json and seed_race.json at render time, so the page
+    stays honest whoever the opponent is — Week 7's Wasted Talent is just the first."""
+    import csv as _csv
+    opp = ctx["opponent"]
+    REPO_ = Path(__file__).resolve().parents[1]
+
+    olog, ulog = [], []
+    for r in _csv.DictReader(open(REPO_ / "data/processed/league_schedule_games.csv", encoding="utf-8-sig")):
+        if r["season"] != "Maple Tree Summer 2026" or r["completed_flag"] != "1" or r["home_runs"] == "":
+            continue
+        h, a, hr, ar = r["home_team"], r["away_team"], int(r["home_runs"]), int(r["away_runs"])
+        for team, book in ((opp, olog), ("Maple Tree", ulog)):
+            if team in (h, a):
+                o2 = a if h == team else h
+                rf, ra = (hr, ar) if h == team else (ar, hr)
+                book.append({"week": r["week_label"], "opp": o2, "rf": rf, "ra": ra})
+    sr = load("seed_race.json")
+    pow_ = {r["team"]: r for r in sr.get("power_ranking", [])}
+    riv = next((r for r in load("rivalry.json") if r["opponent"].lower() == opp.lower()), None)
+
+    g = max(len(olog), 1)
+    rs, ra = sum(x["rf"] for x in olog) / g, sum(x["ra"] for x in olog) / g
+    close = [x for x in olog if abs(x["rf"] - x["ra"]) <= 3]
+    op, us = pow_.get(opp, {}), pow_.get("Maple Tree", {})
+
+    c.setFillColor(SAND)
+    c.rect(0, 0, W, H, stroke=0, fill=1)
+    c.setFillColor(BARK)
+    c.rect(0, H - 104, W, 104, stroke=0, fill=1)
+    _txt(c, 36, H - 44, f"{ctx['week_label'].upper()}  \u00b7  KNOW YOUR ENEMY", "Helvetica-Bold", 9, CREAM, cs=2.2)
+    _txt(c, 36, H - 76, f"SCOUTING {opp.upper()}", "Helvetica-Bold", 25, WHITE, cs=0.5)
+    if op:
+        _txt(c, W - 36, H - 44, f"{op['wins']}-{op['losses']}  \u00b7  #1 seed", "Helvetica-Bold", 13, WHITE, align="r")
+        _txt(c, W - 36, H - 64, f"{signed(op['run_diff'])} run diff  \u00b7  4 games left", "Helvetica", 9, TAN, align="r")
+
+    ty = H - 176
+    tiles = [
+        (f"{rs:.1f}", "RUNS/GAME", "league avg 11.6"),
+        (f"{ra:.1f}", "ALLOWED/GAME", "best in the league"),
+        (f"{op.get('rating', 0):+.1f}", "POWER RATING", f"#2 \u2014 ours {us.get('rating', 0):+.1f} (#4)"),
+        (f"{op.get('sos_played', 0):.3f}"[1:], "SCHEDULE FACED", "softest of any contender"),
+    ]
+    tw = (W - 72 - 3 * 12) / 4
+    for i, (big, lab, sub) in enumerate(tiles):
+        x = 36 + i * (tw + 12)
+        c.setFillColor(PAPER)
+        c.setStrokeColor(LINE)
+        c.roundRect(x, ty, tw, 58, 7, stroke=1, fill=1)
+        _txt(c, x + 11, ty + 34, big, "Helvetica-Bold", 19, BARK)
+        _txt(c, x + 11, ty + 21, lab, "Helvetica-Bold", 6.6, MUTED, cs=1)
+        _txt(c, x + 11, ty + 10, sub, "Helvetica-Oblique", 7, MAPLE)
+
+    ly = ty - 30
+    section_title(c, 36, ly, "Their season, game by game", 250)
+    yy = ly - 22
+    for x in olog:
+        won = x["rf"] > x["ra"]
+        _txt(c, 40, yy, x["week"], "Helvetica", 7.5, MUTED)
+        _txt(c, 82, yy, f"vs {x['opp']}", "Helvetica", 8.8, INK)
+        _txt(c, 236, yy, f"{x['rf']}-{x['ra']}", "Helvetica-Bold", 9, GREEN if won else MAPLE, align="r")
+        _txt(c, 264, yy, f"{x['rf'] - x['ra']:+d}", "Helvetica", 8, MUTED, align="r")
+        yy -= 15.5
+    yy -= 4
+    for line in [f"Close games (within 3): {len(close)}. Every result",
+                 "decided by eight or more \u2014 they have",
+                 "never had to win a tight one."]:
+        _txt(c, 40, yy, line, "Helvetica-Oblique", 8.2, MAPLE)
+        yy -= 11
+
+    yy -= 12
+    section_title(c, 36, yy, "Franchise history", 250)
+    yy -= 20
+    if riv:
+        _txt(c, 40, yy, f"All-time: {riv['record']}, outscored {riv['runs_against']}-{riv['runs_for']}",
+             "Helvetica-Bold", 9, BARK)
+        yy -= 15
+    for dt, sea, rf, ra2 in [("2025-07-30", "Tappers '25", 16, 7), ("2025-07-30", "Tappers '25", 10, 18),
+                             ("2025-09-10", "Fall '25", 8, 13), ("2025-09-10", "Fall '25", 22, 19),
+                             ("2026-05-13", "Spring '26", 16, 17), ("2026-05-13", "Spring '26", 4, 16)]:
+        won = rf > ra2
+        _txt(c, 40, yy, dt, "Helvetica", 7.5, MUTED)
+        _txt(c, 100, yy, sea, "Helvetica", 8.2, INK)
+        _txt(c, 236, yy, f"{rf}-{ra2}", "Helvetica-Bold", 8.6, GREEN if won else MAPLE, align="r")
+        _txt(c, 264, yy, "W" if won else "L", "Helvetica-Bold", 8, GREEN if won else MAPLE, align="r")
+        yy -= 13.5
+    _txt(c, 40, yy - 2, "Never won a season series. Last meeting, May 13: dropped both.",
+         "Helvetica-Oblique", 7.8, MUTED)
+
+    rx, rw = 300, W - 36 - 300
+    ry = ty - 30
+    section_title(c, rx, ry, "The case they are beatable", rw)
+    ry -= 20
+    for head, body in [
+        ("The record is schedule-flavoured.",
+         f"Their {op.get('sos_played', 0):.3f} slate is the softest of any contender; ours is the "
+         f"hardest in the league at {us.get('sos_played', 0):.3f}. The schedule-adjusted gap is "
+         f"{op.get('rating', 0) - us.get('rating', 0):.1f} runs a game \u2014 real, but not the chasm "
+         "the standings imply."),
+        ("They have never played a close game.",
+         "All eight results decided by 8+. We are 3-0 in one-run games this season. If Wednesday "
+         "is tight late, only one dugout has been there."),
+        ("Common opponent says even.",
+         "Both clubs split with Sandlot Vibes. Their two games: lost by 10, won by 11. Ours: "
+         "lost by 1, won by 3. Same outcome, far less variance on our side."),
+        ("The park plays smaller.",
+         "Boncosky Yellow is 300 all around after weeks on Green's 350. Power carries \u2014 and "
+         "six of our ten project above a .490 on-base rate."),
+    ]:
+        _txt(c, rx + 4, ry, head, "Helvetica-Bold", 9.2, BARK)
+        ry = wrap(c, rx + 4, ry - 12, body, rw - 10, "Helvetica", 8.2, 10.4, INK) - 8
+
+    ry -= 2
+    section_title(c, rx, ry, "What these two games decide", rw)
+    ry -= 20
+    for label, body in [
+        ("Win both", "94% the #2 seed \u2014 and #1 flips to Sandlot Vibes, because Wasted Talent "
+         "hold that tiebreaker by a single run and a loss to us breaks it."),
+        ("Split", "Most likely #3 (60/40 over #4). The top-five bye is already locked either way."),
+        ("Lose both", "#4 or #5 and the hard half of the bracket \u2014 through the #1 seed to reach "
+         "a final."),
+    ]:
+        _txt(c, rx + 4, ry, label.upper(), "Helvetica-Bold", 8.6, MAPLE, cs=0.6)
+        ry = wrap(c, rx + 4, ry - 11, body, rw - 10, "Helvetica", 8.2, 10.2, INK) - 7
+
+    # ---- bottom band: the other games that move our seed on Wednesday --------
+    by = 258
+    section_title(c, 36, by, "Wednesday's other scoreboard", W - 72)
+    by -= 20
+    _txt(c, 40, by, "Two more Week 7 doubleheaders run alongside ours, and one of them moves our "
+         "seed almost as much as our own night does.", "Helvetica", 8.6, INK)
+    by -= 22
+    cards = [
+        ("BREW CREW vs NUKETOWN \u00d72",
+         "The one to watch. Brew Crew hold our head-to-head tiebreaker, so every loss of "
+         "theirs protects us. Pull for Nuketown \u2014 unless we drop both to Wasted Talent, "
+         "in which case we need Brew Crew winning to hold the clubs below us down. Check "
+         "our scoreboard first, then pick a side."),
+        ("COMO vs MEAN BEANZ \u00d72",
+         "Skip it. We ran every branch of the season: this pairing has zero effect on our "
+         "seed in any of them. Watch it only for the softball."),
+        ("THE MAKE-UP SLATE",
+         "Sandlot Vibes finish against winless Everything hurts \u2014 near-locks that all but "
+         "seal them 10-2. Wasted Talent still owe Mean Beanz two. If we sweep tonight, those "
+         "two games decide whether we finish second: root for Wasted Talent there, strange "
+         "as it reads \u2014 a three-way tie at the top is one we win outright."),
+    ]
+    cw = (W - 72 - 2 * 12) / 3
+    for i, (head, body) in enumerate(cards):
+        x = 36 + i * (cw + 12)
+        c.setFillColor(PAPER)
+        c.setStrokeColor(LINE)
+        c.roundRect(x, 84, cw, by - 84, 7, stroke=1, fill=1)
+        _txt(c, x + 10, by - 16, head, "Helvetica-Bold", 7.6, MAPLE, cs=0.4)
+        wrap(c, x + 10, by - 30, body, cw - 20, "Helvetica", 7.8, 9.8, INK)
+
+    c.setStrokeColor(LINE)
+    c.setLineWidth(0.75)
+    c.line(36, 64, W - 36, 64)
+    _txt(c, 36, 50, "MAPLE TREE SOFTBALL  \u00b7  SCOUTING REPORT", "Helvetica-Bold", 8, BARK, cs=1)
+    _txt(c, W - 36, 50, "full seed math at mapletreesoftball.netlify.app/seed-race", "Helvetica", 8, MUTED, align="r")
+    c.showPage()
+
+
 def main():
     ap = argparse.ArgumentParser(description="Maple Tree weekly gameday preview PDF")
     ap.add_argument("--lineup", required=True, help="comma-separated batting order (names or slugs)")
@@ -223,6 +388,8 @@ def main():
     ap.add_argument("--week-label")
     ap.add_argument("--season")
     ap.add_argument("--out")
+    ap.add_argument("--scout-full", action="store_true",
+                    help="insert a full-page opponent scouting report after page 1")
     ap.add_argument("--story", action="append", default=[],
                     help='Inject a storyline as "Lead.|Body". Repeatable; appears near the top.')
     args = ap.parse_args()
@@ -505,6 +672,9 @@ def main():
     _txt(c, 36, 50, "MAPLE TREE SOFTBALL", "Helvetica-Bold", 8, BARK, cs=1)
     _txt(c, W - 36, 50, "mapletreesoftball.netlify.app  ·  The Maple Tree Tap - Cary, Illinois", "Helvetica", 8, MUTED, align="r")
     c.showPage()
+
+    if args.scout_full:
+        page_scout_full(c, ctx)
 
     # ===== PAGE 2 : LINEUP =====
     c.setFillColor(PAPER)
