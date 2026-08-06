@@ -232,22 +232,7 @@ def page_bracket(c):
          "seed matters.", half - 24, "Helvetica", 8.2, INK, 10.2)
     py -= 112
 
-    # who wins the whole thing
-    section(c, 36, py, "Who wins the whole thing", W - 72)
-    py -= 20
-    rows = sorted(teams.values(), key=lambda t: -t.get("p_champion", 0))[:6]
-    for t in rows:
-        bar_w = 210 * t["p_champion"] / max(rows[0]["p_champion"], 1e-9)
-        txt(c, 46, py - 3, t["team"], "Helvetica-Bold" if t["is_team"] else "Helvetica", 9,
-            BARK if t["is_team"] else INK)
-        c.setFillColor(HexColor("#e6e1d2"))
-        c.roundRect(190, py - 8, 210, 11, 5, stroke=0, fill=1)
-        c.setFillColor(MAPLE if t["is_team"] else HexColor("#a8a290"))
-        c.roundRect(190, py - 8, max(bar_w, 3), 11, 5, stroke=0, fill=1)
-        txt(c, 412, py - 3, f"{t['p_champion']:.0%}", "Helvetica-Bold", 9, INK)
-        txt(c, W - 46, py - 3, f"reach final {t['p_reach_final']:.0%}", "Helvetica", 8, MUTED, align="r")
-        py -= 17
-    footer(c, "bracket per the league sheet · strengths from the schedule-adjusted rating")
+    footer(c, "bracket per the league sheet · all ten games Wednesday 19 August")
     c.showPage()
 
 
