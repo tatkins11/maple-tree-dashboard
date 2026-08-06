@@ -740,7 +740,7 @@ def main():
                     _txt(c, 52, y0 + 5, t["opponent"], "Helvetica", 9, INK)
                     _txt(c, 300, y0 + 5, f"{t['w']}-{t['l']}", "Helvetica", 9, INK, align="r")
                     _txt(c, 372, y0 + 5, f"{t['runs_for']}-{t['runs_against']}", "Helvetica", 9, INK, align="r")
-                    d_ = t["h2h_diff"]
+                    d_ = t["runs_for"] - t["runs_against"]   # h2h run diff, from the ledger fields
                     _txt(c, 444, y0 + 5, f"+{d_}" if d_ > 0 else str(d_), "Helvetica-Bold", 9,
                          GREEN if d_ > 0 else MAPLE, align="r")
                     _txt(c, W - 36, y0 + 5, "Maple Tree" if t["we_hold"] else t["opponent"],
@@ -749,13 +749,12 @@ def main():
                 y -= 6
                 lost_ = [t["opponent"] for t in tb if not t["we_hold"]]
                 if lost_:
-                    y = wrap(c, 36, y, "The one we lose is to " + ", ".join(lost_) +
-                             " — and it is the tie most likely to matter, because they finish "
-                             "against the bottom of the table while we finish against the top.",
+                    y = wrap(c, 36, y, "We lose a tie to " + ", ".join(lost_) +
+                             " — the Brew Crew one decides the playoff slot if they reach 8-4 alone.",
                              W - 72, "Helvetica-Oblique", 8.6, 11, MAPLE)
                 y -= 8
 
-            # ---- page break: the odds get their own sheet ----------------------
+            # ---- page break: close the seed-race page (always) -----------------
             c.setStrokeColor(LINE)
             c.setLineWidth(0.75)
             c.line(36, 64, W - 36, 64)
@@ -763,189 +762,193 @@ def main():
             _txt(c, W - 36, 50, "continued", "Helvetica-Oblique", 8, MUTED, align="r")
             c.showPage()
 
-            c.setFillColor(PAPER)
-            c.rect(0, 0, W, H, stroke=0, fill=1)
-            c.setFillColor(BARK)
-            c.rect(0, H - 96, W, 96, stroke=0, fill=1)
-            _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
-                 f"{(week_label or date_pretty).upper()}  ·  WHAT IS LEFT",
-                 "Helvetica-Bold", 8.5, TAN, cs=2)
-            _txt(c, 36, H - 66, "HOW IT ENDS", "Helvetica-Bold", 26, WHITE, cs=1)
-            _txt(c, W - 36, H - 40, "Seed and title odds", "Helvetica-Bold", 11, WHITE, align="r")
-            _txt(c, W - 36, H - 58, "every branch weighted", "Helvetica-Oblique", 8.5, TAN, align="r")
-            y = H - 132
+            # HOW IT ENDS + the seeds-only bracket sheet exist only while our own
+            # games remain: with the season done their scenario grid is empty and
+            # the copy goes stale, and the week's extras pages own that content.
+            if race.get("scenarios"):
+                c.setFillColor(PAPER)
+                c.rect(0, 0, W, H, stroke=0, fill=1)
+                c.setFillColor(BARK)
+                c.rect(0, H - 96, W, 96, stroke=0, fill=1)
+                _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
+                     f"{(week_label or date_pretty).upper()}  ·  WHAT IS LEFT",
+                     "Helvetica-Bold", 8.5, TAN, cs=2)
+                _txt(c, 36, H - 66, "HOW IT ENDS", "Helvetica-Bold", 26, WHITE, cs=1)
+                _txt(c, W - 36, H - 40, "Seed and title odds", "Helvetica-Bold", 11, WHITE, align="r")
+                _txt(c, W - 36, H - 58, "every branch weighted", "Helvetica-Oblique", 8.5, TAN, align="r")
+                y = H - 132
 
-            # three ways our doubleheader goes
-            scen = race.get("scenarios") or []
-            if scen:
-                section_title(c, 36, y, "The three ways our doubleheader goes", W - 72)
+                # three ways our doubleheader goes
+                scen = race.get("scenarios") or []
+                if scen:
+                    section_title(c, 36, y, "The three ways our doubleheader goes", W - 72)
+                    y -= 20
+                    y = wrap(c, 36, y, "Both our games are treated as coin flips — a fairer planning "
+                             "assumption than the model's read of a two-game sample. Everyone else "
+                             "keeps their modelled odds. Each panel is conditional: given that the "
+                             "night goes this way, here is where we land.",
+                             W - 72, "Helvetica", 9, 11.5, MUTED)
+                    y -= 8
+                    cw = (W - 72 - 24) / 3
+                    top = y
+                    for i, sc in enumerate(scen):
+                        x0 = 36 + i * (cw + 12)
+                        best_ = sc["wins"] == 2
+                        c.setFillColor(CREAM if best_ else SAND)
+                        c.setStrokeColor(MAPLE if best_ else LINE)
+                        c.setLineWidth(1.2 if best_ else 0.8)
+                        c.roundRect(x0, top - 150, cw, 148, 8, stroke=1, fill=1)
+                        _txt(c, x0 + 13, top - 22, sc["label"], "Helvetica-Bold", 12, BARK)
+                        _txt(c, x0 + cw - 13, top - 22, sc["final_record"], "Helvetica", 9.5, MUTED, align="r")
+                        _txt(c, x0 + 13, top - 52, f"#{sc['likeliest_seed']}", "Helvetica-Bold", 26,
+                             MAPLE if best_ else BARK)
+                        _txt(c, x0 + 52, top - 52, "most likely seed", "Helvetica-Bold", 7, MUTED, cs=0.8)
+                        yy = top - 70
+                        for x_ in sc["seeds"]:
+                            _txt(c, x0 + 22, yy - 6, f"#{x_['seed']}", "Helvetica-Bold", 7.5, MUTED, align="r")
+                            c.setFillColor(HexColor("#e6e1d2"))
+                            c.roundRect(x0 + 28, yy - 8, cw - 76, 6, 3, stroke=0, fill=1)
+                            c.setFillColor(MAPLE if best_ else HexColor("#a8a290"))
+                            c.roundRect(x0 + 28, yy - 8, max(x_["p"] * (cw - 76), 1.2), 6, 3, stroke=0, fill=1)
+                            _txt(c, x0 + cw - 13, yy - 6, _pct(x_["p"]), "Helvetica", 7.5, INK, align="r")
+                            yy -= 13
+                        c.setStrokeColor(LINE)
+                        c.setLineWidth(0.7)
+                        c.line(x0 + 13, top - 120, x0 + cw - 13, top - 120)
+                        top2 = sum(x["p"] for x in sc["seeds"] if x["seed"] <= 2)
+                        for j, (lb, vv, col) in enumerate([("BYE", sc["p_bye"], BARK),
+                                                           ("#2 OR BETTER", top2, MAPLE)]):
+                            xx = x0 + 13 + j * ((cw - 26) / 2)
+                            _txt(c, xx, top - 128, lb, "Helvetica-Bold", 6.5, MUTED, cs=0.6)
+                            _txt(c, xx, top - 143, _pct(vv), "Helvetica-Bold", 10, col)
+                    y = top - 168
+                    y = wrap(c, 36, y, "The bye is only at risk if we lose both. Win one and it is "
+                             "locked. Sweep the doubleheader and we land the second seed in ninety-four "
+                             "outcomes out of a hundred, with a floor of third — the half of the bracket "
+                             "that cannot meet Wasted Talent before the final. Split and the bye holds "
+                             "but second is effectively gone, because Sandlot Vibes finish against the "
+                             "only winless club in the league.",
+                             W - 72, "Helvetica-Oblique", 8.8, 11, MAPLE)
+                    y -= 10
+
+                # where we finish
+                section_title(c, 36, y, "Where Maple Tree finish", W - 72)
                 y -= 20
-                y = wrap(c, 36, y, "Both our games are treated as coin flips — a fairer planning "
-                         "assumption than the model's read of a two-game sample. Everyone else "
-                         "keeps their modelled odds. Each panel is conditional: given that the "
-                         "night goes this way, here is where we land.",
-                         W - 72, "Helvetica", 9, 11.5, MUTED)
+                odds = [o for o in race["our_seed_odds"] if o["p"] > 0.001]
+                peak = max((o["p"] for o in odds), default=1.0)
+                best = max(odds, key=lambda o: o["p"]) if odds else None
+                for o in odds:
+                    _txt(c, 52, y - 9, f"#{o['seed']}", "Helvetica-Bold", 10,
+                         MAPLE if best and o["seed"] == best["seed"] else BARK, align="r")
+                    c.setFillColor(HexColor("#e6e1d2"))
+                    c.roundRect(62, y - 12, 380, 9, 4.5, stroke=0, fill=1)
+                    fw = max(o["p"] / peak * 380, 1.5)
+                    c.setFillColor(MAPLE if best and o["seed"] == best["seed"] else HexColor("#a8a290"))
+                    c.roundRect(62, y - 12, fw, 9, 4.5, stroke=0, fill=1)
+                    _txt(c, 486, y - 9, _pct(o["p"]), "Helvetica-Bold", 10, BARK, align="r")
+                    y -= 17
                 y -= 8
-                cw = (W - 72 - 24) / 3
-                top = y
-                for i, sc in enumerate(scen):
-                    x0 = 36 + i * (cw + 12)
-                    best_ = sc["wins"] == 2
-                    c.setFillColor(CREAM if best_ else SAND)
-                    c.setStrokeColor(MAPLE if best_ else LINE)
-                    c.setLineWidth(1.2 if best_ else 0.8)
-                    c.roundRect(x0, top - 150, cw, 148, 8, stroke=1, fill=1)
-                    _txt(c, x0 + 13, top - 22, sc["label"], "Helvetica-Bold", 12, BARK)
-                    _txt(c, x0 + cw - 13, top - 22, sc["final_record"], "Helvetica", 9.5, MUTED, align="r")
-                    _txt(c, x0 + 13, top - 52, f"#{sc['likeliest_seed']}", "Helvetica-Bold", 26,
-                         MAPLE if best_ else BARK)
-                    _txt(c, x0 + 52, top - 52, "most likely seed", "Helvetica-Bold", 7, MUTED, cs=0.8)
-                    yy = top - 70
-                    for x_ in sc["seeds"]:
-                        _txt(c, x0 + 22, yy - 6, f"#{x_['seed']}", "Helvetica-Bold", 7.5, MUTED, align="r")
-                        c.setFillColor(HexColor("#e6e1d2"))
-                        c.roundRect(x0 + 28, yy - 8, cw - 76, 6, 3, stroke=0, fill=1)
-                        c.setFillColor(MAPLE if best_ else HexColor("#a8a290"))
-                        c.roundRect(x0 + 28, yy - 8, max(x_["p"] * (cw - 76), 1.2), 6, 3, stroke=0, fill=1)
-                        _txt(c, x0 + cw - 13, yy - 6, _pct(x_["p"]), "Helvetica", 7.5, INK, align="r")
-                        yy -= 13
-                    c.setStrokeColor(LINE)
-                    c.setLineWidth(0.7)
-                    c.line(x0 + 13, top - 120, x0 + cw - 13, top - 120)
-                    top2 = sum(x["p"] for x in sc["seeds"] if x["seed"] <= 2)
-                    for j, (lb, vv, col) in enumerate([("BYE", sc["p_bye"], BARK),
-                                                       ("#2 OR BETTER", top2, MAPLE)]):
-                        xx = x0 + 13 + j * ((cw - 26) / 2)
-                        _txt(c, xx, top - 128, lb, "Helvetica-Bold", 6.5, MUTED, cs=0.6)
-                        _txt(c, xx, top - 143, _pct(vv), "Helvetica-Bold", 10, col)
-                y = top - 168
-                y = wrap(c, 36, y, "The bye is only at risk if we lose both. Win one and it is "
-                         "locked. Sweep the doubleheader and we land the second seed in ninety-four "
-                         "outcomes out of a hundred, with a floor of third — the half of the bracket "
-                         "that cannot meet Wasted Talent before the final. Split and the bye holds "
-                         "but second is effectively gone, because Sandlot Vibes finish against the "
-                         "only winless club in the league.",
-                         W - 72, "Helvetica-Oblique", 8.8, 11, MAPLE)
-                y -= 10
 
-            # where we finish
-            section_title(c, 36, y, "Where Maple Tree finish", W - 72)
-            y -= 20
-            odds = [o for o in race["our_seed_odds"] if o["p"] > 0.001]
-            peak = max((o["p"] for o in odds), default=1.0)
-            best = max(odds, key=lambda o: o["p"]) if odds else None
-            for o in odds:
-                _txt(c, 52, y - 9, f"#{o['seed']}", "Helvetica-Bold", 10,
-                     MAPLE if best and o["seed"] == best["seed"] else BARK, align="r")
-                c.setFillColor(HexColor("#e6e1d2"))
-                c.roundRect(62, y - 12, 380, 9, 4.5, stroke=0, fill=1)
-                fw = max(o["p"] / peak * 380, 1.5)
-                c.setFillColor(MAPLE if best and o["seed"] == best["seed"] else HexColor("#a8a290"))
-                c.roundRect(62, y - 12, fw, 9, 4.5, stroke=0, fill=1)
-                _txt(c, 486, y - 9, _pct(o["p"]), "Helvetica-Bold", 10, BARK, align="r")
-                y -= 17
-            y -= 8
+                # ---- page break: the bracket gets its own sheet --------------------
+                c.setStrokeColor(LINE)
+                c.setLineWidth(0.75)
+                c.line(36, 64, W - 36, 64)
+                _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE SEED RACE", "Helvetica-Bold", 8, BARK, cs=1)
+                _txt(c, W - 36, 50, "continued", "Helvetica-Oblique", 8, MUTED, align="r")
+                c.showPage()
 
-            # ---- page break: the bracket gets its own sheet --------------------
-            c.setStrokeColor(LINE)
-            c.setLineWidth(0.75)
-            c.line(36, 64, W - 36, 64)
-            _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE SEED RACE", "Helvetica-Bold", 8, BARK, cs=1)
-            _txt(c, W - 36, 50, "continued", "Helvetica-Oblique", 8, MUTED, align="r")
-            c.showPage()
+                c.setFillColor(PAPER)
+                c.rect(0, 0, W, H, stroke=0, fill=1)
+                c.setFillColor(BARK)
+                c.rect(0, H - 96, W, 96, stroke=0, fill=1)
+                _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
+                     "WEDNESDAY 19 AUGUST  ·  ONE NIGHT, TEN GAMES",
+                     "Helvetica-Bold", 8.5, TAN, cs=2)
+                _txt(c, 36, H - 66, "THE BRACKET", "Helvetica-Bold", 26, WHITE, cs=1)
+                _txt(c, W - 36, H - 40, "All eleven clubs qualify", "Helvetica-Bold", 11, WHITE, align="r")
+                _txt(c, W - 36, H - 58, "seeds 1-5 skip the 6:30 round", "Helvetica-Oblique", 8.5, TAN, align="r")
 
-            c.setFillColor(PAPER)
-            c.rect(0, 0, W, H, stroke=0, fill=1)
-            c.setFillColor(BARK)
-            c.rect(0, H - 96, W, 96, stroke=0, fill=1)
-            _txt(c, 36, H - 34, f"{meta['current_season']['label'].upper()}  ·  "
-                 "WEDNESDAY 19 AUGUST  ·  ONE NIGHT, TEN GAMES",
-                 "Helvetica-Bold", 8.5, TAN, cs=2)
-            _txt(c, 36, H - 66, "THE BRACKET", "Helvetica-Bold", 26, WHITE, cs=1)
-            _txt(c, W - 36, H - 40, "All eleven clubs qualify", "Helvetica-Bold", 11, WHITE, align="r")
-            _txt(c, W - 36, H - 58, "seeds 1-5 skip the 6:30 round", "Helvetica-Oblique", 8.5, TAN, align="r")
+                likely = {sc["wins"]: sc["likeliest_seed"] for sc in scen} if scen else {}
+                mark = {v: k for k, v in likely.items()}    # seed -> how our night went
+                SLAB = {0: "LOSE BOTH", 1: "SPLIT", 2: "WIN BOTH"}
 
-            likely = {sc["wins"]: sc["likeliest_seed"] for sc in scen} if scen else {}
-            mark = {v: k for k, v in likely.items()}    # seed -> how our night went
-            SLAB = {0: "LOSE BOTH", 1: "SPLIT", 2: "WIN BOTH"}
+                def node(x, yb, w, h, lines, hot=False, tag=None):
+                    c.setFillColor(CREAM if hot else SAND)
+                    c.setStrokeColor(MAPLE if hot else LINE)
+                    c.setLineWidth(1.3 if hot else 0.8)
+                    c.roundRect(x, yb, w, h, 5, stroke=1, fill=1)
+                    for i, (txt_, bold) in enumerate(lines):
+                        _txt(c, x + 8, yb + h - 13 - i * 11, txt_,
+                             "Helvetica-Bold" if bold else "Helvetica", 8.2, BARK if bold else INK)
+                    if tag:
+                        _txt(c, x + w - 7, yb + h - 12, tag, "Helvetica-Bold", 6, MAPLE, align="r")
 
-            def node(x, yb, w, h, lines, hot=False, tag=None):
-                c.setFillColor(CREAM if hot else SAND)
-                c.setStrokeColor(MAPLE if hot else LINE)
-                c.setLineWidth(1.3 if hot else 0.8)
-                c.roundRect(x, yb, w, h, 5, stroke=1, fill=1)
-                for i, (txt_, bold) in enumerate(lines):
-                    _txt(c, x + 8, yb + h - 13 - i * 11, txt_,
-                         "Helvetica-Bold" if bold else "Helvetica", 8.2, BARK if bold else INK)
-                if tag:
-                    _txt(c, x + w - 7, yb + h - 12, tag, "Helvetica-Bold", 6, MAPLE, align="r")
+                def elbow(x1, y1, x2, y2):
+                    c.setStrokeColor(HexColor("#c9c2ae"))
+                    c.setLineWidth(0.9)
+                    xm = (x1 + x2) / 2
+                    c.line(x1, y1, xm, y1)
+                    c.line(xm, y1, xm, y2)
+                    c.line(xm, y2, x2, y2)
 
-            def elbow(x1, y1, x2, y2):
-                c.setStrokeColor(HexColor("#c9c2ae"))
-                c.setLineWidth(0.9)
-                xm = (x1 + x2) / 2
-                c.line(x1, y1, xm, y1)
-                c.line(xm, y1, xm, y2)
-                c.line(xm, y2, x2, y2)
+                C1, C2, C3, C4 = 40, 174, 314, 452
+                BW, BH, SH = 118, 34, 28
 
-            C1, C2, C3, C4 = 40, 174, 314, 452
-            BW, BH, SH = 118, 34, 28
+                for gid, hi, lo, yy in [("G1", 8, 9, 596), ("G2", 7, 10, 452), ("G3", 6, 11, 308)]:
+                    node(C1, yy, BW, SH, [(f"#{hi}  v  #{lo}", True)])
+                    _txt(c, C1, yy - 10, f"{gid}  ·  6:30", "Helvetica", 6.5, MUTED)
 
-            for gid, hi, lo, yy in [("G1", 8, 9, 596), ("G2", 7, 10, 452), ("G3", 6, 11, 308)]:
-                node(C1, yy, BW, SH, [(f"#{hi}  v  #{lo}", True)])
-                _txt(c, C1, yy - 10, f"{gid}  ·  6:30", "Helvetica", 6.5, MUTED)
+                r2 = [("G5", [("#1", True), ("winner of G1", False)], 640, (1,)),
+                      ("G4", [("#4", True), ("#5", True)], 540, (4, 5)),
+                      ("G6", [("#2", True), ("winner of G2", False)], 420, (2,)),
+                      ("G7", [("#3", True), ("winner of G3", False)], 300, (3,))]
+                for gid, lines, yy, seeds in r2:
+                    hits = [sd for sd in seeds if sd in mark]
+                    tag = SLAB[mark[hits[0]]] if hits else None
+                    node(C2, yy, BW, BH, lines, hot=bool(hits), tag=tag)
+                    _txt(c, C2, yy - 10, f"{gid}  ·  7:30", "Helvetica", 6.5, MUTED)
 
-            r2 = [("G5", [("#1", True), ("winner of G1", False)], 640, (1,)),
-                  ("G4", [("#4", True), ("#5", True)], 540, (4, 5)),
-                  ("G6", [("#2", True), ("winner of G2", False)], 420, (2,)),
-                  ("G7", [("#3", True), ("winner of G3", False)], 300, (3,))]
-            for gid, lines, yy, seeds in r2:
-                hits = [sd for sd in seeds if sd in mark]
-                tag = SLAB[mark[hits[0]]] if hits else None
-                node(C2, yy, BW, BH, lines, hot=bool(hits), tag=tag)
-                _txt(c, C2, yy - 10, f"{gid}  ·  7:30", "Helvetica", 6.5, MUTED)
+                elbow(C1 + BW, 596 + SH / 2, C2, 640 + 10)
+                elbow(C1 + BW, 452 + SH / 2, C2, 420 + 10)
+                elbow(C1 + BW, 308 + SH / 2, C2, 300 + 10)
 
-            elbow(C1 + BW, 596 + SH / 2, C2, 640 + 10)
-            elbow(C1 + BW, 452 + SH / 2, C2, 420 + 10)
-            elbow(C1 + BW, 308 + SH / 2, C2, 300 + 10)
+                node(C3, 578, BW, BH, [("winner G5", False), ("winner G4", False)])
+                _txt(c, C3, 568, "G8  ·  8:30", "Helvetica", 6.5, MUTED)
+                node(C3, 348, BW, BH, [("winner G6", False), ("winner G7", False)])
+                _txt(c, C3, 338, "G9  ·  8:30", "Helvetica", 6.5, MUTED)
+                elbow(C2 + BW, 640 + BH / 2, C3, 578 + BH - 11)
+                elbow(C2 + BW, 540 + BH / 2, C3, 578 + 11)
+                elbow(C2 + BW, 420 + BH / 2, C3, 348 + BH - 11)
+                elbow(C2 + BW, 300 + BH / 2, C3, 348 + 11)
 
-            node(C3, 578, BW, BH, [("winner G5", False), ("winner G4", False)])
-            _txt(c, C3, 568, "G8  ·  8:30", "Helvetica", 6.5, MUTED)
-            node(C3, 348, BW, BH, [("winner G6", False), ("winner G7", False)])
-            _txt(c, C3, 338, "G9  ·  8:30", "Helvetica", 6.5, MUTED)
-            elbow(C2 + BW, 640 + BH / 2, C3, 578 + BH - 11)
-            elbow(C2 + BW, 540 + BH / 2, C3, 578 + 11)
-            elbow(C2 + BW, 420 + BH / 2, C3, 348 + BH - 11)
-            elbow(C2 + BW, 300 + BH / 2, C3, 348 + 11)
+                c.setFillColor(BARK)
+                c.roundRect(C4, 452, 124, 48, 6, stroke=0, fill=1)
+                _txt(c, C4 + 12, 482, "THE FINAL", "Helvetica-Bold", 7.5, TAN, cs=1.2)
+                _txt(c, C4 + 12, 464, "G10  ·  9:30 PM", "Helvetica-Bold", 11, WHITE)
+                elbow(C3 + BW, 578 + BH / 2, C4, 452 + 34)
+                elbow(C3 + BW, 348 + BH / 2, C4, 452 + 14)
 
-            c.setFillColor(BARK)
-            c.roundRect(C4, 452, 124, 48, 6, stroke=0, fill=1)
-            _txt(c, C4 + 12, 482, "THE FINAL", "Helvetica-Bold", 7.5, TAN, cs=1.2)
-            _txt(c, C4 + 12, 464, "G10  ·  9:30 PM", "Helvetica-Bold", 11, WHITE)
-            elbow(C3 + BW, 578 + BH / 2, C4, 452 + 34)
-            elbow(C3 + BW, 348 + BH / 2, C4, 452 + 14)
+                y = 262
+                section_title(c, 36, y, "Why the half matters more than the seed", W - 72)
+                y -= 22
+                y = wrap(c, 36, y, "#1 sits with #4 and #5, so whichever of those two survives their "
+                         "opener runs straight into the best team in the league. #2 and #3 share the "
+                         "bottom half and cannot meet #1 before the final. That is the whole reason the "
+                         "step from #3 to #4 costs more than the step from #2 to #3, and why a "
+                         "doubleheader against Wasted Talent decides more than a place on the table.",
+                         W - 72, "Helvetica", 9.2, 12, INK)
+                if mark:
+                    y -= 4
+                    bits = [f"{SLAB[w].lower()} puts us on the #{sd} line" for sd, w in sorted(mark.items())]
+                    wrap(c, 36, y, "Highlighted above: " + "; ".join(bits) + ".",
+                         W - 72, "Helvetica-Oblique", 9, 11.5, MAPLE)
 
-            y = 262
-            section_title(c, 36, y, "Why the half matters more than the seed", W - 72)
-            y -= 22
-            y = wrap(c, 36, y, "#1 sits with #4 and #5, so whichever of those two survives their "
-                     "opener runs straight into the best team in the league. #2 and #3 share the "
-                     "bottom half and cannot meet #1 before the final. That is the whole reason the "
-                     "step from #3 to #4 costs more than the step from #2 to #3, and why a "
-                     "doubleheader against Wasted Talent decides more than a place on the table.",
-                     W - 72, "Helvetica", 9.2, 12, INK)
-            if mark:
-                y -= 4
-                bits = [f"{SLAB[w].lower()} puts us on the #{sd} line" for sd, w in sorted(mark.items())]
-                wrap(c, 36, y, "Highlighted above: " + "; ".join(bits) + ".",
-                     W - 72, "Helvetica-Oblique", 9, 11.5, MAPLE)
-
-            c.setStrokeColor(LINE)
-            c.setLineWidth(0.75)
-            c.line(36, 64, W - 36, 64)
-            _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE BRACKET", "Helvetica-Bold", 8, BARK, cs=1)
-            _txt(c, W - 36, 50, "all ten games Wednesday 19 August", "Helvetica", 8, MUTED, align="r")
-            c.showPage()
+                c.setStrokeColor(LINE)
+                c.setLineWidth(0.75)
+                c.line(36, 64, W - 36, 64)
+                _txt(c, 36, 50, "MAPLE TREE SOFTBALL  ·  THE BRACKET", "Helvetica-Bold", 8, BARK, cs=1)
+                _txt(c, W - 36, 50, "all ten games Wednesday 19 August", "Helvetica", 8, MUTED, align="r")
+                c.showPage()
 
             # ---- title odds on a clean sheet ----------------------------------
             c.setFillColor(PAPER)
