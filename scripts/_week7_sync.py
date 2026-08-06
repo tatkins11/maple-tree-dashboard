@@ -69,9 +69,15 @@ G2_TEAM = dict(pa=46, ab=45, h=29, **{"1b": 16, "2b": 7, "3b": 2}, hr=4, rbi=22,
 # full seven with the home half of the 7th not needed (X).
 INNINGS = {G1_KEY: 4, G2_KEY: 7}
 
-# Only our own games — the rest of the league's Week 7 results are not in yet.
+# Full Week 7 results (Brian, 8/6). His paste lists the AWAY team first; the CSV
+# stores home/away, so each entry is (home_runs, away_runs) for that row's designation.
+# Our two games cross-check the box scores exactly.
 LEAGUE_SCORES: dict[str, tuple[int, int]] = {
+    "summer-2026-week-7-g1": (9, 15),    # home Nuketown 9, away Brew Crew 15
+    "summer-2026-week-7-g2": (10, 18),   # home Como 10, away Mean Beanz 18
     "summer-2026-week-7-g3": (17, 4),    # home Wasted Talent 17, away Maple Tree 4
+    "summer-2026-week-7-g4": (18, 17),   # home Brew Crew 18, away Nuketown 17
+    "summer-2026-week-7-g5": (6, 15),    # home Mean Beanz 6, away Como 15
     "summer-2026-week-7-g6": (22, 16),   # home Maple Tree 22, away Wasted Talent 16
 }
 

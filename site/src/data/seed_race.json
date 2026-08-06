@@ -1,9 +1,9 @@
 {
  "season": "Maple Tree Summer 2026",
- "games_played": 52,
- "games_remaining": 14,
- "branches": 16384,
- "method": "Every remaining outcome enumerated exactly \u2014 2^14 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then the league tiebreaker chain: head-to-head record, runs allowed against the tied club, then runs allowed overall. Three-way ties additionally require a win over every other tied club to be ranked on head-to-head.",
+ "games_played": 56,
+ "games_remaining": 10,
+ "branches": 1024,
+ "method": "Every remaining outcome enumerated exactly \u2014 2^10 branches, not a sample. Per-game odds come from a log5 matchup on each club's Pythagorean expectation (exponent 1.5, flattened for a ~12-run environment) and are clamped to [5%, 95%] so no result is treated as certain. Games are assumed independent. Seeding is win percentage, then the league tiebreaker chain: head-to-head record, runs allowed against the tied club, then runs allowed overall. Three-way ties additionally require a win over every other tied club to be ranked on head-to-head.",
  "teams": [
   {
    "team": "Wasted Talent",
@@ -18,11 +18,11 @@
    "ra_per_game": 8.3,
    "games_left": 2,
    "max_wins": 10,
-   "p_top_seed": 0.671864333999833,
-   "p_top_three": 0.9808490024794602,
-   "p_first_round_bye": 0.9999999999999936,
-   "p_reach_final": 0.5104488922017153,
-   "p_champion": 0.3398104699858495,
+   "p_top_seed": 0.6498996235923425,
+   "p_top_three": 0.9864980382695817,
+   "p_first_round_bye": 0.9999999999999998,
+   "p_reach_final": 0.5103084029801329,
+   "p_champion": 0.33942770175152837,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 1
@@ -40,14 +40,36 @@
    "ra_per_game": 11.4,
    "games_left": 2,
    "max_wins": 10,
-   "p_top_seed": 0.32813088192018713,
-   "p_top_three": 0.9999909993638892,
-   "p_first_round_bye": 0.9999999999999936,
-   "p_reach_final": 0.3863971738952308,
-   "p_champion": 0.18728165625084867,
+   "p_top_seed": 0.3500987282449149,
+   "p_top_three": 0.9999732545190019,
+   "p_first_round_bye": 0.9999999999999998,
+   "p_reach_final": 0.38706154834180106,
+   "p_champion": 0.18746887057042363,
    "alive_for_top_seed": true,
    "is_team": false,
    "seed": 2
+  },
+  {
+   "team": "Brew Crew",
+   "wins": 7,
+   "losses": 3,
+   "games": 10,
+   "win_pct": 0.7,
+   "runs_for": 127,
+   "runs_against": 104,
+   "run_diff": 23,
+   "rs_per_game": 12.7,
+   "ra_per_game": 10.4,
+   "games_left": 2,
+   "max_wins": 9,
+   "p_top_seed": 1.6481627425760933e-06,
+   "p_top_three": 0.7107285095326761,
+   "p_first_round_bye": 0.9847873574000181,
+   "p_reach_final": 0.25762538932255863,
+   "p_champion": 0.11582178187942012,
+   "alive_for_top_seed": true,
+   "is_team": false,
+   "seed": 3
   },
   {
    "team": "Maple Tree",
@@ -63,34 +85,12 @@
    "games_left": 0,
    "max_wins": 8,
    "p_top_seed": 0.0,
-   "p_top_three": 0.5816270421175493,
-   "p_first_round_bye": 0.9999999999999936,
-   "p_reach_final": 0.22581670154572972,
-   "p_champion": 0.09721789759622497,
+   "p_top_three": 0.2950867923562504,
+   "p_first_round_bye": 0.9999999999999998,
+   "p_reach_final": 0.20778469878636818,
+   "p_champion": 0.09156903977092651,
    "alive_for_top_seed": false,
    "is_team": true,
-   "seed": 3
-  },
-  {
-   "team": "Brew Crew",
-   "wins": 5,
-   "losses": 3,
-   "games": 8,
-   "win_pct": 0.625,
-   "runs_for": 94,
-   "runs_against": 78,
-   "run_diff": 16,
-   "rs_per_game": 11.75,
-   "ra_per_game": 9.75,
-   "games_left": 4,
-   "max_wins": 9,
-   "p_top_seed": 4.78407997979079e-06,
-   "p_top_three": 0.3829905359432477,
-   "p_first_round_bye": 0.8642383282751944,
-   "p_reach_final": 0.22897884342208838,
-   "p_champion": 0.10349129295467639,
-   "alive_for_top_seed": true,
-   "is_team": false,
    "seed": 4
   },
   {
@@ -107,10 +107,10 @@
    "games_left": 2,
    "max_wins": 8,
    "p_top_seed": 0.0,
-   "p_top_three": 0.022565916315606224,
-   "p_first_round_bye": 0.9063413457416359,
-   "p_reach_final": 0.24435597421158506,
-   "p_champion": 0.12293879277614714,
+   "p_top_three": 0.007713405322487002,
+   "p_first_round_bye": 0.956131621930037,
+   "p_reach_final": 0.24496865492342706,
+   "p_champion": 0.12300998304941965,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 5
@@ -130,9 +130,9 @@
    "max_wins": 7,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
-   "p_first_round_bye": 0.07207224089540899,
-   "p_reach_final": 0.13456312193645795,
-   "p_champion": 0.04992755118802543,
+   "p_first_round_bye": 0.05908102066994477,
+   "p_reach_final": 0.14084100330397778,
+   "p_champion": 0.05234959953933435,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 6
@@ -140,21 +140,21 @@
   {
    "team": "Nuketown",
    "wins": 4,
-   "losses": 4,
-   "games": 8,
-   "win_pct": 0.5,
-   "runs_for": 104,
-   "runs_against": 102,
-   "run_diff": 2,
+   "losses": 6,
+   "games": 10,
+   "win_pct": 0.4,
+   "runs_for": 130,
+   "runs_against": 135,
+   "run_diff": -5,
    "rs_per_game": 13.0,
-   "ra_per_game": 12.75,
-   "games_left": 4,
-   "max_wins": 8,
+   "ra_per_game": 13.5,
+   "games_left": 2,
+   "max_wins": 6,
    "p_top_seed": 0.0,
-   "p_top_three": 0.03197650378023255,
-   "p_first_round_bye": 0.15648455335896036,
-   "p_reach_final": 0.12373834169599433,
-   "p_champion": 0.04716967973620519,
+   "p_top_three": 0.0,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.09021198896295728,
+   "p_champion": 0.032930346683927636,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 7
@@ -174,53 +174,53 @@
    "max_wins": 6,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
-   "p_first_round_bye": 0.0008635317287871387,
-   "p_reach_final": 0.08713224926683374,
-   "p_champion": 0.035595832979606556,
+   "p_first_round_bye": 0.0,
+   "p_reach_final": 0.09010008503671753,
+   "p_champion": 0.03593261584665344,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 8
   },
   {
    "team": "Como",
-   "wins": 2,
-   "losses": 6,
-   "games": 8,
-   "win_pct": 0.25,
-   "runs_for": 81,
-   "runs_against": 109,
-   "run_diff": -28,
-   "rs_per_game": 10.125,
-   "ra_per_game": 13.625,
-   "games_left": 4,
-   "max_wins": 6,
+   "wins": 3,
+   "losses": 7,
+   "games": 10,
+   "win_pct": 0.3,
+   "runs_for": 106,
+   "runs_against": 133,
+   "run_diff": -27,
+   "rs_per_game": 10.6,
+   "ra_per_game": 13.3,
+   "games_left": 2,
+   "max_wins": 5,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.028617117059040204,
-   "p_champion": 0.008541309970812868,
+   "p_reach_final": 0.033067911955802096,
+   "p_champion": 0.010969358272473168,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 9
   },
   {
    "team": "Mean Beanz",
-   "wins": 2,
-   "losses": 6,
-   "games": 8,
-   "win_pct": 0.25,
-   "runs_for": 88,
-   "runs_against": 122,
-   "run_diff": -34,
-   "rs_per_game": 11.0,
-   "ra_per_game": 15.25,
-   "games_left": 4,
-   "max_wins": 6,
+   "wins": 3,
+   "losses": 7,
+   "games": 10,
+   "win_pct": 0.3,
+   "runs_for": 112,
+   "runs_against": 147,
+   "run_diff": -35,
+   "rs_per_game": 11.2,
+   "ra_per_game": 14.7,
+   "games_left": 2,
+   "max_wins": 5,
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.02967305160077885,
-   "p_champion": 0.008009725713370082,
+   "p_reach_final": 0.037748554917499656,
+   "p_champion": 0.010504750194308776,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 10
@@ -241,8 +241,8 @@
    "p_top_seed": 0.0,
    "p_top_three": 0.0,
    "p_first_round_bye": 0.0,
-   "p_reach_final": 0.00027853316453039134,
-   "p_champion": 1.5790848224648153e-05,
+   "p_reach_final": 0.00028176146875492783,
+   "p_champion": 1.5952441582004983e-05,
    "alive_for_top_seed": false,
    "is_team": false,
    "seed": 11
@@ -252,19 +252,15 @@
  "our_seed_odds": [
   {
    "seed": 2,
-   "p": 0.017482065641297923
+   "p": 0.018996922302465632
   },
   {
    "seed": 3,
-   "p": 0.5641449764762505
+   "p": 0.27608987005378466
   },
   {
    "seed": 4,
-   "p": 0.4010628890021741
-  },
-  {
-   "seed": 5,
-   "p": 0.017310068880273786
+   "p": 0.7049132076437473
   }
  ],
  "our_game_win_prob": 0.5,
@@ -275,8 +271,8 @@
    "wins": 8,
    "losses": 2,
    "run_diff": 50,
-   "rating": 9.254826157658355,
-   "sos_played": 0.603007411531922,
+   "rating": 9.256453185739854,
+   "sos_played": 0.6012393007438827,
    "sos_remaining": 0.0,
    "projected_win_pct": 0.8316666666666667,
    "record_rank": 2,
@@ -289,10 +285,10 @@
    "wins": 8,
    "losses": 2,
    "run_diff": 79,
-   "rating": 7.419157503484594,
-   "sos_played": 0.5142156919054909,
-   "sos_remaining": 0.2977664588248591,
-   "projected_win_pct": 0.8027586813534402,
+   "rating": 7.392936545410334,
+   "sos_played": 0.5,
+   "sos_remaining": 0.29999999999999993,
+   "projected_win_pct": 0.8006548345441974,
    "record_rank": 1,
    "move": -1,
    "is_team": false
@@ -300,15 +296,15 @@
   {
    "rank": 3,
    "team": "Brew Crew",
-   "wins": 5,
+   "wins": 7,
    "losses": 3,
-   "run_diff": 16,
-   "rating": 4.5329351866191825,
-   "sos_played": 0.5636178572948937,
-   "sos_remaining": 0.40184489733000817,
-   "projected_win_pct": 0.6226864233905527,
-   "record_rank": 4,
-   "move": 1,
+   "run_diff": 23,
+   "rating": 4.7522425934112125,
+   "sos_played": 0.5632456004323702,
+   "sos_remaining": 0.30000000000000004,
+   "projected_win_pct": 0.6924611454324282,
+   "record_rank": 3,
+   "move": 0,
    "is_team": false
   },
   {
@@ -317,12 +313,12 @@
    "wins": 8,
    "losses": 4,
    "run_diff": 19,
-   "rating": 4.375279735171129,
-   "sos_played": 0.6460027110318638,
+   "rating": 4.376413949195903,
+   "sos_played": 0.6597976335755061,
    "sos_remaining": null,
    "projected_win_pct": 0.6666666666666666,
-   "record_rank": 3,
-   "move": -1,
+   "record_rank": 4,
+   "move": 0,
    "is_team": true
   },
   {
@@ -331,8 +327,8 @@
    "wins": 6,
    "losses": 4,
    "run_diff": 29,
-   "rating": 2.663759292240965,
-   "sos_played": 0.5164136547023744,
+   "rating": 2.669242394033712,
+   "sos_played": 0.5181817654904138,
    "sos_remaining": 0.4,
    "projected_win_pct": 0.598771997838149,
    "record_rank": 5,
@@ -343,14 +339,14 @@
    "rank": 6,
    "team": "Nuketown",
    "wins": 4,
-   "losses": 4,
-   "run_diff": 2,
-   "rating": 2.282999070775915,
-   "sos_played": 0.585331910349305,
-   "sos_remaining": 0.5673757003383748,
-   "projected_win_pct": 0.4908199550774682,
-   "record_rank": 6,
-   "move": 0,
+   "losses": 6,
+   "run_diff": -5,
+   "rating": 2.0914304466480753,
+   "sos_played": 0.5850711628521892,
+   "sos_remaining": 0.5,
+   "projected_win_pct": 0.4143085259046389,
+   "record_rank": 8,
+   "move": 2,
    "is_team": false
   },
   {
@@ -359,12 +355,12 @@
    "wins": 4,
    "losses": 6,
    "run_diff": 3,
-   "rating": -1.4493476072479434,
-   "sos_played": 0.4176149657766694,
+   "rating": -1.4777668548337677,
+   "sos_played": 0.41652837184759445,
    "sos_remaining": 0.6,
    "projected_win_pct": 0.401228002161851,
-   "record_rank": 8,
-   "move": 1,
+   "record_rank": 7,
+   "move": 0,
    "is_team": false
   },
   {
@@ -373,24 +369,24 @@
    "wins": 5,
    "losses": 5,
    "run_diff": 0,
-   "rating": -2.0490175391048506,
-   "sos_played": 0.4588407094845646,
-   "sos_remaining": 0.4875276926080866,
-   "projected_win_pct": 0.4987864554292705,
-   "record_rank": 7,
-   "move": -1,
+   "rating": -1.9853177596940275,
+   "sos_played": 0.4585799619874488,
+   "sos_remaining": 0.4,
+   "projected_win_pct": 0.5023581407620278,
+   "record_rank": 6,
+   "move": -2,
    "is_team": false
   },
   {
    "rank": 9,
    "team": "Como",
-   "wins": 2,
-   "losses": 6,
-   "run_diff": -28,
-   "rating": -5.669652121728365,
-   "sos_played": 0.3751936482946308,
-   "sos_remaining": 0.4245809448838926,
-   "projected_win_pct": 0.30623511708199264,
+   "wins": 3,
+   "losses": 7,
+   "run_diff": -27,
+   "rating": -5.83462416858591,
+   "sos_played": 0.3902023664244938,
+   "sos_remaining": 0.7,
+   "projected_win_pct": 0.30753885456757174,
    "record_rank": 9,
    "move": 0,
    "is_team": false
@@ -398,13 +394,13 @@
   {
    "rank": 10,
    "team": "Mean Beanz",
-   "wins": 2,
-   "losses": 6,
-   "run_diff": -34,
-   "rating": -7.092639770791391,
-   "sos_played": 0.3955504482228525,
-   "sos_remaining": 0.5326242996616251,
-   "projected_win_pct": 0.27871336766727567,
+   "wins": 3,
+   "losses": 7,
+   "run_diff": -35,
+   "rating": -6.966713236487255,
+   "sos_played": 0.38159550381447743,
+   "sos_remaining": 0.8,
+   "projected_win_pct": 0.2826784987891359,
    "record_rank": 10,
    "move": 0,
    "is_team": false
@@ -415,8 +411,8 @@
    "wins": 0,
    "losses": 10,
    "run_diff": -136,
-   "rating": -14.268299907077585,
-   "sos_played": 0.42421099140543267,
+   "rating": -14.27429709483813,
+   "sos_played": 0.4255583328316234,
    "sos_remaining": 0.8,
    "projected_win_pct": 0.001666666666666668,
    "record_rank": 11,
@@ -428,21 +424,17 @@
   {
    "team": "Wasted Talent",
    "seed": 1,
-   "seed_confidence": 0.6718643339998343,
+   "seed_confidence": 0.649899623592343,
    "record": "10-2",
-   "expected_seed": 1.4191405957379872,
+   "expected_seed": 1.404860939608159,
    "spread": [
     {
      "seed": 1,
-     "p": 0.6718643339998343
+     "p": 0.649899623592343
     },
     {
      "seed": 2,
-     "p": 0.26226275618727607
-    },
-    {
-     "seed": 3,
-     "p": 0.04672191229235559
+     "p": 0.31463033134550444
     }
    ],
    "is_team": false
@@ -450,91 +442,75 @@
   {
    "team": "Sandlot Vibes",
    "seed": 2,
-   "seed_confidence": 0.6718270522809058,
+   "seed_confidence": 0.6498515432860089,
    "record": "10-2",
-   "expected_seed": 1.671920184514824,
+   "expected_seed": 1.6499777457051585,
    "spread": [
     {
      "seed": 1,
-     "p": 0.3281308819201875
+     "p": 0.35009872824491517
     },
     {
      "seed": 2,
-     "p": 0.6718270522809058
+     "p": 0.6498515432860089
+    }
+   ],
+   "is_team": false
+  },
+  {
+   "team": "Brew Crew",
+   "seed": 3,
+   "seed_confidence": 0.6942056583039142,
+   "record": "8-4",
+   "expected_seed": 3.546148091858307,
+   "spread": [
+    {
+     "seed": 3,
+     "p": 0.6942056583039142
+    },
+    {
+     "seed": 5,
+     "p": 0.24297581558252604
     }
    ],
    "is_team": false
   },
   {
    "team": "Maple Tree",
-   "seed": 3,
-   "seed_confidence": 0.5641449764762526,
+   "seed": 4,
+   "seed_confidence": 0.704913207643749,
    "record": "8-4",
-   "expected_seed": 3.4182009611214257,
+   "expected_seed": 3.6859162853412837,
    "spread": [
     {
      "seed": 3,
-     "p": 0.5641449764762526
+     "p": 0.2760898700537853
     },
     {
      "seed": 4,
-     "p": 0.4010628890021756
+     "p": 0.704913207643749
     }
    ],
    "is_team": true
   },
   {
-   "team": "Brew Crew",
-   "seed": 3,
-   "seed_confidence": 0.335140164081407,
-   "record": "8-4",
-   "expected_seed": 4.0483117040081975,
-   "spread": [
-    {
-     "seed": 2,
-     "p": 0.04784558778186695
-    },
-    {
-     "seed": 3,
-     "p": 0.335140164081407
-    },
-    {
-     "seed": 4,
-     "p": 0.3242979085555354
-    },
-    {
-     "seed": 5,
-     "p": 0.15694988377641075
-    },
-    {
-     "seed": 6,
-     "p": 0.09581464401393804
-    }
-   ],
-   "is_team": false
-  },
-  {
    "team": "Bleacher Bums",
    "seed": 5,
-   "seed_confidence": 0.6640751012622067,
+   "seed_confidence": 0.6921546073395985,
    "record": "7-5",
-   "expected_seed": 4.8807745223136365,
+   "expected_seed": 4.816046336227001,
    "spread": [
     {
      "seed": 4,
-     "p": 0.21970032816382742
+     "p": 0.25626360926795133
     },
     {
      "seed": 5,
-     "p": 0.6640751012622067
-    },
-    {
-     "seed": 6,
-     "p": 0.041128087299388646
+     "p": 0.6921546073395985
     },
     {
      "seed": 7,
-     "p": 0.05253056695897074
+     "p": 0.04386837806996322
     }
    ],
    "is_team": false
@@ -542,25 +518,21 @@
   {
    "team": "Slaughtered in 3",
    "seed": 6,
-   "seed_confidence": 0.5674301137482185,
+   "seed_confidence": 0.7048676340994945,
    "record": "6-6",
-   "expected_seed": 6.334031604797112,
+   "expected_seed": 6.216142737960895,
    "spread": [
     {
      "seed": 5,
-     "p": 0.06574815685865489
+     "p": 0.05908102066994481
     },
     {
      "seed": 6,
-     "p": 0.5674301137482185
+     "p": 0.7048676340994945
     },
     {
      "seed": 7,
-     "p": 0.31009840283276663
-    },
-    {
-     "seed": 8,
-     "p": 0.04886820067430709
+     "p": 0.19687893183028268
     }
    ],
    "is_team": false
@@ -568,25 +540,25 @@
   {
    "team": "Nuketown",
    "seed": 7,
-   "seed_confidence": 0.4953020726507737,
-   "record": "6-6",
-   "expected_seed": 6.479713516985767,
+   "seed_confidence": 0.444473649637134,
+   "record": "5-7",
+   "expected_seed": 7.348984934100269,
    "spread": [
     {
-     "seed": 5,
-     "p": 0.08907223508926984
-    },
-    {
      "seed": 6,
-     "p": 0.2362013250293444
+     "p": 0.19687893183028307
     },
     {
      "seed": 7,
-     "p": 0.4953020726507737
+     "p": 0.444473649637134
     },
     {
      "seed": 8,
-     "p": 0.09584049184017086
+     "p": 0.17681125728737823
+    },
+    {
+     "seed": 9,
+     "p": 0.1764558750924407
     }
    ],
    "is_team": false
@@ -594,25 +566,25 @@
   {
    "team": "Zero to Hiro",
    "seed": 8,
-   "seed_confidence": 0.6595884939659324,
+   "seed_confidence": 0.5851638922282424,
    "record": "5-7",
-   "expected_seed": 8.015267873071654,
+   "expected_seed": 7.608009727522262,
    "spread": [
     {
      "seed": 6,
-     "p": 0.05253056695897065
+     "p": 0.08304079147024128
     },
     {
      "seed": 7,
-     "p": 0.08257719730303258
+     "p": 0.27965662473244285
     },
     {
      "seed": 8,
-     "p": 0.6595884939659324
+     "p": 0.5851638922282424
     },
     {
      "seed": 9,
-     "p": 0.2033836206075649
+     "p": 0.05052944794295916
     }
    ],
    "is_team": false
@@ -620,21 +592,21 @@
   {
    "team": "Como",
    "seed": 9,
-   "seed_confidence": 0.5040285607003314,
+   "seed_confidence": 0.6197276485400718,
    "record": "4-8",
-   "expected_seed": 9.098750885666286,
+   "expected_seed": 8.916595347426266,
    "spread": [
     {
      "seed": 8,
-     "p": 0.15338103154709995
+     "p": 0.18387062124201467
     },
     {
      "seed": 9,
-     "p": 0.5040285607003314
+     "p": 0.6197276485400718
     },
     {
      "seed": 10,
-     "p": 0.31472193694509787
+     "p": 0.1644231430347024
     }
    ],
    "is_team": false
@@ -642,17 +614,17 @@
   {
    "team": "Mean Beanz",
    "seed": 10,
-   "seed_confidence": 0.6841323089178973,
+   "seed_confidence": 0.8285873271864194,
    "record": "3-9",
-   "expected_seed": 9.633888151783108,
+   "expected_seed": 9.8073178542504,
    "spread": [
     {
      "seed": 9,
-     "p": 0.2730421726373519
+     "p": 0.15328702842452852
     },
     {
      "seed": 10,
-     "p": 0.6841323089178973
+     "p": 0.8285873271864194
     }
    ],
    "is_team": false
@@ -688,39 +660,14 @@
     },
     "lose_both": {
      "root_for": "Como",
-     "swing": 0.3472532072544352
+     "swing": 0.46938600353301974
     }
    },
    "unconditional": true,
-   "max_swing": 0.3472532072544352,
+   "max_swing": 0.46938600353301974,
    "root_now": {
     "root_for": "Como",
-    "swing": 0.3472532072544352
-   }
-  },
-  {
-   "home": "Nuketown",
-   "away": "Brew Crew",
-   "week": "Week 7",
-   "by_scenario": {
-    "win_both": {
-     "root_for": null,
-     "swing": 0.0
-    },
-    "split": {
-     "root_for": null,
-     "swing": 0.0
-    },
-    "lose_both": {
-     "root_for": "Nuketown",
-     "swing": 0.21711167017063193
-    }
-   },
-   "unconditional": true,
-   "max_swing": 0.21711167017063193,
-   "root_now": {
-    "root_for": "Nuketown",
-    "swing": 0.21711167017063193
+    "swing": 0.46938600353301974
    }
   },
   {
@@ -738,14 +685,14 @@
     },
     "lose_both": {
      "root_for": "Bleacher Bums",
-     "swing": 0.1900523001581762
+     "swing": 0.27005150523784804
     }
    },
    "unconditional": true,
-   "max_swing": 0.1900523001581762,
+   "max_swing": 0.27005150523784804,
    "root_now": {
     "root_for": "Bleacher Bums",
-    "swing": 0.1900523001581762
+    "swing": 0.27005150523784804
    }
   },
   {
@@ -763,39 +710,14 @@
     },
     "lose_both": {
      "root_for": "Mean Beanz",
-     "swing": 0.14752443438672458
+     "swing": 0.183870292501366
     }
    },
    "unconditional": true,
-   "max_swing": 0.14752443438672458,
+   "max_swing": 0.183870292501366,
    "root_now": {
     "root_for": "Mean Beanz",
-    "swing": 0.14752443438672458
-   }
-  },
-  {
-   "home": "Nuketown",
-   "away": "Slaughtered in 3",
-   "week": "Week 1",
-   "by_scenario": {
-    "win_both": {
-     "root_for": null,
-     "swing": 0.0
-    },
-    "split": {
-     "root_for": null,
-     "swing": 0.0
-    },
-    "lose_both": {
-     "root_for": "Slaughtered in 3",
-     "swing": 0.13243593643810314
-    }
-   },
-   "unconditional": true,
-   "max_swing": 0.13243593643810314,
-   "root_now": {
-    "root_for": "Slaughtered in 3",
-    "swing": 0.13243593643810314
+    "swing": 0.183870292501366
    }
   },
   {
@@ -813,20 +735,20 @@
     },
     "lose_both": {
      "root_for": "Everything hurts",
-     "swing": 0.0059605320538427264
+     "swing": 0.006238454554884587
     }
    },
    "unconditional": true,
-   "max_swing": 0.0059605320538427264,
+   "max_swing": 0.006238454554884587,
    "root_now": {
     "root_for": "Everything hurts",
-    "swing": 0.0059605320538427264
+    "swing": 0.006238454554884587
    }
   },
   {
-   "home": "Como",
-   "away": "Mean Beanz",
-   "week": "Week 7",
+   "home": "Nuketown",
+   "away": "Slaughtered in 3",
+   "week": "Week 1",
    "by_scenario": {
     "win_both": {
      "root_for": null,
@@ -838,20 +760,20 @@
     },
     "lose_both": {
      "root_for": null,
-     "swing": 2.353672812205332e-14
+     "swing": 2.220446049250313e-15
     }
    },
    "unconditional": false,
-   "max_swing": 2.353672812205332e-14,
+   "max_swing": 2.220446049250313e-15,
    "root_now": {
     "root_for": null,
-    "swing": 2.353672812205332e-14
+    "swing": 2.220446049250313e-15
    }
   }
  ],
  "massey": {
-  "home_edge": 0.3461538461538478,
-  "r2": 0.7110979174951303,
+  "home_edge": -0.07142857142856894,
+  "r2": 0.6888918501487262,
   "cap": 15
  },
  "our_games_left": 0,
@@ -905,7 +827,7 @@
    "we_hold": true
   }
  ],
- "rival": "Wasted Talent",
+ "rival": "Brew Crew",
  "rival_games_left": 2,
  "joint": [],
  "scenarios": [],
@@ -914,7 +836,7 @@
    "week": "Week 1",
    "home": "Mean Beanz",
    "away": "Wasted Talent",
-   "home_win_prob": 0.18344791187935827,
+   "home_win_prob": 0.19607099273481562,
    "involves_us": false
   },
   {
@@ -928,14 +850,14 @@
    "week": "Week 1",
    "home": "Nuketown",
    "away": "Slaughtered in 3",
-   "home_win_prob": 0.5072812674243764,
+   "home_win_prob": 0.48585115542783364,
    "involves_us": false
   },
   {
    "week": "Week 1",
    "home": "Wasted Talent",
    "away": "Mean Beanz",
-   "home_win_prob": 0.8165520881206417,
+   "home_win_prob": 0.8039290072651843,
    "involves_us": false
   },
   {
@@ -949,7 +871,7 @@
    "week": "Week 1",
    "home": "Slaughtered in 3",
    "away": "Nuketown",
-   "home_win_prob": 0.4927187325756236,
+   "home_win_prob": 0.5141488445721664,
    "involves_us": false
   },
   {
@@ -963,7 +885,7 @@
    "week": "Week 1",
    "home": "Como",
    "away": "Brew Crew",
-   "home_win_prob": 0.3262429966162515,
+   "home_win_prob": 0.3452331274054304,
    "involves_us": false
   },
   {
@@ -977,35 +899,7 @@
    "week": "Week 1",
    "home": "Brew Crew",
    "away": "Como",
-   "home_win_prob": 0.6737570033837486,
-   "involves_us": false
-  },
-  {
-   "week": "Week 7",
-   "home": "Nuketown",
-   "away": "Brew Crew",
-   "home_win_prob": 0.43763846304043214,
-   "involves_us": false
-  },
-  {
-   "week": "Week 7",
-   "home": "Como",
-   "away": "Mean Beanz",
-   "home_win_prob": 0.5111677058757046,
-   "involves_us": false
-  },
-  {
-   "week": "Week 7",
-   "home": "Brew Crew",
-   "away": "Nuketown",
-   "home_win_prob": 0.5623615369595679,
-   "involves_us": false
-  },
-  {
-   "week": "Week 7",
-   "home": "Mean Beanz",
-   "away": "Como",
-   "home_win_prob": 0.48883229412429535,
+   "home_win_prob": 0.6547668725945697,
    "involves_us": false
   }
  ]
