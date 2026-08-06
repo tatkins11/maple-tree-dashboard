@@ -1,7 +1,7 @@
 {
  "team": "Maple Tree",
- "generated": "2026-07-30T13:47:16",
- "data_through": "2026-07-29",
+ "generated": "2026-08-06T10:15:31",
+ "data_through": "2026-08-05",
  "current_season": {
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
@@ -39,26 +39,26 @@
    "slug": "soviet-sluggers-summer-2021"
   }
  ],
- "record": "7-3",
+ "record": "8-4",
  "seed_race": {
-  "headline": "Maple Tree is the #3 seed at 7-3 (+26), 1 game back of Wasted Talent for the #1 seed with 2 to play.",
+  "headline": "Maple Tree is the #3 seed at 8-4 (+19), 1 game back of Wasted Talent for the #1 seed with season complete.",
   "team_seed": 3,
   "leader": "Wasted Talent",
-  "games_played_total": 100,
+  "games_played_total": 104,
   "board": [
    {
     "seed": 1,
     "team_name": "Wasted Talent",
-    "wins": 7,
-    "losses": 1,
+    "wins": 8,
+    "losses": 2,
     "ties": 0,
-    "games": 8,
-    "win_pct": 0.875,
-    "runs_for": 129,
-    "runs_against": 57,
-    "run_diff": 72,
-    "games_remaining": 4,
-    "max_wins": 11,
+    "games": 10,
+    "win_pct": 0.8,
+    "runs_for": 162,
+    "runs_against": 83,
+    "run_diff": 79,
+    "games_remaining": 2,
+    "max_wins": 10,
     "games_back": 0.0,
     "is_team": false
    },
@@ -81,16 +81,16 @@
    {
     "seed": 3,
     "team_name": "Maple Tree",
-    "wins": 7,
-    "losses": 3,
+    "wins": 8,
+    "losses": 4,
     "ties": 0,
-    "games": 10,
-    "win_pct": 0.7,
-    "runs_for": 117,
-    "runs_against": 91,
-    "run_diff": 26,
-    "games_remaining": 2,
-    "max_wins": 9,
+    "games": 12,
+    "win_pct": 0.6667,
+    "runs_for": 143,
+    "runs_against": 124,
+    "run_diff": 19,
+    "games_remaining": 0,
+    "max_wins": 8,
     "games_back": 1.0,
     "is_team": true
    },
@@ -227,20 +227,28 @@
  "potw": {
   "player": "Glove",
   "canonical_name": "glove",
-  "game_date": "2026-07-29",
-  "opponents": "Sandlot Vibes",
+  "game_date": "2026-08-05",
+  "opponents": "Wasted Talent",
   "games": 2,
-  "game_score": 4.8,
-  "ab": 8,
+  "game_score": 7.55,
+  "ab": 7,
   "hits": 6,
-  "hr": 1,
-  "rbi": 2,
+  "hr": 2,
+  "rbi": 6,
   "r": 5,
   "bb": 0,
-  "tb": 9,
+  "tb": 14,
   "slug": "glove"
  },
  "weekly_results": [
+  {
+   "game_date": "2026-08-05",
+   "result_display": "Split 1-1 (4-17, 22-16)",
+   "wins": 1,
+   "losses": 1,
+   "runs_for": 26,
+   "runs_against": 33
+  },
   {
    "game_date": "2026-07-29",
    "result_display": "Split 1-1 (12-13, 13-10)",
@@ -283,19 +291,12 @@
   }
  ],
  "milestones": [
-  "Tristan needs 4 more doubles to break the single-season Doubles record (10, Tim)",
+  "Tristan needs 3 more doubles to break the single-season Doubles record (10, Tim)",
   "Jason is 1 from 25 career walks",
+  "Tim is 1 from 20 career hr",
   "Kives is 1 from 15 career hr",
-  "Glove is 1 from 75 career games",
-  "Porter is 1 from 20 career doubles",
-  "Tim is 1 from 20 career doubles"
+  "Tristan is 1 from 75 career singles",
+  "Joel is 1 from 5 career hr"
  ],
- "next_game": {
-  "week_label": "Week 7",
-  "date_display": "Wed 08/05/26",
-  "time_display": "6:30 PM",
-  "opponent_display": "Wasted Talent",
-  "home_away_display": "Away",
-  "location_or_field": "Boncosky Yellow"
- }
+ "next_game": null
 }

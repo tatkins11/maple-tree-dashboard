@@ -26,6 +26,9 @@ const joint: any[] = (race as any).joint ?? [];
 const rival: string = (race as any).rival ?? '';
 const LBL: Record<number, string> = { 0: 'lose both', 1: 'split', 2: 'win both' };
 const power: any[] = (race as any).power_ranking ?? [];
+// Our own regular season is over once our_games_left hits 0 — the conditional
+// win-both/split/lose-both machinery goes away and the page reads as a watch party.
+const seasonDone = ((race as any).our_games_left ?? ourGames.length) === 0;
 const projected: any[] = (race as any).projected_table ?? [];
 const rooting: any[] = (race as any).rooting ?? [];
 ---
@@ -141,14 +144,24 @@ const rooting: any[] = (race as any).rooting ?? [];
     <p class="sec-sub" style="margin-top:10px">
       {held.length > 0 && `We win a tie with ${held.map((t) => t.opponent).join(', ')}. `}
       {lost.length > 0 && (
-        <><strong>We lose one to {lost.map((t) => t.opponent).join(', ')}</strong> — and that is the
-        tie most likely to matter, because Brew Crew have four games left against the bottom of the
-        table while we have two against the top.</>
+        <><strong>We lose one to {lost.map((t) => t.opponent).join(', ')}</strong> — and the Brew
+        Crew tie is the one that decides our playoff slot: if they win out to 8-4 alone, that
+        two-run gap from Week 3 hands them the third seed. If Bleacher Bums reach 8-4 as well,
+        the three-way rule saves us — we are the only club in that group with a win over both.</>
       )}
     </p>
   </section>
 
   <!-- what our own two games do -->
+  {seasonDone && (
+    <p class="race-callout">
+      <strong>Our regular season is finished.</strong> 8-4 against the hardest schedule in the
+      league, and the top-five bye is locked. What is left is arithmetic performed by other
+      people: {race.games_remaining} games that decide whether we open the playoffs third or
+      fourth. The rooting guide below is now unconditional — our result is in the books.
+    </p>
+  )}
+  {!seasonDone && (
   <section class="race-block">
     <h2 class="sec-title">Our last two games</h2>
     <p class="sec-sub">
@@ -178,8 +191,10 @@ const rooting: any[] = (race as any).rooting ?? [];
       </table>
     </div>
   </section>
+  )}
 
   <!-- the three ways it goes -->
+  {scen.length > 0 && (
   <section class="race-block">
     <h2 class="sec-title">The three ways our doubleheader goes</h2>
     <p class="sec-sub">
@@ -235,6 +250,7 @@ const rooting: any[] = (race as any).rooting ?? [];
       is effectively gone: Sandlot Vibes finish against the only winless club in the league.
     </p>
   </section>
+  )}
 
   <!-- where we actually land -->
   <section class="race-block">
@@ -317,19 +333,24 @@ const rooting: any[] = (race as any).rooting ?? [];
   <section class="race-block">
     <h2 class="sec-title">Who to root for in everyone else's games</h2>
     <p class="sec-sub">
-      For each game we are not playing, the club whose win lowers our expected seed.
-      Several of these <em>invert</em> depending on how our own doubleheader goes, so the
-      column that applies is the one matching our result — a single blanket answer would
-      point the wrong way about half the time.
+      {seasonDone
+        ? 'For each remaining game, the club whose win raises our seed. Our own result is final, so these are unconditional — no scenarios, just sides.'
+        : 'For each game we are not playing, the club whose win lowers our expected seed. Several of these invert depending on how our own doubleheader goes, so the column that applies is the one matching our result — a single blanket answer would point the wrong way about half the time.'}
     </p>
     <div class="tbl-wrap">
       <table class="tbl">
         <thead>
           <tr>
             <th>Matchup</th>
-            <th>If we win both</th>
-            <th>If we split</th>
-            <th>If we lose both</th>
+            {seasonDone ? (
+              <th>Root for</th>
+            ) : (
+              <>
+                <th>If we win both</th>
+                <th>If we split</th>
+                <th>If we lose both</th>
+              </>
+            )}
             <th class="num">Leverage</th>
           </tr>
         </thead>
@@ -339,19 +360,29 @@ const rooting: any[] = (race as any).rooting ?? [];
               <tr class:list={[{ 'is-dead': r.max_swing < 0.005 }]}>
                 <td>
                   {r.home} vs {r.away}
-                  {r.unconditional && <span class="uncond-tag">same either way</span>}
+                  {!seasonDone && r.unconditional && <span class="uncond-tag">same either way</span>}
                 </td>
-                {['win_both', 'split', 'lose_both'].map((k) => (
+                {seasonDone ? (
                   <td>
-                    {r.by_scenario[k].root_for ? (
-                      <span class:list={['root-pill', { 'root-us': false }]}>
-                        {r.by_scenario[k].root_for}
-                      </span>
+                    {(r.root_now ?? r.by_scenario.lose_both).root_for ? (
+                      <span class="root-pill">{(r.root_now ?? r.by_scenario.lose_both).root_for}</span>
                     ) : (
                       <span class="root-none">no effect</span>
                     )}
                   </td>
-                ))}
+                ) : (
+                  ['win_both', 'split', 'lose_both'].map((k) => (
+                    <td>
+                      {r.by_scenario[k].root_for ? (
+                        <span class:list={['root-pill', { 'root-us': false }]}>
+                          {r.by_scenario[k].root_for}
+                        </span>
+                      ) : (
+                        <span class="root-none">no effect</span>
+                      )}
+                    </td>
+                  ))
+                )}
                 <td class="num">{r.max_swing < 0.005 ? '—' : r.max_swing.toFixed(2)}</td>
               </tr>
             ))

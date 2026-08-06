@@ -506,6 +506,11 @@ def main() -> None:
                 dirs.append(pick)
         row["unconditional"] = len(set(dirs)) == 1 and len(dirs) > 1
         row["max_swing"] = max(v["swing"] for v in row["by_scenario"].values())
+        if not our_idx:
+            # Season over for us: ow=0 is the only populated cell and it is not a
+            # "lose both" — it is simply the answer. Surface it unconditionally.
+            row["root_now"] = row["by_scenario"]["lose_both"]
+            row["unconditional"] = row["root_now"]["root_for"] is not None
         rooting_rows.append(row)
     rooting_rows.sort(key=lambda r: -r["max_swing"])
 
@@ -537,16 +542,31 @@ def main() -> None:
         "projected_table": projected_rows,
         "rooting": rooting_rows,
         "massey": {"home_edge": hfa, "r2": r2, "cap": 15},
+        "our_games_left": len(our_idx),
+        # Head-to-head ledger vs every club we have actually played, with who wins a
+        # two-team tie TODAY: h2h record, then fewest runs allowed to the other club,
+        # then fewest runs allowed overall — the league sheet's order.
+        "our_tiebreakers": [
+            {"opponent": o,
+             "w": base_h2h_w.get((US, o), 0), "l": base_h2h_w.get((o, US), 0),
+             "runs_for": base_h2h_ra.get((o, US), 0),
+             "runs_against": base_h2h_ra.get((US, o), 0),
+             "we_hold": (
+                 (base_h2h_w.get((US, o), 0), -base_h2h_ra.get((US, o), 0), -base[US]["ra"]) >
+                 (base_h2h_w.get((o, US), 0), -base_h2h_ra.get((o, US), 0), -base[o]["ra"])
+             )}
+            for o in sorted(base) if o != US and base_h2h_gp.get((US, o), 0) > 0
+        ],
         "rival": rival,
         "rival_games_left": len(rival_idx),
-        "joint": [
+        "joint": [] if not our_idx else [
             {"our_wins": ow, "rival_wins": rw,
              "p": cell["p"] / total,
              "seeds": [{"seed": sd, "p": v / cell["p"]}
                        for sd, v in sorted(cell["seeds"].items()) if v / cell["p"] > 0.005],
              "p_seed_2_or_better": sum(v for sd, v in cell["seeds"].items() if sd <= 2) / cell["p"]}
             for (ow, rw), cell in sorted(joint.items(), reverse=True) if cell["p"] / total > 1e-6],
-        "scenarios": [
+        "scenarios": [] if not our_idx else [
             {"wins": k,
              "label": {0: "Lose both", 1: "Split", 2: "Win both"}[k],
              "final_record": f"{base[US]['w'] + k}-{base[US]['l'] + (2 - k)}",

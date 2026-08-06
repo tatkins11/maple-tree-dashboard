@@ -21,6 +21,26 @@
    "label": "Fall 2025"
   },
   {
+   "player": "Glove",
+   "canonical_name": "glove",
+   "game_date": "2026-08-05",
+   "season": "Maple Tree Summer 2026",
+   "opponent": "Wasted Talent",
+   "pa": 5,
+   "ab": 5,
+   "hits": 5,
+   "2b": 2,
+   "3b": 0,
+   "hr": 2,
+   "bb": 0,
+   "r": 5,
+   "rbi": 5,
+   "tb": 13,
+   "game_score": 7.1,
+   "slug": "glove",
+   "label": "Summer 2026"
+  },
+  {
    "player": "Tristan",
    "canonical_name": "tristan",
    "game_date": "2021-06-23",
@@ -179,26 +199,6 @@
    "game_score": 5.7,
    "slug": "joel",
    "label": "Spring 2026"
-  },
-  {
-   "player": "Porter",
-   "canonical_name": "porter",
-   "game_date": "2021-06-23",
-   "season": "Soviet Sluggers Summer 2021",
-   "opponent": "Refuse To Win",
-   "pa": 5,
-   "ab": 5,
-   "hits": 5,
-   "2b": 0,
-   "3b": 0,
-   "hr": 2,
-   "bb": 0,
-   "r": 4,
-   "rbi": 3,
-   "tb": 11,
-   "game_score": 5.7,
-   "slug": "porter",
-   "label": "Soviet Sluggers Summer 2021"
   }
  ],
  "feats": [
@@ -218,6 +218,20 @@
      "tb": 15,
      "slug": "glove",
      "label": "Fall 2025"
+    },
+    {
+     "player": "Glove",
+     "canonical_name": "glove",
+     "game_date": "2026-08-05",
+     "season": "Maple Tree Summer 2026",
+     "opponent": "Wasted Talent",
+     "pa": 5,
+     "hits": 5,
+     "hr": 2,
+     "rbi": 5,
+     "tb": 13,
+     "slug": "glove",
+     "label": "Summer 2026"
     },
     {
      "player": "Tristan",
@@ -382,6 +396,20 @@
      "tb": 15,
      "slug": "tristan",
      "label": "Soviet Sluggers Summer 2021"
+    },
+    {
+     "player": "Glove",
+     "canonical_name": "glove",
+     "game_date": "2026-08-05",
+     "season": "Maple Tree Summer 2026",
+     "opponent": "Wasted Talent",
+     "pa": 5,
+     "hits": 5,
+     "hr": 2,
+     "rbi": 5,
+     "tb": 13,
+     "slug": "glove",
+     "label": "Summer 2026"
     },
     {
      "player": "Tristan",

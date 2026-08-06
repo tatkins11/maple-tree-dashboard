@@ -3,7 +3,7 @@
   "name": "Maple Tree Summer 2026",
   "label": "Summer 2026",
   "slug": "summer-2026",
-  "record": "7-3",
+  "record": "8-4",
   "games": [
    {
     "week_label": "Week 2",
@@ -152,12 +152,12 @@
     "opponent_name": "Wasted Talent",
     "home_away": "away",
     "location_or_field": "Boncosky Yellow",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "L",
+    "runs_for": 4.0,
+    "runs_against": 17.0
    },
    {
     "week_label": "Week 7",
@@ -166,12 +166,12 @@
     "opponent_name": "Wasted Talent",
     "home_away": "home",
     "location_or_field": "Boncosky Yellow",
-    "status": "scheduled",
-    "completed_flag": 0,
+    "status": "completed",
+    "completed_flag": 1,
     "is_bye": false,
-    "result": null,
-    "runs_for": null,
-    "runs_against": null
+    "result": "W",
+    "runs_for": 22.0,
+    "runs_against": 16.0
    },
    {
     "week_label": "Week 1",

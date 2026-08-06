@@ -10,7 +10,7 @@
   {
    "player": "Glove",
    "canonical_name": "glove",
-   "potw": 8,
+   "potw": 9,
    "best_week": 10.9,
    "slug": "glove"
   },
@@ -72,6 +72,25 @@
   }
  ],
  "history": [
+  {
+   "season": "Maple Tree Summer 2026",
+   "game_date": "2026-08-05",
+   "player": "Glove",
+   "canonical_name": "glove",
+   "game_score": 7.55,
+   "games": 2,
+   "ab": 7,
+   "hits": 6,
+   "hr": 2,
+   "rbi": 6,
+   "r": 5,
+   "bb": 0,
+   "tb": 14,
+   "opponents": "Wasted Talent",
+   "slug": "glove",
+   "label": "Summer 2026",
+   "team_result": "Split 1-1 (4-17, 22-16)"
+  },
   {
    "season": "Maple Tree Summer 2026",
    "game_date": "2026-07-29",
